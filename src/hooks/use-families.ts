@@ -39,6 +39,8 @@ export interface ListFamiliesParams {
   search?: string;
   archived?: boolean;
   branchId?: string;
+  sortBy?: "name" | "createdAt" | "memberCount";
+  sortOrder?: "asc" | "desc";
 }
 
 export interface CreateFamilyInput {
@@ -62,6 +64,8 @@ function buildListPath(params: ListFamiliesParams): string {
   if (params.search) searchParams.set("search", params.search);
   if (params.archived) searchParams.set("archived", "true");
   if (params.branchId) searchParams.set("branchId", params.branchId);
+  if (params.sortBy) searchParams.set("sortBy", params.sortBy);
+  if (params.sortOrder) searchParams.set("sortOrder", params.sortOrder);
   const queryString = searchParams.toString();
   return `/families${queryString ? `?${queryString}` : ""}`;
 }

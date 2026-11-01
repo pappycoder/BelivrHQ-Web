@@ -5,11 +5,12 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import {
+  ArrowUpRight,
   BookOpen,
   Download,
-  Eye,
   Headphones,
   LayoutGrid,
+  PencilLine,
   Plus,
   Rows3,
   Search,
@@ -23,6 +24,8 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
+  ManageHeading,
+  RowActions,
   SearchField,
   ViewToggle,
 } from "@/components/paper/primitives";
@@ -227,7 +230,7 @@ function SermonsInner() {
             <span>Date</span>
             <span>Length</span>
             <span>Media</span>
-            <span className="text-right">Open</span>
+            <ManageHeading />
           </div>
           {rows.map((sermon) => (
             <StaggerItem key={sermon.sermonId}>
@@ -254,22 +257,20 @@ function SermonsInner() {
                   {sermon.videoUrl ? <Video className="size-3.5 text-sky" aria-label="Has video" /> : null}
                   {sermon.tags?.length ? <span className="truncate text-[9px]">#{sermon.tags[0]}</span> : null}
                 </span>
-                <div className="flex justify-end gap-1">
-                  {canUpdate && !sermon.archivedAt ? (
-                    <Link href={`/library/sermons/${sermon.sermonId}/edit`} className="rounded-full px-2 py-1 text-[10px] text-ink-faint opacity-0 transition-opacity hover:text-ink group-hover:opacity-100">
-                      Edit
-                    </Link>
-                  ) : null}
-                  <Button
-                    size="icon-xs"
-                    variant="ghost"
-                    aria-label={`Open ${sermon.title}`}
-                    onClick={() => router.push(`/library/sermons/${sermon.sermonId}`)}
-                    className="rounded-full opacity-0 transition-opacity group-hover:opacity-100"
-                  >
-                    <Eye className="size-3.5" />
-                  </Button>
-                </div>
+                <RowActions
+                  actions={[
+                    {
+                      label: `Open ${sermon.title}`,
+                      icon: <ArrowUpRight />,
+                      href: `/library/sermons/${sermon.sermonId}`,
+                    },
+                    canUpdate && !sermon.archivedAt && {
+                      label: "Edit sermon",
+                      icon: <PencilLine />,
+                      href: `/library/sermons/${sermon.sermonId}/edit`,
+                    },
+                  ]}
+                />
               </div>
             </StaggerItem>
           ))}

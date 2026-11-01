@@ -14,7 +14,7 @@ import {
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { EmptyState, FilterChip, SearchField } from "@/components/paper/primitives";
+import { EmptyState, FilterChip, RowActions, SearchField } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -218,21 +218,39 @@ export default function TemplatesPage() {
                 <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
                   <span>{t.branchName ?? "All branches"}</span>
                   <span className="flex items-center gap-0.5">
-                    {canUpdate && !t.archivedAt ? (
-                      <>
-                        <button type="button" aria-label="Edit" onClick={() => openForm(t)} className="grid size-7 place-items-center rounded-full hover:bg-muted hover:text-ink"><PencilLine className="size-3.5" /></button>
-                        {t.status === "draft" ? (
-                          <button type="button" aria-label="Publish" title="Publish" onClick={() => publish.mutate(t.templateId, { onSuccess: () => toast("Published — usable in broadcasts now.") })} className="grid size-7 place-items-center rounded-full text-moss hover:bg-moss-soft"><Rocket className="size-3.5" /></button>
-                        ) : null}
-                        <button type="button" aria-label="Archive" onClick={() => archive.mutate(t.templateId, { onSuccess: () => toast("Archived.") })} className="grid size-7 place-items-center rounded-full hover:bg-muted hover:text-ink"><Archive className="size-3.5" /></button>
-                      </>
-                    ) : null}
-                    {canUpdate && t.archivedAt ? (
-                      <button type="button" onClick={() => restore.mutate(t.templateId, { onSuccess: () => toast("Restored.") })} className="flex items-center gap-1 rounded-full px-2 py-1 text-moss hover:bg-moss-soft"><ArchiveRestore className="size-3" /> Restore</button>
-                    ) : null}
-                    {canDelete && !t.archivedAt ? (
-                      <button type="button" aria-label="Delete" onClick={() => setDeleteTarget(t)} className="grid size-7 place-items-center rounded-full hover:bg-rose-soft hover:text-rose"><Trash2 className="size-3.5" /></button>
-                    ) : null}
+                    <RowActions
+                      reveal={false}
+                      actions={[
+                        canUpdate && !t.archivedAt && {
+                          label: "Edit template",
+                          icon: <PencilLine />,
+                          onSelect: () => openForm(t),
+                        },
+                        canUpdate && !t.archivedAt && t.status === "draft" && {
+                          label: "Publish — usable in broadcasts now",
+                          icon: <Rocket />,
+                          tone: "success",
+                          onSelect: () => publish.mutate(t.templateId, { onSuccess: () => toast("Published — usable in broadcasts now.") }),
+                        },
+                        canUpdate && !t.archivedAt && {
+                          label: "Archive template",
+                          icon: <Archive />,
+                          onSelect: () => archive.mutate(t.templateId, { onSuccess: () => toast("Archived.") }),
+                        },
+                        canUpdate && t.archivedAt && {
+                          label: "Restore template",
+                          icon: <ArchiveRestore />,
+                          tone: "success",
+                          onSelect: () => restore.mutate(t.templateId, { onSuccess: () => toast("Restored.") }),
+                        },
+                        canDelete && !t.archivedAt && {
+                          label: "Delete template",
+                          icon: <Trash2 />,
+                          tone: "danger",
+                          onSelect: () => setDeleteTarget(t),
+                        },
+                      ]}
+                    />
                   </span>
                 </div>
               </div>

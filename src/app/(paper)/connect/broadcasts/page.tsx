@@ -3,16 +3,16 @@
 import * as React from "react";
 import Link from "next/link";
 import {
+  Ban,
   CalendarClock,
   Megaphone,
   Plus,
   Send,
-  X,
 } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { EmptyState, FilterChip, SearchField } from "@/components/paper/primitives";
+import { EmptyState, FilterChip, ManageHeading, RowActions, SearchField } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -187,7 +187,7 @@ export default function BroadcastsPage() {
                 <span>Reached</span>
                 <span>State</span>
                 <span>When</span>
-                <span className="text-right">Manage</span>
+                <ManageHeading />
               </div>
               <div className="divide-y divide-line/70">
                 {filtered.map((b) => (
@@ -201,17 +201,16 @@ export default function BroadcastsPage() {
                     <span className="num">{b.totalRecipients}</span>
                     <span><Tag tone={STATUS_TONES[b.status] ?? "neutral"} dot>{BROADCAST_STATUS_LABELS[b.status as keyof typeof BROADCAST_STATUS_LABELS] ?? b.status}</Tag></span>
                     <span className="num text-[11px] text-ink-faint">{b.scheduledAt ? `sched ${stamp(b.scheduledAt)}` : stamp(b.sentAt ?? b.createdAt)}</span>
-                    <span className="flex justify-end">
-                      {canUpdate && b.status === "scheduled" ? (
-                        <button
-                          type="button"
-                          onClick={() => cancel.mutate(b.broadcastId, { onSuccess: () => toast("Scheduled send cancelled."), onError: () => toast.error("Couldn't cancel it.") })}
-                          className="flex items-center gap-1 rounded-full px-2 py-1 text-[10px] text-rose opacity-0 transition-opacity hover:bg-rose-soft group-hover:opacity-100"
-                        >
-                          <X className="size-2.5" /> Cancel
-                        </button>
-                      ) : null}
-                    </span>
+                    <RowActions
+                      actions={[
+                        canUpdate && b.status === "scheduled" && {
+                          label: "Cancel scheduled send",
+                          icon: <Ban />,
+                          tone: "danger",
+                          onSelect: () => cancel.mutate(b.broadcastId, { onSuccess: () => toast("Scheduled send cancelled."), onError: () => toast.error("Couldn't cancel it.") }),
+                        },
+                      ]}
+                    />
                   </div>
                 ))}
               </div>

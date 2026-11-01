@@ -3,10 +3,18 @@
 import * as React from "react";
 import Link from "next/link";
 import {
+  Archive,
+  ArchiveRestore,
+  ArrowUpRight,
   CalendarDays,
   HandCoins,
+  LayoutGrid,
+  PencilLine,
   RefreshCw,
+  Rows3,
   Search,
+  Trash2,
+  UserRoundCheck,
   UserRoundPlus,
   Users,
 } from "lucide-react";
@@ -18,18 +26,32 @@ import {
   EmptyState,
   FieldRow,
   FilterChip,
+  ManageHeading,
   PersonAvatar,
+  RowActions,
   SearchField,
+  SortDirectionToggle,
+  ViewToggle,
 } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
   useVisitorsList,
   useVisitorsStats,
   useUpdateVisitorById,
+  useArchiveVisitor,
+  useRestoreArchiveVisitor,
   type Visitor,
   type FollowUpStatus,
+  type ListVisitorsParams,
 } from "@/hooks/use-visitors";
 import { VisitorFormDialog } from "@/components/visitors/visitor-form-dialog";
 import { ConvertVisitorDialog } from "@/components/visitors/convert-visitor-dialog";
@@ -56,6 +78,14 @@ const STATUS_TONES: Record<FollowUpStatus, "moss" | "neutral" | "rose" | "sky" |
   dropped_off: "neutral",
 };
 
+const SORT_OPTIONS: { value: NonNullable<ListVisitorsParams["sortBy"]>; label: string }[] = [
+  { value: "firstName", label: "First name" },
+  { value: "lastName", label: "Last name" },
+  { value: "firstVisitDate", label: "First visit" },
+  { value: "followUpStatus", label: "Status" },
+  { value: "createdAt", label: "Date added" },
+];
+
 function label(status: FollowUpStatus) {
   return FOLLOW_UP_OPTIONS.find((o) => o.value === status)?.label ?? status;
 }
@@ -74,7 +104,11 @@ export default function VisitorsPage() {
   const [searchInput, setSearchInput] = React.useState("");
   const [search, setSearch] = React.useState("");
   const [status, setStatus] = React.useState<FollowUpStatus | "all">("all");
+  const [sortBy, setSortBy] = React.useState<NonNullable<ListVisitorsParams["sortBy"]>>("firstName");
+  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("asc");
+  const [archivedView, setArchivedView] = React.useState(false);
   const [page, setPage] = React.useState(1);
+  const [view, setView] = React.useState<"table" | "cards">("table");
   const [formOpen, setFormOpen] = React.useState(false);
   const [editTarget, setEditTarget] = React.useState<Visitor | null>(null);
   const [convertTarget, setConvertTarget] = React.useState<Visitor | null>(null);
@@ -85,23 +119,40 @@ export default function VisitorsPage() {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
-  const params = React.useMemo(
+  const params = React.useMemo<ListVisitorsParams>(
     () => ({
       page,
       limit: PAGE_SIZE,
       search: search || undefined,
       followUpStatus: status === "all" ? undefined : status,
+      sortBy,
+      sortOrder,
+      archived: archivedView ? true : undefined,
     }),
-    [page, search, status],
+    [page, search, status, sortBy, sortOrder, archivedView],
   );
 
   const list = useVisitorsList(params);
   const stats = useVisitorsStats();
   const updateVisitor = useUpdateVisitorById();
+  const archive = useArchiveVisitor();
+  const restoreArchive = useRestoreArchiveVisitor();
 
   const rows = list.data?.data ?? [];
   const total = list.data?.meta?.total ?? 0;
   const totalPages = Math.max(1, list.data?.meta?.totalPages ?? 1);
+
+  const toggleArchive = (visitor: Visitor) => {
+    if (visitor.archivedAt) {
+      restoreArchive.mutate(visitor.id, {
+        onSuccess: () => toast(`${visitor.firstName} restored to the active register.`),
+      });
+    } else {
+      archive.mutate(visitor.id, {
+        onSuccess: () => toast(`${visitor.firstName} archived — records are kept.`),
+      });
+    }
+  };
 
   const peek = (visitor: Visitor) =>
     open({
@@ -126,17 +177,14 @@ export default function VisitorsPage() {
           {visitor.notes ? (
             <p className="rounded-lg border border-line bg-card p-3 text-[11px] leading-relaxed text-ink-soft">{visitor.notes}</p>
           ) : null}
-          {canUpdate ? (
-            <div className="grid grid-cols-2 gap-2">
-              <Button variant="outline" size="sm" className="h-9 rounded-lg border-line text-xs" onClick={() => { close(); setEditTarget(visitor); setFormOpen(true); }}>
-                Edit
-              </Button>
-              <Button variant="outline" size="sm" className="h-9 rounded-lg border-line text-xs" onClick={() => { close(); setConvertTarget(visitor); }}>
-                Convert
-              </Button>
+          <div className="grid grid-cols-2 gap-2">
+            <Button asChild size="sm" className="h-9 rounded-lg text-xs">
+              <Link href={`/people/visitors/${visitor.id}`}>Full record</Link>
+            </Button>
+            {canUpdate ? (
               <Button
                 size="sm"
-                className="col-span-2 h-9 rounded-lg text-xs"
+                className="h-9 rounded-lg text-xs"
                 disabled={updateVisitor.isPending}
                 onClick={() =>
                   updateVisitor.mutate(
@@ -147,7 +195,27 @@ export default function VisitorsPage() {
               >
                 Mark contacted
               </Button>
-            </div>
+            ) : null}
+            {canUpdate ? (
+              <Button variant="outline" size="sm" className="h-9 rounded-lg border-line text-xs" onClick={() => { close(); setEditTarget(visitor); setFormOpen(true); }}>
+                Edit
+              </Button>
+            ) : null}
+            {canUpdate && !visitor.convertedMemberId && !visitor.archivedAt ? (
+              <Button variant="outline" size="sm" className="h-9 rounded-lg border-line text-xs" onClick={() => { close(); setConvertTarget(visitor); }}>
+                Convert
+              </Button>
+            ) : null}
+          </div>
+          {canDelete && !visitor.archivedAt ? (
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full rounded-lg border-line text-xs text-destructive"
+              onClick={() => { close(); setDeleteTarget([visitor]); }}
+            >
+              Remove guest
+            </Button>
           ) : null}
         </div>
       ),
@@ -183,20 +251,50 @@ export default function VisitorsPage() {
             {item.label}
           </FilterChip>
         ))}
+        <div className="ml-auto flex flex-wrap items-center gap-2">
+          <FilterChip active={archivedView} onClick={() => { setArchivedView((v) => !v); setPage(1); }}>
+            Archived
+          </FilterChip>
+          <Select value={sortBy} onValueChange={(value) => { setSortBy(value as typeof sortBy); setPage(1); }}>
+            <SelectTrigger className="h-8 w-32 rounded-full border-line bg-card text-[11px] shadow-none">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {SORT_OPTIONS.map((item) => (
+                <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <SortDirectionToggle ascending={sortOrder === "asc"} onToggle={() => setSortOrder((o) => (o === "asc" ? "desc" : "asc"))} />
+          <ViewToggle
+            value={view}
+            onChange={setView}
+            options={[
+              { value: "table", label: "Table", icon: <Rows3 /> },
+              { value: "cards", label: "Cards", icon: <LayoutGrid /> },
+            ]}
+          />
+        </div>
       </div>
 
       {list.isError ? (
         <EmptyState icon={<Search />} title="Couldn&apos;t load the register" description="The visitor list didn&apos;t answer." action={<Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => list.refetch()}>Retry</Button>} />
       ) : list.isLoading ? (
-        <div className="space-y-2">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}</div>
+        view === "table" ? (
+          <div className="space-y-2">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}</div>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-36 rounded-2xl" />)}
+          </div>
+        )
       ) : rows.length === 0 ? (
         <EmptyState
           icon={<Users />}
           title="No guests match"
-          description="Try a different name, or loosen the filter."
-          action={<Button variant="outline" size="sm" className="rounded-full border-line text-xs" onClick={() => { setSearchInput(""); setSearch(""); setStatus("all"); setPage(1); }}>Clear filters</Button>}
+          description={archivedView ? "Nothing archived under these filters." : "Try a different name, or loosen the filter."}
+          action={<Button variant="outline" size="sm" className="rounded-full border-line text-xs" onClick={() => { setSearchInput(""); setSearch(""); setStatus("all"); setArchivedView(false); setPage(1); }}>Clear filters</Button>}
         />
-      ) : (
+      ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
           <div className="overflow-x-auto">
             <div className="min-w-[680px]">
@@ -205,7 +303,7 @@ export default function VisitorsPage() {
                 <span>Status</span>
                 <span>First visit</span>
                 <span>Assigned</span>
-                <span className="text-right">Manage</span>
+                <ManageHeading />
               </div>
               <div className="divide-y divide-line/70">
                 {rows.map((visitor) => (
@@ -220,24 +318,36 @@ export default function VisitorsPage() {
                     <span><Tag tone={STATUS_TONES[visitor.followUpStatus]} dot>{label(visitor.followUpStatus)}</Tag></span>
                     <span className="num text-[11px] text-ink-soft">{visitor.firstVisitDate.slice(0, 10)}</span>
                     <span className="truncate text-[11px] text-ink-faint">{visitor.assignedToName ?? "—"}</span>
-                    <div className="flex items-center justify-end gap-1.5">
-                      <Link
-                        href={`/people/visitors/${visitor.id}`}
-                        className="rounded-full px-2 py-1 text-[10px] text-brand opacity-0 transition-opacity group-hover:opacity-100 hover:underline"
-                      >
-                        Open
-                      </Link>
-                      {canUpdate ? (
-                        <button type="button" onClick={() => { setEditTarget(visitor); setFormOpen(true); }} className="rounded-full px-2 py-1 text-[10px] text-brand opacity-0 transition-opacity group-hover:opacity-100 hover:underline">
-                          Edit
-                        </button>
-                      ) : null}
-                      {canDelete ? (
-                        <button type="button" onClick={() => setDeleteTarget([visitor])} className="rounded-full px-2 py-1 text-[10px] text-rose opacity-0 transition-opacity group-hover:opacity-100 hover:underline" aria-label="Delete visitor">
-                          Remove
-                        </button>
-                      ) : null}
-                    </div>
+                    <RowActions
+                      actions={[
+                        {
+                          label: "Open guest record",
+                          icon: <ArrowUpRight />,
+                          href: `/people/visitors/${visitor.id}`,
+                        },
+                        canUpdate && !visitor.archivedAt && {
+                          label: "Edit guest",
+                          icon: <PencilLine />,
+                          onSelect: () => { setEditTarget(visitor); setFormOpen(true); },
+                        },
+                        canUpdate && !visitor.archivedAt && !visitor.convertedMemberId && {
+                          label: "Convert to member",
+                          icon: <UserRoundCheck />,
+                          onSelect: () => setConvertTarget(visitor),
+                        },
+                        canUpdate && {
+                          label: visitor.archivedAt ? "Restore guest" : "Archive guest",
+                          icon: visitor.archivedAt ? <ArchiveRestore /> : <Archive />,
+                          onSelect: () => toggleArchive(visitor),
+                        },
+                        canDelete && !visitor.archivedAt && {
+                          label: "Delete guest",
+                          icon: <Trash2 />,
+                          tone: "danger",
+                          onSelect: () => setDeleteTarget([visitor]),
+                        },
+                      ]}
+                    />
                   </div>
                 ))}
               </div>
@@ -252,6 +362,34 @@ export default function VisitorsPage() {
             </div>
           </div>
         </div>
+      ) : (
+        <>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {rows.map((visitor) => (
+              <button key={visitor.id} type="button" onClick={() => peek(visitor)} className="paper-card lift rounded-2xl p-4 text-left">
+                <div className="flex items-start gap-3">
+                  <PersonAvatar name={fullName(visitor)} size="md" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-semibold">{fullName(visitor)}</p>
+                    <p className="truncate text-[11px] text-ink-faint">{visitor.email ?? visitor.phone ?? "No contact"}</p>
+                  </div>
+                </div>
+                <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
+                  <Tag tone={STATUS_TONES[visitor.followUpStatus]}>{label(visitor.followUpStatus)}</Tag>
+                  <span className="num">{visitor.firstVisitDate.slice(0, 10)}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+          <div className="paper-card flex items-center justify-between rounded-2xl px-5 py-2.5 text-[11px] text-ink-faint">
+            <span>Showing <span className="num font-medium text-ink">{(page - 1) * PAGE_SIZE + 1}–{Math.min(total, page * PAGE_SIZE)}</span> of <span className="num font-medium text-ink">{total}</span></span>
+            <div className="flex items-center gap-1.5">
+              <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
+              <span className="num">{page} / {totalPages}</span>
+              <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
+            </div>
+          </div>
+        </>
       )}
 
       <VisitorFormDialog open={formOpen} onOpenChange={setFormOpen} visitor={editTarget} />

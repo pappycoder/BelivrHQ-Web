@@ -6,6 +6,7 @@ import { getToastErrorMessage, toast } from "@/lib/toast";
 import { SectionCard } from "@/components/paper/section";
 import { Tag } from "@/components/paper/stat";
 import { DataList, FieldRow, PersonAvatar } from "@/components/paper/primitives";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -90,14 +91,16 @@ export default function SettingsProfilePage() {
       <div className="paper-card flex flex-wrap items-center gap-4 rounded-2xl p-5">
         <div className="relative">
           <PersonAvatar name={`${p.firstName} ${p.lastName}`} src={shownName ?? undefined} size="lg" />
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            aria-label="Change profile photo"
-            className="absolute -bottom-1 -right-1 grid size-6 place-items-center rounded-full border border-line bg-card text-ink-faint shadow-sm hover:text-ink"
-          >
-            {uploadAvatar.isPending ? <Skeleton className="size-3" /> : <Camera className="size-3" />}
-          </button>
+          <ActionTooltip label="Change profile photo">
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              aria-label="Change profile photo"
+              className="absolute -bottom-1 -right-1 grid size-6 place-items-center rounded-full border border-line bg-card text-ink-faint shadow-sm hover:text-ink"
+            >
+              {uploadAvatar.isPending ? <Skeleton className="size-3" /> : <Camera className="size-3" />}
+            </button>
+          </ActionTooltip>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => pickPhoto(e.target.files?.[0])} />
         </div>
         <div className="min-w-0 flex-1">

@@ -1,11 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { CalendarClock, Pause, PlayCircle, Repeat, ShieldOff } from "lucide-react";
+import { Ban, CalendarClock, Pause, PlayCircle, Repeat, ShieldOff } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { EmptyState, FilterChip, PersonAvatar } from "@/components/paper/primitives";
+import { EmptyState, FilterChip, ManageHeading, PersonAvatar, RowActions } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -108,7 +108,7 @@ export default function GivingSchedulesPage() {
             <span className="text-right">Amount</span>
             <span>Frequency</span>
             <span>Next charge</span>
-            <span className="text-right">Manage</span>
+            <ManageHeading />
           </div>
           {rows.map((schedule) => (
             <StaggerItem key={schedule.id}>
@@ -130,24 +130,27 @@ export default function GivingSchedulesPage() {
                 <span className="num text-right text-xs font-semibold">{formatNaira(schedule.amount)}</span>
                 <span className="text-[11px] text-ink-soft">{FREQUENCY_LABELS[schedule.frequency] ?? schedule.frequency}</span>
                 <span className="num text-[11px] text-ink-soft">{schedule.nextChargeDate ? formatDate(schedule.nextChargeDate) : "—"}</span>
-                <span className="flex justify-end gap-1">
-                  {canManage ? (
-                    schedule.isActive ? (
-                      <>
-                        <button type="button" aria-label="Pause schedule" onClick={() => act(pause, schedule.id, "Schedule paused — the giver can breathe.")} className="grid size-7 place-items-center rounded-full text-ink-faint opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted hover:text-ink">
-                          <Pause className="size-3.5" />
-                        </button>
-                        <button type="button" onClick={() => setCancelTarget(schedule)} className="rounded-full px-2 py-1 text-[10px] text-rose opacity-0 transition-opacity group-hover:opacity-100 hover:bg-rose-soft">
-                          Cancel
-                        </button>
-                      </>
-                    ) : (
-                      <button type="button" onClick={() => act(resume, schedule.id, "Schedule resumed — the floor rebuilds quietly.")} className="flex items-center gap-1 rounded-full bg-moss-soft px-2.5 py-1 text-[10px] text-moss">
-                        <PlayCircle className="size-3" /> Resume
-                      </button>
-                    )
-                  ) : null}
-                </span>
+                <RowActions
+                  actions={[
+                    canManage && schedule.isActive && {
+                      label: "Pause schedule",
+                      icon: <Pause />,
+                      onSelect: () => act(pause, schedule.id, "Schedule paused — the giver can breathe."),
+                    },
+                    canManage && !schedule.isActive && {
+                      label: "Resume schedule",
+                      icon: <PlayCircle />,
+                      tone: "success",
+                      onSelect: () => act(resume, schedule.id, "Schedule resumed — the floor rebuilds quietly."),
+                    },
+                    canManage && schedule.isActive && {
+                      label: "Cancel schedule",
+                      icon: <Ban />,
+                      tone: "danger",
+                      onSelect: () => setCancelTarget(schedule),
+                    },
+                  ]}
+                />
               </div>
             </StaggerItem>
           ))}

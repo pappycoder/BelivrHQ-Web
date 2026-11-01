@@ -4,6 +4,7 @@ import * as React from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { X } from "lucide-react";
 import { useInspector } from "./inspector-provider";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { overlay, spring } from "@/components/paper/motion/variants";
 import { cn } from "@/lib/utils";
 
@@ -49,14 +50,16 @@ export function Inspector() {
                   <p className="truncate text-xs text-ink-soft">{payload.subtitle}</p>
                 ) : null}
               </div>
-              <button
-                type="button"
-                onClick={close}
-                aria-label="Close inspector"
-                className="grid size-8 shrink-0 place-items-center rounded-full text-ink-faint transition-colors hover:bg-muted hover:text-ink"
-              >
-                <X className="size-4" />
-              </button>
+              <ActionTooltip label="Close panel">
+                <button
+                  type="button"
+                  onClick={close}
+                  aria-label="Close inspector"
+                  className="grid size-8 shrink-0 place-items-center rounded-full text-ink-faint transition-colors hover:bg-muted hover:text-ink"
+                >
+                  <X className="size-4" />
+                </button>
+              </ActionTooltip>
             </div>
             <div className="flex-1 overflow-y-auto px-5 py-5">{payload.content}</div>
           </motion.aside>

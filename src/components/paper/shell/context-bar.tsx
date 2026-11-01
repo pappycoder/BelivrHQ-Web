@@ -25,6 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ActionTooltip } from "@/components/ui/tooltip";
 
 export function ContextBar({ onOpenSearch }: { onOpenSearch: () => void }) {
   const pathname = usePathname();
@@ -74,35 +75,41 @@ export function ContextBar({ onOpenSearch }: { onOpenSearch: () => void }) {
             ⌘K
           </kbd>
         </button>
-        <button
-          type="button"
-          onClick={onOpenSearch}
-          aria-label="Search"
-          className="grid size-8 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink sm:hidden"
-        >
-          <Search className="size-4" />
-        </button>
+        <ActionTooltip label="Search">
+          <button
+            type="button"
+            onClick={onOpenSearch}
+            aria-label="Search"
+            className="grid size-8 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink sm:hidden"
+          >
+            <Search className="size-4" />
+          </button>
+        </ActionTooltip>
 
-        <Link
-          href="/support"
-          aria-label="Help and support"
-          className="hidden size-8 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink sm:grid"
-        >
-          <CircleHelp className="size-4" />
-        </Link>
+        <ActionTooltip label="Help and support">
+          <Link
+            href="/support"
+            aria-label="Help and support"
+            className="hidden size-8 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink sm:grid"
+          >
+            <CircleHelp className="size-4" />
+          </Link>
+        </ActionTooltip>
 
-        <Link
-          href="/notifications"
-          aria-label={`Notifications${unread?.count ? ` (${unread.count} unread)` : ""}`}
-          className="relative grid size-8 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink"
-        >
-          <Bell className="size-4" />
-          {unread?.count ? (
-            <span className="absolute right-1 top-1 grid min-h-4 min-w-4 place-items-center rounded-full bg-brand px-1 text-[9px] font-semibold text-paper ring-2 ring-background">
-              {unread.count > 99 ? "99+" : unread.count}
-            </span>
-          ) : null}
-        </Link>
+        <ActionTooltip label={`Notifications${unread?.count ? ` (${unread.count} unread)` : ""}`}>
+          <Link
+            href="/notifications"
+            aria-label={`Notifications${unread?.count ? ` (${unread.count} unread)` : ""}`}
+            className="relative grid size-8 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink"
+          >
+            <Bell className="size-4" />
+            {unread?.count ? (
+              <span className="absolute right-1 top-1 grid min-h-4 min-w-4 place-items-center rounded-full bg-brand px-1 text-[9px] font-semibold text-paper ring-2 ring-background">
+                {unread.count > 99 ? "99+" : unread.count}
+              </span>
+            ) : null}
+          </Link>
+        </ActionTooltip>
 
         <AccountMenu />
       </div>
@@ -121,15 +128,17 @@ function AccountMenu() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          aria-label="Account menu"
-          className="ml-1 rounded-full ring-offset-2 ring-offset-background transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-        >
-          <PersonAvatar name={fullName} src={profile?.avatarUrl} size="sm" />
-        </button>
-      </DropdownMenuTrigger>
+      <ActionTooltip label="Account menu">
+        <DropdownMenuTrigger asChild>
+          <button
+            type="button"
+            aria-label="Account menu"
+            className="ml-1 rounded-full ring-offset-2 ring-offset-background transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+          >
+            <PersonAvatar name={fullName} src={profile?.avatarUrl} size="sm" />
+          </button>
+        </DropdownMenuTrigger>
+      </ActionTooltip>
       <DropdownMenuContent align="end" className="w-64">
         <DropdownMenuLabel className="flex items-center gap-2.5 py-2">
           <PersonAvatar name={fullName} src={profile?.avatarUrl} size="md" />

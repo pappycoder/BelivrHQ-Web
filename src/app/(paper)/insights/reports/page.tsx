@@ -14,6 +14,7 @@ import {
   Loader2,
   Plus,
   Users,
+  X,
 } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { SectionCard } from "@/components/paper/section";
@@ -21,6 +22,7 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import { EmptyState } from "@/components/paper/primitives";
 import { TrendChart } from "@/components/paper/charts";
 import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import { exportCSV, exportReportPDF, type ExportColumn, type PdfReportSection } from "@/lib/export-utils";
 import { exportExcel } from "@/lib/export-utils";
@@ -320,9 +322,15 @@ export default function ReportsStudioPage() {
                       </span>
                     </div>
                     <div className="absolute -top-2.5 right-3 flex gap-0.5">
-                      <button type="button" aria-label="Move up" onClick={() => move(index, -1)} className="grid size-5 place-items-center rounded-full bg-card text-ink-faint ring-1 ring-line hover:text-ink"><ArrowUp className="size-2.5" /></button>
-                      <button type="button" aria-label="Move down" onClick={() => move(index, 1)} className="grid size-5 place-items-center rounded-full bg-card text-ink-faint ring-1 ring-line hover:text-ink"><ArrowDown className="size-2.5" /></button>
-                      <button type="button" aria-label="Remove" onClick={() => setBlocks((current) => current.filter((item) => item !== id))} className="grid size-5 place-items-center rounded-full bg-card text-ink-faint ring-1 ring-line hover:text-rose">✕</button>
+                      <ActionTooltip label="Move block up">
+                        <button type="button" aria-label="Move up" onClick={() => move(index, -1)} className="grid size-5 place-items-center rounded-full bg-card text-ink-faint ring-1 ring-line hover:text-ink"><ArrowUp className="size-2.5" /></button>
+                      </ActionTooltip>
+                      <ActionTooltip label="Move block down">
+                        <button type="button" aria-label="Move down" onClick={() => move(index, 1)} className="grid size-5 place-items-center rounded-full bg-card text-ink-faint ring-1 ring-line hover:text-ink"><ArrowDown className="size-2.5" /></button>
+                      </ActionTooltip>
+                      <ActionTooltip label="Remove block">
+                        <button type="button" aria-label="Remove" onClick={() => setBlocks((current) => current.filter((item) => item !== id))} className="grid size-5 place-items-center rounded-full bg-card text-ink-faint ring-1 ring-line hover:text-rose"><X className="size-2.5" /></button>
+                      </ActionTooltip>
                     </div>
                     <div className="mt-2">
                       {id === "financial" && fin ? (

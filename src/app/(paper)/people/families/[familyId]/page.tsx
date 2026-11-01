@@ -17,6 +17,7 @@ import {
   EmptyState,
   FieldRow,
   PersonAvatar,
+  RowActions,
 } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
@@ -157,15 +158,16 @@ export default function FamilyDetailPage({
                       <Crown className="size-3" /> head
                     </span>
                   ) : null}
-                  {canUpdate ? (
-                    <button
-                      type="button"
-                      onClick={() => setRemoveTarget(member)}
-                      className="rounded-full px-2 py-1 text-[10px] text-ink-faint opacity-0 transition-opacity group-hover:opacity-100 hover:text-rose"
-                    >
-                      Remove
-                    </button>
-                  ) : null}
+                  <RowActions
+                    actions={[
+                      canUpdate && {
+                        label: `Remove ${member.firstName} ${member.lastName}`,
+                        icon: <UserX />,
+                        tone: "danger",
+                        onSelect: () => setRemoveTarget(member),
+                      },
+                    ]}
+                  />
                 </div>
               </StaggerItem>
             ))

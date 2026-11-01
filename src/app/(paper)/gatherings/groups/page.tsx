@@ -4,6 +4,8 @@ import * as React from "react";
 import Link from "next/link";
 import {
   Archive,
+  ArchiveRestore,
+  ArrowUpRight,
   CalendarPlus,
   Layers,
   LayoutGrid,
@@ -15,7 +17,7 @@ import {
 import { toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { EmptyState, PersonAvatar, SearchField, ViewToggle } from "@/components/paper/primitives";
+import { EmptyState, ManageHeading, PersonAvatar, RowActions, SearchField, ViewToggle } from "@/components/paper/primitives";
 import { AvatarStack } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -111,7 +113,7 @@ export default function DepartmentsPage() {
             <span>Branch</span>
             <span>Head</span>
             <span className="text-right">Serving</span>
-            <span className="text-right">Manage</span>
+            <ManageHeading />
           </div>
           {rows.map((dept) => {
             const head = dept.headMemberId
@@ -134,28 +136,37 @@ export default function DepartmentsPage() {
                   {head ? <><PersonAvatar name={head} size="xs" /> <span className="truncate">{head}</span></> : <span className="text-ink-faint">Unheaded</span>}
                 </span>
                 <span className="num text-right text-[11px]">{number(dept.members?.length ?? dept.memberCount ?? 0)}</span>
-                <span className="flex justify-end gap-0.5">
-                  {canEditDept ? (
-                    <button type="button" aria-label={`Edit ${dept.name}`} onClick={() => { setEditing(dept); setFormOpen(true); }} className="grid size-7 place-items-center rounded-full text-ink-faint opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted hover:text-ink">
-                      <PencilLine className="size-3.5" />
-                    </button>
-                  ) : null}
-                  {canUpdate && !dept.archivedAt ? (
-                    <button type="button" aria-label={`Archive ${dept.name}`} onClick={() => archive.mutate(dept.id, { onSuccess: () => toast(`${dept.name} archived.`), onError: () => toast.error("Couldn't archive.") })} className="grid size-7 place-items-center rounded-full text-ink-faint opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted hover:text-ink">
-                      <Archive className="size-3.5" />
-                    </button>
-                  ) : null}
-                  {dept.archivedAt && canUpdate ? (
-                    <button type="button" onClick={() => restore.mutate(dept.id, { onSuccess: () => toast(`${dept.name} restored.`), onError: () => toast.error("Couldn't restore.") })} className="rounded-full px-2 py-1 text-[10px] text-moss hover:bg-moss-soft">
-                      Restore
-                    </button>
-                  ) : null}
-                  {canDelete && !isDepartmentHead && !dept.archivedAt ? (
-                    <button type="button" aria-label={`Delete ${dept.name}`} onClick={() => setDeleteTarget(dept)} className="grid size-7 place-items-center rounded-full text-ink-faint opacity-0 transition-opacity group-hover:opacity-100 hover:bg-rose-soft hover:text-rose">
-                      <Trash2 className="size-3.5" />
-                    </button>
-                  ) : null}
-                </span>
+                <RowActions
+                  actions={[
+                    {
+                      label: "Open department",
+                      icon: <ArrowUpRight />,
+                      href: `/gatherings/groups/${dept.id}`,
+                    },
+                    canEditDept && {
+                      label: `Edit ${dept.name}`,
+                      icon: <PencilLine />,
+                      onSelect: () => { setEditing(dept); setFormOpen(true); },
+                    },
+                    canUpdate && !dept.archivedAt && {
+                      label: `Archive ${dept.name}`,
+                      icon: <Archive />,
+                      onSelect: () => archive.mutate(dept.id, { onSuccess: () => toast(`${dept.name} archived.`), onError: () => toast.error("Couldn't archive.") }),
+                    },
+                    canUpdate && dept.archivedAt && {
+                      label: `Restore ${dept.name}`,
+                      icon: <ArchiveRestore />,
+                      tone: "success",
+                      onSelect: () => restore.mutate(dept.id, { onSuccess: () => toast(`${dept.name} restored.`), onError: () => toast.error("Couldn't restore.") }),
+                    },
+                    canDelete && !isDepartmentHead && !dept.archivedAt && {
+                      label: `Delete ${dept.name}`,
+                      icon: <Trash2 />,
+                      tone: "danger",
+                      onSelect: () => setDeleteTarget(dept),
+                    },
+                  ]}
+                />
               </div>
             );
           })}
@@ -177,28 +188,33 @@ export default function DepartmentsPage() {
                       {dept.branchName ?? "Church-wide"} · {number(dept.members?.length ?? dept.memberCount ?? 0)} serving
                     </p>
                   </div>
-                  <div className="flex shrink-0 gap-0.5">
-                    {canEditDept ? (
-                      <button type="button" aria-label="Edit department" onClick={() => { setEditing(dept); setFormOpen(true); }} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
-                        <PencilLine className="size-3.5" />
-                      </button>
-                    ) : null}
-                    {canUpdate && !dept.archivedAt ? (
-                      <button type="button" aria-label="Archive" onClick={() => archive.mutate(dept.id, { onSuccess: () => toast(`${dept.name} archived.`), onError: () => toast.error("Couldn't archive.") })} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
-                        <Archive className="size-3.5" />
-                      </button>
-                    ) : null}
-                    {dept.archivedAt && canUpdate ? (
-                      <button type="button" onClick={() => restore.mutate(dept.id, { onSuccess: () => toast(`${dept.name} restored.`), onError: () => toast.error("Couldn't restore.") })} className="rounded-full px-2 py-1 text-[10px] text-moss hover:bg-moss-soft">
-                        Restore
-                      </button>
-                    ) : null}
-                    {canDelete && !isDepartmentHead ? (
-                      <button type="button" aria-label="Delete" onClick={() => setDeleteTarget(dept)} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-rose-soft hover:text-rose">
-                        <Trash2 className="size-3.5" />
-                      </button>
-                    ) : null}
-                  </div>
+                  <RowActions
+                    reveal={false}
+                    actions={[
+                      canEditDept && {
+                        label: "Edit department",
+                        icon: <PencilLine />,
+                        onSelect: () => { setEditing(dept); setFormOpen(true); },
+                      },
+                      canUpdate && !dept.archivedAt && {
+                        label: "Archive department",
+                        icon: <Archive />,
+                        onSelect: () => archive.mutate(dept.id, { onSuccess: () => toast(`${dept.name} archived.`), onError: () => toast.error("Couldn't archive.") }),
+                      },
+                      canUpdate && dept.archivedAt && {
+                        label: "Restore department",
+                        icon: <ArchiveRestore />,
+                        tone: "success",
+                        onSelect: () => restore.mutate(dept.id, { onSuccess: () => toast(`${dept.name} restored.`), onError: () => toast.error("Couldn't restore.") }),
+                      },
+                      canDelete && !isDepartmentHead && {
+                        label: "Delete department",
+                        icon: <Trash2 />,
+                        tone: "danger",
+                        onSelect: () => setDeleteTarget(dept),
+                      },
+                    ]}
+                  />
                 </div>
                 {dept.description ? <p className="mt-2 line-clamp-2 text-[11px] leading-relaxed text-ink-soft">{dept.description}</p> : null}
                 <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3">

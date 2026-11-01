@@ -23,6 +23,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { ArchiveConfirmDialog, type ArchiveDialogKind } from "@/components/shared/archive-confirm-dialog";
 import { BranchFormDialog } from "@/components/branches/branch-form-dialog";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -95,11 +96,13 @@ export default function BranchDetailPage({
               </Button>
             ) : null}
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button type="button" aria-label="Manage branch" className="grid h-8 w-8 place-items-center rounded-full border border-line bg-card text-ink-faint hover:text-ink">
-                  <MoreHorizontal className="size-3.5" />
-                </button>
-              </DropdownMenuTrigger>
+              <ActionTooltip label="Manage branch">
+                <DropdownMenuTrigger asChild>
+                  <button type="button" aria-label="Manage branch" className="grid h-8 w-8 place-items-center rounded-full border border-line bg-card text-ink-faint hover:text-ink">
+                    <MoreHorizontal className="size-3.5" />
+                  </button>
+                </DropdownMenuTrigger>
+              </ActionTooltip>
               <DropdownMenuContent align="end" className="w-44">
                 {!branch.archivedAt && canDelete ? (
                   <DropdownMenuItem className="text-xs" onClick={() => setArchiveState("archive")}>Archive branch</DropdownMenuItem>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   Archive,
   ArchiveRestore,
-  ChevronDown,
+  ArrowUpRight,
   LayoutGrid,
   Mail,
   PencilLine,
@@ -25,8 +25,11 @@ import {
   FieldRow,
   DataList,
   FilterChip,
+  ManageHeading,
   PersonAvatar,
+  RowActions,
   SearchField,
+  SortDirectionToggle,
   ViewToggle,
 } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
@@ -335,14 +338,7 @@ export default function PeopleMembersPage() {
               ))}
             </SelectContent>
           </Select>
-          <button
-            type="button"
-            aria-label={`Sort ${sortOrder === "asc" ? "descending" : "ascending"}`}
-            onClick={() => setSortOrder((o) => (o === "asc" ? "desc" : "asc"))}
-            className="grid size-8 place-items-center rounded-full border border-line bg-card text-ink-faint transition-colors hover:text-ink"
-          >
-            <ChevronDown className={cn("size-3.5 transition-transform", sortOrder === "asc" && "rotate-180")} />
-          </button>
+          <SortDirectionToggle ascending={sortOrder === "asc"} onToggle={() => setSortOrder((o) => (o === "asc" ? "desc" : "asc"))} />
           <ViewToggle
             value={view}
             onChange={setView}
@@ -387,7 +383,7 @@ export default function PeopleMembersPage() {
                 <span>Status</span>
                 <span>Branch</span>
                 <span>Member since</span>
-                <span className="text-right">Manage</span>
+                <ManageHeading />
               </div>
               <div className="divide-y divide-line/70">
                 {rows.map((member) => (
@@ -413,44 +409,32 @@ export default function PeopleMembersPage() {
                       {(member.branchId && branchNames.get(member.branchId)) ?? (isHq ? "—" : profile?.branch?.name ?? "—")}
                     </span>
                     <span className="num text-[11px] text-ink-soft">{member.memberSince ?? "—"}</span>
-                    <div className="flex items-center justify-end gap-1">
-                      {canUpdate ? (
-                        <button
-                          type="button"
-                          aria-label={member.archivedAt ? "Restore" : "Archive"}
-                          title={member.archivedAt ? "Restore to active" : "Archive"}
-                          onClick={() => toggleArchive(member)}
-                          className="grid size-7 place-items-center rounded-full text-ink-faint opacity-0 transition-all group-hover:opacity-100 hover:bg-muted hover:text-ink"
-                        >
-                          {member.archivedAt ? <ArchiveRestore className="size-3.5" /> : <Archive className="size-3.5" />}
-                        </button>
-                      ) : null}
-                      {canUpdate && !member.archivedAt ? (
-                        <button
-                          type="button"
-                          aria-label="Edit member"
-                          onClick={() => { setEditTarget(member); setFormOpen(true); }}
-                          className="grid size-7 place-items-center rounded-full text-ink-faint opacity-0 transition-all group-hover:opacity-100 hover:bg-muted hover:text-ink"
-                        >
-                          <PencilLine className="size-3.5" />
-                        </button>
-                      ) : null}
-                      {canDeactivate && !member.archivedAt ? (
-                        <button
-                          type="button"
-                          aria-label="Deactivate member"
-                          onClick={() => setDeactivateTarget([member])}
-                          className="grid size-7 place-items-center rounded-full text-ink-faint opacity-0 transition-all group-hover:opacity-100 hover:bg-rose-soft hover:text-rose"
-                        >
-                          <UserRoundX className="size-3.5" />
-                        </button>
-                      ) : null}
-                      <Link
-                        href={`/people/members/${member.memberId}`}
-                        className="rounded-full px-2 py-1 text-[10px] text-brand opacity-0 transition-opacity group-hover:opacity-100 hover:underline"
-                      >
-                        Open
-                      </Link>
+                    <div className="flex items-center justify-end">
+                      <RowActions
+                        actions={[
+                          {
+                            label: "Open profile",
+                            icon: <ArrowUpRight />,
+                            href: `/people/members/${member.memberId}`,
+                          },
+                          canUpdate && !member.archivedAt && {
+                            label: "Edit member",
+                            icon: <PencilLine />,
+                            onSelect: () => { setEditTarget(member); setFormOpen(true); },
+                          },
+                          canUpdate && {
+                            label: member.archivedAt ? "Restore member" : "Archive member",
+                            icon: member.archivedAt ? <ArchiveRestore /> : <Archive />,
+                            onSelect: () => toggleArchive(member),
+                          },
+                          canDeactivate && !member.archivedAt && {
+                            label: "Deactivate member",
+                            icon: <UserRoundX />,
+                            tone: "danger",
+                            onSelect: () => setDeactivateTarget([member]),
+                          },
+                        ]}
+                      />
                     </div>
                   </div>
                 ))}

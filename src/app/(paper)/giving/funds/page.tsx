@@ -1,11 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Layers, PencilLine, Plus, Wallet } from "lucide-react";
+import { Archive, ArchiveRestore, Layers, PencilLine, Plus, Trash2, Wallet } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { EmptyState, FilterChip } from "@/components/paper/primitives";
+import { EmptyState, FilterChip, RowActions } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -107,28 +107,32 @@ export default function GivingFundsPage() {
                     {category.description || `Opened ${formatDate(category.createdAt)}`}
                   </span>
                 </span>
-                <span className="flex shrink-0 items-center gap-1">
-                  {canUpdate && !category.archivedAt ? (
-                    <button type="button" aria-label={`Edit ${category.name}`} onClick={() => setFormTarget({ open: true, category })} className="grid size-7 place-items-center rounded-full text-ink-faint opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted hover:text-ink">
-                      <PencilLine className="size-3.5" />
-                    </button>
-                  ) : null}
-                  {canDelete && !category.archivedAt ? (
-                    <button type="button" aria-label={`Archive ${category.name}`} onClick={() => archive.mutate(category.categoryId, { onSuccess: () => toast(`${category.name} archived.`), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't archive it.")) })} className="rounded-full px-2 py-1 text-[10px] text-ink-faint opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted hover:text-ink">
-                      Archive
-                    </button>
-                  ) : null}
-                  {category.archivedAt && canUpdate ? (
-                    <button type="button" onClick={() => restore.mutate(category.categoryId, { onSuccess: () => toast(`${category.name} restored.`), onError: () => toast.error("Couldn't restore it.") })} className="rounded-full px-2 py-1 text-[10px] text-moss hover:bg-moss-soft">
-                      Restore
-                    </button>
-                  ) : null}
-                  {category.archivedAt && canDelete ? (
-                    <button type="button" onClick={() => setDeleteTarget(category)} className="rounded-full px-2 py-1 text-[10px] text-rose opacity-0 transition-opacity group-hover:opacity-100 hover:bg-rose-soft">
-                      Delete
-                    </button>
-                  ) : null}
-                </span>
+                <RowActions
+                  actions={[
+                    canUpdate && !category.archivedAt && {
+                      label: `Edit ${category.name}`,
+                      icon: <PencilLine />,
+                      onSelect: () => setFormTarget({ open: true, category }),
+                    },
+                    canDelete && !category.archivedAt && {
+                      label: `Archive ${category.name}`,
+                      icon: <Archive />,
+                      onSelect: () => archive.mutate(category.categoryId, { onSuccess: () => toast(`${category.name} archived.`), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't archive it.")) }),
+                    },
+                    canUpdate && category.archivedAt && {
+                      label: `Restore ${category.name}`,
+                      icon: <ArchiveRestore />,
+                      tone: "success",
+                      onSelect: () => restore.mutate(category.categoryId, { onSuccess: () => toast(`${category.name} restored.`), onError: () => toast.error("Couldn't restore it.") }),
+                    },
+                    canDelete && category.archivedAt && {
+                      label: `Delete ${category.name} forever`,
+                      icon: <Trash2 />,
+                      tone: "danger",
+                      onSelect: () => setDeleteTarget(category),
+                    },
+                  ]}
+                />
               </div>
             </StaggerItem>
           ))}

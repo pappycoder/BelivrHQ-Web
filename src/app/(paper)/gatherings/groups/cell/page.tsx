@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import {
   Archive,
+  ArchiveRestore,
   CalendarClock,
   Heart,
   MapPin,
@@ -15,7 +16,7 @@ import {
 import { toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard } from "@/components/paper/stat";
-import { EmptyState, PersonAvatar, SearchField } from "@/components/paper/primitives";
+import { EmptyState, PersonAvatar, RowActions, SearchField } from "@/components/paper/primitives";
 import { AvatarStack } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -109,28 +110,33 @@ export default function CellGroupsPage() {
                       {group.address ?? group.branchName ?? "Where two or three gather"}
                     </p>
                   </div>
-                  <div className="flex shrink-0 gap-0.5">
-                    {canManageGroup(group) ? (
-                      <button type="button" aria-label="Edit group" onClick={() => { setEditing(group); setFormOpen(true); }} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
-                        <PencilLine className="size-3.5" />
-                      </button>
-                    ) : null}
-                    {canManageGroup(group) && !group.archivedAt ? (
-                      <button type="button" aria-label="Archive group" title="Archive (records kept)" onClick={() => archive.mutate(group.id, { onSuccess: () => toast(`${group.name} archived.`), onError: () => toast.error("Couldn't archive.") })} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
-                        <Archive className="size-3.5" />
-                      </button>
-                    ) : null}
-                    {group.archivedAt && canManageGroup(group) ? (
-                      <button type="button" onClick={() => restore.mutate(group.id, { onSuccess: () => toast(`${group.name} reopened.`), onError: () => toast.error("Couldn't restore.") })} className="rounded-full px-2 py-1 text-[10px] text-moss hover:bg-moss-soft">
-                        Restore
-                      </button>
-                    ) : null}
-                    {canDelete && !isCellLeader ? (
-                      <button type="button" aria-label="Delete group" onClick={() => setDeleteTarget(group)} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-rose-soft hover:text-rose">
-                        <Trash2 className="size-3.5" />
-                      </button>
-                    ) : null}
-                  </div>
+                  <RowActions
+                    reveal={false}
+                    actions={[
+                      canManageGroup(group) && {
+                        label: "Edit group",
+                        icon: <PencilLine />,
+                        onSelect: () => { setEditing(group); setFormOpen(true); },
+                      },
+                      canManageGroup(group) && !group.archivedAt && {
+                        label: "Archive group — records kept",
+                        icon: <Archive />,
+                        onSelect: () => archive.mutate(group.id, { onSuccess: () => toast(`${group.name} archived.`), onError: () => toast.error("Couldn't archive.") }),
+                      },
+                      canManageGroup(group) && group.archivedAt && {
+                        label: "Restore group",
+                        icon: <ArchiveRestore />,
+                        tone: "success",
+                        onSelect: () => restore.mutate(group.id, { onSuccess: () => toast(`${group.name} reopened.`), onError: () => toast.error("Couldn't restore.") }),
+                      },
+                      canDelete && !isCellLeader && {
+                        label: "Delete group",
+                        icon: <Trash2 />,
+                        tone: "danger",
+                        onSelect: () => setDeleteTarget(group),
+                      },
+                    ]}
+                  />
                 </div>
                 <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-ink-soft">
                   {group.meetingDay ? (

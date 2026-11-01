@@ -1,10 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { Search, X } from "lucide-react";
+import Link from "next/link";
+import { ChevronDown, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "@/components/ui/tooltip";
 
 export { Tag } from "./stat";
 
@@ -137,16 +139,186 @@ export function SearchField({
         className="h-9 rounded-lg border-line bg-card pl-9 pr-8 text-sm shadow-none"
       />
       {value ? (
-        <button
-          type="button"
-          onClick={() => onChange("")}
-          aria-label="Clear search"
-          className="absolute right-2 top-1/2 grid size-5 -translate-y-1/2 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink"
-        >
-          <X className="size-3" />
-        </button>
+        <ActionTooltip label="Clear search">
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            aria-label="Clear search"
+            className="absolute right-2 top-1/2 grid size-5 -translate-y-1/2 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink"
+          >
+            <X className="size-3" />
+          </button>
+        </ActionTooltip>
       ) : null}
     </div>
+  );
+}
+
+const iconActionTones = {
+  default: "hover:bg-muted hover:text-ink",
+  danger: "hover:bg-rose-soft hover:text-rose",
+  success: "hover:bg-moss-soft hover:text-moss",
+  warning: "hover:bg-gold-soft hover:text-gold",
+} as const;
+
+export type IconActionTone = keyof typeof iconActionTones;
+
+function iconActionClass(
+  tone: IconActionTone,
+  disabled?: boolean,
+  className?: string,
+) {
+  return cn(
+    "grid size-7 shrink-0 place-items-center rounded-full text-ink-faint transition-colors [&_svg]:size-3.5",
+    iconActionTones[tone],
+    disabled && "pointer-events-none opacity-50",
+    className,
+  );
+}
+
+/** Icon-only button with a visible tooltip — the Paper grammar for compact actions. */
+export function IconAction({
+  label,
+  icon,
+  onSelect,
+  tone = "default",
+  disabled,
+  className,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  onSelect?: () => void;
+  tone?: IconActionTone;
+  disabled?: boolean;
+  className?: string;
+}) {
+  return (
+    <ActionTooltip label={label}>
+      <button
+        type="button"
+        onClick={onSelect}
+        disabled={disabled}
+        aria-label={label}
+        className={iconActionClass(tone, disabled, className)}
+      >
+        {icon}
+      </button>
+    </ActionTooltip>
+  );
+}
+
+/** Icon-only navigation control with the same tooltip grammar as IconAction. */
+export function IconActionLink({
+  label,
+  icon,
+  href,
+  tone = "default",
+  className,
+  onClick,
+}: {
+  label: string;
+  icon: React.ReactNode;
+  href: string;
+  tone?: IconActionTone;
+  className?: string;
+  onClick?: () => void;
+}) {
+  return (
+    <ActionTooltip label={label}>
+      <Link
+        href={href}
+        aria-label={label}
+        onClick={onClick}
+        className={iconActionClass(tone, undefined, className)}
+      >
+        {icon}
+      </Link>
+    </ActionTooltip>
+  );
+}
+
+/** One row action: either navigates (href) or fires a handler (onSelect). */
+export interface RowAction {
+  label: string;
+  icon: React.ReactNode;
+  href?: string;
+  onSelect?: () => void;
+  tone?: IconActionTone;
+  disabled?: boolean;
+}
+
+type Falsy = false | null | undefined | 0 | "";
+
+/**
+ * The standard Manage cell. Fixed grammar: Open → Edit → domain actions →
+ * Archive/Restore → destructive last. Falsy entries are dropped so callers can
+ * gate actions inline (`canUpdate && { … }`).
+ */
+export function RowActions({
+  actions,
+  reveal = true,
+  className,
+}: {
+  actions: (RowAction | Falsy)[];
+  reveal?: boolean;
+  className?: string;
+}) {
+  const visible = actions.filter((action): action is RowAction => Boolean(action));
+  if (visible.length === 0) return null;
+  return (
+    <div
+      className={cn(
+        "row-actions flex items-center justify-end gap-1",
+        reveal && "row-actions--reveal",
+        className,
+      )}
+    >
+      {visible.map((action) =>
+        action.href ? (
+          <IconActionLink
+            key={action.label}
+            label={action.label}
+            icon={action.icon}
+            href={action.href}
+            tone={action.tone}
+          />
+        ) : (
+          <IconAction
+            key={action.label}
+            label={action.label}
+            icon={action.icon}
+            onSelect={action.onSelect}
+            tone={action.tone}
+            disabled={action.disabled}
+          />
+        ),
+      )}
+    </div>
+  );
+}
+
+/** The single header cell every list table uses above its RowActions. */
+export function ManageHeading() {
+  return <span className="text-right">Manage</span>;
+}
+
+/** asc/desc flip control shared by every sortable Paper list. */
+export function SortDirectionToggle({
+  ascending,
+  onToggle,
+  className,
+}: {
+  ascending: boolean;
+  onToggle: () => void;
+  className?: string;
+}) {
+  return (
+    <IconAction
+      label={ascending ? "Sort descending" : "Sort ascending"}
+      icon={<ChevronDown className={cn("transition-transform", ascending && "rotate-180")} />}
+      onSelect={onToggle}
+      className={cn("size-8 rounded-full border border-line bg-card", className)}
+    />
   );
 }
 
@@ -199,21 +371,22 @@ export function ViewToggle<T extends string>({
   return (
     <div className="inline-flex items-center rounded-lg border border-line bg-card p-0.5">
       {options.map((option) => (
-        <button
-          key={option.value}
-          type="button"
-          onClick={() => onChange(option.value)}
-          aria-label={option.label}
-          aria-pressed={value === option.value}
-          className={cn(
-            "grid size-7 place-items-center rounded-md text-ink-faint transition-colors [&_svg]:size-3.5",
-            value === option.value
-              ? "bg-ink text-paper"
-              : "hover:bg-muted hover:text-ink",
-          )}
-        >
-          {option.icon}
-        </button>
+        <ActionTooltip key={option.value} label={option.label}>
+          <button
+            type="button"
+            onClick={() => onChange(option.value)}
+            aria-label={option.label}
+            aria-pressed={value === option.value}
+            className={cn(
+              "grid size-7 place-items-center rounded-md text-ink-faint transition-colors [&_svg]:size-3.5",
+              value === option.value
+                ? "bg-ink text-paper"
+                : "hover:bg-muted hover:text-ink",
+            )}
+          >
+            {option.icon}
+          </button>
+        </ActionTooltip>
       ))}
     </div>
   );

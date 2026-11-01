@@ -25,6 +25,7 @@ import {
 } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
@@ -179,11 +180,13 @@ export default function AdminTeamPage() {
                     </button>
                     {(canUpdate || canDelete) ? (
                       <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <button type="button" aria-label={`Manage ${member.firstName}`} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
-                            <MoreHorizontal className="size-3.5" />
-                          </button>
-                        </DropdownMenuTrigger>
+                        <ActionTooltip label={`Manage ${member.firstName}`}>
+                          <DropdownMenuTrigger asChild>
+                            <button type="button" aria-label={`Manage ${member.firstName}`} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
+                              <MoreHorizontal className="size-3.5" />
+                            </button>
+                          </DropdownMenuTrigger>
+                        </ActionTooltip>
                         <DropdownMenuContent align="end" className="w-44">
                           {canUpdate ? (
                             <DropdownMenuItem className="gap-2 text-xs" onClick={() => setRoleTarget(member)}>

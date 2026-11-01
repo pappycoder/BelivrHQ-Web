@@ -4,12 +4,14 @@ import * as React from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
+  ArrowUpRight,
   CalendarPlus,
   HandCoins,
   MapPin,
   Navigation,
   PencilLine,
   UserPlus,
+  UserRoundX,
   Users,
 } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
@@ -20,6 +22,7 @@ import {
   EmptyState,
   FieldRow,
   PersonAvatar,
+  RowActions,
 } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -196,12 +199,21 @@ export default function CellGroupDetailPage({
                       <span className="block text-[10px] text-ink-faint">joined {formatDate(member.joinedAt)}</span>
                     </span>
                     <Tag tone={member.role === "leader" ? "brand" : "neutral"}>{GROUP_ROLES.find((r) => r.value === member.role)?.label ?? member.role}</Tag>
-                    <Link href={`/people/members/${member.memberId}`} className="rounded-full px-2 py-1 text-[10px] text-ink-faint hover:text-brand">Profile</Link>
-                    {canManageMembers ? (
-                      <button type="button" onClick={() => setRemoveTarget(member)} className="rounded-full px-2 py-1 text-[10px] text-rose opacity-0 transition-opacity group-hover:opacity-100 hover:bg-rose-soft">
-                        Remove
-                      </button>
-                    ) : null}
+                    <RowActions
+                      actions={[
+                        {
+                          label: `Open ${member.firstName} ${member.lastName}`,
+                          icon: <ArrowUpRight />,
+                          href: `/people/members/${member.memberId}`,
+                        },
+                        canManageMembers && {
+                          label: `Remove ${member.firstName} ${member.lastName} from the group`,
+                          icon: <UserRoundX />,
+                          tone: "danger",
+                          onSelect: () => setRemoveTarget(member),
+                        },
+                      ]}
+                    />
                   </div>
                 ))}
               </div>

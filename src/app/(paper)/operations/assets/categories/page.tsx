@@ -3,12 +3,13 @@
 import * as React from "react";
 import Link from "next/link";
 import { getToastErrorMessage, toast } from "@/lib/toast";
-import { Plus } from "lucide-react";
+import { MoreHorizontal, PencilLine, Plus } from "lucide-react";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
 import { EmptyState, FilterChip } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
@@ -97,15 +98,21 @@ export default function AssetCategoriesPage() {
                 {category.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
                 <div className="flex shrink-0 items-center gap-1">
                   {canUpdate && !category.archivedAt ? (
-                    <button type="button" onClick={() => setFormTarget({ open: true, category })} className="rounded-full px-2 py-1 text-[10px] text-ink-faint opacity-0 transition-opacity hover:text-ink group-hover:opacity-100">
-                      Edit
-                    </button>
+                    <ActionTooltip label={`Edit ${category.name}`}>
+                      <button type="button" onClick={() => setFormTarget({ open: true, category })} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
+                        <PencilLine className="size-3.5" />
+                      </button>
+                    </ActionTooltip>
                   ) : null}
                   {canDelete ? (
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button type="button" aria-label="Manage category" className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">⋯</button>
-                      </DropdownMenuTrigger>
+                      <ActionTooltip label={`Manage ${category.name}`}>
+                        <DropdownMenuTrigger asChild>
+                          <button type="button" aria-label={`Manage ${category.name}`} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
+                            <MoreHorizontal className="size-3.5" />
+                          </button>
+                        </DropdownMenuTrigger>
+                      </ActionTooltip>
                       <DropdownMenuContent align="end" className="w-40">
                         {category.archivedAt ? (
                           <DropdownMenuItem className="text-xs" onClick={() => restore.mutate(category.id, { onSuccess: () => toast("Category restored."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't restore it.")) })}>

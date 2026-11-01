@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { FilterChip } from "@/components/paper/primitives";
+import { FilterChip, IconAction } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -173,14 +173,12 @@ export default function EventsCalendarPage() {
             <div className="flex items-center justify-between border-b border-line px-5 py-3">
               <p className="font-display text-sm font-semibold">{monthLabel}</p>
               <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  aria-label="Previous month"
-                  onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
-                  className="grid size-8 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink"
-                >
-                  <ChevronLeft className="size-4" />
-                </button>
+                <IconAction
+                  label="Previous month"
+                  icon={<ChevronLeft className="size-4" />}
+                  onSelect={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
+                  className="size-8"
+                />
                 <button
                   type="button"
                   onClick={() => { setMonth(new Date(today.getFullYear(), today.getMonth(), 1)); setSelected(today); }}
@@ -188,14 +186,12 @@ export default function EventsCalendarPage() {
                 >
                   Today
                 </button>
-                <button
-                  type="button"
-                  aria-label="Next month"
-                  onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
-                  className="grid size-8 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink"
-                >
-                  <ChevronRight className="size-4" />
-                </button>
+                <IconAction
+                  label="Next month"
+                  icon={<ChevronRight className="size-4" />}
+                  onSelect={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
+                  className="size-8"
+                />
               </div>
             </div>
             <div className="rule-label grid grid-cols-7 border-b border-line px-2 py-2">

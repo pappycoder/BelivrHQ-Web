@@ -158,6 +158,25 @@
     background-position: 0 50%;
   }
 
+  /* Paper Manage cells: icon actions stay visible on touch, reveal on hover or
+     keyboard focus for fine pointers. Parents using this opt in via the
+     `group` class (rows) or `paper-card` (cards). */
+  .row-actions--reveal {
+    transition: opacity 150ms ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .row-actions--reveal {
+      opacity: 0;
+    }
+    .group:hover .row-actions--reveal,
+    .group:focus-within .row-actions--reveal,
+    .row-actions--reveal:focus-within,
+    .paper-card:hover .row-actions--reveal,
+    .paper-card:focus-within .row-actions--reveal {
+      opacity: 1;
+    }
+  }
+
   .grain-overlay::before {
     content: "";
     position: fixed;

@@ -5,6 +5,7 @@ import {
   CalendarDays,
   Download,
   LogIn,
+  Undo2,
   UserRound,
   Users,
 } from "lucide-react";
@@ -17,7 +18,9 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
+  ManageHeading,
   PersonAvatar,
+  RowActions,
   SearchField,
 } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
@@ -159,7 +162,7 @@ export default function AttendanceRecordsPage() {
                 <span>Gathering</span>
                 <span>Category</span>
                 <span>When</span>
-                <span className="text-right">Manage</span>
+                <ManageHeading />
               </div>
               <div className="divide-y divide-line/70">
                 {rows.map((record) => (
@@ -174,9 +177,16 @@ export default function AttendanceRecordsPage() {
                     <span className="num text-[10px] text-ink-faint">{stamp(record.checkInAt)}</span>
                     <div className="flex justify-end">
                       {canDelete ? (
-                        <button type="button" onClick={() => setDeleteTarget(record)} className="rounded-full px-2 py-1 text-[10px] text-rose opacity-0 transition-opacity group-hover:opacity-100 hover:underline">
-                          Undo
-                        </button>
+                        <RowActions
+                          actions={[
+                            {
+                              label: "Undo this check-in",
+                              icon: <Undo2 />,
+                              tone: "danger",
+                              onSelect: () => setDeleteTarget(record),
+                            },
+                          ]}
+                        />
                       ) : (
                         <span className="flex items-center gap-1 text-[9px] text-ink-faint opacity-0 group-hover:opacity-100">
                           <LogIn className="size-2.5" /> {record.source === "walk_in" ? "walk-in" : record.source || "—"}

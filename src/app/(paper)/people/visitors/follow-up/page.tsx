@@ -33,6 +33,7 @@ import {
   SearchField,
   ViewToggle,
 } from "@/components/paper/primitives";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { VisitorFormDialog } from "@/components/visitors/visitor-form-dialog";
@@ -357,14 +358,16 @@ function CardFace({
     <div className="paper-card group rounded-xl p-3">
       <div className="flex items-start gap-2.5">
         {dragHandleProps ? (
-          <button
-            type="button"
-            aria-label={`Drag ${visitor.firstName}`}
-            className="mt-1 cursor-grab touch-none rounded text-ink-faint opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 active:cursor-grabbing"
-            {...(dragHandleProps as object)}
-          >
-            <GripVertical className="size-3.5" />
-          </button>
+          <ActionTooltip label={`Drag ${visitor.firstName}`}>
+            <button
+              type="button"
+              aria-label={`Drag ${visitor.firstName}`}
+              className="mt-1 cursor-grab touch-none rounded text-ink-faint opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100 active:cursor-grabbing"
+              {...(dragHandleProps as object)}
+            >
+              <GripVertical className="size-3.5" />
+            </button>
+          </ActionTooltip>
         ) : (
           <span className="w-5" />
         )}

@@ -3,11 +3,11 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { Coins, Plus, Ticket, Trash2 } from "lucide-react";
+import { Coins, PencilLine, Plus, Ticket, Trash2 } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader, SectionCard } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { EmptyState, FilterChip } from "@/components/paper/primitives";
+import { EmptyState, FilterChip, RowActions } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -136,12 +136,21 @@ function TiersInner() {
                         {tier.capacity != null ? <>{number(tier.capacity)} seats</> : "uncapped seats"}
                       </span>
                       {canManage && paidEvent ? (
-                        <span className="flex shrink-0 gap-1">
-                          <button type="button" onClick={() => setFormTarget({ open: true, tier })} className="rounded-full px-2 py-1 text-[10px] text-ink-faint opacity-0 transition-opacity group-hover:opacity-100 hover:text-ink">Edit</button>
-                          <button type="button" onClick={() => setDeleteTarget(tier)} className="grid size-7 place-items-center rounded-full text-ink-faint opacity-0 transition-opacity group-hover:opacity-100 hover:bg-rose-soft hover:text-rose" aria-label={`Delete ${tier.name}`}>
-                            <Trash2 className="size-3.5" />
-                          </button>
-                        </span>
+                        <RowActions
+                          actions={[
+                            {
+                              label: `Edit ${tier.name}`,
+                              icon: <PencilLine />,
+                              onSelect: () => setFormTarget({ open: true, tier }),
+                            },
+                            {
+                              label: `Delete ${tier.name}`,
+                              icon: <Trash2 />,
+                              tone: "danger",
+                              onSelect: () => setDeleteTarget(tier),
+                            },
+                          ]}
+                        />
                       ) : null}
                     </div>
                   </StaggerItem>

@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Building2, MapPin, Plus, Users } from "lucide-react";
+import { ArrowLeft, Building2, MapPin, MoreHorizontal, Plus, Users } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
@@ -15,6 +15,7 @@ import {
 } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
@@ -130,9 +131,13 @@ export default function AdminBranchesPage() {
                 <span className="hidden text-[10px] text-ink-faint sm:block">added {formatDate(branch.createdAt)}</span>
                 {canUpdate || canDelete ? (
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button type="button" aria-label={`Manage ${branch.name}`} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">⋯</button>
-                    </DropdownMenuTrigger>
+                    <ActionTooltip label={`Manage ${branch.name}`}>
+                      <DropdownMenuTrigger asChild>
+                        <button type="button" aria-label={`Manage ${branch.name}`} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
+                          <MoreHorizontal className="size-3.5" />
+                        </button>
+                      </DropdownMenuTrigger>
+                    </ActionTooltip>
                     <DropdownMenuContent align="end" className="w-44">
                       {canUpdate && !branch.archivedAt ? (
                         <DropdownMenuItem className="text-xs" onClick={() => setFormTarget({ open: true, branch })}>Edit</DropdownMenuItem>

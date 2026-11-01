@@ -21,6 +21,7 @@ import {
 } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
@@ -135,11 +136,13 @@ export default function FormsListPage() {
                   <span className="flex shrink-0 items-center gap-1.5">
                     {form.archivedAt ? <Tag tone="neutral">Archived</Tag> : <Tag tone={form.status === "published" ? "moss" : form.status === "draft" ? "gold" : "sky"} dot>{FORM_STATUS_LABELS[form.status]}</Tag>}
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button type="button" aria-label="Manage form" className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
-                          <MoreHorizontal className="size-3.5" />
-                        </button>
-                      </DropdownMenuTrigger>
+                      <ActionTooltip label="Manage form">
+                        <DropdownMenuTrigger asChild>
+                          <button type="button" aria-label="Manage form" className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
+                            <MoreHorizontal className="size-3.5" />
+                          </button>
+                        </DropdownMenuTrigger>
+                      </ActionTooltip>
                       <DropdownMenuContent align="end" className="w-44">
                         <DropdownMenuItem className="gap-2 text-xs" onClick={() => router.push(`/library/forms/${form.id}`)}>
                           <Inbox className="size-3.5" /> Open &amp; answers

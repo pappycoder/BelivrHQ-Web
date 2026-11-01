@@ -3,11 +3,15 @@
 import * as React from "react";
 import Link from "next/link";
 import {
+  Archive,
+  ArchiveRestore,
+  ArrowUpRight,
   CalendarClock,
   Pause,
   PencilLine,
   Play,
   Plus,
+  Trash2,
 } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
@@ -15,6 +19,7 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
+  RowActions,
 } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +48,6 @@ import {
   type ServiceCategory,
 } from "@/hooks/use-attendance";
 import { useBranchesList } from "@/hooks/use-branches";
-import { cn } from "@/lib/utils";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const PAGE_SIZE = 15;
@@ -346,43 +350,46 @@ function ServiceRow({
       <span className="num hidden w-20 shrink-0 text-right text-[11px] text-ink-soft sm:block">
         {service.attendanceCount ?? 0} <span className="text-[9px] text-ink-faint">counted</span>
       </span>
-      {canManage && !service.archivedAt ? (
-        <button
-          type="button"
-          disabled={toggleActive.isPending}
-          aria-label={service.isActive ? "Pause counting" : "Activate"}
-          title={service.isActive ? "Pause counting" : "Activate"}
-          onClick={() => toggleActive.mutate({ isActive: !service.isActive }, {
-            onSuccess: () => toast(`${service.name} ${service.isActive ? "paused" : "counting again"}.`),
-          })}
-          className={cn(
-            "grid size-7 shrink-0 place-items-center rounded-full opacity-0 transition-opacity group-hover:opacity-100",
-            service.isActive ? "text-moss hover:bg-moss-soft" : "text-gold hover:bg-gold-soft",
-          )}
-        >
-          {service.isActive ? <Play className="size-3.5" /> : <Pause className="size-3.5" />}
-        </button>
-      ) : null}
-      {canManage ? (
-        <button type="button" onClick={onEdit} aria-label={`Edit ${service.name}`} className="grid size-7 shrink-0 place-items-center rounded-full text-ink-faint opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted hover:text-ink">
-          <PencilLine className="size-3.5" />
-        </button>
-      ) : null}
-      {canManage && !service.archivedAt ? (
-        <button type="button" onClick={onArchive} aria-label="Archive" title="Archive (keeps attendance history)" className="grid size-7 shrink-0 place-items-center rounded-full text-ink-faint opacity-0 transition-opacity group-hover:opacity-100 hover:bg-muted hover:text-ink">
-          <CalendarClock className="size-3.5" />
-        </button>
-      ) : null}
-      {canManage && service.archivedAt ? (
-        <button type="button" onClick={onRestore} className="shrink-0 rounded-full px-2 py-1 text-[10px] text-moss opacity-0 transition-opacity hover:bg-moss-soft group-hover:opacity-100">
-          Restore
-        </button>
-      ) : null}
-      {canDelete ? (
-        <button type="button" onClick={onDelete} aria-label="Delete" className="shrink-0 rounded-full px-2 py-1 text-[10px] text-rose opacity-0 transition-opacity hover:bg-rose-soft group-hover:opacity-100">
-          Delete
-        </button>
-      ) : null}
+      <RowActions
+        actions={[
+          {
+            label: "Open service",
+            icon: <ArrowUpRight />,
+            href: `/gatherings/attendance/services/${service.serviceId}`,
+          },
+          canManage && !service.archivedAt && {
+            label: service.isActive ? "Pause counting" : "Resume counting",
+            icon: service.isActive ? <Pause /> : <Play />,
+            tone: service.isActive ? "success" : "warning",
+            disabled: toggleActive.isPending,
+            onSelect: () => toggleActive.mutate({ isActive: !service.isActive }, {
+              onSuccess: () => toast(`${service.name} ${service.isActive ? "paused" : "counting again"}.`),
+            }),
+          },
+          canManage && {
+            label: `Edit ${service.name}`,
+            icon: <PencilLine />,
+            onSelect: onEdit,
+          },
+          canManage && !service.archivedAt && {
+            label: "Archive service — keeps attendance history",
+            icon: <Archive />,
+            onSelect: onArchive,
+          },
+          canManage && service.archivedAt && {
+            label: "Restore service",
+            icon: <ArchiveRestore />,
+            tone: "success",
+            onSelect: onRestore,
+          },
+          canDelete && {
+            label: "Delete service",
+            icon: <Trash2 />,
+            tone: "danger",
+            onSelect: onDelete,
+          },
+        ]}
+      />
     </div>
   );
 }

@@ -2,13 +2,14 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { HeartHandshake, Lock, Plus, Search } from "lucide-react";
+import { HeartHandshake, Lock, PencilLine, Plus, Search } from "lucide-react";
 import { PageHeader, SectionCard } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
   PersonAvatar,
+  RowActions,
 } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
@@ -146,13 +147,17 @@ export default function PastoralNotesPage() {
                       <span className="flex shrink-0 items-center gap-2 text-ink-faint">
                         with {note.authorFirstName} {note.authorLastName}
                         {canUpdate ? (
-                          <button
-                            type="button"
-                            onClick={() => { setEditTarget(note); setFormOpen(true); }}
-                            className="rounded-full px-2 py-0.5 text-[10px] text-brand opacity-0 transition-opacity hover:underline group-hover:opacity-100 [.paper-card:hover_&]:opacity-100"
-                          >
-                            Edit
-                          </button>
+                          <RowActions
+                            reveal={false}
+                            className="justify-start"
+                            actions={[
+                              {
+                                label: "Edit note",
+                                icon: <PencilLine />,
+                                onSelect: () => { setEditTarget(note); setFormOpen(true); },
+                              },
+                            ]}
+                          />
                         ) : null}
                       </span>
                     </div>

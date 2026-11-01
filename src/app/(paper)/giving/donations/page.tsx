@@ -18,6 +18,7 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import { EmptyState, FilterChip } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
+import { ActionTooltip } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   DropdownMenu,
@@ -261,11 +262,13 @@ export default function GivingDonationsPage() {
                 <span className="flex justify-end">
                   {tx.status === "success" ? (
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button type="button" aria-label={`Receipt actions for gift of ${tx.amount}`} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
-                          <MoreHorizontal className="size-3.5" />
-                        </button>
-                      </DropdownMenuTrigger>
+                      <ActionTooltip label={`Receipt actions for gift of ${tx.amount}`}>
+                        <DropdownMenuTrigger asChild>
+                          <button type="button" aria-label={`Receipt actions for gift of ${tx.amount}`} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
+                            <MoreHorizontal className="size-3.5" />
+                          </button>
+                        </DropdownMenuTrigger>
+                      </ActionTooltip>
                       <DropdownMenuContent align="end" className="w-52">
                         <ReceiptActions transaction={tx} />
                       </DropdownMenuContent>
