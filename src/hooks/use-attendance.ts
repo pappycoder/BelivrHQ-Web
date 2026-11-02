@@ -469,6 +469,19 @@ export function attendanceSessionPermissions(
             update: "attendance:records:update",
           };
 }
+
+/**
+ * Whether a page should surface the reported-headcount (general attendance)
+ * tab for a context. Mirrors `GeneralAttendancePanel`'s own render gate —
+ * the panel hides itself unless read or create is held.
+ */
+export function useCanViewGeneralAttendance(
+  type: AttendanceContext,
+): boolean {
+  const { canAny } = usePermissions();
+  const grants = attendanceSessionPermissions(type);
+  return canAny(grants.read, grants.create);
+}
 function sessionPath(params: GeneralAttendanceParams) {
   if (!params.contextType || params.contextType === "service")
     return "/attendance/general";

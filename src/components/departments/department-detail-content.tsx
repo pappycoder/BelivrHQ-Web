@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { UrlTabs } from "@/components/shared/url-tabs";
-import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { GeneralAttendancePanel } from "@/components/attendance/general-attendance-panel";
 
@@ -289,26 +289,46 @@ export function DepartmentDetailContent({
             <TabsContent
               value="attendance"
               forceMount
-              className="space-y-4 data-[state=inactive]:hidden"
+              className="data-[state=inactive]:hidden"
             >
-              <GeneralAttendancePanel
-                context={{
-                  type: "department",
-                  id: department.id,
-                  name: department.name,
-                  branchId: department.branchId,
-                  active: !department.archivedAt,
-                }}
-                canManage={
-                  canUpdate && (!isDepartmentHead || !!isOwnDepartment)
-                }
-              />
-              <DepartmentAttendancePanel
-                department={department}
-                canManage={
-                  canUpdate && (!isDepartmentHead || !!isOwnDepartment)
-                }
-              />
+              <Tabs defaultValue="named">
+                <TabsList className="h-9 w-fit rounded-full border border-line bg-card p-0.5">
+                  <TabsTrigger
+                    value="named"
+                    className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper"
+                  >
+                    Check-ins
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="reported"
+                    className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper"
+                  >
+                    Reported totals
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="named" className="mt-4">
+                  <DepartmentAttendancePanel
+                    department={department}
+                    canManage={
+                      canUpdate && (!isDepartmentHead || !!isOwnDepartment)
+                    }
+                  />
+                </TabsContent>
+                <TabsContent value="reported" className="mt-4">
+                  <GeneralAttendancePanel
+                    context={{
+                      type: "department",
+                      id: department.id,
+                      name: department.name,
+                      branchId: department.branchId,
+                      active: !department.archivedAt,
+                    }}
+                    canManage={
+                      canUpdate && (!isDepartmentHead || !!isOwnDepartment)
+                    }
+                  />
+                </TabsContent>
+              </Tabs>
             </TabsContent>
           </UrlTabs>
         </div>

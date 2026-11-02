@@ -218,16 +218,17 @@ export default function EventDetailPage({
         ) : null}
 
         {canSeeAttendance ? (
-          <TabsContent value="attendance" className="mt-4 space-y-4">
-            <GeneralAttendancePanel
-              context={{
-                type: "event",
-                id: e.eventId,
-                name: e.title,
-                branchId: e.branchId,
-                active: !e.archivedAt,
-              }}
-            />
+          <TabsContent value="attendance" className="mt-4">
+            <Tabs defaultValue="named">
+              <TabsList className="h-9 w-fit rounded-full border border-line bg-card p-0.5">
+                <TabsTrigger value="named" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
+                  Check-ins
+                </TabsTrigger>
+                <TabsTrigger value="reported" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
+                  Reported totals
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="named" className="mt-4">
             <SectionCard eyebrow="In the room" title={`${attendance.data?.length ?? 0} check-ins`} bodyClassName="p-0">
               {attendance.data?.length ? (
                 <div className="divide-y divide-line/70">
@@ -249,6 +250,20 @@ export default function EventDetailPage({
                 <p className="px-5 py-8 text-center text-xs text-ink-faint">The doors haven&apos;t opened for this one yet.</p>
               )}
             </SectionCard>
+              </TabsContent>
+
+              <TabsContent value="reported" className="mt-4">
+                <GeneralAttendancePanel
+                  context={{
+                    type: "event",
+                    id: e.eventId,
+                    name: e.title,
+                    branchId: e.branchId,
+                    active: !e.archivedAt,
+                  }}
+                />
+              </TabsContent>
+            </Tabs>
           </TabsContent>
         ) : null}
 

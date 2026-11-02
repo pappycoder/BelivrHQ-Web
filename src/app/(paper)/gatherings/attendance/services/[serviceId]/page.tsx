@@ -19,11 +19,13 @@ import {
 } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GeneralAttendancePanel } from "@/components/attendance/general-attendance-panel";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
   useService,
   useServiceAttendance,
+  useCanViewGeneralAttendance,
   SERVICE_CATEGORIES,
   attendanceCategoryLabel,
   type AttendanceRecord,
@@ -50,6 +52,7 @@ export default function ServiceDetailPage({
   const service = useService(serviceId);
   const named = useServiceAttendance(serviceId);
   const canGiving = ready && can("giving:records", "read");
+  const canSeeReported = useCanViewGeneralAttendance("service");
   const gifts = useGivingTransactionsAll({ serviceId });
 
   if (service.isLoading) {
@@ -126,10 +129,19 @@ export default function ServiceDetailPage({
         </div>
       </div>
 
-      {/* General (reported) attendance — the shared totals surface for this service */}
-      <GeneralAttendancePanel service={s} />
-
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <Tabs defaultValue="named" className="min-w-0">
+        {canSeeReported ? (
+          <TabsList className="h-9 w-fit rounded-full border border-line bg-card p-0.5">
+            <TabsTrigger value="named" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
+              Named check-ins
+            </TabsTrigger>
+            <TabsTrigger value="reported" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
+              Reported totals
+            </TabsTrigger>
+          </TabsList>
+        ) : null}
+        <TabsContent value="named" className={canSeeReported ? "mt-4" : undefined}>
         <SectionCard
           eyebrow="Named check-ins"
           title="People counted by name"
@@ -139,7 +151,7 @@ export default function ServiceDetailPage({
           {named.isLoading ? (
             <div className="space-y-2 p-5">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-10 rounded-xl" />)}</div>
           ) : namedRows.length === 0 ? (
-            <p className="px-5 py-10 text-center text-[11px] text-ink-faint">No named check-ins yet — the totals above may still tell the true count.</p>
+            <p className="px-5 py-10 text-center text-[11px] text-ink-faint">No named check-ins yet — the Reported totals tab may still tell the true count.</p>
           ) : (
             <div className="divide-y divide-line/70">
               {namedRows.slice(0, 12).map((record) => (
@@ -159,6 +171,14 @@ export default function ServiceDetailPage({
             </div>
           )}
         </SectionCard>
+        </TabsContent>
+
+        {canSeeReported ? (
+          <TabsContent value="reported" className="mt-4">
+            <GeneralAttendancePanel service={s} />
+          </TabsContent>
+        ) : null}
+        </Tabs>
 
         <aside className="space-y-4">
           <SectionCard eyebrow="This service" title="The schedule">
@@ -206,8 +226,9 @@ export default function ServiceDetailPage({
 
           <div className="rounded-2xl border border-dashed border-line p-5 text-[10px] leading-relaxed text-ink-faint">
             <Users className="mb-1 size-3.5" />
-            Reported totals and named check-ins live side by side on purpose — one counts the room,
-            the other remembers the names. Both are honest; neither replaces the other.
+            Reported totals and named check-ins keep their own tabs on purpose —
+            one counts the room, the other remembers the names. Both are honest;
+            neither replaces the other.
           </div>
         </aside>
       </div>

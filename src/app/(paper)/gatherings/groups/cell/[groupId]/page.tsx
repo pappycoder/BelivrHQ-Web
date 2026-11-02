@@ -26,6 +26,7 @@ import {
 } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ConfirmDeleteDialog } from "@/components/pastoral/confirm-delete-dialog";
 import { CellGroupFormDialog } from "@/components/departments/cell-group-form-dialog";
 import { CellGroupMemberDialog } from "@/components/departments/cell-group-member-dialog";
@@ -45,6 +46,7 @@ import {
   GROUP_ROLES,
   type CellGroupMember,
 } from "@/hooks/use-admin";
+import { useCanViewGeneralAttendance } from "@/hooks/use-attendance";
 import { formatDate } from "@/hooks/use-media";
 import { number } from "@/lib/paper/format";
 
@@ -81,6 +83,7 @@ export default function CellGroupDetailPage({
   const canManageMembers = can("cell_groups", "create") && (!isCellLeader || isOwnGroup);
   const canEdit = can("cell_groups", "update") && (!isCellLeader || isOwnGroup);
   const canSeeGiving = ready && canAny("cell_groups:giving:read");
+  const canSeeReported = useCanViewGeneralAttendance("cell_group");
 
   if (group.isLoading) {
     return (
@@ -146,32 +149,49 @@ export default function CellGroupDetailPage({
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-4">
-          <GeneralAttendancePanel
-            context={{
-              type: "cell_group",
-              id: g.id,
-              name: g.name,
-              branchId: g.branchId,
-              active: !g.archivedAt,
-            }}
-            canManage={!isCellLeader || isOwnGroup}
-          />
-
-          <MeetingAttendanceTable
-            records={records}
-            loading={attendance.isLoading}
-            error={attendance.isError}
-            date={meetingDate}
-            onDateChange={setMeetingDate}
-            title="Cell group attendance"
-            action={
-              canManageMembers && !g.archivedAt ? (
-                <Button size="sm" className="h-8 gap-1.5 rounded-full text-xs" onClick={() => setAttendanceDialogOpen(true)}>
-                  <CalendarPlus className="size-3.5" /> Record Attendance
-                </Button>
-              ) : null
-            }
-          />
+          <Tabs defaultValue="named">
+            {canSeeReported ? (
+              <TabsList className="h-9 w-fit rounded-full border border-line bg-card p-0.5">
+                <TabsTrigger value="named" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
+                  Named attendance
+                </TabsTrigger>
+                <TabsTrigger value="reported" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
+                  Reported totals
+                </TabsTrigger>
+              </TabsList>
+            ) : null}
+            <TabsContent value="named" className={canSeeReported ? "mt-4" : undefined}>
+              <MeetingAttendanceTable
+                records={records}
+                loading={attendance.isLoading}
+                error={attendance.isError}
+                date={meetingDate}
+                onDateChange={setMeetingDate}
+                title="Cell group attendance"
+                action={
+                  canManageMembers && !g.archivedAt ? (
+                    <Button size="sm" className="h-8 gap-1.5 rounded-full text-xs" onClick={() => setAttendanceDialogOpen(true)}>
+                      <CalendarPlus className="size-3.5" /> Record Attendance
+                    </Button>
+                  ) : null
+                }
+              />
+            </TabsContent>
+            {canSeeReported ? (
+              <TabsContent value="reported" className="mt-4">
+                <GeneralAttendancePanel
+                  context={{
+                    type: "cell_group",
+                    id: g.id,
+                    name: g.name,
+                    branchId: g.branchId,
+                    active: !g.archivedAt,
+                  }}
+                  canManage={!isCellLeader || isOwnGroup}
+                />
+              </TabsContent>
+            ) : null}
+          </Tabs>
 
           <SectionCard
             eyebrow="The roster"

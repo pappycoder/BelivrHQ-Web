@@ -73,6 +73,25 @@ const emptyCounts = {
   femaleCount: "",
 };
 
+/** Count fields as strings, ready for the entry form. */
+function valuesFrom(
+  record: Pick<
+    GeneralAttendanceCounts,
+    "total" | "adultCount" | "childrenCount" | "maleCount" | "femaleCount"
+  >,
+): typeof emptyCounts {
+  return Object.fromEntries(
+    countFields.map(([key]) => [
+      key,
+      record[key] == null ? "" : String(record[key]),
+    ]),
+  ) as typeof emptyCounts;
+}
+
+function sameValues(a: typeof emptyCounts, b: typeof emptyCounts): boolean {
+  return countFields.every(([key]) => a[key] === b[key]);
+}
+
 export function GeneralAttendancePanel({
   service,
   context,
@@ -155,6 +174,35 @@ export function GeneralAttendancePanel({
   );
   const [values, setValues] = React.useState(emptyCounts);
   const [error, setError] = React.useState("");
+  // A session already recorded for the selected day (in create mode) is
+  // auto-loaded so the form edits it — the API keeps one session per
+  // context/branch/date, and a second create would fail with a conflict.
+  const [matched, setMatched] = React.useState<GeneralAttendanceRecord | null>(
+    null,
+  );
+  const autoFilled = React.useRef<typeof emptyCounts | null>(null);
+  const targetType = target?.type;
+  const targetId = target?.id;
+  const lookupDay = React.useCallback(
+    async (day: string, branch: string, signal?: AbortSignal) => {
+      if (!targetType || !targetId || !day) return null;
+      const found = await fetchGeneralAttendance(
+        {
+          contextType: targetType,
+          contextId: targetId,
+          ...(targetType === "service" ? { serviceId: targetId } : {}),
+          branchId: branch || undefined,
+          startDate: day,
+          endDate: day,
+          page: 1,
+          limit: 2,
+        },
+        signal,
+      );
+      return (found.data ?? []).find((r) => r.attendanceDate === day) ?? null;
+    },
+    [targetType, targetId],
+  );
   React.useEffect(
     () => setPage(1),
     [target?.id, filters.branchId, filters.startDate, filters.endDate],
@@ -175,8 +223,45 @@ export function GeneralAttendancePanel({
     onBusyChange?.(save.isPending);
     return () => onBusyChange?.(false);
   }, [save.isPending, onBusyChange]);
+  const autoLookupActive = canCreate && canRead && !editing && (inline || open);
+  React.useEffect(() => {
+    if (!autoLookupActive) {
+      setMatched(null);
+      return;
+    }
+    const controller = new AbortController();
+    const timer = setTimeout(() => {
+      lookupDay(date, recordBranch, controller.signal)
+        .then((found) => {
+          if (controller.signal.aborted) return;
+          setMatched(found);
+          if (found) {
+            const next = valuesFrom(found);
+            autoFilled.current = next;
+            setValues(next);
+          } else if (autoFilled.current) {
+            // Only drop the prefilled numbers if nobody typed over them.
+            const previous = autoFilled.current;
+            autoFilled.current = null;
+            setValues((current) =>
+              sameValues(current, previous) ? { ...emptyCounts } : current,
+            );
+          }
+        })
+        .catch(() => {
+          // A failed lookup keeps the form blank; the 409 retry on submit is
+          // the safety net for a same-day record we could not preview.
+        });
+    }, 350);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [autoLookupActive, date, recordBranch, lookupDay]);
   function begin(record?: GeneralAttendanceRecord) {
     setEditing(record ?? null);
+    setMatched(null);
+    autoFilled.current = null;
     setDate(
       record?.attendanceDate ??
         (service
@@ -186,16 +271,7 @@ export function GeneralAttendancePanel({
     setRecordBranch(
       record?.branchId ?? target?.branchId ?? profile?.branchId ?? "",
     );
-    setValues(
-      record
-        ? (Object.fromEntries(
-            countFields.map(([key]) => [
-              key,
-              record[key] == null ? "" : String(record[key]),
-            ]),
-          ) as typeof emptyCounts)
-        : { ...emptyCounts },
-    );
+    setValues(record ? valuesFrom(record) : { ...emptyCounts });
     setError("");
     setOpen(true);
   }
@@ -236,29 +312,62 @@ export function GeneralAttendancePanel({
       setError("Select the branch for this meeting attendance.");
       return;
     }
-    if (!editing && service && !serviceOccursOn(service, date)) {
+    if (!editing && !matched && service && !serviceOccursOn(service, date)) {
       setError(`${service.name} does not meet on ${date}. Choose a scheduled day.`);
       return;
     }
+    const recordId = editing?.id ?? matched?.id;
+    const payload = {
+      counts,
+      contextType: target?.type ?? editing?.contextType ?? matched?.contextType,
+      contextId: target?.id ?? editing?.contextId ?? matched?.contextId,
+      ...(target?.type === "service" ||
+      (!target && (editing?.serviceId ?? matched?.serviceId))
+        ? { serviceId: target?.id ?? editing?.serviceId ?? matched?.serviceId }
+        : {}),
+      branchId: recordBranch,
+      attendanceDate: date,
+    };
     try {
-      await save.mutateAsync({
-        id: editing?.id,
-        counts,
-        contextType: target?.type ?? editing?.contextType,
-        contextId: target?.id ?? editing?.contextId,
-        ...(target?.type === "service" || (!target && editing?.serviceId)
-          ? { serviceId: target?.id ?? editing?.serviceId }
-          : {}),
-        branchId: recordBranch,
-        attendanceDate: date,
-      });
+      await save.mutateAsync({ ...payload, id: recordId });
       toast.success(
-        editing ? "General attendance updated" : "General attendance recorded",
+        recordId
+          ? "General attendance updated"
+          : "General attendance recorded",
       );
       setOpen(false);
       if (inline && !editing) setValues({ ...emptyCounts });
     } catch (err) {
-      setError(getToastErrorMessage(err, "Could not save general attendance."));
+      // A same-day session may have appeared after the prefill check
+      // (another tablet at the door, offline sync). Instead of dead-ending
+      // on the 409, adopt that record and save into it.
+      const looksLikeConflict =
+        (err as { statusCode?: number }).statusCode === 409 ||
+        /already recorded/i.test(getToastErrorMessage(err, ""));
+      if (!recordId && looksLikeConflict) {
+        const found = await lookupDay(date, recordBranch).catch(() => null);
+        if (found) {
+          try {
+            await save.mutateAsync({ ...payload, id: found.id });
+            setMatched(found);
+            autoFilled.current = valuesFrom(found);
+            toast.success("General attendance updated");
+            setOpen(false);
+            if (inline && !editing) setValues({ ...emptyCounts });
+          } catch (retryError) {
+            setError(
+              getToastErrorMessage(
+                retryError,
+                "Could not save general attendance.",
+              ),
+            );
+          }
+          return;
+        }
+      }
+      setError(
+        getToastErrorMessage(err, "Could not save general attendance."),
+      );
     }
   }
   if (
@@ -329,6 +438,12 @@ export function GeneralAttendancePanel({
             />
           </div>
         )}
+        {matched && !editing ? (
+          <p role="status" className="text-xs text-muted-foreground">
+            {date} already has a recorded headcount — saving updates that
+            record instead of adding a second one.
+          </p>
+        ) : null}
         <div
           className={
             compact
