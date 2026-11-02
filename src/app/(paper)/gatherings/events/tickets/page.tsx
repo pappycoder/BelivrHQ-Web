@@ -8,7 +8,7 @@ import { Download, Ticket, UserPlus, Users } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { EmptyState, PersonAvatar } from "@/components/paper/primitives";
+import { EmptyState, ListPaginationFooter, PersonAvatar } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -24,7 +24,6 @@ import { useEventsList, useEventTiers, useAllTickets, useCreateTicket, type AllT
 import { generateTicketPDF } from "@/lib/ticket-pdf";
 import { formatDate } from "@/hooks/use-media";
 import { formatNaira } from "@/hooks/use-analytics";
-import { number } from "@/lib/paper/format";
 
 const PAGE_SIZE = 15;
 
@@ -36,6 +35,7 @@ function TicketsInner() {
 
   const [eventId, setEventId] = React.useState(searchParams.get("event") ?? "");
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [assignOpen, setAssignOpen] = React.useState(false);
   const [assignMember, setAssignMember] = React.useState<{ id: string; name: string } | null>(null);
   const [assignTier, setAssignTier] = React.useState("");
@@ -43,14 +43,13 @@ function TicketsInner() {
 
   const events = useEventsList({ limit: 100, sortBy: "startDate", sortOrder: "desc" });
   const tiers = useEventTiers(eventId);
-  const tickets = useAllTickets({ eventId: eventId || undefined, page, limit: PAGE_SIZE });
+  const tickets = useAllTickets({ eventId: eventId || undefined, page, limit: perPage });
   const createTicket = useCreateTicket();
 
   const eventList = events.data?.data ?? [];
   const selected = eventList.find((e) => e.eventId === eventId);
   const rows = tickets.data?.data ?? [];
   const total = tickets.data?.total ?? 0;
-  const totalPages = Math.max(1, tickets.data?.totalPages ?? 1);
   const usedCount = rows.filter((t) => t.usedAt).length;
   const paidEvent = !!selected && !selected.isFree;
 
@@ -180,13 +179,15 @@ function TicketsInner() {
                   </Button>
                 </div>
               ))}
-              <div className="flex items-center justify-between bg-muted/20 px-5 py-2.5 text-[11px] text-ink-faint">
-                <span>Page <span className="num font-medium text-ink">{page}</span> of <span className="num">{totalPages}</span> · {number(total)} passes</span>
-                <div className="flex items-center gap-1.5">
-                  <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-                  <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-                </div>
-              </div>
+              <ListPaginationFooter
+                page={page}
+                perPage={perPage}
+                total={total}
+                onPageChange={setPage}
+                onPerPageChange={setPerPage}
+                itemName="passes"
+                pending={tickets.isFetching}
+              />
             </div>
           )}
         </>

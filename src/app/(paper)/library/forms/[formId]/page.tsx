@@ -19,6 +19,7 @@ import {
   EmptyState,
   FieldRow,
   FilterChip,
+  ListPaginationFooter,
   PersonAvatar,
 } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
@@ -58,13 +59,14 @@ export default function FormDetailPage({
 
   const [status, setStatus] = React.useState<SubmissionStatus | "">("");
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(15);
   const [detail, setDetail] = React.useState<FormSubmission | null>(null);
   const [rejectTarget, setRejectTarget] = React.useState<FormSubmission | null>(null);
 
   const submissions = useFormSubmissions(formId, {
     status: status || undefined,
     page,
-    limit: 15,
+    limit: perPage,
   });
 
   if (form.isLoading) {
@@ -89,7 +91,7 @@ export default function FormDetailPage({
 
   const f = form.data;
   const rows = submissions.data?.data ?? [];
-  const totalPages = Math.max(1, submissions.data?.meta?.totalPages ?? 1);
+  const total = submissions.data?.meta?.total ?? 0;
   const shareUrl = f.isPublic && f.publicToken ? `${typeof window !== "undefined" ? window.location.origin : ""}/forms/public/${f.publicToken}` : null;
 
   const copyLink = () => {
@@ -221,13 +223,15 @@ export default function FormDetailPage({
                   </Button>
                 </div>
               ))}
-              <div className="flex items-center justify-between bg-muted/20 px-5 py-2.5 text-[11px] text-ink-faint">
-                <span>Page {page} of {totalPages}</span>
-                <div className="flex items-center gap-1.5">
-                  <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-                  <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-                </div>
-              </div>
+              <ListPaginationFooter
+                page={page}
+                perPage={perPage}
+                total={total}
+                onPageChange={setPage}
+                onPerPageChange={setPerPage}
+                itemName="responses"
+                pending={submissions.isFetching}
+              />
             </div>
           )}
         </div>

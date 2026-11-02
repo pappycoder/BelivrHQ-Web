@@ -9,6 +9,7 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
+  ListPaginationFooter,
   ManageHeading,
   RowActions,
   ViewToggle,
@@ -43,6 +44,8 @@ export default function AdminRolesPage() {
   const [createOpen, setCreateOpen] = React.useState(false);
   const [onlyCustom, setOnlyCustom] = React.useState(false);
   const [view, setView] = React.useState<"table" | "cards">("table");
+  const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(10);
 
   const roles = useRolesSummary();
   const permissions = useAllPermissions();
@@ -51,6 +54,9 @@ export default function AdminRolesPage() {
     const ordered = sortRolesByOrder(all);
     return onlyCustom ? ordered.filter((r) => r.isChurchOwned || r.isCustomized) : ordered;
   }, [all, onlyCustom]);
+  const totalRoles = rows.length;
+  const paged = rows.slice((page - 1) * perPage, (page - 1) * perPage + perPage);
+  React.useEffect(() => setPage(1), [onlyCustom, perPage]);
   const totalPermissions = permissions.data?.length ?? 0;
 
   const statusBadge = (role: RoleWithPermissions) => {
@@ -119,7 +125,7 @@ export default function AdminRolesPage() {
                 <ManageHeading />
               </div>
               <div className="divide-y divide-line/70">
-                {rows.map((role) => {
+                {paged.map((role) => {
                   const label = role.label || getRoleLabel(role.roleName);
                   const inOrder = ROLE_ORDER.includes(role.roleName as (typeof ROLE_ORDER)[number]);
                   return (
@@ -165,7 +171,7 @@ export default function AdminRolesPage() {
         </div>
       ) : (
         <StaggerGroup className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {rows.map((role) => {
+          {paged.map((role) => {
             const label = role.label || getRoleLabel(role.roleName);
             const inOrder = ROLE_ORDER.includes(role.roleName as (typeof ROLE_ORDER)[number]);
             return (
@@ -212,6 +218,18 @@ export default function AdminRolesPage() {
           })}
         </StaggerGroup>
       )}
+
+      <div className="paper-card rounded-2xl">
+        <ListPaginationFooter
+          page={page}
+          perPage={perPage}
+          total={totalRoles}
+          onPageChange={setPage}
+          onPerPageChange={setPerPage}
+          perPageOptions={[10, 25, 50]}
+          itemName="roles"
+        />
+      </div>
 
       <div className="rounded-2xl border border-dashed border-line p-5 text-[11px] leading-relaxed text-ink-soft">
         <p className="mb-1 font-display text-xs font-semibold text-ink">How editing works</p>

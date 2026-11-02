@@ -9,6 +9,7 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
+  ListPaginationFooter,
   PersonAvatar,
   SearchField,
 } from "@/components/paper/primitives";
@@ -41,12 +42,13 @@ export default function EngagementPage() {
   const [bucket, setBucket] = React.useState<EngagementBucket | "all">("all");
   const [query, setQuery] = React.useState("");
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(15);
   const [scoring, setScoring] = React.useState<EngagementScore | null>(null);
 
   const distribution = useEngagementDistribution();
   const scores = useEngagementScores({
     page,
-    limit: 15,
+    limit: perPage,
     search: query || undefined,
     bucket: bucket === "all" ? undefined : bucket,
     sortBy: "score",
@@ -55,7 +57,7 @@ export default function EngagementPage() {
   const recalculate = useRecalculateScores();
 
   const rows = scores.data?.data ?? [];
-  const totalPages = Math.max(1, scores.data?.meta?.totalPages ?? 1);
+  const total = scores.data?.meta?.total ?? 0;
   const dist = distribution.data;
 
   return (
@@ -147,14 +149,15 @@ export default function EngagementPage() {
               );
             })}
           </div>
-          <div className="flex items-center justify-between border-t border-line px-5 py-2.5 text-[11px] text-ink-faint">
-            <span>Click anyone for their factor breakdown.</span>
-            <div className="flex items-center gap-1.5">
-              <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-              <span className="num">{page} / {totalPages}</span>
-              <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-            </div>
-          </div>
+          <ListPaginationFooter
+            page={page}
+            perPage={perPage}
+            total={total}
+            onPageChange={setPage}
+            onPerPageChange={setPerPage}
+            itemName="scores"
+            pending={scores.isFetching}
+          />
         </div>
       )}
 

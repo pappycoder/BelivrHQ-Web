@@ -5,7 +5,7 @@ import { Ban, CalendarClock, Pause, PlayCircle, Repeat, ShieldOff } from "lucide
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { EmptyState, FilterChip, ManageHeading, PersonAvatar, RowActions } from "@/components/paper/primitives";
+import { EmptyState, FilterChip, ListPaginationFooter, ManageHeading, PersonAvatar, RowActions } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,7 +21,7 @@ import {
 } from "@/hooks/use-giving";
 import { formatDate } from "@/hooks/use-media";
 import { formatNaira } from "@/hooks/use-analytics";
-import { number } from "@/lib/paper/format";
+
 
 const PAGE_SIZE = 15;
 
@@ -37,13 +37,14 @@ export default function GivingSchedulesPage() {
   const canCreate = ready && can("giving", "create");
 
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [activeFilter, setActiveFilter] = React.useState<"" | "true" | "false">("");
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [cancelTarget, setCancelTarget] = React.useState<RecurringGiving | null>(null);
 
   const recurring = useRecurringGiving({
     page,
-    limit: PAGE_SIZE,
+    limit: perPage,
     isActive: activeFilter === "" ? undefined : activeFilter === "true",
   });
   const pause = usePauseRecurringGiving();
@@ -52,7 +53,6 @@ export default function GivingSchedulesPage() {
 
   const rows = recurring.data?.data ?? [];
   const total = recurring.data?.meta?.total ?? 0;
-  const totalPages = Math.max(1, recurring.data?.meta?.totalPages ?? 1);
   const activeMonthly = rows
     .filter((r) => r.isActive)
     .reduce((sum, r) => sum + (r.frequency === "monthly" ? r.amount : r.frequency === "quarterly" ? Math.round(r.amount / 3) : Math.round(r.amount / 4)), 0);
@@ -154,13 +154,15 @@ export default function GivingSchedulesPage() {
               </div>
             </StaggerItem>
           ))}
-          <div className="flex items-center justify-between bg-muted/20 px-5 py-2.5 text-[11px] text-ink-faint">
-            <span>Page <span className="num font-medium text-ink">{page}</span> of <span className="num">{totalPages}</span> · {number(total)} schedules</span>
-            <div className="flex items-center gap-1.5">
-              <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-              <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-            </div>
-          </div>
+          <ListPaginationFooter
+            page={page}
+            perPage={perPage}
+            total={total}
+            onPageChange={setPage}
+            onPerPageChange={setPerPage}
+            itemName="schedules"
+            pending={recurring.isFetching}
+          />
         </StaggerGroup>
       )}
 

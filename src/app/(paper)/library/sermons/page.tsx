@@ -24,10 +24,12 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
+  ListPaginationFooter,
   ManageHeading,
   RowActions,
   SearchField,
   ViewToggle,
+  type RowAction,
 } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
@@ -41,7 +43,6 @@ import {
   type Sermon,
 } from "@/hooks/use-sermons";
 import { formatDate } from "@/hooks/use-media";
-import { number } from "@/lib/paper/format";
 
 const PAGE_SIZE = 15;
 
@@ -80,6 +81,7 @@ function SermonsInner() {
   const [query, setQuery] = React.useState("");
   const [search, setSearch] = React.useState("");
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [sortBy, setSortBy] = React.useState<"sermonDate" | "title" | "createdAt">("sermonDate");
   const [archivedView, setArchivedView] = React.useState(false);
   const [view, setView] = React.useState<"rows" | "grid">("rows");
@@ -93,14 +95,14 @@ function SermonsInner() {
 
   const params = React.useMemo(() => ({
     page,
-    limit: PAGE_SIZE,
+    limit: perPage,
     search: search || undefined,
     series,
     speaker,
     sortBy,
     sortOrder: "desc" as const,
     archived: archivedView ? true : undefined,
-  }), [page, search, series, speaker, sortBy, archivedView]);
+  }), [page, perPage, search, series, speaker, sortBy, archivedView]);
 
   const sermons = useSermonsList(params);
   const seriesAgg = useSermonsSeries();
@@ -108,7 +110,20 @@ function SermonsInner() {
 
   const rows = React.useMemo(() => sermons.data?.data ?? [], [sermons.data]);
   const total = sermons.data?.total ?? 0;
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+  // One Manage grammar shared by the table rows and the cards.
+  const manageActions = (sermon: Sermon): (RowAction | false | "" | undefined)[] => [
+    {
+      label: `Open ${sermon.title}`,
+      icon: <ArrowUpRight />,
+      href: `/library/sermons/${sermon.sermonId}`,
+    },
+    canUpdate && !sermon.archivedAt && {
+      label: "Edit sermon",
+      icon: <PencilLine />,
+      href: `/library/sermons/${sermon.sermonId}/edit`,
+    },
+  ];
 
   const fetchAllExport = React.useCallback(async () => {
     const all = await fetchAllPages<Sermon>((p) =>
@@ -195,32 +210,52 @@ function SermonsInner() {
           action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => router.push("/library/sermons/new")}>Add the first</Button> : undefined}
         />
       ) : view === "grid" ? (
-        <StaggerGroup className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {rows.map((sermon) => (
-            <StaggerItem key={sermon.sermonId}>
-              <button
-                type="button"
-                onClick={() => router.push(`/library/sermons/${sermon.sermonId}`)}
-                className="paper-card lift flex h-full w-full flex-col rounded-2xl p-4 text-left"
-              >
-                <span className="flex items-start justify-between gap-2">
-                  <span className="grid size-10 place-items-center rounded-xl bg-brand-soft text-brand">
-                    {sermon.videoUrl ? <Video className="size-4" /> : <Headphones className="size-4" />}
+        <>
+          <StaggerGroup className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {rows.map((sermon) => (
+              <StaggerItem key={sermon.sermonId}>
+                <div className="paper-card lift flex h-full flex-col rounded-2xl p-4">
+                  <span className="flex items-start justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/library/sermons/${sermon.sermonId}`)}
+                      className="flex min-w-0 flex-1 items-start justify-between gap-2 text-left"
+                    >
+                      <span className="grid size-10 place-items-center rounded-xl bg-brand-soft text-brand">
+                        {sermon.videoUrl ? <Video className="size-4" /> : <Headphones className="size-4" />}
+                      </span>
+                      <span className="flex min-w-0 flex-wrap items-center gap-1.5">
+                        {sermon.seriesName ? <Tag tone="gold">{sermon.seriesName}</Tag> : null}
+                        {sermon.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
+                      </span>
+                    </button>
+                    <RowActions reveal={false} actions={manageActions(sermon)} />
                   </span>
-                  {sermon.seriesName ? <Tag tone="gold">{sermon.seriesName}</Tag> : null}
-                  {sermon.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
-                </span>
-                <span className="mt-3 line-clamp-2 font-display text-sm font-semibold leading-snug">{sermon.title}</span>
-                <span className="mt-1 text-[11px] text-ink-soft">{sermon.speaker ?? "Unknown speaker"}</span>
-                {sermon.scriptureReference ? <span className="mt-1 font-mono text-[10px] text-brand">{sermon.scriptureReference}</span> : null}
-                <span className="num mt-auto pt-3 text-[10px] text-ink-faint">
-                  {formatDate(sermon.sermonDate)} · {duration(sermon.durationSeconds) ?? "—"}
-                  {sermon.audioUrl ? " · audio" : ""}{sermon.videoUrl ? " · video" : ""}
-                </span>
-              </button>
-            </StaggerItem>
-          ))}
-        </StaggerGroup>
+                  <button type="button" onClick={() => router.push(`/library/sermons/${sermon.sermonId}`)} className="mt-3 text-left">
+                    <span className="line-clamp-2 font-display text-sm font-semibold leading-snug">{sermon.title}</span>
+                    <span className="mt-1 block text-[11px] text-ink-soft">{sermon.speaker ?? "Unknown speaker"}</span>
+                  </button>
+                  {sermon.scriptureReference ? <span className="mt-1 font-mono text-[10px] text-brand">{sermon.scriptureReference}</span> : null}
+                  <span className="num mt-auto pt-3 text-[10px] text-ink-faint">
+                    {formatDate(sermon.sermonDate)} · {duration(sermon.durationSeconds) ?? "—"}
+                    {sermon.audioUrl ? " · audio" : ""}{sermon.videoUrl ? " · video" : ""}
+                  </span>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerGroup>
+          <div className="paper-card rounded-2xl">
+            <ListPaginationFooter
+              page={page}
+              perPage={perPage}
+              total={total}
+              onPageChange={setPage}
+              onPerPageChange={setPerPage}
+              itemName="messages"
+              pending={sermons.isFetching}
+            />
+          </div>
+        </>
       ) : (
         <StaggerGroup className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl">
           <div className="rule-label grid grid-cols-[minmax(0,2.4fr)_1fr_0.8fr_0.9fr_0.8fr_1fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
@@ -274,14 +309,15 @@ function SermonsInner() {
               </div>
             </StaggerItem>
           ))}
-          <div className="flex items-center justify-between bg-muted/20 px-5 py-2.5 text-[11px] text-ink-faint">
-            <span><span className="num">{number((page - 1) * PAGE_SIZE + rows.length)}</span> of <span className="num">{number(total)}</span> messages</span>
-            <div className="flex items-center gap-1.5">
-              <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-              <span className="num">{page} / {totalPages}</span>
-              <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-            </div>
-          </div>
+          <ListPaginationFooter
+            page={page}
+            perPage={perPage}
+            total={total}
+            onPageChange={setPage}
+            onPerPageChange={setPerPage}
+            itemName="messages"
+            pending={sermons.isFetching}
+          />
         </StaggerGroup>
       )}
 

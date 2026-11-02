@@ -22,6 +22,7 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
+  ListPaginationFooter,
   ManageHeading,
   PersonAvatar,
   RowActions,
@@ -76,6 +77,7 @@ export default function AdminTeamPage() {
   const [status, setStatus] = React.useState("");
   const [view, setView] = React.useState<"table" | "cards">("table");
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [inviteOpen, setInviteOpen] = React.useState(false);
   const [roleTarget, setRoleTarget] = React.useState<UserProfile | null>(null);
   const [deleteState, setDeleteState] = React.useState<{ users: UserProfile[]; mode: "delete" | "deactivate" } | null>(null);
@@ -87,7 +89,7 @@ export default function AdminTeamPage() {
 
   const users = useUsers({
     page,
-    limit: PAGE_SIZE,
+    limit: perPage,
     search: search || undefined,
     status: (status || undefined) as "active" | "inactive" | undefined,
     sortBy: "first_name",
@@ -96,7 +98,6 @@ export default function AdminTeamPage() {
 
   const rows = users.data?.data ?? [];
   const total = users.data?.meta?.total ?? 0;
-  const totalPages = Math.max(1, users.data?.meta?.totalPages ?? 1);
 
   const fetchAllExport = React.useCallback(async () => {
     const all = await fetchAllPages<UserProfile>((p) =>
@@ -266,13 +267,16 @@ export default function AdminTeamPage() {
             </StaggerGroup>
           )}
 
-          <div className="paper-card flex items-center justify-between rounded-2xl px-5 py-2.5 text-[11px] text-ink-faint">
-            <span><span className="num font-medium text-ink">{(page - 1) * PAGE_SIZE + rows.length}</span> of <span className="num">{total}</span> seats</span>
-            <div className="flex items-center gap-1.5">
-              <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-              <span className="num">{page} / {totalPages}</span>
-              <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-            </div>
+          <div className="paper-card rounded-2xl">
+            <ListPaginationFooter
+              page={page}
+              perPage={perPage}
+              total={total}
+              onPageChange={setPage}
+              onPerPageChange={setPerPage}
+              itemName="seats"
+              pending={users.isFetching}
+            />
           </div>
         </>
       )}

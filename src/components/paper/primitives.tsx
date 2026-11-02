@@ -456,3 +456,92 @@ export function DataList({
 }) {
   return <div className={cn("divide-y divide-line/70", className)}>{children}</div>;
 }
+
+/**
+ * One pagination footer for every Paper list: the honest count, a rows-per-page
+ * control and Prev/Next. Server-paginated pages drive it from their hook params;
+ * client-sliced lists pass their computed window.
+ */
+export function ListPaginationFooter({
+  page,
+  perPage,
+  total,
+  onPageChange,
+  onPerPageChange,
+  perPageOptions = [10, 15, 25, 50],
+  itemName = "items",
+  pending = false,
+}: {
+  page: number;
+  perPage: number;
+  total: number;
+  onPageChange: (page: number) => void;
+  onPerPageChange?: (perPage: number) => void;
+  perPageOptions?: number[];
+  itemName?: string;
+  pending?: boolean;
+}) {
+  const totalPages = Math.max(1, Math.ceil(total / Math.max(1, perPage)));
+  const from = total === 0 ? 0 : (page - 1) * perPage + 1;
+  const to = Math.min(total, page * perPage);
+  return (
+    <div
+      className={cn(
+        "flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-line px-5 py-2.5 text-[11px] text-ink-faint",
+        pending && "opacity-60",
+      )}
+      aria-label="Pagination"
+    >
+      <span>
+        Showing <span className="num font-medium text-ink">{from}–{to}</span> of{" "}
+        <span className="num font-medium text-ink">{total.toLocaleString()}</span>{" "}
+        {itemName}
+      </span>
+      <div className="flex items-center gap-3">
+        {onPerPageChange ? (
+          <label className="flex items-center gap-1.5">
+            <span>Rows per page</span>
+            <select
+              value={perPage}
+              onChange={(event) => {
+                onPerPageChange(Number(event.target.value));
+                onPageChange(1);
+              }}
+              className="h-7 rounded-full border border-line bg-card px-2 text-[11px] outline-none"
+              aria-label="Rows per page"
+            >
+              {perPageOptions.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
+        <div className="flex items-center gap-1.5">
+          <Button
+            variant="outline"
+            size="xs"
+            disabled={page <= 1}
+            onClick={() => onPageChange(page - 1)}
+            className="rounded-full border-line bg-card"
+          >
+            Prev
+          </Button>
+          <span className="num">
+            {page} / {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="xs"
+            disabled={page >= totalPages}
+            onClick={() => onPageChange(page + 1)}
+            className="rounded-full border-line bg-card"
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}

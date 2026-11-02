@@ -26,12 +26,14 @@ import {
   EmptyState,
   FieldRow,
   FilterChip,
+  ListPaginationFooter,
   ManageHeading,
   PersonAvatar,
   RowActions,
   SearchField,
   SortDirectionToggle,
   ViewToggle,
+  type RowAction,
 } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -108,6 +110,7 @@ export default function VisitorsPage() {
   const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("asc");
   const [archivedView, setArchivedView] = React.useState(false);
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [view, setView] = React.useState<"table" | "cards">("table");
   const [formOpen, setFormOpen] = React.useState(false);
   const [editTarget, setEditTarget] = React.useState<Visitor | null>(null);
@@ -122,14 +125,14 @@ export default function VisitorsPage() {
   const params = React.useMemo<ListVisitorsParams>(
     () => ({
       page,
-      limit: PAGE_SIZE,
+      limit: perPage,
       search: search || undefined,
       followUpStatus: status === "all" ? undefined : status,
       sortBy,
       sortOrder,
       archived: archivedView ? true : undefined,
     }),
-    [page, search, status, sortBy, sortOrder, archivedView],
+    [page, perPage, search, status, sortBy, sortOrder, archivedView],
   );
 
   const list = useVisitorsList(params);
@@ -140,7 +143,6 @@ export default function VisitorsPage() {
 
   const rows = list.data?.data ?? [];
   const total = list.data?.meta?.total ?? 0;
-  const totalPages = Math.max(1, list.data?.meta?.totalPages ?? 1);
 
   const toggleArchive = (visitor: Visitor) => {
     if (visitor.archivedAt) {
@@ -153,6 +155,36 @@ export default function VisitorsPage() {
       });
     }
   };
+
+  // One Manage grammar shared by the table rows and the cards.
+  const manageActions = (visitor: Visitor): (RowAction | false | "" | undefined)[] => [
+    {
+      label: "Open guest record",
+      icon: <ArrowUpRight />,
+      href: `/people/visitors/${visitor.id}`,
+    },
+    canUpdate && !visitor.archivedAt && {
+      label: "Edit guest",
+      icon: <PencilLine />,
+      onSelect: () => { setEditTarget(visitor); setFormOpen(true); },
+    },
+    canUpdate && !visitor.archivedAt && !visitor.convertedMemberId && {
+      label: "Convert to member",
+      icon: <UserRoundCheck />,
+      onSelect: () => setConvertTarget(visitor),
+    },
+    canUpdate && {
+      label: visitor.archivedAt ? "Restore guest" : "Archive guest",
+      icon: visitor.archivedAt ? <ArchiveRestore /> : <Archive />,
+      onSelect: () => toggleArchive(visitor),
+    },
+    canDelete && !visitor.archivedAt && {
+      label: "Delete guest",
+      icon: <Trash2 />,
+      tone: "danger",
+      onSelect: () => setDeleteTarget([visitor]),
+    },
+  ];
 
   const peek = (visitor: Visitor) =>
     open({
@@ -318,76 +350,54 @@ export default function VisitorsPage() {
                     <span><Tag tone={STATUS_TONES[visitor.followUpStatus]} dot>{label(visitor.followUpStatus)}</Tag></span>
                     <span className="num text-[11px] text-ink-soft">{visitor.firstVisitDate.slice(0, 10)}</span>
                     <span className="truncate text-[11px] text-ink-faint">{visitor.assignedToName ?? "—"}</span>
-                    <RowActions
-                      actions={[
-                        {
-                          label: "Open guest record",
-                          icon: <ArrowUpRight />,
-                          href: `/people/visitors/${visitor.id}`,
-                        },
-                        canUpdate && !visitor.archivedAt && {
-                          label: "Edit guest",
-                          icon: <PencilLine />,
-                          onSelect: () => { setEditTarget(visitor); setFormOpen(true); },
-                        },
-                        canUpdate && !visitor.archivedAt && !visitor.convertedMemberId && {
-                          label: "Convert to member",
-                          icon: <UserRoundCheck />,
-                          onSelect: () => setConvertTarget(visitor),
-                        },
-                        canUpdate && {
-                          label: visitor.archivedAt ? "Restore guest" : "Archive guest",
-                          icon: visitor.archivedAt ? <ArchiveRestore /> : <Archive />,
-                          onSelect: () => toggleArchive(visitor),
-                        },
-                        canDelete && !visitor.archivedAt && {
-                          label: "Delete guest",
-                          icon: <Trash2 />,
-                          tone: "danger",
-                          onSelect: () => setDeleteTarget([visitor]),
-                        },
-                      ]}
-                    />
+                    <RowActions actions={manageActions(visitor)} />
                   </div>
                 ))}
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-between border-t border-line px-5 py-2.5 text-[11px] text-ink-faint">
-            <span>Showing <span className="num font-medium text-ink">{(page - 1) * PAGE_SIZE + 1}–{Math.min(total, page * PAGE_SIZE)}</span> of <span className="num font-medium text-ink">{total}</span></span>
-            <div className="flex items-center gap-1.5">
-              <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-              <span className="num">{page} / {totalPages}</span>
-              <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-            </div>
-          </div>
+          <ListPaginationFooter
+            page={page}
+            perPage={perPage}
+            total={total}
+            onPageChange={setPage}
+            onPerPageChange={setPerPage}
+            itemName="guests"
+            pending={list.isFetching}
+          />
         </div>
       ) : (
         <>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {rows.map((visitor) => (
-              <button key={visitor.id} type="button" onClick={() => peek(visitor)} className="paper-card lift rounded-2xl p-4 text-left">
-                <div className="flex items-start gap-3">
-                  <PersonAvatar name={fullName(visitor)} size="md" />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs font-semibold">{fullName(visitor)}</p>
-                    <p className="truncate text-[11px] text-ink-faint">{visitor.email ?? visitor.phone ?? "No contact"}</p>
-                  </div>
+              <div key={visitor.id} className="paper-card lift flex h-full flex-col rounded-2xl p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <button type="button" onClick={() => peek(visitor)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
+                    <PersonAvatar name={fullName(visitor)} size="md" />
+                    <div className="min-w-0">
+                      <p className="truncate text-xs font-semibold">{fullName(visitor)}</p>
+                      <p className="truncate text-[11px] text-ink-faint">{visitor.email ?? visitor.phone ?? "No contact"}</p>
+                    </div>
+                  </button>
+                  <RowActions reveal={false} actions={manageActions(visitor)} />
                 </div>
                 <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
                   <Tag tone={STATUS_TONES[visitor.followUpStatus]}>{label(visitor.followUpStatus)}</Tag>
                   <span className="num">{visitor.firstVisitDate.slice(0, 10)}</span>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
-          <div className="paper-card flex items-center justify-between rounded-2xl px-5 py-2.5 text-[11px] text-ink-faint">
-            <span>Showing <span className="num font-medium text-ink">{(page - 1) * PAGE_SIZE + 1}–{Math.min(total, page * PAGE_SIZE)}</span> of <span className="num font-medium text-ink">{total}</span></span>
-            <div className="flex items-center gap-1.5">
-              <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-              <span className="num">{page} / {totalPages}</span>
-              <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-            </div>
+          <div className="paper-card rounded-2xl">
+            <ListPaginationFooter
+              page={page}
+              perPage={perPage}
+              total={total}
+              onPageChange={setPage}
+              onPerPageChange={setPerPage}
+              itemName="guests"
+              pending={list.isFetching}
+            />
           </div>
         </>
       )}

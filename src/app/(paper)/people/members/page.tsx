@@ -25,12 +25,14 @@ import {
   FieldRow,
   DataList,
   FilterChip,
+  ListPaginationFooter,
   ManageHeading,
   PersonAvatar,
   RowActions,
   SearchField,
   SortDirectionToggle,
   ViewToggle,
+  type RowAction,
 } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
@@ -57,7 +59,6 @@ import {
   type MemberStatus,
   type ListMembersParams,
 } from "@/hooks/use-members";
-import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 15;
 
@@ -126,6 +127,7 @@ export default function PeopleMembersPage() {
   const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("asc");
   const [archivedView, setArchivedView] = React.useState(false);
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [view, setView] = React.useState<"table" | "cards">("table");
   const [editTarget, setEditTarget] = React.useState<Member | null>(null);
   const [formOpen, setFormOpen] = React.useState(false);
@@ -142,7 +144,7 @@ export default function PeopleMembersPage() {
   const queryParams = React.useMemo<ListMembersParams>(
     () => ({
       page,
-      limit: PAGE_SIZE,
+      limit: perPage,
       search: search || undefined,
       status: status === "all" ? undefined : status,
       branchId: isHq && branchId !== "all" ? branchId : undefined,
@@ -150,7 +152,7 @@ export default function PeopleMembersPage() {
       sortOrder,
       archived: archivedView ? true : undefined,
     }),
-    [page, search, status, branchId, isHq, sortBy, sortOrder, archivedView],
+    [page, perPage, search, status, branchId, isHq, sortBy, sortOrder, archivedView],
   );
 
   const list = useMembersList(queryParams, { enabled: ready });
@@ -165,7 +167,6 @@ export default function PeopleMembersPage() {
 
   const rows = list.data?.data ?? [];
   const total = list.data?.meta?.total ?? 0;
-  const totalPages = Math.max(1, list.data?.meta?.totalPages ?? 1);
 
   const peek = (member: Member) =>
     open({
@@ -246,6 +247,27 @@ export default function PeopleMembersPage() {
       });
     }
   };
+
+  // One Manage grammar shared by the table rows and the cards.
+  const manageActions = (member: Member): (RowAction | false | "" | undefined)[] => [
+    { label: "Open profile", icon: <ArrowUpRight />, href: `/people/members/${member.memberId}` },
+    canUpdate && !member.archivedAt && {
+      label: "Edit member",
+      icon: <PencilLine />,
+      onSelect: () => { setEditTarget(member); setFormOpen(true); },
+    },
+    canUpdate && {
+      label: member.archivedAt ? "Restore member" : "Archive member",
+      icon: member.archivedAt ? <ArchiveRestore /> : <Archive />,
+      onSelect: () => toggleArchive(member),
+    },
+    canDeactivate && !member.archivedAt && {
+      label: "Deactivate member",
+      icon: <UserRoundX />,
+      tone: "danger",
+      onSelect: () => setDeactivateTarget([member]),
+    },
+  ];
 
   const fetchAllExportRows = React.useCallback(async () => {
     const fetched = await fetchAllPages<Member>((p) =>
@@ -410,42 +432,20 @@ export default function PeopleMembersPage() {
                     </span>
                     <span className="num text-[11px] text-ink-soft">{member.memberSince ?? "—"}</span>
                     <div className="flex items-center justify-end">
-                      <RowActions
-                        actions={[
-                          {
-                            label: "Open profile",
-                            icon: <ArrowUpRight />,
-                            href: `/people/members/${member.memberId}`,
-                          },
-                          canUpdate && !member.archivedAt && {
-                            label: "Edit member",
-                            icon: <PencilLine />,
-                            onSelect: () => { setEditTarget(member); setFormOpen(true); },
-                          },
-                          canUpdate && {
-                            label: member.archivedAt ? "Restore member" : "Archive member",
-                            icon: member.archivedAt ? <ArchiveRestore /> : <Archive />,
-                            onSelect: () => toggleArchive(member),
-                          },
-                          canDeactivate && !member.archivedAt && {
-                            label: "Deactivate member",
-                            icon: <UserRoundX />,
-                            tone: "danger",
-                            onSelect: () => setDeactivateTarget([member]),
-                          },
-                        ]}
-                      />
+                      <RowActions actions={manageActions(member)} />
                     </div>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-          <PaginationBar
+          <ListPaginationFooter
             page={page}
-            totalPages={totalPages}
+            perPage={perPage}
             total={total}
-            onPage={setPage}
+            onPageChange={setPage}
+            onPerPageChange={setPerPage}
+            itemName="people"
             pending={list.isFetching}
           />
         </div>
@@ -454,24 +454,35 @@ export default function PeopleMembersPage() {
           <StaggerGroup className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {rows.map((member) => (
               <StaggerItem key={member.memberId}>
-                <button type="button" onClick={() => peek(member)} className="paper-card lift w-full rounded-2xl p-4 text-left">
-                  <div className="flex items-start gap-3">
-                    <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.photoUrl} size="md" />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-xs font-semibold">{member.firstName} {member.lastName}</p>
-                      <p className="truncate text-[11px] text-ink-faint">{member.email ?? member.phone ?? "—"}</p>
-                    </div>
+                <div className="paper-card lift flex h-full flex-col rounded-2xl p-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <button type="button" onClick={() => peek(member)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
+                      <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.photoUrl} size="md" />
+                      <div className="min-w-0">
+                        <p className="truncate text-xs font-semibold">{member.firstName} {member.lastName}</p>
+                        <p className="truncate text-[11px] text-ink-faint">{member.email ?? member.phone ?? "—"}</p>
+                      </div>
+                    </button>
+                    <RowActions reveal={false} actions={manageActions(member)} />
                   </div>
                   <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
                     <Tag tone={STATUS_TONES[member.status]}>{member.status}</Tag>
                     <span className="num">{member.memberSince ?? ""}</span>
                   </div>
-                </button>
+                </div>
               </StaggerItem>
             ))}
           </StaggerGroup>
           <div className="paper-card rounded-2xl">
-            <PaginationBar page={page} totalPages={totalPages} total={total} onPage={setPage} pending={list.isFetching} />
+            <ListPaginationFooter
+              page={page}
+              perPage={perPage}
+              total={total}
+              onPageChange={setPage}
+              onPerPageChange={setPerPage}
+              itemName="people"
+              pending={list.isFetching}
+            />
           </div>
         </>
       )}
@@ -504,40 +515,5 @@ function ArrowUpDownIcon() {
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="mr-1.5 shrink-0 text-ink-faint">
       <path d="m21 16-4 4-4-4M17 20V4M3 8l4-4 4 4M7 4v16" />
     </svg>
-  );
-}
-
-function PaginationBar({
-  page,
-  totalPages,
-  total,
-  onPage,
-  pending,
-}: {
-  page: number;
-  totalPages: number;
-  total: number;
-  onPage: (page: number) => void;
-  pending?: boolean;
-}) {
-  const from = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
-  return (
-    <div className="flex items-center justify-between gap-2 border-t border-line px-5 py-2.5 text-[11px] text-ink-faint">
-      <span className={cn(pending && "opacity-60")}>
-        Showing <span className="num font-medium text-ink">{from}–{Math.min(total, page * PAGE_SIZE)}</span> of{" "}
-        <span className="num font-medium text-ink">{total}</span>
-      </span>
-      <div className="flex items-center gap-1.5">
-        <Button variant="outline" size="xs" disabled={page <= 1 || pending} onClick={() => onPage(page - 1)} className="rounded-full border-line bg-card">
-          Prev
-        </Button>
-        <span className="num">
-          {page} / {Math.max(1, totalPages)}
-        </span>
-        <Button variant="outline" size="xs" disabled={page >= totalPages || pending} onClick={() => onPage(page + 1)} className="rounded-full border-line bg-card">
-          Next
-        </Button>
-      </div>
-    </div>
   );
 }

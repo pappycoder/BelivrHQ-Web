@@ -17,7 +17,7 @@ import {
 import { toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { EmptyState, ManageHeading, PersonAvatar, RowActions, SearchField, ViewToggle } from "@/components/paper/primitives";
+import { EmptyState, ListPaginationFooter, ManageHeading, PersonAvatar, RowActions, SearchField, ViewToggle } from "@/components/paper/primitives";
 import { AvatarStack } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -47,6 +47,8 @@ export default function DepartmentsPage() {
   const [editing, setEditing] = React.useState<Department | null>(null);
   const [deleteTarget, setDeleteTarget] = React.useState<Department | null>(null);
   const [view, setView] = React.useState<"cards" | "table">("cards");
+  const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(12);
 
   const departments = useDepartmentsList({});
   const archive = useArchiveDepartment();
@@ -58,6 +60,7 @@ export default function DepartmentsPage() {
   const rows = query.trim()
     ? all.filter((d) => d.name.toLowerCase().includes(query.trim().toLowerCase()))
     : all;
+  const paged = rows.slice((page - 1) * perPage, (page - 1) * perPage + perPage);
 
   const covered = rows.reduce((sum, d) => sum + (d.members?.length ?? d.memberCount ?? 0), 0);
 
@@ -84,7 +87,7 @@ export default function DepartmentsPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={query} onChange={setQuery} placeholder="Search departments…" className="w-full max-w-xs" />
+        <SearchField value={query} onChange={(v) => { setQuery(v); setPage(1); }} placeholder="Search departments…" className="w-full max-w-xs" />
         <ViewToggle
           value={view}
           onChange={setView}
@@ -115,7 +118,7 @@ export default function DepartmentsPage() {
             <span className="text-right">Serving</span>
             <ManageHeading />
           </div>
-          {rows.map((dept) => {
+          {paged.map((dept) => {
             const head = dept.headMemberId
               ? `${dept.headFirstName ?? ""} ${dept.headLastName ?? ""}`.trim()
               : "";
@@ -173,7 +176,7 @@ export default function DepartmentsPage() {
         </div>
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {rows.map((dept) => {
+          {paged.map((dept) => {
             const head = dept.headMemberId
               ? `${dept.headFirstName ?? ""} ${dept.headLastName ?? ""}`.trim()
               : "";
@@ -241,6 +244,15 @@ export default function DepartmentsPage() {
           })}
         </div>
       )}
+
+      <ListPaginationFooter
+        page={page}
+        perPage={perPage}
+        total={rows.length}
+        onPageChange={setPage}
+        onPerPageChange={setPerPage}
+        itemName="departments"
+      />
 
       <DepartmentFormDialog
         open={formOpen}

@@ -136,6 +136,18 @@ export function useBulkMarkAsRead() {
   });
 }
 
+export function useBulkMarkAsUnread() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (ids: string[]) =>
+      api.patch<{ updated: number }>("/notifications/bulk-unread", { ids }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications-unread"] });
+    },
+  });
+}
+
 export function useBulkDeleteNotifications() {
   const queryClient = useQueryClient();
   return useMutation({

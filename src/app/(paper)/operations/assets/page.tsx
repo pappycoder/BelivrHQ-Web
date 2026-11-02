@@ -9,7 +9,7 @@ import { fetchAllPages, listUrl } from "@/lib/export-all";
 import type { ExportColumn } from "@/lib/export-utils";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { EmptyState, FilterChip, SearchField } from "@/components/paper/primitives";
+import { EmptyState, FilterChip, ListPaginationFooter, SearchField } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -25,9 +25,7 @@ import {
   type Asset,
   type AssetStatus,
 } from "@/hooks/use-assets";
-import { formatDate } from "@/hooks/use-media";
 import { formatNaira } from "@/hooks/use-analytics";
-import { number } from "@/lib/paper/format";
 
 const PAGE_SIZE = 15;
 
@@ -74,6 +72,7 @@ export default function AssetsPage() {
   const [categoryId, setCategoryId] = React.useState("");
   const [archivedView, setArchivedView] = React.useState(false);
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [drawerAssetId, setDrawerAssetId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
@@ -83,12 +82,12 @@ export default function AssetsPage() {
 
   const params = React.useMemo(() => ({
     page,
-    limit: PAGE_SIZE,
+    limit: perPage,
     search: search || undefined,
     status: status || undefined,
     categoryId: categoryId || undefined,
     archived: archivedView ? true : undefined,
-  }), [page, search, status, categoryId, archivedView]);
+  }), [page, perPage, search, status, categoryId, archivedView]);
 
   const assets = useAssetsList(params);
   const stats = useAssetStats();
@@ -96,7 +95,6 @@ export default function AssetsPage() {
 
   const rows = assets.data?.data ?? [];
   const total = assets.data?.meta?.total ?? 0;
-  const totalPages = Math.max(1, assets.data?.meta?.totalPages ?? 1);
   const maintenanceTotal = useAssetsList({ status: "maintenance", limit: 1 }).data?.meta?.total ?? 0;
 
   const fetchAllExport = React.useCallback(async () => {
@@ -205,16 +203,15 @@ export default function AssetsPage() {
               </StaggerGroup>
             </div>
           </div>
-          <div className="flex items-center justify-between border-t border-line px-5 py-2.5 text-[11px] text-ink-faint">
-            <span>
-              <span className="num font-medium text-ink">{number((page - 1) * PAGE_SIZE + rows.length)}</span> of <span className="num">{number(total)}</span> items · updated {formatDate(rows[0]?.updatedAt)}
-            </span>
-            <div className="flex items-center gap-1.5">
-              <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-              <span className="num">{page} / {totalPages}</span>
-              <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-            </div>
-          </div>
+          <ListPaginationFooter
+            page={page}
+            perPage={perPage}
+            total={total}
+            onPageChange={setPage}
+            onPerPageChange={setPerPage}
+            itemName="assets"
+            pending={assets.isFetching}
+          />
         </div>
       )}
 

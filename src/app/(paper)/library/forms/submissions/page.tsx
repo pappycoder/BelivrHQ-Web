@@ -6,7 +6,7 @@ import { Inbox, Loader2, XCircle } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { EmptyState, FilterChip, PersonAvatar } from "@/components/paper/primitives";
+import { EmptyState, FilterChip, ListPaginationFooter, PersonAvatar } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SubmissionDetailDialog } from "@/components/forms/submission-detail-dialog";
@@ -36,6 +36,7 @@ export default function FormsSubmissionsPage() {
   const [formId, setFormId] = React.useState<string>("");
   const [status, setStatus] = React.useState("");
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [detail, setDetail] = React.useState<FormSubmission | null>(null);
   const [rejectTarget, setRejectTarget] = React.useState<FormSubmission | null>(null);
 
@@ -43,12 +44,11 @@ export default function FormsSubmissionsPage() {
   const submissions = useFormSubmissions(formId || undefined, {
     status: (status || undefined) as SubmissionStatus | undefined,
     page,
-    limit: PAGE_SIZE,
+    limit: perPage,
   });
   const updateStatus = useUpdateSubmissionStatus(formId);
 
   const rows = submissions.data?.data ?? [];
-  const totalPages = Math.max(1, submissions.data?.meta?.totalPages ?? 1);
   const total = submissions.data?.meta?.total ?? 0;
 
   const approve = (submission: FormSubmission) => {
@@ -137,13 +137,15 @@ export default function FormsSubmissionsPage() {
                   </Button>
                 </div>
               ))}
-              <div className="flex items-center justify-between bg-muted/20 px-5 py-2.5 text-[11px] text-ink-faint">
-                <span>Page <span className="num font-medium text-ink">{page}</span> of <span className="num">{totalPages}</span></span>
-                <div className="flex items-center gap-1.5">
-                  <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-                  <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-                </div>
-              </div>
+              <ListPaginationFooter
+                page={page}
+                perPage={perPage}
+                total={total}
+                onPageChange={setPage}
+                onPerPageChange={setPerPage}
+                itemName="responses"
+                pending={submissions.isFetching}
+              />
             </div>
           )}
         </>

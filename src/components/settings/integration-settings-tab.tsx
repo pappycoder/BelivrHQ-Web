@@ -5,12 +5,27 @@ import { ConfirmDeleteDialog } from "@/components/pastoral/confirm-delete-dialog
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import * as React from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Archive, KeyRound, ShieldCheck } from "lucide-react";
 import { api } from "@/lib/api";
 import { toast } from "@/lib/toast";
 import { usePermissions } from "@/hooks/use-permissions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RowActions } from "@/components/paper/primitives";
+import { Tag, type Tone } from "@/components/paper/stat";
+
+/** One field grammar across every integration form. */
+const fieldClass =
+  "h-10 w-full rounded-lg border border-line bg-background px-3 text-sm shadow-none outline-none";
+
+function statusTone(account: Account): Tone {
+  if (account.archived_at) return "neutral";
+  if (account.verification_status === "verified") return "moss";
+  if (account.verification_status === "limited") return "gold";
+  if (account.verification_status === "failed") return "rose";
+  return "sky";
+}
 
 type Channel = "email" | "whatsapp" | "sms" | "voice" | "payment";
 type Mode = "custom" | "disabled";
@@ -70,20 +85,28 @@ export function IntegrationSettingsTab() {
     staleTime: 60_000,
   });
   if (!can("integrations", "read")) return null;
-  if (query.isLoading) return <p role="status">Loading integrations…</p>;
+  if (query.isLoading) return <p role="status" className="text-xs text-ink-faint">Loading integrations…</p>;
   if (query.isError)
     return (
-      <div role="alert">
-        Unable to load integrations.{" "}
-        <Button variant="outline" onClick={() => void query.refetch()}>
+      <div
+        role="alert"
+        className="paper-card flex items-center justify-between gap-3 rounded-2xl p-5"
+      >
+        <p className="text-xs text-ink-soft">Unable to load integrations.</p>
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-8 rounded-full border-line text-xs"
+          onClick={() => void query.refetch()}
+        >
           Retry
         </Button>
       </div>
     );
   if (!query.data) return null;
   return (
-    <div className="space-y-8">
-      <p className="text-sm text-muted-foreground">
+    <div className="space-y-6">
+      <p className="text-[11px] leading-relaxed text-ink-soft">
         Add provider accounts, check their credentials, then choose an account
         separately for each service. A compatible account can be shared across
         services. Each service stays disabled until you select and save a
@@ -95,9 +118,22 @@ export function IntegrationSettingsTab() {
         values={["accounts", "services"]}
         className="space-y-6"
       >
-        <TabsList aria-label="Integration views">
-          <TabsTrigger value="accounts">Provider accounts</TabsTrigger>
-          <TabsTrigger value="services">Service routing</TabsTrigger>
+        <TabsList
+          aria-label="Integration views"
+          className="h-9 w-fit gap-1 rounded-full border border-line bg-card p-0.5"
+        >
+          <TabsTrigger
+            value="accounts"
+            className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper"
+          >
+            Provider accounts
+          </TabsTrigger>
+          <TabsTrigger
+            value="services"
+            className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper"
+          >
+            Service routing
+          </TabsTrigger>
         </TabsList>
         <TabsContent
           value="accounts"
@@ -211,9 +247,9 @@ function ProviderAccounts({
     }
   }
   return (
-    <section id="provider-accounts" data-settings-section className="space-y-4">
-      <h2 className="text-lg font-semibold">Provider accounts</h2>
-      <p className="text-sm text-muted-foreground">
+    <section id="provider-accounts" data-settings-section className="space-y-3">
+      <p className="rule-label">Vault</p>
+      <p className="text-[11px] leading-relaxed text-ink-soft">
         Keys are encrypted on the server and cannot be viewed after saving. To
         rotate a key, add a replacement account, check it, switch the services,
         then archive the old account. Historical payments keep their original
@@ -222,54 +258,70 @@ function ProviderAccounts({
       {data.accounts.map((account) => (
         <div
           key={account.id}
-          className="rounded-md border p-3 space-y-2"
+          className="paper-card flex flex-wrap items-start justify-between gap-3 rounded-2xl p-4"
           data-testid={`account-${account.id}`}
         >
-          <p className="font-medium">
-            {account.label} —{" "}
-            {data.providers.find((item) => item.id === account.provider)?.label}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Credential check: {account.verification_status}
-            {account.archived_at ? "; archived" : ""}.{" "}
-            {account.verified_at
-              ? `Last checked ${new Date(account.verified_at).toLocaleString()}`
-              : "Not checked yet."}
-          </p>
-          {canManage && !account.archived_at && (
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                disabled={busy}
-                onClick={() => void accountAction(account.id, "verify")}
-              >
-                Check credentials
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                disabled={busy}
-                onClick={() => {
-                  setNotice("");
-                  setArchiveAccountId(account.id);
-                }}
-              >
-                Archive account
-              </Button>
+          <div className="flex min-w-0 items-start gap-3">
+            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand">
+              <KeyRound className="size-4" />
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-xs font-semibold">
+                {account.label} —{" "}
+                {data.providers.find((item) => item.id === account.provider)?.label}
+              </p>
+              <p className="mt-0.5 text-[10px] text-ink-faint">
+                {account.verified_at
+                  ? `Last checked ${new Date(account.verified_at).toLocaleString()}`
+                  : "Not checked yet."}
+              </p>
+              {["termii", "twilio", "meta"].includes(account.provider) && (
+                <p className="mt-1 break-all text-[10px] text-ink-faint">
+                  Messaging callback on your backend:{" "}
+                  <code>/api/v1/integrations/webhooks/{account.id}</code>
+                </p>
+              )}
             </div>
-          )}
-          {["termii", "twilio", "meta"].includes(account.provider) && (
-            <p className="break-all text-sm text-muted-foreground">
-              Messaging callback on your backend:{" "}
-              <code>/api/v1/integrations/webhooks/{account.id}</code>
-            </p>
-          )}
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <Tag tone={statusTone(account)} dot>
+              {account.archived_at ? "Archived" : account.verification_status}
+            </Tag>
+            {canManage && !account.archived_at && (
+              <RowActions
+                reveal={false}
+                actions={[
+                  {
+                    label: "Check credentials",
+                    icon: <ShieldCheck />,
+                    disabled: busy,
+                    onSelect: () => void accountAction(account.id, "verify"),
+                  },
+                  {
+                    label: "Archive account",
+                    icon: <Archive />,
+                    tone: "warning",
+                    disabled: busy,
+                    onSelect: () => {
+                      setNotice("");
+                      setArchiveAccountId(account.id);
+                    },
+                  },
+                ]}
+              />
+            )}
+          </div>
         </div>
       ))}
+      {!data.accounts.length && (
+        <p className="rounded-2xl border border-dashed border-line px-4 py-8 text-center text-[11px] text-ink-faint">
+          No provider accounts yet — add one below to route a service through
+          your own keys.
+        </p>
+      )}
       {canManage && (
-        <details className="rounded-lg border p-4">
-          <summary className="cursor-pointer font-medium">
+        <details className="paper-card rounded-2xl p-4">
+          <summary className="cursor-pointer text-xs font-semibold">
             Add provider account
           </summary>
           <form
@@ -278,17 +330,19 @@ function ProviderAccounts({
             onChange={() => setDraft(true)}
             autoComplete="off"
             data-sentry-block
-            className="rounded-md border p-4 space-y-4"
+            className="mt-4 space-y-4 rounded-xl border border-line bg-background/40 p-4"
           >
             <fieldset disabled={busy} className="space-y-4">
-              <legend className="font-medium">Add a provider account</legend>
-              <div className="space-y-2">
-                <Label htmlFor="integration-provider">Provider</Label>
+              <legend className="rule-label float-left w-full">
+                New account
+              </legend>
+              <div className="space-y-1.5">
+                <Label htmlFor="integration-provider" className="text-xs">Provider</Label>
                 <select
                   id="integration-provider"
                   value={providerId}
                   onChange={(event) => setProviderId(event.currentTarget.value)}
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  className={fieldClass}
                 >
                   {data.providers.map((item) => (
                     <option key={item.id} value={item.id}>
@@ -297,20 +351,21 @@ function ProviderAccounts({
                   ))}
                 </select>
               </div>
-              <p className="text-sm text-muted-foreground">{provider.help}</p>
-              <div className="space-y-2">
-                <Label htmlFor="account-label">Account name</Label>
+              <p className="text-[11px] leading-relaxed text-ink-soft">{provider.help}</p>
+              <div className="space-y-1.5">
+                <Label htmlFor="account-label" className="text-xs">Account name</Label>
                 <Input
                   id="account-label"
                   name="label"
                   required
                   maxLength={80}
                   placeholder="For example: Church office account"
+                  className="h-10 rounded-lg border-line bg-background text-sm shadow-none"
                 />
               </div>
               {provider.fields.map((field) => (
-                <div className="space-y-2" key={field.key}>
-                  <Label htmlFor={`credential-${field.key}`}>
+                <div className="space-y-1.5" key={field.key}>
+                  <Label htmlFor={`credential-${field.key}`} className="text-xs">
                     {field.label}
                     {field.optional ? " (optional)" : ""}
                   </Label>
@@ -319,7 +374,7 @@ function ProviderAccounts({
                       id={`credential-${field.key}`}
                       name={field.key}
                       required={!field.optional}
-                      className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                      className={fieldClass}
                     >
                       {field.options.map((value) => (
                         <option key={value} value={value}>
@@ -336,11 +391,12 @@ function ProviderAccounts({
                       maxLength={2048}
                       autoComplete={field.secret ? "new-password" : "off"}
                       spellCheck={false}
+                      className="h-10 rounded-lg border-line bg-background text-sm shadow-none"
                     />
                   )}
                 </div>
               ))}
-              <Button type="submit">
+              <Button type="submit" className="h-9 rounded-full text-xs">
                 {busy ? "Working…" : "Save provider account"}
               </Button>
             </fieldset>
@@ -371,7 +427,7 @@ function ProviderAccounts({
         }}
       />
       {notice && (
-        <p role="status" className="text-sm">
+        <p role="status" className="text-[11px] text-ink-soft">
           {notice}
         </p>
       )}
@@ -460,10 +516,18 @@ function ChannelSettings({
     <section
       id={`channel-${channel}`}
       data-settings-section
-      className="space-y-4 border-t pt-6"
+      className="paper-card space-y-4 rounded-2xl p-5"
     >
-      <h2 className="text-lg font-semibold">{label}</h2>
-      <p className="text-sm text-muted-foreground">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="rule-label mb-1">Service routing</p>
+          <h2 className="font-display text-base font-semibold tracking-tight">{label}</h2>
+        </div>
+        <Tag tone={mode === "custom" && accountId ? "moss" : "neutral"} dot>
+          {mode === "custom" && accountId ? "Custom account" : "Disabled"}
+        </Tag>
+      </div>
+      <p className="text-[11px] leading-relaxed text-ink-soft">
         {saved
           ? `Saved mode: ${saved.mode}.`
           : "Disabled until your church selects a provider account."}{" "}
@@ -476,13 +540,13 @@ function ChannelSettings({
         className="space-y-4"
       >
         <fieldset disabled={!canManage || busy} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor={`${channel}-mode`}>Account source</Label>
+          <div className="space-y-1.5">
+            <Label htmlFor={`${channel}-mode`} className="text-xs">Account source</Label>
             <select
               id={`${channel}-mode`}
               value={mode}
               onChange={(event) => setMode(event.currentTarget.value as Mode)}
-              className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+              className={fieldClass}
             >
               <option value="custom">Choose provider account</option>
               <option value="disabled">Disable this service</option>
@@ -490,14 +554,14 @@ function ChannelSettings({
           </div>
           {mode === "custom" && (
             <>
-              <div className="space-y-2">
-                <Label htmlFor={`${channel}-account`}>Provider account</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor={`${channel}-account`} className="text-xs">Provider account</Label>
                 <select
                   id={`${channel}-account`}
                   value={accountId}
                   onChange={(event) => setAccountId(event.currentTarget.value)}
                   required
-                  className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+                  className={fieldClass}
                 >
                   <option value="">Select an account</option>
                   {accounts.map((account) => (
@@ -517,7 +581,7 @@ function ChannelSettings({
                 </select>
               </div>
               {selected?.verification_status === "limited" && (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-[11px] leading-relaxed text-ink-soft">
                   Account inspection was limited. Save this service and send a
                   controlled test to confirm that the credentials and sender
                   work.
@@ -538,8 +602,8 @@ function ChannelSettings({
                       required: false,
                     },
                   ].map((field) => (
-                    <div className="space-y-2" key={field.key}>
-                      <Label htmlFor={`${channel}-${field.key}`}>
+                    <div className="space-y-1.5" key={field.key}>
+                      <Label htmlFor={`${channel}-${field.key}`} className="text-xs">
                         {field.label}
                       </Label>
                       <Input
@@ -553,6 +617,7 @@ function ChannelSettings({
                             : ""
                         }
                         maxLength={254}
+                        className="h-10 rounded-lg border-line bg-background text-sm shadow-none"
                       />
                     </div>
                   ))}
@@ -560,8 +625,8 @@ function ChannelSettings({
               )}
               {["sms", "voice", "whatsapp"].includes(channel) &&
                 provider !== "meta" && (
-                  <div className="space-y-2" key={accountId}>
-                    <Label htmlFor={`${channel}-from`}>
+                  <div className="space-y-1.5" key={accountId}>
+                    <Label htmlFor={`${channel}-from`} className="text-xs">
                       {provider === "termii"
                         ? channel === "sms"
                           ? "Approved SMS sender ID"
@@ -578,11 +643,12 @@ function ChannelSettings({
                           : ""
                       }
                       maxLength={128}
+                      className="h-10 rounded-lg border-line bg-background text-sm shadow-none"
                     />
                   </div>
                 )}
               {channel === "payment" && (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-[11px] leading-relaxed text-ink-soft">
                   The selected gateway becomes the church default for giving and
                   paid event tickets. Card authorizations cannot move to another
                   merchant account; recurring donors must authorize that account
@@ -592,12 +658,14 @@ function ChannelSettings({
             </>
           )}
           {canManage && (
-            <Button type="submit">Save {label.toLowerCase()} settings</Button>
+            <Button type="submit" className="h-9 rounded-full text-xs">
+              Save {label.toLowerCase()} settings
+            </Button>
           )}
         </fieldset>
       </form>
       {channel === "payment" && (
-        <p className="break-all text-sm text-muted-foreground">
+        <p className="break-all text-[11px] leading-relaxed text-ink-soft">
           Configure the payment account webhook on your backend at{" "}
           <code>
             /api/v1/integrations/payments/webhook/{provider ?? "PROVIDER"}
@@ -608,14 +676,14 @@ function ChannelSettings({
       )}
       {canManage && saved?.mode === "custom" && channel !== "payment" && (
         <div className="space-y-3" data-sentry-block>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-[11px] leading-relaxed text-ink-soft">
             Tests use saved settings and send a real message or connect a live
             call. Provider charges may apply. WhatsApp text tests need an open
             conversation window. Sender/domain approval remains the provider’s
             responsibility.
           </p>
-          <div className="space-y-2">
-            <Label htmlFor={`${channel}-recipient`}>
+          <div className="space-y-1.5">
+            <Label htmlFor={`${channel}-recipient`} className="text-xs">
               {channel === "email"
                 ? "Test email recipient"
                 : channel === "voice"
@@ -627,11 +695,13 @@ function ChannelSettings({
               type={channel === "email" ? "email" : "tel"}
               value={recipient}
               onChange={(event) => setRecipient(event.target.value)}
+              className="h-10 rounded-lg border-line bg-background text-sm shadow-none"
             />
           </div>
           <Button
             type="button"
             variant="outline"
+            className="h-9 rounded-full border-line text-xs"
             onClick={() => void test()}
             disabled={busy || !recipient}
           >
@@ -640,7 +710,7 @@ function ChannelSettings({
         </div>
       )}
       {notice && (
-        <p role="status" className="text-sm">
+        <p role="status" className="text-[11px] text-ink-soft">
           {notice}
         </p>
       )}

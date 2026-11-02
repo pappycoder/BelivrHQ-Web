@@ -10,6 +10,7 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
+  ListPaginationFooter,
   ManageHeading,
   PersonAvatar,
   RowActions,
@@ -33,6 +34,8 @@ import {
 import { formatDate } from "@/hooks/use-media";
 import { number } from "@/lib/paper/format";
 
+const PAGE_SIZE = 15;
+
 type DialogState = { kind: ArchiveDialogKind; branch: Branch } | null;
 
 export default function AdminBranchesPage() {
@@ -45,6 +48,8 @@ export default function AdminBranchesPage() {
   const [query, setQuery] = React.useState("");
   const [search, setSearch] = React.useState("");
   const [archivedView, setArchivedView] = React.useState(false);
+  const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [view, setView] = React.useState<"table" | "cards">("table");
   const [formTarget, setFormTarget] = React.useState<{ open: boolean; branch: Branch | null }>({ open: false, branch: null });
   const [archiveState, setArchiveState] = React.useState<DialogState>(null);
@@ -54,7 +59,11 @@ export default function AdminBranchesPage() {
     return () => clearTimeout(t);
   }, [query]);
 
-  const branches = useBranchesList({ search: search || undefined, archived: archivedView ? true : undefined, limit: 100, sortBy: "name", sortOrder: "asc" });
+  React.useEffect(() => {
+    setPage(1);
+  }, [search, archivedView, perPage]);
+
+  const branches = useBranchesList({ page, limit: perPage, search: search || undefined, archived: archivedView ? true : undefined, sortBy: "name", sortOrder: "asc" });
   const archive = useArchiveBranch();
   const restore = useRestoreArchiveBranch();
   const del = useDeleteBranch();
@@ -195,6 +204,18 @@ export default function AdminBranchesPage() {
           ))}
         </StaggerGroup>
       )}
+
+      <div className="paper-card rounded-2xl">
+        <ListPaginationFooter
+          page={page}
+          perPage={perPage}
+          total={total}
+          onPageChange={setPage}
+          onPerPageChange={setPerPage}
+          itemName="branches"
+          pending={branches.isFetching}
+        />
+      </div>
 
       <div className="rounded-2xl border border-dashed border-line p-5 text-[11px] leading-relaxed text-ink-soft">
         <p className="mb-1 font-display text-xs font-semibold text-ink">Branch scope is real</p>

@@ -27,12 +27,14 @@ import {
   EmptyState,
   FieldRow,
   FilterChip,
+  ListPaginationFooter,
   ManageHeading,
   PersonAvatar,
   RowActions,
   SearchField,
   SortDirectionToggle,
   ViewToggle,
+  type RowAction,
 } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
@@ -103,6 +105,7 @@ export default function FamiliesPage() {
   const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("asc");
   const [archivedView, setArchivedView] = React.useState(false);
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [view, setView] = React.useState<"cards" | "table">("cards");
   const [formOpen, setFormOpen] = React.useState(false);
   const [editTarget, setEditTarget] = React.useState<Family | null>(null);
@@ -120,14 +123,14 @@ export default function FamiliesPage() {
   const params = React.useMemo<ListFamiliesParams>(
     () => ({
       page,
-      limit: PAGE_SIZE,
+      limit: perPage,
       search: search || undefined,
       archived: archivedView ? true : undefined,
       branchId: isHq && branchId !== "all" ? branchId : undefined,
       sortBy,
       sortOrder,
     }),
-    [page, search, archivedView, branchId, isHq, sortBy, sortOrder],
+    [page, perPage, search, archivedView, branchId, isHq, sortBy, sortOrder],
   );
 
   const list = useFamiliesList(params);
@@ -151,6 +154,31 @@ export default function FamiliesPage() {
       });
     }
   };
+
+  // One Manage grammar shared by the table rows and the cards.
+  const manageActions = (family: Family): (RowAction | false | "" | undefined)[] => [
+    {
+      label: "Open household",
+      icon: <ArrowUpRight />,
+      href: `/people/families/${family.familyId}`,
+    },
+    canUpdate && !family.archivedAt && {
+      label: "Edit household",
+      icon: <PencilLine />,
+      onSelect: () => { setEditTarget(family); setFormOpen(true); },
+    },
+    canUpdate && {
+      label: family.archivedAt ? "Restore household" : "Archive household",
+      icon: family.archivedAt ? <ArchiveRestore /> : <Archive />,
+      onSelect: () => toggleArchive(family),
+    },
+    canDelete && !family.archivedAt && {
+      label: "Delete household",
+      icon: <Trash2 />,
+      tone: "danger",
+      onSelect: () => setDeleteTarget([family]),
+    },
+  ];
 
   const peek = (family: Family) =>
     open({
@@ -377,47 +405,22 @@ export default function FamiliesPage() {
                         {family.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
                       </span>
                       <span className="num text-[11px] text-ink-soft">{family.createdAt?.slice(0, 10) ?? "—"}</span>
-                      <RowActions
-                        actions={[
-                          {
-                            label: "Open household",
-                            icon: <ArrowUpRight />,
-                            href: `/people/families/${family.familyId}`,
-                          },
-                          canUpdate && !family.archivedAt && {
-                            label: "Edit household",
-                            icon: <PencilLine />,
-                            onSelect: () => { setEditTarget(family); setFormOpen(true); },
-                          },
-                          canUpdate && {
-                            label: family.archivedAt ? "Restore household" : "Archive household",
-                            icon: family.archivedAt ? <ArchiveRestore /> : <Archive />,
-                            onSelect: () => toggleArchive(family),
-                          },
-                          canDelete && !family.archivedAt && {
-                            label: "Delete household",
-                            icon: <Trash2 />,
-                            tone: "danger",
-                            onSelect: () => setDeleteTarget([family]),
-                          },
-                        ]}
-                      />
+                      <RowActions actions={manageActions(family)} />
                     </div>
                   );
                 })}
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-between border-t border-line px-5 py-2.5 text-[11px] text-ink-faint">
-            <span>
-              Showing <span className="num font-medium text-ink">{(page - 1) * PAGE_SIZE + 1}–{Math.min(total, page * PAGE_SIZE)}</span> of <span className="num font-medium text-ink">{total}</span>
-            </span>
-            <div className="flex items-center gap-1.5">
-              <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-              <span className="num">{page} / {totalPages}</span>
-              <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-            </div>
-          </div>
+          <ListPaginationFooter
+            page={page}
+            perPage={perPage}
+            total={total}
+            onPageChange={setPage}
+            onPerPageChange={setPerPage}
+            itemName="households"
+            pending={list.isFetching}
+          />
         </div>
       ) : (
         <>
@@ -426,41 +429,47 @@ export default function FamiliesPage() {
               const head = family.members.find((m) => m.isHead);
               return (
                 <StaggerItem key={family.familyId}>
-                  <button type="button" onClick={() => peek(family)} className="paper-card lift w-full rounded-2xl p-4 text-left">
+                  <div className="paper-card lift flex h-full flex-col rounded-2xl p-4">
                     <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <p className="truncate font-display text-sm font-semibold">{family.name}</p>
-                        {head ? (
-                          <p className="mt-0.5 flex items-center gap-1.5 truncate text-[11px] text-ink-faint">
-                            <Crown className="size-3 shrink-0 text-gold" /> {head.firstName} {head.lastName}
-                          </p>
-                        ) : (
-                          <p className="mt-0.5 text-[11px] text-ink-faint">No head assigned</p>
-                        )}
-                      </div>
-                      <AvatarStack people={family.members.map((m) => ({ name: `${m.firstName} ${m.lastName}` }))} size="xs" max={4} />
+                      <button type="button" onClick={() => peek(family)} className="flex min-w-0 items-center gap-2 text-left">
+                        <div className="min-w-0">
+                          <p className="truncate font-display text-sm font-semibold">{family.name}</p>
+                          {head ? (
+                            <p className="mt-0.5 flex items-center gap-1.5 truncate text-[11px] text-ink-faint">
+                              <Crown className="size-3 shrink-0 text-gold" /> {head.firstName} {head.lastName}
+                            </p>
+                          ) : (
+                            <p className="mt-0.5 text-[11px] text-ink-faint">No head assigned</p>
+                          )}
+                        </div>
+                      </button>
+                      <RowActions reveal={false} actions={manageActions(family)} />
                     </div>
                     <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[11px]">
-                      <span className="text-ink-soft">{family.members.length} people</span>
+                      <span className="flex items-center gap-2">
+                        <AvatarStack people={family.members.map((m) => ({ name: `${m.firstName} ${m.lastName}` }))} size="xs" max={4} />
+                        <span className="text-ink-soft">{family.members.length} people</span>
+                      </span>
                       <span className="flex items-center gap-1.5 text-ink-faint">
                         {family.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
                         <span className="num">{family.createdAt?.slice(0, 10)}</span>
                       </span>
                     </div>
-                  </button>
+                  </div>
                 </StaggerItem>
               );
             })}
           </StaggerGroup>
-          <div className="paper-card flex items-center justify-between rounded-2xl px-5 py-2.5 text-[11px] text-ink-faint">
-            <span>
-              Showing <span className="num font-medium text-ink">{(page - 1) * PAGE_SIZE + 1}–{Math.min(total, page * PAGE_SIZE)}</span> of <span className="num font-medium text-ink">{total}</span>
-            </span>
-            <div className="flex items-center gap-1.5">
-              <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-              <span className="num">{page} / {totalPages}</span>
-              <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-            </div>
+          <div className="paper-card rounded-2xl">
+            <ListPaginationFooter
+              page={page}
+              perPage={perPage}
+              total={total}
+              onPageChange={setPage}
+              onPerPageChange={setPerPage}
+              itemName="households"
+              pending={list.isFetching}
+            />
           </div>
         </>
       )}

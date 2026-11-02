@@ -17,6 +17,7 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
+  ListPaginationFooter,
   SearchField,
 } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
@@ -54,12 +55,13 @@ export default function FormsListPage() {
   const [query, setQuery] = React.useState("");
   const [status, setStatus] = React.useState<FormStatus | "">("");
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [archivedView, setArchivedView] = React.useState(false);
   const [deleteTarget, setDeleteTarget] = React.useState<Form | null>(null);
 
   const forms = useFormsList({
     page,
-    limit: PAGE_SIZE,
+    limit: perPage,
     search: query || undefined,
     status: status || undefined,
     archived: archivedView || undefined,
@@ -70,7 +72,6 @@ export default function FormsListPage() {
 
   const rows = forms.data?.data ?? [];
   const total = forms.data?.meta?.total ?? 0;
-  const totalPages = Math.max(1, forms.data?.meta?.totalPages ?? 1);
 
   return (
     <div className="space-y-6">
@@ -195,12 +196,17 @@ export default function FormsListPage() {
       )}
 
       {rows.length ? (
-        <div className="paper-card flex items-center justify-between rounded-2xl px-5 py-2.5 text-[11px] text-ink-faint">
-          <span>Page <span className="num font-medium text-ink">{page}</span> of <span className="num">{totalPages}</span></span>
-          <div className="flex items-center gap-1.5">
-            <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-            <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-          </div>
+        <div className="paper-card rounded-2xl">
+          <ListPaginationFooter
+            page={page}
+            perPage={perPage}
+            total={total}
+            onPageChange={setPage}
+            onPerPageChange={setPerPage}
+            perPageOptions={[12, 24, 48]}
+            itemName="forms"
+            pending={forms.isFetching}
+          />
         </div>
       ) : null}
 

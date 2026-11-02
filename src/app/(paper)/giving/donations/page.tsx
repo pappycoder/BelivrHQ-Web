@@ -15,7 +15,7 @@ import type { ExportColumn } from "@/lib/export-utils";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { EmptyState, FilterChip } from "@/components/paper/primitives";
+import { EmptyState, FilterChip, ListPaginationFooter } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
 import { ActionTooltip } from "@/components/ui/tooltip";
@@ -38,7 +38,6 @@ import {
 } from "@/hooks/use-giving";
 import { formatDate } from "@/hooks/use-media";
 import { formatNaira } from "@/hooks/use-analytics";
-import { number } from "@/lib/paper/format";
 
 const PAGE_SIZE = 15;
 
@@ -129,6 +128,7 @@ export default function GivingDonationsPage() {
   const canRecord = ready && can("giving", "create");
 
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [status, setStatus] = React.useState("");
   const [type, setType] = React.useState("");
   const [categoryId, setCategoryId] = React.useState("");
@@ -138,7 +138,7 @@ export default function GivingDonationsPage() {
 
   const params = React.useMemo(() => ({
     page,
-    limit: PAGE_SIZE,
+    limit: perPage,
     status: status || undefined,
     type: type || undefined,
     categoryId: categoryId || undefined,
@@ -146,13 +146,12 @@ export default function GivingDonationsPage() {
     endDate: endDate || undefined,
     sortBy: "giving_date" as const,
     sortOrder: "desc" as const,
-  }), [page, status, type, categoryId, startDate, endDate]);
+  }), [page, perPage, status, type, categoryId, startDate, endDate]);
 
   const transactions = useGivingTransactions(params);
   const categories = useGivingCategories({ limit: 100 });
   const rows = transactions.data?.data ?? [];
   const total = transactions.data?.meta?.total ?? 0;
-  const totalPages = Math.max(1, transactions.data?.meta?.totalPages ?? 1);
   const pageSum = rows.reduce((sum, t) => (t.status === "success" ? sum + t.amount : sum), 0);
   const activeCategories = (categories.data?.data ?? []).filter((c) => !c.archivedAt);
 
@@ -280,14 +279,15 @@ export default function GivingDonationsPage() {
               </div>
             </StaggerItem>
           ))}
-          <div className="flex items-center justify-between bg-muted/20 px-5 py-2.5 text-[11px] text-ink-faint">
-            <span><span className="num font-medium text-ink">{number((page - 1) * PAGE_SIZE + rows.length)}</span> of <span className="num">{number(total)}</span> gifts</span>
-            <div className="flex items-center gap-1.5">
-              <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-              <span className="num">{page} / {totalPages}</span>
-              <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-            </div>
-          </div>
+          <ListPaginationFooter
+            page={page}
+            perPage={perPage}
+            total={total}
+            onPageChange={setPage}
+            onPerPageChange={setPerPage}
+            itemName="gifts"
+            pending={transactions.isFetching}
+          />
         </StaggerGroup>
       )}
 

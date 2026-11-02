@@ -20,6 +20,7 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
+  ListPaginationFooter,
   RowActions,
 } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
@@ -165,6 +166,7 @@ export default function AttendanceServicesPage() {
   const isHq = !!profile?.isAdminHq;
 
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [category, setCategory] = React.useState("all");
   const [archivedView, setArchivedView] = React.useState(false);
   const [formOpen, setFormOpen] = React.useState(false);
@@ -174,7 +176,7 @@ export default function AttendanceServicesPage() {
 
   const params = {
     page,
-    limit: PAGE_SIZE,
+    limit: perPage,
     archived: archivedView || undefined,
     category: category === "all" ? undefined : category,
   };
@@ -188,7 +190,6 @@ export default function AttendanceServicesPage() {
 
   const rows = services.data?.data ?? [];
   const total = services.data?.meta?.total ?? 0;
-  const totalPages = Math.max(1, services.data?.meta?.totalPages ?? 1);
 
   const branchNames = React.useMemo(() => {
     const map = new Map<string, string>();
@@ -311,13 +312,15 @@ export default function AttendanceServicesPage() {
               })}
             />
           ))}
-          <div className="flex items-center justify-between bg-muted/20 px-5 py-2.5 text-[11px] text-ink-faint">
-            <span>Page <span className="num font-medium text-ink">{page}</span> of <span className="num">{totalPages}</span></span>
-            <div className="flex items-center gap-1.5">
-              <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-              <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-            </div>
-          </div>
+          <ListPaginationFooter
+            page={page}
+            perPage={perPage}
+            total={total}
+            onPageChange={setPage}
+            onPerPageChange={setPerPage}
+            itemName="services"
+            pending={services.isFetching}
+          />
         </div>
       )}
 

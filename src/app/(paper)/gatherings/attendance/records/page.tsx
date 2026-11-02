@@ -18,19 +18,18 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
+  ListPaginationFooter,
   ManageHeading,
   PersonAvatar,
   RowActions,
   SearchField,
 } from "@/components/paper/primitives";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExportDropdown } from "@/components/shared/export-dropdown";
 import { ConfirmDeleteDialog } from "@/components/pastoral/confirm-delete-dialog";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useAttendanceRecords, useAttendanceServices, useDeleteAttendance, ATTENDANCE_CATEGORIES, attendanceCategoryLabel, type AttendanceRecord, type AttendanceCategory } from "@/hooks/use-attendance";
-import { number } from "@/lib/paper/format";
 
 const PAGE_SIZE = 20;
 
@@ -65,6 +64,7 @@ export default function AttendanceRecordsPage() {
   const canDelete = ready && can("attendance:records", "delete") || ready && can("attendance", "delete");
 
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [serviceId, setServiceId] = React.useState("all");
   const [category, setCategory] = React.useState<"all" | AttendanceCategory>("all");
   const [startDate, setStartDate] = React.useState("");
@@ -76,13 +76,13 @@ export default function AttendanceRecordsPage() {
   const params = React.useMemo(
     () => ({
       page,
-      limit: PAGE_SIZE,
+      limit: perPage,
       serviceId: serviceId === "all" ? undefined : serviceId,
       category: category === "all" ? undefined : category,
       startDate: startDate || undefined,
       endDate: endDate || undefined,
     }),
-    [page, serviceId, category, startDate, endDate],
+    [page, perPage, serviceId, category, startDate, endDate],
   );
   const records = useAttendanceRecords(params);
   const del = useDeleteAttendance();
@@ -198,16 +198,15 @@ export default function AttendanceRecordsPage() {
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-between border-t border-line px-5 py-2.5 text-[11px] text-ink-faint">
-            <span>
-              <span className="num font-medium text-ink">{number((page - 1) * PAGE_SIZE + rows.length)}</span> of <span className="num">{total}</span> shown so far
-            </span>
-            <div className="flex items-center gap-1.5">
-              <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-              <span className="num">{page} / {totalPages}</span>
-              <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-            </div>
-          </div>
+          <ListPaginationFooter
+            page={page}
+            perPage={perPage}
+            total={total}
+            onPageChange={setPage}
+            onPerPageChange={setPerPage}
+            itemName="records"
+            pending={records.isFetching}
+          />
         </div>
       )}
 

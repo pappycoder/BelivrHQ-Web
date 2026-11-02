@@ -1,16 +1,11 @@
 "use client";
 
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from "@/components/ui/table";
 import * as React from "react";
+import { PencilLine } from "lucide-react";
 import styles from "./general-attendance-panel.module.css";
 import { format } from "date-fns";
+import { ListPaginationFooter, ManageHeading, RowActions } from "@/components/paper/primitives";
+import { cn } from "@/lib/utils";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useCurrentProfile } from "@/hooks/use-profile";
 import {
@@ -44,7 +39,6 @@ import {
 import { BranchFilter } from "@/components/shared/branch-filter";
 import { ExportDropdown } from "@/components/shared/export-dropdown";
 import { toast, getToastErrorMessage } from "@/lib/toast";
-import { TablePagination } from "@/components/shared/table-pagination";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { fetchAllPages } from "@/lib/export-all";
 import {
@@ -143,6 +137,7 @@ export function GeneralAttendancePanel({
   const canUpdate =
     !readOnly && canManage && canAny(grants.update) && target?.active !== false;
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(20);
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
   const [branchId, setBranchId] = React.useState("");
@@ -155,7 +150,7 @@ export function GeneralAttendancePanel({
     endDate: filters.endDate || endDate || undefined,
     branchId: filters.branchId || branchId || undefined,
     page,
-    limit: 20,
+    limit: perPage,
   };
   const query = useGeneralAttendance(
     params,
@@ -575,72 +570,84 @@ export function GeneralAttendancePanel({
           ) : (
             <>
               <div className="overflow-x-auto">
-                <Table
-                  selectable
-                  aria-label="General attendance"
-                  className="w-full text-sm"
-                >
-                  <TableHeader>
-                    <TableRow>
-                      {columns.map((c) => (
-                        <TableHead
-                          className={`p-2 text-xs ${countFields.some(([key]) => key === c.key) ? "text-right" : "text-left"}`}
-                          key={c.key}
-                        >
-                          {c.label}
-                        </TableHead>
-                      ))}
-                      {canUpdate && (
-                        <TableHead className="p-2 text-left">Actions</TableHead>
-                      )}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
+                <div className="min-w-[760px]">
+                  <div
+                    className={cn(
+                      "rule-label grid items-center gap-3 border-b border-line px-2 py-2.5",
+                      canUpdate
+                        ? "grid-cols-[minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1fr)_repeat(5,minmax(0,0.7fr))_auto]"
+                        : "grid-cols-[minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1fr)_repeat(5,minmax(0,0.7fr))]",
+                    )}
+                  >
+                    <span>Date</span>
+                    <span>Meeting</span>
+                    <span>Branch</span>
+                    {countFields.map(([, label]) => (
+                      <span key={label} className="text-right">
+                        {label}
+                      </span>
+                    ))}
+                    {canUpdate ? <ManageHeading /> : null}
+                  </div>
+                  <div className="divide-y divide-line/70">
                     {rows.map((row) => (
-                      <TableRow key={row.id} className="border-t">
-                        {columns.map((c) => (
-                          <TableCell
-                            className={`p-2 text-xs ${countFields.some(([key]) => key === c.key) ? "text-right tabular-nums" : ""}`}
-                            key={c.key}
+                      <div
+                        key={row.id}
+                        className={cn(
+                          "group grid items-center gap-3 px-2 py-2.5 text-xs transition-colors hover:bg-muted/40",
+                          canUpdate
+                            ? "grid-cols-[minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1fr)_repeat(5,minmax(0,0.7fr))_auto]"
+                            : "grid-cols-[minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1fr)_repeat(5,minmax(0,0.7fr))]",
+                        )}
+                      >
+                        <span className="num text-[11px]">{row.attendanceDate}</span>
+                        <span className="min-w-0 truncate font-medium">
+                          {row.contextName ?? "—"}
+                        </span>
+                        <span className="min-w-0 truncate text-[11px] text-ink-soft">
+                          {row.branchName ?? "—"}
+                        </span>
+                        {countFields.map(([key]) => (
+                          <span
+                            key={key}
+                            className="num text-right tabular-nums text-[11px]"
                           >
                             {String(
-                              row[c.key as keyof GeneralAttendanceRecord] ??
-                                "—",
+                              row[key as keyof GeneralAttendanceRecord] ?? "—",
                             )}
-                          </TableCell>
+                          </span>
                         ))}
-                        {canUpdate && (
-                          <TableCell className="p-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => begin(row)}
-                            >
-                              Edit headcount
-                            </Button>
-                          </TableCell>
-                        )}
-                      </TableRow>
+                        {canUpdate ? (
+                          <div className="flex justify-end">
+                            <RowActions
+                              actions={[
+                                {
+                                  label: "Edit headcount",
+                                  icon: <PencilLine />,
+                                  onSelect: () => begin(row),
+                                },
+                              ]}
+                            />
+                          </div>
+                        ) : null}
+                      </div>
                     ))}
-                    {!rows.length && (
-                      <TableRow>
-                        <TableCell
-                          className="p-4"
-                          colSpan={columns.length + (canUpdate ? 1 : 0)}
-                        >
-                          No general attendance recorded for this period.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
+                    {!rows.length ? (
+                      <p className="px-2 py-6 text-center text-xs text-ink-faint">
+                        No general attendance recorded for this period.
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
               </div>
-              <TablePagination
+              <ListPaginationFooter
                 page={page}
-                perPage={20}
+                perPage={perPage}
                 total={query.data?.meta.total ?? 0}
-                itemName="records"
                 onPageChange={setPage}
+                onPerPageChange={setPerPage}
+                itemName="headcount records"
+                pending={query.isFetching}
               />
             </>
           )}

@@ -8,6 +8,7 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
+  ListPaginationFooter,
   PersonAvatar,
   RowActions,
 } from "@/components/paper/primitives";
@@ -50,12 +51,13 @@ export default function PastoralNotesPage() {
 
   const [confidentiality, setConfidentiality] = React.useState<ConfidentialityLevel | "all">("all");
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(15);
   const [formOpen, setFormOpen] = React.useState(false);
   const [editTarget, setEditTarget] = React.useState<PastoralNote | null>(null);
 
   const notes = usePastoralNotes({
     page,
-    limit: 12,
+    limit: perPage,
     confidentiality: confidentiality === "all" ? undefined : confidentiality,
     sortBy: "created_at",
     sortOrder: "desc",
@@ -63,7 +65,6 @@ export default function PastoralNotesPage() {
 
   const rows = notes.data?.data ?? [];
   const total = notes.data?.meta?.total ?? 0;
-  const totalPages = Math.max(1, notes.data?.meta?.totalPages ?? 1);
 
   return (
     <div className="space-y-6">
@@ -168,14 +169,16 @@ export default function PastoralNotesPage() {
           )}
 
           {rows.length ? (
-            <div className="paper-card flex items-center justify-between rounded-2xl px-5 py-2.5 text-[11px] text-ink-faint">
-              <span>
-                Page <span className="num font-medium text-ink">{page}</span> of <span className="num font-medium text-ink">{totalPages}</span> · <span className="num">{total}</span> notes
-              </span>
-              <div className="flex items-center gap-1.5">
-                <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-                <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-              </div>
+            <div className="paper-card rounded-2xl">
+              <ListPaginationFooter
+                page={page}
+                perPage={perPage}
+                total={total}
+                onPageChange={setPage}
+                onPerPageChange={setPerPage}
+                itemName="notes"
+                pending={notes.isFetching}
+              />
             </div>
           ) : null}
         </div>

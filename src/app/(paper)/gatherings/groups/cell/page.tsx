@@ -16,7 +16,7 @@ import {
 import { toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard } from "@/components/paper/stat";
-import { EmptyState, PersonAvatar, RowActions, SearchField } from "@/components/paper/primitives";
+import { EmptyState, ListPaginationFooter, PersonAvatar, RowActions, SearchField } from "@/components/paper/primitives";
 import { AvatarStack } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -40,6 +40,8 @@ export default function CellGroupsPage() {
   const isCellLeader = !!profile?.role.includes("cell_leader");
 
   const [query, setQuery] = React.useState("");
+  const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(12);
   const [formOpen, setFormOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<CellGroup | null>(null);
   const [deleteTarget, setDeleteTarget] = React.useState<CellGroup | null>(null);
@@ -52,6 +54,7 @@ export default function CellGroupsPage() {
   const rows = query.trim()
     ? all.filter((g) => g.name.toLowerCase().includes(query.trim().toLowerCase()))
     : all;
+  const paged = rows.slice((page - 1) * perPage, (page - 1) * perPage + perPage);
 
   const branchesCovered = new Set(all.map((g) => g.branchId ?? "unassigned")).size;
   const isOwn = (g: CellGroup) => isCellLeader && !!profile?.memberId && g.leaderId === profile.memberId;
@@ -83,7 +86,7 @@ export default function CellGroupsPage() {
         <StatCard label="With a host" value={all.filter((g) => g.leaderId).length} tone="gold" />
       </div>
 
-      <SearchField value={query} onChange={setQuery} placeholder="Search circles…" className="w-full max-w-xs" />
+      <SearchField value={query} onChange={(v) => { setQuery(v); setPage(1); }} placeholder="Search circles…" className="w-full max-w-xs" />
 
       {groups.isLoading ? (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -98,7 +101,7 @@ export default function CellGroupsPage() {
         />
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {rows.map((group) => {
+          {paged.map((group) => {
             const leader = group.leaderId ? `${group.leaderFirstName ?? ""} ${group.leaderLastName ?? ""}`.trim() : "";
             return (
               <div key={group.id} className="paper-card flex h-full flex-col rounded-2xl p-4">
@@ -171,6 +174,16 @@ export default function CellGroupsPage() {
           })}
         </div>
       )}
+
+      <ListPaginationFooter
+        page={page}
+        perPage={perPage}
+        total={rows.length}
+        onPageChange={setPage}
+        onPerPageChange={setPerPage}
+        perPageOptions={[12, 24, 48]}
+        itemName="circles"
+      />
 
       <CellGroupFormDialog
         open={formOpen}

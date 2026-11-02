@@ -22,6 +22,7 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
+  ListPaginationFooter,
   SearchField,
 } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
@@ -100,6 +101,7 @@ function MediaInner() {
   const [query, setQuery] = React.useState("");
   const [search, setSearch] = React.useState("");
   const [page, setPage] = React.useState(1);
+  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [preview, setPreview] = React.useState<MediaAsset | null>(null);
   const [deleteTarget, setDeleteTarget] = React.useState<MediaAsset | null>(null);
   const [permTarget, setPermTarget] = React.useState<MediaAsset | null>(null);
@@ -114,7 +116,7 @@ function MediaInner() {
   const folders = useMediaFolders();
   const list = useMediaLibrary({
     page,
-    limit: PAGE_SIZE,
+    limit: perPage,
     folder: folder === "all" ? undefined : folder,
     mimeType: mimePrefixForKind(kind),
     permissions: permissions ? (permissions as MediaAsset["permissions"]) : undefined,
@@ -127,7 +129,7 @@ function MediaInner() {
 
   const rows = list.data?.data ?? [];
   const total = list.data?.total ?? 0;
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(total / perPage));
   const folderList = folders.data ?? [];
 
   return (
@@ -226,13 +228,17 @@ function MediaInner() {
               );
             })}
           </StaggerGroup>
-          <div className="paper-card flex items-center justify-between rounded-2xl px-5 py-2.5 text-[11px] text-ink-faint">
-            <span><span className="num font-medium text-ink">{(page - 1) * PAGE_SIZE + rows.length}</span> of <span className="num">{total}</span> files</span>
-            <div className="flex items-center gap-1.5">
-              <Button variant="outline" size="xs" disabled={page <= 1} onClick={() => setPage(page - 1)} className="rounded-full border-line bg-card">Prev</Button>
-              <span className="num">{page} / {totalPages}</span>
-              <Button variant="outline" size="xs" disabled={page >= totalPages} onClick={() => setPage(page + 1)} className="rounded-full border-line bg-card">Next</Button>
-            </div>
+          <div className="paper-card rounded-2xl">
+            <ListPaginationFooter
+              page={page}
+              perPage={perPage}
+              total={total}
+              onPageChange={setPage}
+              onPerPageChange={setPerPage}
+              perPageOptions={[12, 24, 48]}
+              itemName="files"
+              pending={list.isFetching}
+            />
           </div>
         </>
       )}
