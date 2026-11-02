@@ -4,9 +4,11 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
+  ArrowUpRight,
+  LayoutGrid,
   Mail,
-  MoreHorizontal,
   PauseCircle,
+  Rows3,
   ShieldCheck,
   Trash2,
   UserPlus,
@@ -20,19 +22,16 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
+  ManageHeading,
   PersonAvatar,
+  RowActions,
   SearchField,
+  ViewToggle,
+  type RowAction,
 } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
-import { ActionTooltip } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ExportDropdown } from "@/components/shared/export-dropdown";
 import { UserFormDialog } from "@/components/users/user-form-dialog";
 import { DeleteUserDialog } from "@/components/users/delete-user-dialog";
@@ -75,6 +74,7 @@ export default function AdminTeamPage() {
   const [query, setQuery] = React.useState("");
   const [search, setSearch] = React.useState("");
   const [status, setStatus] = React.useState("");
+  const [view, setView] = React.useState<"table" | "cards">("table");
   const [page, setPage] = React.useState(1);
   const [inviteOpen, setInviteOpen] = React.useState(false);
   const [roleTarget, setRoleTarget] = React.useState<UserProfile | null>(null);
@@ -109,6 +109,24 @@ export default function AdminTeamPage() {
     );
     return exportRows(all, labelMap);
   }, [search, status, labelMap]);
+
+  // One Manage grammar shared by the table rows and the cards.
+  const manageActions = (member: UserProfile): (RowAction | false | "" | undefined)[] => [
+    { label: "Open full record", icon: <ArrowUpRight />, href: `/admin/team/${member.profileId}` },
+    canUpdate && { label: `Change ${member.firstName}'s roles`, icon: <ShieldCheck />, onSelect: () => setRoleTarget(member) },
+    canDelete && member.status === "active" && {
+      label: "Pause access",
+      icon: <PauseCircle />,
+      tone: "warning",
+      onSelect: () => setDeleteState({ users: [member], mode: "deactivate" }),
+    },
+    canDelete && member.status !== "active" && {
+      label: "Remove from workspace",
+      icon: <Trash2 />,
+      tone: "danger",
+      onSelect: () => setDeleteState({ users: [member], mode: "delete" }),
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -153,6 +171,16 @@ export default function AdminTeamPage() {
         <FilterChip active={status === ""} onClick={() => { setStatus(""); setPage(1); }}>All</FilterChip>
         <FilterChip active={status === "active"} onClick={() => { setStatus("active"); setPage(1); }}>Active</FilterChip>
         <FilterChip active={status === "inactive"} onClick={() => { setStatus("inactive"); setPage(1); }}>Paused</FilterChip>
+        <span className="ml-auto">
+          <ViewToggle
+            value={view}
+            onChange={setView}
+            options={[
+              { value: "table", label: "Table", icon: <Rows3 /> },
+              { value: "cards", label: "Cards", icon: <LayoutGrid /> },
+            ]}
+          />
+        </span>
       </div>
 
       {users.isLoading ? (
@@ -166,65 +194,77 @@ export default function AdminTeamPage() {
         />
       ) : (
         <>
-          <StaggerGroup className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-            {rows.map((member) => (
-              <StaggerItem key={member.profileId}>
-                <div className="paper-card flex h-full flex-col rounded-2xl p-4">
-                  <div className="flex items-start justify-between gap-2">
-                    <button type="button" onClick={() => router.push(`/admin/team/${member.profileId}`)} className="flex min-w-0 items-center gap-3 text-left">
-                      <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.avatarUrl} size="md" />
-                      <div className="min-w-0">
-                        <p className="truncate text-xs font-semibold">{member.firstName} {member.lastName}</p>
-                        <p className="truncate text-[11px] text-ink-faint">{member.role.map((r) => resolveRoleLabel(r, labelMap)).join(" · ") || "No role assigned"}</p>
-                      </div>
-                    </button>
-                    {(canUpdate || canDelete) ? (
-                      <DropdownMenu>
-                        <ActionTooltip label={`Manage ${member.firstName}`}>
-                          <DropdownMenuTrigger asChild>
-                            <button type="button" aria-label={`Manage ${member.firstName}`} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
-                              <MoreHorizontal className="size-3.5" />
-                            </button>
-                          </DropdownMenuTrigger>
-                        </ActionTooltip>
-                        <DropdownMenuContent align="end" className="w-44">
-                          {canUpdate ? (
-                            <DropdownMenuItem className="gap-2 text-xs" onClick={() => setRoleTarget(member)}>
-                              <ShieldCheck className="size-3.5" /> Change roles
-                            </DropdownMenuItem>
-                          ) : null}
-                          {canUpdate ? (
-                            <DropdownMenuItem className="gap-2 text-xs" onClick={() => router.push(`/admin/team/${member.profileId}`)}>
-                              <UserPlus className="size-3.5" /> Open full record
-                            </DropdownMenuItem>
-                          ) : null}
-                          {canDelete && member.status === "active" ? (
-                            <DropdownMenuItem className="gap-2 text-xs" onClick={() => setDeleteState({ users: [member], mode: "deactivate" })}>
-                              <PauseCircle className="size-3.5" /> Pause access
-                            </DropdownMenuItem>
-                          ) : null}
-                          {canDelete && member.status !== "active" ? (
-                            <DropdownMenuItem className="gap-2 text-xs" onClick={() => setDeleteState({ users: [member], mode: "delete" })}>
-                              <Trash2 className="size-3.5 text-rose" /> Remove from workspace
-                            </DropdownMenuItem>
-                          ) : null}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    ) : null}
+          {view === "table" ? (
+            <div className="paper-card overflow-hidden rounded-2xl">
+              <div className="overflow-x-auto">
+                <div className="min-w-[720px]">
+                  <div className="rule-label grid grid-cols-[minmax(0,1.8fr)_minmax(0,1.1fr)_1fr_0.9fr_0.9fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
+                    <span>Person</span>
+                    <span>Roles</span>
+                    <span>Branch</span>
+                    <span>Status</span>
+                    <span>Last sign-in</span>
+                    <ManageHeading />
                   </div>
-                  <p className="mt-2 truncate text-[10px] text-ink-faint">{member.email ?? "No email on file"}</p>
-                  <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
-                    <span className="flex items-center gap-1.5">
-                      <Tag tone={member.status === "active" ? "moss" : "rose"} dot>{member.status === "active" ? "Active" : "Paused"}</Tag>
-                      {member.isAdminHq ? <Tag tone="sky">HQ</Tag> : null}
-                      {member.branch ? <span className="truncate">· {member.branch.name}</span> : null}
-                    </span>
-                    <span>{member.lastSignInAt ? new Date(member.lastSignInAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "never signed in"}</span>
+                  <div className="divide-y divide-line/70">
+                    {rows.map((member) => (
+                      <div key={member.profileId} className="group grid grid-cols-[minmax(0,1.8fr)_minmax(0,1.1fr)_1fr_0.9fr_0.9fr_auto] items-center gap-3 px-5 py-3 text-xs transition-colors hover:bg-muted/40">
+                        <button type="button" onClick={() => router.push(`/admin/team/${member.profileId}`)} className="flex min-w-0 items-center gap-3 text-left">
+                          <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.avatarUrl} size="sm" />
+                          <span className="min-w-0">
+                            <span className="block truncate font-semibold">{member.firstName} {member.lastName}</span>
+                            <span className="block truncate text-[10px] text-ink-faint">{member.email ?? "No email on file"}</span>
+                          </span>
+                        </button>
+                        <span className="truncate text-[11px] text-ink-soft">
+                          {member.role.map((r) => resolveRoleLabel(r, labelMap)).join(" · ") || "No role assigned"}
+                        </span>
+                        <span className="truncate text-[11px] text-ink-soft">{member.branch?.name ?? "—"}</span>
+                        <span>
+                          <Tag tone={member.status === "active" ? "moss" : "rose"} dot>{member.status === "active" ? "Active" : "Paused"}</Tag>
+                          {member.isAdminHq ? <Tag tone="sky" className="ml-1">HQ</Tag> : null}
+                        </span>
+                        <span className="num text-[10px] text-ink-faint">
+                          {member.lastSignInAt ? new Date(member.lastSignInAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "never"}
+                        </span>
+                        <div className="flex justify-end">
+                          <RowActions actions={manageActions(member)} />
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </StaggerItem>
-            ))}
-          </StaggerGroup>
+              </div>
+            </div>
+          ) : (
+            <StaggerGroup className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              {rows.map((member) => (
+                <StaggerItem key={member.profileId}>
+                  <div className="paper-card flex h-full flex-col rounded-2xl p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <button type="button" onClick={() => router.push(`/admin/team/${member.profileId}`)} className="flex min-w-0 items-center gap-3 text-left">
+                        <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.avatarUrl} size="md" />
+                        <div className="min-w-0">
+                          <p className="truncate text-xs font-semibold">{member.firstName} {member.lastName}</p>
+                          <p className="truncate text-[11px] text-ink-faint">{member.role.map((r) => resolveRoleLabel(r, labelMap)).join(" · ") || "No role assigned"}</p>
+                        </div>
+                      </button>
+                      <RowActions reveal={false} actions={manageActions(member)} />
+                    </div>
+                    <p className="mt-2 truncate text-[10px] text-ink-faint">{member.email ?? "No email on file"}</p>
+                    <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
+                      <span className="flex items-center gap-1.5">
+                        <Tag tone={member.status === "active" ? "moss" : "rose"} dot>{member.status === "active" ? "Active" : "Paused"}</Tag>
+                        {member.isAdminHq ? <Tag tone="sky">HQ</Tag> : null}
+                        {member.branch ? <span className="truncate">· {member.branch.name}</span> : null}
+                      </span>
+                      <span>{member.lastSignInAt ? new Date(member.lastSignInAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "never signed in"}</span>
+                    </div>
+                  </div>
+                </StaggerItem>
+              ))}
+            </StaggerGroup>
+          )}
 
           <div className="paper-card flex items-center justify-between rounded-2xl px-5 py-2.5 text-[11px] text-ink-faint">
             <span><span className="num font-medium text-ink">{(page - 1) * PAGE_SIZE + rows.length}</span> of <span className="num">{total}</span> seats</span>

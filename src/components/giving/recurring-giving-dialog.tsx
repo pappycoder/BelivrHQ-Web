@@ -27,8 +27,11 @@ import { useBranchesList } from "@/hooks/use-branches";
 import {
   useGivingCategories,
   useCreateRecurringGiving,
+  useRecurringPaymentOptions,
 } from "@/hooks/use-giving";
 import { getToastErrorMessage, toast } from "@/lib/toast";
+import { AlertTriangle } from "lucide-react";
+import Link from "next/link";
 
 export function RecurringGivingDialog({
   open,
@@ -58,6 +61,10 @@ export function RecurringGivingDialog({
     { enabled: open && !!branchId },
   );
   const mutation = useCreateRecurringGiving();
+  const paymentOptions = useRecurringPaymentOptions();
+  // Automatic charges need a configured church Paystack account; when the
+  // options read proves it is missing, explain before the submit fails.
+  const recurringBlocked = paymentOptions.data?.recurringAvailable === false;
   const [memberId, setMemberId] = useState("");
   const [memberName, setMemberName] = useState("");
   const [email, setEmail] = useState("");
@@ -117,6 +124,25 @@ export function RecurringGivingDialog({
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-4">
+          {recurringBlocked ? (
+            <div
+              role="alert"
+              className="flex items-start gap-2.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2.5 text-xs text-amber-700 dark:text-amber-300"
+            >
+              <AlertTriangle className="mt-0.5 size-3.5 shrink-0" />
+              <p>
+                Recurring gifts charge cards automatically, which needs a
+                Paystack payment account for your church. Set one up under{" "}
+                <Link
+                  href="/admin/channels"
+                  className="font-medium underline underline-offset-2"
+                >
+                  Settings → Integrations
+                </Link>{" "}
+                first.
+              </p>
+            </div>
+          ) : null}
           <GivingFormSection title="Giver & branch">
             <div className="space-y-2">
               <Label>Branch</Label>
@@ -271,7 +297,7 @@ export function RecurringGivingDialog({
             <Button
               type="submit"
               loading={mutation.isPending}
-              disabled={!branchId || !memberId || !categoryId}
+              disabled={!branchId || !memberId || !categoryId || recurringBlocked}
             >
               Create Schedule
             </Button>

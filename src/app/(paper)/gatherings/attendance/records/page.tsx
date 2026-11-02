@@ -29,7 +29,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ExportDropdown } from "@/components/shared/export-dropdown";
 import { ConfirmDeleteDialog } from "@/components/pastoral/confirm-delete-dialog";
 import { usePermissions } from "@/hooks/use-permissions";
-import { useAttendanceRecords, useAttendanceServices, useDeleteAttendance, ATTENDANCE_CATEGORIES, type AttendanceRecord, type AttendanceCategory } from "@/hooks/use-attendance";
+import { useAttendanceRecords, useAttendanceServices, useDeleteAttendance, ATTENDANCE_CATEGORIES, attendanceCategoryLabel, type AttendanceRecord, type AttendanceCategory } from "@/hooks/use-attendance";
 import { number } from "@/lib/paper/format";
 
 const PAGE_SIZE = 20;
@@ -48,7 +48,7 @@ function toExportRow(record: AttendanceRecord) {
     name: record.memberName ?? record.visitorName ?? "Member",
     type: record.memberId ? "member" : "visitor",
     service: record.serviceName ?? record.eventName ?? "",
-    category: record.category ?? "",
+    category: attendanceCategoryLabel(record.category) ?? "",
     source: record.source ?? "",
     when: new Date(record.checkInAt).toISOString(),
   };
@@ -173,7 +173,7 @@ export default function AttendanceRecordsPage() {
                     </span>
                     <span><Tag tone={record.memberId ? "moss" : "gold"}>{record.memberId ? "member" : "visitor"}</Tag></span>
                     <span className="min-w-0 truncate text-[11px] text-ink-soft">{record.serviceName ?? record.eventName ?? "—"}</span>
-                    <span className="text-[11px] capitalize text-ink-faint">{record.category ?? "—"}</span>
+                    <span className="text-[11px] capitalize text-ink-faint">{attendanceCategoryLabel(record.category) ?? "—"}</span>
                     <span className="num text-[10px] text-ink-faint">{stamp(record.checkInAt)}</span>
                     <div className="flex justify-end">
                       {canDelete ? (

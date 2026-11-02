@@ -244,7 +244,7 @@ export default function AttendanceServicesPage() {
         branchId: isHq && draft.branchId ? draft.branchId : undefined,
       },
       {
-        onSuccess: () => { toast.success("The rota has a new rhythm."); setFormOpen(false); },
+        onSuccess: () => { toast.success("Service added."); setFormOpen(false); },
         onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't create the service.")),
       },
     );
@@ -324,7 +324,7 @@ export default function AttendanceServicesPage() {
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
         <DialogContent className="rounded-2xl border-line bg-card">
           <DialogHeader>
-            <DialogTitle className="font-display">{editing ? `Edit ${editing.name}` : "New recurring service"}</DialogTitle>
+            <DialogTitle className="font-display">{editing ? `Edit ${editing.name}` : "New service"}</DialogTitle>
             <DialogDescription className="text-xs">
               Recurrence, time and category drive the check-in windows. Weekly services can float on any day; one-time and date-range services only accept their own dates.
             </DialogDescription>
@@ -430,7 +430,7 @@ export default function AttendanceServicesPage() {
               <Switch checked={draft.isActive} onCheckedChange={(v) => setDraft((d) => ({ ...d, isActive: !!v }))} />
             </label>
             <Button type="submit" disabled={createService.isPending || updateService.isPending} className="h-10 w-full rounded-lg text-sm">
-              {editing ? "Save changes" : "Add to the rota"}
+              {editing ? "Save changes" : "Add service"}
             </Button>
           </form>
         </DialogContent>

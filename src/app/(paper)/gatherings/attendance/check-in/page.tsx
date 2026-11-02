@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { GeneralAttendancePanel } from "@/components/attendance/general-attendance-panel";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
   useAttendanceServices,
@@ -29,6 +30,7 @@ import {
   useRecordAttendance,
   ATTENDANCE_CATEGORIES,
   SERVICE_CATEGORIES,
+  attendanceCategoryLabel,
   type AttendanceCategory,
 } from "@/hooks/use-attendance";
 import { useMembersList, useSearchMembers } from "@/hooks/use-members";
@@ -221,6 +223,14 @@ export default function AttendanceCheckInPage() {
         </div>
       </div>
 
+      {/* Reported headcount — the whole-room total, independent of named check-ins. */}
+      <GeneralAttendancePanel
+        service={activeService}
+        requireService
+        entryMode="inline"
+        showRecords={false}
+      />
+
       <div className="flex flex-wrap items-center gap-2">
         <FilterChip active={tab === "roster"} onClick={() => setTab("roster")}>Members roster</FilterChip>
         <FilterChip active={tab === "walkin"} onClick={() => setTab("walkin")}>Walk-in</FilterChip>
@@ -314,7 +324,7 @@ export default function AttendanceCheckInPage() {
                 <UserPlus className="size-4" /> {createVisitor.isPending ? "Welcoming…" : "Check in as visitor"}
               </Button>
               <p className="text-center text-[10px] text-ink-faint">
-                Category is {category}; change it with the chips above before submitting.
+                Category is {attendanceCategoryLabel(category)}; change it with the chips above before submitting.
               </p>
             </form>
           </SectionCard>
@@ -327,7 +337,7 @@ export default function AttendanceCheckInPage() {
                 <div key={record.attendanceId} className="flex items-center gap-2.5 px-4 py-2.5">
                   <PersonAvatar name={record.memberName ?? record.visitorName ?? "Guest"} size="xs" />
                   <span className="min-w-0 flex-1 truncate text-[11px] font-medium">{record.memberName ?? record.visitorName ?? "Guest"}</span>
-                  <span className="text-[9px] uppercase text-ink-faint">{record.category ?? "—"}</span>
+                  <span className="text-[9px] uppercase text-ink-faint">{attendanceCategoryLabel(record.category) ?? "—"}</span>
                 </div>
               ))}
               {!recent.data?.data?.length ? <p className="px-4 py-8 text-center text-[11px] text-ink-faint">The first one through the door starts the list.</p> : null}

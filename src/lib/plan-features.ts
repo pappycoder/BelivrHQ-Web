@@ -48,7 +48,12 @@ export function featureForPermission(permission: string): PlanFeature | undefine
   if (['pastoral', 'pastoral_confidential', 'appointments'].includes(resource)) return 'pastoral';
   if (['departments', 'cell_groups'].includes(resource)) return 'groups';
   if (['sermons', 'media'].includes(resource)) return 'media';
-  if (['templates', 'broadcasts', 'messages'].includes(resource)) return 'email';
+  // The shared inbox ("emails") is part of the email feature (Community);
+  // WhatsApp/SMS message history is its own Network feature. Without these
+  // mappings the resources fell through as plan-free and leaked into Essentials.
+  if (['emails', 'templates', 'broadcasts', 'messages'].includes(resource)) return 'email';
+  if (resource === 'whatsapp') return 'whatsapp';
+  if (resource === 'sms') return 'sms';
   if (resource === 'reports' && (surface === 'financial' || surface === 'view')) return 'giving';
   if (resource === 'integrations') return 'giving';
   if (resource === 'calls') return 'calls';

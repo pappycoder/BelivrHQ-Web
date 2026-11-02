@@ -53,7 +53,7 @@ export function UserDetailSidebar({ user }: UserDetailSidebarProps) {
         <WorkspaceAvatar
           id={user.profileId}
           name={`${user.firstName} ${user.lastName}`}
-          photoUrl={user.avatarUrl}
+          photoUrl={user.avatarUrl ?? user.member?.photoUrl}
           className="mx-auto size-14"
         />
         <h1 className="mt-2 text-xl font-semibold">

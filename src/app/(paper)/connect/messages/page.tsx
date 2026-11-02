@@ -54,7 +54,9 @@ function stamp(value: string) {
 
 export default function MessagesPage() {
   const { can, ready } = usePermissions();
-  const canSend = ready && (can("whatsapp", "create") || can("messages", "create"));
+  // Outbound sends ride the `whatsapp` resource (SMS + WhatsApp share it);
+  // a "messages" resource was never in the permission catalog.
+  const canSend = ready && can("whatsapp", "create");
 
   const [direction, setDirection] = React.useState<MessageDirection | "all">("all");
   const [phone, setPhone] = React.useState("");

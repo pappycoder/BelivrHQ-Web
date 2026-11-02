@@ -15,8 +15,31 @@ export const ATTENDANCE_CATEGORIES: {
 }[] = [
   { value: "adult", label: "Adult" },
   { value: "children", label: "Children" },
-  { value: "unspecified", label: "Unspecified" },
+  // `unspecified` is the bucket for mixed crowds — adults and children alike.
+  { value: "unspecified", label: "Mixed" },
 ];
+
+/**
+ * Display label for an attendance record category. The stored value
+ * `unspecified` (the default on mixed services) reads as "Mixed" because it
+ * captures both adults and children. Returns `null` for a missing value so
+ * callers can keep their own placeholder.
+ */
+export function attendanceCategoryLabel(
+  category?: string | null,
+): string | null {
+  switch (category) {
+    case "adult":
+      return "Adult";
+    case "children":
+      return "Children";
+    case "unspecified":
+    case "mixed":
+      return "Mixed";
+    default:
+      return category ? category.replace(/_/g, " ") : null;
+  }
+}
 
 export const SERVICE_CATEGORIES: { value: ServiceCategory; label: string }[] = [
   { value: "adult", label: "Adult" },

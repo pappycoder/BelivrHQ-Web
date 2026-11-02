@@ -80,34 +80,22 @@ export default function PaperHomePage() {
       />
 
       <StaggerGroup className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StaggerItem>
-          {ready && canAny("members:all:read") ? (
-            <StatCard label="People" value={memberTotal} tone="moss" icon={<Users className="size-4" />} deltaLabel="known by name" />
-          ) : (
-            <Skeleton className="h-[124px] rounded-2xl" />
-          )}
-        </StaggerItem>
-        <StaggerItem>
-          {ready && canAny("giving:dashboard:read") ? (
-            <StatCard
-              label="Giving · period"
-              value={giving.data?.total ?? 0}
-              prefix={givingCurrency === "NGN" ? "₦" : "$"}
-              tone="brand"
-              icon={<HandCoins className="size-4" />}
-              deltaLabel={`${number(giving.data?.count ?? 0)} gifts`}
-            />
-          ) : (
-            <Skeleton className="h-[124px] rounded-2xl" />
-          )}
-        </StaggerItem>
-        <StaggerItem>
-          {ready && canAny("events:calendar:read") ? (
-            <UpcomingStat />
-          ) : (
-            <Skeleton className="h-[124px] rounded-2xl" />
-          )}
-        </StaggerItem>
+        <GatedMetric ready={ready} show={canAny("members:all:read")}>
+          <StatCard label="People" value={memberTotal} tone="moss" icon={<Users className="size-4" />} deltaLabel="known by name" />
+        </GatedMetric>
+        <GatedMetric ready={ready} show={canAny("giving:dashboard:read")}>
+          <StatCard
+            label="Giving · period"
+            value={giving.data?.total ?? 0}
+            prefix={givingCurrency === "NGN" ? "₦" : "$"}
+            tone="brand"
+            icon={<HandCoins className="size-4" />}
+            deltaLabel={`${number(giving.data?.count ?? 0)} gifts`}
+          />
+        </GatedMetric>
+        <GatedMetric ready={ready} show={canAny("events:calendar:read")}>
+          <UpcomingStat />
+        </GatedMetric>
         <StaggerItem>
           <StatCard
             label="Unread signals"
@@ -250,6 +238,30 @@ export default function PaperHomePage() {
       </p>
     </div>
   );
+}
+
+/**
+ * One headline metric that only exists once its permission resolves.
+ * Skeleton while the profile loads; nothing at all when the viewer (or the
+ * church's plan) cannot see it — never an endless shimmer.
+ */
+function GatedMetric({
+  ready,
+  show,
+  children,
+}: {
+  ready: boolean;
+  show: boolean;
+  children: React.ReactNode;
+}) {
+  if (!ready) {
+    return (
+      <StaggerItem>
+        <Skeleton className="h-[124px] rounded-2xl" />
+      </StaggerItem>
+    );
+  }
+  return show ? <StaggerItem>{children}</StaggerItem> : null;
 }
 
 function UpcomingStat() {

@@ -25,6 +25,7 @@ import {
   useService,
   useServiceAttendance,
   SERVICE_CATEGORIES,
+  attendanceCategoryLabel,
   type AttendanceRecord,
 } from "@/hooks/use-attendance";
 import { useGivingTransactionsAll } from "@/hooks/use-giving";
@@ -149,7 +150,7 @@ export default function ServiceDetailPage({
                     <span className="block text-[10px] text-ink-faint">{formatDate(record.checkInAt)} · {record.source}</span>
                   </span>
                   {record.visitorId ? <Tag tone="gold">guest</Tag> : <Tag tone="moss">member</Tag>}
-                  <span className="num hidden text-[10px] text-ink-faint sm:block">{record.category === "children" ? "child" : "adult"}</span>
+                  <span className="num hidden text-[10px] text-ink-faint sm:block">{(attendanceCategoryLabel(record.category) ?? "—").toLowerCase()}</span>
                 </div>
               ))}
               {namedRows.length > 12 ? (

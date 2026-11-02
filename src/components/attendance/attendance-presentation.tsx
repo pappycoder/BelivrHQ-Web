@@ -51,11 +51,11 @@ export function AttendanceCategoryBadge({ category }: { category?: string }) {
       ? "Adult"
       : category === "children"
         ? "Children"
-        : category === "mixed"
-          ? "Mixed (Adults & Children)"
-          : category && category !== "unspecified"
+        : category === "mixed" || category === "unspecified"
+          ? "Mixed"
+          : category
             ? category.replace(/_/g, " ")
-            : "Unspecified";
+            : "Mixed";
   return (
     <Badge
       variant="outline"

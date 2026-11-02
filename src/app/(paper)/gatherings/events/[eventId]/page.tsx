@@ -20,6 +20,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { GeneralAttendancePanel } from "@/components/attendance/general-attendance-panel";
+import { attendanceCategoryLabel } from "@/hooks/use-attendance";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
   useEvent,
@@ -216,7 +218,16 @@ export default function EventDetailPage({
         ) : null}
 
         {canSeeAttendance ? (
-          <TabsContent value="attendance" className="mt-4">
+          <TabsContent value="attendance" className="mt-4 space-y-4">
+            <GeneralAttendancePanel
+              context={{
+                type: "event",
+                id: e.eventId,
+                name: e.title,
+                branchId: e.branchId,
+                active: !e.archivedAt,
+              }}
+            />
             <SectionCard eyebrow="In the room" title={`${attendance.data?.length ?? 0} check-ins`} bodyClassName="p-0">
               {attendance.data?.length ? (
                 <div className="divide-y divide-line/70">
@@ -227,7 +238,7 @@ export default function EventDetailPage({
                         {record.memberName ?? record.visitorName ?? "Guest"}
                         {!record.memberId && record.visitorName ? <span className="ml-1.5 text-[9px] text-gold">walk-in</span> : null}
                       </span>
-                      <Tag tone="neutral">{record.category ?? "—"}</Tag>
+                      <Tag tone="neutral">{attendanceCategoryLabel(record.category) ?? "—"}</Tag>
                       <span className="num w-40 shrink-0 text-right text-[10px] text-ink-faint">
                         {new Date(record.checkInAt).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                       </span>

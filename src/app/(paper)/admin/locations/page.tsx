@@ -3,26 +3,23 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Building2, MapPin, MoreHorizontal, Plus, Users } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Building2, LayoutGrid, MapPin, PencilLine, Plus, Archive, ArchiveRestore, Rows3, Trash2, Users } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
   FilterChip,
+  ManageHeading,
   PersonAvatar,
+  RowActions,
   SearchField,
+  ViewToggle,
+  type RowAction,
 } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
-import { ActionTooltip } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ArchiveConfirmDialog, type ArchiveDialogKind } from "@/components/shared/archive-confirm-dialog";
 import { BranchFormDialog } from "@/components/branches/branch-form-dialog";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -48,6 +45,7 @@ export default function AdminBranchesPage() {
   const [query, setQuery] = React.useState("");
   const [search, setSearch] = React.useState("");
   const [archivedView, setArchivedView] = React.useState(false);
+  const [view, setView] = React.useState<"table" | "cards">("table");
   const [formTarget, setFormTarget] = React.useState<{ open: boolean; branch: Branch | null }>({ open: false, branch: null });
   const [archiveState, setArchiveState] = React.useState<DialogState>(null);
 
@@ -67,6 +65,15 @@ export default function AdminBranchesPage() {
 
   const archiveMutation =
     archiveState?.kind === "restore" ? restore : archiveState?.kind === "purge" ? del : archive;
+
+  // One Manage grammar shared by the table rows and the cards.
+  const manageActions = (branch: Branch): (RowAction | false | "" | undefined)[] => [
+    { label: `Open ${branch.name}`, icon: <ArrowUpRight />, href: `/admin/locations/${branch.branchId}` },
+    canUpdate && !branch.archivedAt && { label: "Edit branch", icon: <PencilLine />, onSelect: () => setFormTarget({ open: true, branch }) },
+    canDelete && !branch.archivedAt && { label: "Archive branch — keeps history", icon: <Archive />, onSelect: () => setArchiveState({ kind: "archive", branch }) },
+    canUpdate && branch.archivedAt && { label: "Restore branch", icon: <ArchiveRestore />, tone: "success", onSelect: () => setArchiveState({ kind: "restore", branch }) },
+    canDelete && branch.archivedAt && { label: "Delete forever", icon: <Trash2 />, tone: "danger", onSelect: () => setArchiveState({ kind: "purge", branch }) },
+  ];
 
   return (
     <div className="space-y-6">
@@ -97,6 +104,16 @@ export default function AdminBranchesPage() {
       <div className="flex flex-wrap items-center gap-2">
         <SearchField value={query} onChange={setQuery} placeholder="Search name, city or address…" className="w-full max-w-xs" />
         <FilterChip active={archivedView} onClick={() => setArchivedView((v) => !v)}>Archived</FilterChip>
+        <span className="ml-auto">
+          <ViewToggle
+            value={view}
+            onChange={setView}
+            options={[
+              { value: "table", label: "Table", icon: <Rows3 /> },
+              { value: "cards", label: "Cards", icon: <LayoutGrid /> },
+            ]}
+          />
+        </span>
       </div>
 
       {branches.isLoading ? (
@@ -108,52 +125,71 @@ export default function AdminBranchesPage() {
           description="A branch is a room people gather in — add one when the second Sunday service starts."
           action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => setFormTarget({ open: true, branch: null })}>Add the first branch</Button> : undefined}
         />
+      ) : view === "table" ? (
+        <div className="paper-card overflow-hidden rounded-2xl">
+          <div className="overflow-x-auto">
+            <div className="min-w-[640px]">
+              <div className="rule-label grid grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)_0.9fr_0.9fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
+                <span>Branch</span>
+                <span>Address</span>
+                <span>Members</span>
+                <span>Added</span>
+                <ManageHeading />
+              </div>
+              <div className="divide-y divide-line/70">
+                {rows.map((branch) => (
+                  <div key={branch.branchId} className="group grid grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)_0.9fr_0.9fr_auto] items-center gap-3 px-5 py-3.5 text-xs transition-colors hover:bg-muted/40">
+                    <button type="button" onClick={() => router.push(`/admin/locations/${branch.branchId}`)} className="flex min-w-0 items-center gap-3 text-left">
+                      <PersonAvatar name={branch.name} size="sm" />
+                      <span className="min-w-0">
+                        <span className="flex items-center gap-2">
+                          <span className="truncate font-semibold">{branch.name}</span>
+                          {branch.isHeadquarters ? <Tag tone="gold">HQ</Tag> : null}
+                          {branch.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
+                        </span>
+                      </span>
+                    </button>
+                    <span className="flex min-w-0 items-center gap-1.5 text-[11px] text-ink-faint">
+                      <MapPin className="size-2.5 shrink-0" />
+                      <span className="truncate">{[branch.city, branch.state].filter(Boolean).join(", ") || "No address on file"}</span>
+                    </span>
+                    <span className="num text-[11px] text-ink-soft">{number(branch.memberCount ?? 0)}</span>
+                    <span className="text-[10px] text-ink-faint">{formatDate(branch.createdAt)}</span>
+                    <div className="flex justify-end">
+                      <RowActions actions={manageActions(branch)} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       ) : (
-        <StaggerGroup className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl">
+        <StaggerGroup className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {rows.map((branch) => (
             <StaggerItem key={branch.branchId}>
-              <div className="group flex items-center gap-4 px-5 py-3.5">
-                <button type="button" onClick={() => router.push(`/admin/locations/${branch.branchId}`)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
-                  <PersonAvatar name={branch.name} size="md" />
-                  <span className="min-w-0">
-                    <span className="flex items-center gap-2">
-                      <span className="truncate text-xs font-semibold">{branch.name}</span>
-                      {branch.isHeadquarters ? <Tag tone="gold">HQ</Tag> : null}
-                      {branch.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
+              <div className="paper-card flex h-full flex-col rounded-2xl p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <button type="button" onClick={() => router.push(`/admin/locations/${branch.branchId}`)} className="flex min-w-0 items-center gap-3 text-left">
+                    <PersonAvatar name={branch.name} size="md" />
+                    <span className="min-w-0">
+                      <span className="flex items-center gap-2">
+                        <span className="truncate text-xs font-semibold">{branch.name}</span>
+                        {branch.isHeadquarters ? <Tag tone="gold">HQ</Tag> : null}
+                        {branch.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
+                      </span>
+                      <span className="mt-0.5 flex items-center gap-1.5 text-[10px] text-ink-faint">
+                        <MapPin className="size-2.5" />
+                        <span className="truncate">{[branch.city, branch.state].filter(Boolean).join(", ") || "No address on file"}</span>
+                      </span>
                     </span>
-                    <span className="mt-0.5 flex items-center gap-1.5 text-[10px] text-ink-faint">
-                      <MapPin className="size-2.5" />
-                      <span className="truncate">{[branch.city, branch.state].filter(Boolean).join(", ") || "No address on file"}</span>
-                      <span className="num ml-2 shrink-0">{number(branch.memberCount ?? 0)} members</span>
-                    </span>
-                  </span>
-                </button>
-                <span className="hidden text-[10px] text-ink-faint sm:block">added {formatDate(branch.createdAt)}</span>
-                {canUpdate || canDelete ? (
-                  <DropdownMenu>
-                    <ActionTooltip label={`Manage ${branch.name}`}>
-                      <DropdownMenuTrigger asChild>
-                        <button type="button" aria-label={`Manage ${branch.name}`} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
-                          <MoreHorizontal className="size-3.5" />
-                        </button>
-                      </DropdownMenuTrigger>
-                    </ActionTooltip>
-                    <DropdownMenuContent align="end" className="w-44">
-                      {canUpdate && !branch.archivedAt ? (
-                        <DropdownMenuItem className="text-xs" onClick={() => setFormTarget({ open: true, branch })}>Edit</DropdownMenuItem>
-                      ) : null}
-                      {canDelete && !branch.archivedAt ? (
-                        <DropdownMenuItem className="text-xs" onClick={() => setArchiveState({ kind: "archive", branch })}>Archive</DropdownMenuItem>
-                      ) : null}
-                      {branch.archivedAt && canUpdate ? (
-                        <DropdownMenuItem className="text-xs" onClick={() => setArchiveState({ kind: "restore", branch })}>Restore</DropdownMenuItem>
-                      ) : null}
-                      {branch.archivedAt && canDelete ? (
-                        <DropdownMenuItem className="text-xs text-rose" onClick={() => setArchiveState({ kind: "purge", branch })}>Delete forever</DropdownMenuItem>
-                      ) : null}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : null}
+                  </button>
+                  <RowActions reveal={false} actions={manageActions(branch)} />
+                </div>
+                <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
+                  <span className="num">{number(branch.memberCount ?? 0)} members</span>
+                  <span>added {formatDate(branch.createdAt)}</span>
+                </div>
               </div>
             </StaggerItem>
           ))}

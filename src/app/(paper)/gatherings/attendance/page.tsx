@@ -22,6 +22,7 @@ import {
   useAttendanceTrends,
   useAttendanceRecords,
   useAttendanceServices,
+  attendanceCategoryLabel,
 } from "@/hooks/use-attendance";
 import { number } from "@/lib/paper/format";
 
@@ -135,7 +136,7 @@ export default function AttendanceDashboardPage() {
                     <div className="flex flex-wrap gap-1.5">
                       {Object.entries(data.byCategory).map(([key, value]) => (
                         <Tag key={key} tone={key === "children" ? "gold" : "moss"}>
-                          <span className="capitalize">{key}</span> · <span className="num">{value}</span>
+                          <span className="capitalize">{attendanceCategoryLabel(key) ?? key}</span> · <span className="num">{value}</span>
                         </Tag>
                       ))}
                     </div>
@@ -181,7 +182,11 @@ export default function AttendanceDashboardPage() {
           <SectionCard className="lg:col-span-5" eyebrow="Rhythm" title="Weekly services" bodyClassName="p-0">
             <div className="divide-y divide-line/70">
               {(services.data?.data ?? []).map((service) => (
-                <div key={service.serviceId} className="flex items-center gap-3 px-5 py-3">
+                <Link
+                  key={service.serviceId}
+                  href={`/gatherings/attendance/services/${service.serviceId}`}
+                  className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-muted/40"
+                >
                   <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-muted text-ink-faint">
                     <UserRoundPlus className="size-3.5" />
                   </span>
@@ -192,7 +197,7 @@ export default function AttendanceDashboardPage() {
                     </span>
                   </span>
                   <span className="num text-[11px] text-ink-soft">{service.attendanceCount ?? 0} all-time</span>
-                </div>
+                </Link>
               ))}
               {!services.data?.data?.length ? <p className="px-5 py-8 text-center text-xs text-ink-faint">No active services yet.</p> : null}
             </div>

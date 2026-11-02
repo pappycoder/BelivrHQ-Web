@@ -33,7 +33,9 @@ export default function NewEventPage() {
   const { can, ready } = usePermissions();
   const { data: profile } = useCurrentProfile();
   const isHq = !!profile?.isAdminHq;
-  const canCreate = ready && can("events:create", "create");
+  // Coarse `events:create` grant — the previous "events:create" resource
+  // string built a nonexistent `events:create:create` code that never opened.
+  const canCreate = ready && can("events", "create");
 
   const branches = useBranchesList({ limit: 100 }, { enabled: isHq });
   const createEvent = useCreateEvent();
