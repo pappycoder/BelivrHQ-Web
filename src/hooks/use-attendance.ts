@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { usePermissions } from "@/hooks/use-permissions";
 import { api } from "@/lib/api";
+import type { ScheduleRecurrence } from "@/lib/schedule-occurrence";
 
 // ─── Types ───────────────────────────────────────────────
 
@@ -33,6 +34,12 @@ export interface ChurchService {
   dayOfWeek?: number;
   startTime?: string;
   endTime?: string;
+  /** How the schedule repeats; the API treats a missing value as `weekly`. */
+  recurrence?: ScheduleRecurrence;
+  /** `YYYY-MM-DD` start of the schedule window (required for one-time/range). */
+  startsOn?: string;
+  /** `YYYY-MM-DD` end of the schedule window (required for date ranges). */
+  endsOn?: string;
   isActive: boolean;
   /** All-time check-in count (populated by list/detail endpoints). */
   attendanceCount?: number;
@@ -124,16 +131,21 @@ export interface CreateServiceInput {
   dayOfWeek?: number;
   startTime?: string;
   endTime?: string;
+  recurrence?: ScheduleRecurrence;
+  startsOn?: string;
+  endsOn?: string;
   isActive?: boolean;
 }
 
 export interface UpdateServiceInput extends Partial<
-  Omit<CreateServiceInput, "dayOfWeek" | "startTime" | "endTime">
+  Omit<CreateServiceInput, "dayOfWeek" | "startTime" | "endTime" | "startsOn" | "endsOn">
 > {
   /** Explicit `null` clears the stored value; `undefined` leaves it unchanged. */
   dayOfWeek?: number | null;
   startTime?: string | null;
   endTime?: string | null;
+  startsOn?: string | null;
+  endsOn?: string | null;
 }
 
 export interface RecordAttendanceInput {
@@ -144,6 +156,8 @@ export interface RecordAttendanceInput {
   visitorName?: string;
   category?: AttendanceCategory;
   source?: string;
+  /** Calendar day to record against (`YYYY-MM-DD`); defaults to today. */
+  attendanceDate?: string;
 }
 
 export interface RecordBulkAttendanceInput {

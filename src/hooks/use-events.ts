@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { usePermissions } from "@/hooks/use-permissions";
 import { api } from "@/lib/api";
+import type { EventRecurrence } from "@/lib/schedule-occurrence";
 export interface EventsListResponse {
   data: EventItem[];
   total: number;
@@ -39,6 +40,8 @@ export interface EventItem {
   type: EventType;
   startDate: string;
   endDate?: string;
+  /** `one_time` (default) or `weekly`; the API treats a missing value as one-time. */
+  recurrence?: EventRecurrence;
   location?: string;
   capacity?: number;
   isFree: boolean;
@@ -111,6 +114,7 @@ export interface CreateEventInput {
   type: EventType;
   startDate: string;
   endDate?: string;
+  recurrence?: EventRecurrence;
   location?: string;
   capacity?: number;
   isFree?: boolean;
@@ -125,6 +129,7 @@ export interface BulkCheckInInput {
 }
 
 export interface WalkInCheckInInput {
+  attendanceDate?: string;
   firstName: string;
   lastName: string;
   phone: string;

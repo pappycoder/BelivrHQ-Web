@@ -31,8 +31,12 @@ import { useGivingTransactionsAll } from "@/hooks/use-giving";
 import { formatNaira } from "@/hooks/use-analytics";
 import { formatDate } from "@/hooks/use-media";
 import { number, timeLabel } from "@/lib/paper/format";
+import { SCHEDULE_RECURRENCE_LABELS } from "@/lib/schedule-occurrence";
 
 const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+/** Date-only values are local calendar days, not instants. */
+const formatDay = (value: string) => formatDate(`${value}T00:00:00`);
 
 export default function ServiceDetailPage({
   params,
@@ -88,12 +92,17 @@ export default function ServiceDetailPage({
           <div className="min-w-0 space-y-1.5">
             <div className="flex flex-wrap items-center gap-2">
               {s.category ? <Tag tone={s.category === "children" ? "gold" : "moss"}>{SERVICE_CATEGORIES.find((c) => c.value === s.category)?.label ?? s.category}</Tag> : null}
+              {s.recurrence && s.recurrence !== "weekly" ? <Tag tone="sky">{SCHEDULE_RECURRENCE_LABELS[s.recurrence]}</Tag> : null}
               {!s.isActive ? <Tag tone="neutral">Paused</Tag> : null}
               {s.archivedAt ? <Tag tone="rose">Archived</Tag> : null}
             </div>
             <h1 className="font-display text-[clamp(1.4rem,2.4vw,2rem)] font-semibold tracking-tight">{s.name}</h1>
             <p className="text-[11px] text-ink-soft">
-              {s.dayOfWeek != null ? DAY_NAMES[s.dayOfWeek] : "Any day"}
+              {s.recurrence === "one_time" && s.startsOn
+                ? formatDay(s.startsOn)
+                : s.recurrence === "multi_day" && s.startsOn && s.endsOn
+                  ? `${formatDay(s.startsOn)} – ${formatDay(s.endsOn)}`
+                  : s.dayOfWeek != null ? DAY_NAMES[s.dayOfWeek] : "Any day"}
               {s.startTime ? <span className="num"> · {timeLabel(s.startTime)}{s.endTime ? ` – ${timeLabel(s.endTime)}` : ""}</span> : null}
             </p>
           </div>
@@ -154,7 +163,11 @@ export default function ServiceDetailPage({
           <SectionCard eyebrow="This service" title="The schedule">
             <DataList>
               <FieldRow label="Category">{SERVICE_CATEGORIES.find((c) => c.value === s.category)?.label ?? "Uncategorised"}</FieldRow>
-              <FieldRow label="Day">{s.dayOfWeek != null ? DAY_NAMES[s.dayOfWeek] : "—"}</FieldRow>
+              <FieldRow label="Repeats">{SCHEDULE_RECURRENCE_LABELS[s.recurrence ?? "weekly"]}</FieldRow>
+              <FieldRow label="Day">{s.recurrence === "weekly" || !s.recurrence ? (s.dayOfWeek != null ? DAY_NAMES[s.dayOfWeek] : "—") : "—"}</FieldRow>
+              {s.startsOn || s.endsOn ? (
+                <FieldRow label="Window">{s.startsOn ? formatDay(s.startsOn) : "Always"} → {s.endsOn ? formatDay(s.endsOn) : "Ongoing"}</FieldRow>
+              ) : null}
               <FieldRow label="Start">{s.startTime ? timeLabel(s.startTime) : "—"}</FieldRow>
               <FieldRow label="End">{s.endTime ? timeLabel(s.endTime) : "—"}</FieldRow>
               <FieldRow label="Branch">{s.branchId ? "Branch-tied" : "Church-wide"}</FieldRow>

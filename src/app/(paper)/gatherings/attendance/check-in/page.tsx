@@ -11,6 +11,7 @@ import {
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader, SectionCard } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
+import { CheckInDatePicker } from "@/components/paper/check-in-date";
 import {
   EmptyState,
   FilterChip,
@@ -32,6 +33,12 @@ import {
 } from "@/hooks/use-attendance";
 import { useMembersList, useSearchMembers } from "@/hooks/use-members";
 import { useCreateVisitor } from "@/hooks/use-visitors";
+import {
+  defaultServiceDate,
+  serviceOccursOn,
+  todayKey,
+  type ServiceSchedule,
+} from "@/lib/schedule-occurrence";
 import { cn } from "@/lib/utils";
 
 function defaultCategory(serviceCategory?: string): AttendanceCategory {
@@ -50,6 +57,38 @@ export default function AttendanceCheckInPage() {
   const activeId = serviceId || serviceList[0]?.serviceId || "";
   const activeService = serviceList.find((s) => s.serviceId === activeId);
 
+  const activeSchedule = React.useMemo<ServiceSchedule>(
+    () => ({
+      recurrence: activeService?.recurrence,
+      dayOfWeek: activeService?.dayOfWeek,
+      startsOn: activeService?.startsOn,
+      endsOn: activeService?.endsOn,
+    }),
+    [activeService],
+  );
+  const occursOn = React.useCallback(
+    (date: string) => serviceOccursOn(activeSchedule, date),
+    [activeSchedule],
+  );
+  const [attendanceDate, setAttendanceDate] = React.useState(() => todayKey());
+  const datedService = React.useRef("");
+
+  React.useEffect(() => {
+    if (!activeService || datedService.current === activeService.serviceId) {
+      return;
+    }
+    datedService.current = activeService.serviceId;
+    setAttendanceDate(defaultServiceDate(activeSchedule));
+  }, [activeService, activeSchedule]);
+
+  const dayBounds = React.useMemo(
+    () => ({
+      startDate: `${attendanceDate}T00:00:00.000Z`,
+      endDate: `${attendanceDate}T23:59:59.999Z`,
+    }),
+    [attendanceDate],
+  );
+
   const [tab, setTab] = React.useState<"roster" | "walkin">("roster");
   const [query, setQuery] = React.useState("");
   const [category, setCategory] = React.useState<AttendanceCategory>("unspecified");
@@ -59,7 +98,7 @@ export default function AttendanceCheckInPage() {
 
   const roster = useMembersList({ page: 1, limit: rosterLimit, status: "active" }, { enabled: canCheckIn });
   const search = useSearchMembers(query, 20, { enabled: query.trim().length >= 2 });
-  const recent = useAttendanceRecords({ serviceId: activeId, limit: 8 });
+  const recent = useAttendanceRecords({ serviceId: activeId, limit: 200, ...dayBounds });
   const recordBulk = useRecordBulkAttendance();
   const recordOne = useRecordAttendance();
   const createVisitor = useCreateVisitor();
@@ -67,7 +106,7 @@ export default function AttendanceCheckInPage() {
   React.useEffect(() => {
     setSelected(new Set());
     setQuery("");
-  }, [activeId]);
+  }, [activeId, attendanceDate]);
 
   React.useEffect(() => {
     if (activeService?.category) setCategory(defaultCategory(activeService.category));
@@ -92,6 +131,7 @@ export default function AttendanceCheckInPage() {
         records: [...selected].map((memberId) => ({ memberId })),
         category,
         source: "self",
+        attendanceDate,
       },
       {
         onSuccess: (result) => {
@@ -122,6 +162,7 @@ export default function AttendanceCheckInPage() {
         visitorName: `${visitor.firstName} ${visitor.lastName ?? ""}`.trim(),
         category,
         source: "walk_in",
+        attendanceDate,
       });
       toast.success(`${first} is counted — and now lives in the visitor register.`);
       setWalkIn({ firstName: "", lastName: "", phone: "", email: "" });
@@ -148,22 +189,30 @@ export default function AttendanceCheckInPage() {
         title="Sunday, right now."
         description="One counter per service, counted calmly at the door."
         actions={
-          <select
-            value={activeId}
-            onChange={(event) => setServiceId(event.target.value)}
-            className="h-9 min-w-[200px] rounded-full border border-line bg-card px-3 text-xs outline-none"
-            aria-label="Choose service"
-          >
-            {serviceList.map((service) => (
-              <option key={service.serviceId} value={service.serviceId}>{service.name}</option>
-            ))}
-            {!serviceList.length ? <option>No active services</option> : null}
-          </select>
+          <div className="flex flex-wrap items-center gap-2">
+            <CheckInDatePicker
+              value={attendanceDate}
+              onChange={setAttendanceDate}
+              occursOn={occursOn}
+              disabled={!activeService}
+            />
+            <select
+              value={activeId}
+              onChange={(event) => setServiceId(event.target.value)}
+              className="h-9 min-w-[200px] rounded-full border border-line bg-card px-3 text-xs outline-none"
+              aria-label="Choose service"
+            >
+              {serviceList.map((service) => (
+                <option key={service.serviceId} value={service.serviceId}>{service.name}</option>
+              ))}
+              {!serviceList.length ? <option>No active services</option> : null}
+            </select>
+          </div>
         }
       />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatCard label="In this service (today)" value={recent.data?.meta?.total ?? 0} tone="moss" icon={<Users className="size-4" />} />
+        <StatCard label="In this service" value={recent.data?.meta?.total ?? 0} tone="moss" icon={<Users className="size-4" />} deltaLabel={attendanceDate === todayKey() ? "today" : "selected day"} />
         <StatCard label="Selected" value={selected.size} tone="gold" deltaLabel={selected.size ? "ready" : "tap faces"} />
         <StatCard label="Active members" value={roster.data?.meta?.total ?? 0} tone="brand" deltaLabel="roster loaded" />
         <div className="paper-card flex flex-col justify-between gap-4 rounded-2xl p-5">
@@ -272,9 +321,9 @@ export default function AttendanceCheckInPage() {
         )}
 
         <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
-          <SectionCard eyebrow="Arrivals" title="Just now" bodyClassName="p-0">
+          <SectionCard eyebrow="Arrivals" title="On this day" bodyClassName="p-0">
             <div className="divide-y divide-line/70">
-              {(recent.data?.data ?? []).map((record) => (
+              {(recent.data?.data ?? []).slice(0, 8).map((record) => (
                 <div key={record.attendanceId} className="flex items-center gap-2.5 px-4 py-2.5">
                   <PersonAvatar name={record.memberName ?? record.visitorName ?? "Guest"} size="xs" />
                   <span className="min-w-0 flex-1 truncate text-[11px] font-medium">{record.memberName ?? record.visitorName ?? "Guest"}</span>

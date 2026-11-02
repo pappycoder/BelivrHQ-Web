@@ -11,6 +11,7 @@ import {
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader, SectionCard } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
+import { CheckInDatePicker } from "@/components/paper/check-in-date";
 import {
   EmptyState,
   FilterChip,
@@ -28,7 +29,15 @@ import {
   useEventAttendance,
   useBulkCheckIn,
   useWalkInCheckIn,
+  type EventItem,
 } from "@/hooks/use-events";
+import {
+  dayKey,
+  defaultEventDate,
+  eventOccursOn,
+  todayKey,
+  type EventSchedule,
+} from "@/lib/schedule-occurrence";
 import { cn } from "@/lib/utils";
 
 type TabRoute = "roster" | "walkin";
@@ -44,18 +53,72 @@ export default function EventCheckInPage() {
   const [walkIn, setWalkIn] = React.useState({ firstName: "", lastName: "", phone: "", email: "", gender: "" });
 
   const events = useEventsList(
-    { limit: 50, status: "upcoming", sortBy: "startDate", sortOrder: "asc" },
+    { limit: 100, sortBy: "startDate", sortOrder: "desc" },
     { enabled: ready && can("events:list", "read") },
   );
-  const eventList = events.data?.data ?? [];
+  const eventList = React.useMemo(() => {
+    const today = todayKey();
+    const distance = (event: EventItem) => {
+      const schedule = {
+        recurrence: event.recurrence,
+        startDate: event.startDate,
+        endDate: event.endDate,
+      };
+      // Recurring and bounded windows that include today are the likeliest desk.
+      if (
+        eventOccursOn(schedule, today) &&
+        (event.recurrence === "weekly" || event.endDate)
+      ) {
+        return 0;
+      }
+      const start = new Date(`${dayKey(event.startDate)}T00:00:00`).getTime();
+      const now = new Date(`${today}T00:00:00`).getTime();
+      return Math.abs(Math.round((start - now) / 86_400_000));
+    };
+    return [...(events.data?.data ?? [])].sort(
+      (a, b) => distance(a) - distance(b),
+    );
+  }, [events.data]);
   const activeId = eventId || eventList[0]?.eventId || "";
+  const activeEvent = eventList.find((e) => e.eventId === activeId);
+
+  const activeSchedule = React.useMemo<EventSchedule>(
+    () => ({
+      recurrence: activeEvent?.recurrence,
+      startDate: activeEvent?.startDate ?? todayKey(),
+      endDate: activeEvent?.endDate,
+    }),
+    [activeEvent],
+  );
+  const occursOn = React.useCallback(
+    (date: string) => eventOccursOn(activeSchedule, date),
+    [activeSchedule],
+  );
+  const [attendanceDate, setAttendanceDate] = React.useState(() => todayKey());
+  const datedEvent = React.useRef("");
+
+  React.useEffect(() => {
+    if (!activeEvent || datedEvent.current === activeEvent.eventId) return;
+    datedEvent.current = activeEvent.eventId;
+    setAttendanceDate(defaultEventDate(activeSchedule));
+  }, [activeEvent, activeSchedule]);
 
   const registrations = useEventRegistrations(activeId);
   const attendance = useEventAttendance(activeId);
   const bulkCheckIn = useBulkCheckIn(activeId);
   const walkInCheckIn = useWalkInCheckIn(activeId);
 
-  React.useEffect(() => { setSelected(new Set()); }, [activeId]);
+  const attendanceForDay = React.useMemo(
+    () =>
+      (attendance.data ?? []).filter(
+        (record) => dayKey(record.checkInAt) === attendanceDate,
+      ),
+    [attendance.data, attendanceDate],
+  );
+
+  React.useEffect(() => {
+    setSelected(new Set());
+  }, [activeId, attendanceDate]);
 
   const rows = React.useMemo(() => {
     const list = registrations.data ?? [];
@@ -65,7 +128,7 @@ export default function EventCheckInPage() {
       : list;
   }, [registrations.data, query]);
 
-  const attendedCount = attendance.data?.length ?? 0;
+  const attendedCount = attendanceForDay.length;
   const registeredCount = registrations.data?.length ?? 0;
 
   const toggle = (memberId: string) =>
@@ -79,7 +142,7 @@ export default function EventCheckInPage() {
   const doBulk = () => {
     if (!selected.size) return;
     bulkCheckIn.mutate(
-      { memberIds: [...selected] },
+      { memberIds: [...selected], attendanceDate },
       {
         onSuccess: (result) => {
           toast.success(`${result.checkedIn} checked in${result.skipped ? `, ${result.skipped} already inside` : ""}.`);
@@ -97,6 +160,7 @@ export default function EventCheckInPage() {
     if (!w.phone.trim()) { toast.error("A phone number so we remember them next time."); return; }
     walkInCheckIn.mutate(
       {
+        attendanceDate,
         firstName: w.firstName.trim(),
         lastName: w.lastName.trim(),
         phone: w.phone.trim(),
@@ -112,8 +176,6 @@ export default function EventCheckInPage() {
       },
     );
   };
-
-  const activeEvent = eventList.find((e) => e.eventId === activeId);
 
   if (!canCheckIn) {
     return (
@@ -133,11 +195,18 @@ export default function EventCheckInPage() {
         title="The door desk."
         description="Tap faces as they walk in. Warmth first, admin second."
         actions={
-          <div className="flex min-w-[220px] items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <CheckInDatePicker
+              value={attendanceDate}
+              onChange={setAttendanceDate}
+              occursOn={occursOn}
+              label="Event date"
+              disabled={!activeEvent}
+            />
             <select
               value={activeId}
               onChange={(event) => setEventId(event.target.value)}
-              className="h-9 w-full rounded-full border border-line bg-card px-3 text-xs outline-none"
+              className="h-9 w-full min-w-[220px] rounded-full border border-line bg-card px-3 text-xs outline-none"
               aria-label="Choose event"
             >
               {eventList.map((event) => (
@@ -152,7 +221,7 @@ export default function EventCheckInPage() {
       />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatCard label="In the room" value={attendedCount} tone="moss" icon={<Users className="size-4" />} deltaLabel="right now" />
+        <StatCard label="In the room" value={attendedCount} tone="moss" icon={<Users className="size-4" />} deltaLabel={attendanceDate === todayKey() ? "right now" : "selected day"} />
         <StatCard label="Expected" value={registeredCount} tone="brand" deltaLabel="registered" />
         <StatCard label="Selected" value={selected.size} tone="gold" deltaLabel={selected.size ? "ready to check in" : "tap to select"} />
         <div className="paper-card flex flex-col justify-between gap-4 rounded-2xl p-5">
@@ -265,9 +334,9 @@ export default function EventCheckInPage() {
         )}
 
         <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
-          <SectionCard eyebrow="Arrivals" title="Just walked in" bodyClassName="p-0">
+          <SectionCard eyebrow="Arrivals" title="On this day" bodyClassName="p-0">
             <div className="divide-y divide-line/70">
-              {(attendance.data ?? []).slice(0, 8).map((record) => (
+              {attendanceForDay.slice(0, 8).map((record) => (
                 <div key={record.attendanceId} className="flex items-center gap-2.5 px-4 py-2.5">
                   <PersonAvatar name={record.memberName ?? record.visitorName ?? "Guest"} size="xs" />
                   <span className="min-w-0 flex-1 truncate text-[11px] font-medium">{record.memberName ?? record.visitorName ?? "Guest"}</span>
@@ -276,7 +345,7 @@ export default function EventCheckInPage() {
                   </span>
                 </div>
               ))}
-              {!attendance.data?.length ? <p className="px-4 py-8 text-center text-[11px] text-ink-faint">Doors haven&apos;t opened yet.</p> : null}
+              {!attendanceForDay.length ? <p className="px-4 py-8 text-center text-[11px] text-ink-faint">Doors haven&apos;t opened yet.</p> : null}
             </div>
           </SectionCard>
           <div className="rounded-2xl border border-dashed border-line p-4 text-[11px] leading-relaxed text-ink-soft">

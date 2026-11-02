@@ -47,6 +47,10 @@ import { toast, getToastErrorMessage } from "@/lib/toast";
 import { TablePagination } from "@/components/shared/table-pagination";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { fetchAllPages } from "@/lib/export-all";
+import {
+  defaultServiceDate,
+  serviceOccursOn,
+} from "@/lib/schedule-occurrence";
 
 const countFields = [
   ["total", "Total attendance"],
@@ -143,7 +147,9 @@ export function GeneralAttendancePanel({
   const [editing, setEditing] = React.useState<GeneralAttendanceRecord | null>(
     null,
   );
-  const [date, setDate] = React.useState(format(new Date(), "yyyy-MM-dd"));
+  const [date, setDate] = React.useState(() =>
+    service ? defaultServiceDate(service) : format(new Date(), "yyyy-MM-dd"),
+  );
   const [recordBranch, setRecordBranch] = React.useState(
     target?.branchId ?? profile?.branchId ?? "",
   );
@@ -153,6 +159,9 @@ export function GeneralAttendancePanel({
     () => setPage(1),
     [target?.id, filters.branchId, filters.startDate, filters.endDate],
   );
+  React.useEffect(() => {
+    if (service && !editing) setDate(defaultServiceDate(service));
+  }, [editing, service]);
   const inline = entryMode === "inline";
   const fieldId = React.useId();
   const dirty =
@@ -168,7 +177,12 @@ export function GeneralAttendancePanel({
   }, [save.isPending, onBusyChange]);
   function begin(record?: GeneralAttendanceRecord) {
     setEditing(record ?? null);
-    setDate(record?.attendanceDate ?? format(new Date(), "yyyy-MM-dd"));
+    setDate(
+      record?.attendanceDate ??
+        (service
+          ? defaultServiceDate(service)
+          : format(new Date(), "yyyy-MM-dd")),
+    );
     setRecordBranch(
       record?.branchId ?? target?.branchId ?? profile?.branchId ?? "",
     );
@@ -220,6 +234,10 @@ export function GeneralAttendancePanel({
     }
     if (!recordBranch) {
       setError("Select the branch for this meeting attendance.");
+      return;
+    }
+    if (!editing && service && !serviceOccursOn(service, date)) {
+      setError(`${service.name} does not meet on ${date}. Choose a scheduled day.`);
       return;
     }
     try {

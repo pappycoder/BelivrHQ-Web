@@ -22,6 +22,11 @@ import {
   EVENT_TYPES,
   type EventType,
 } from "@/hooks/use-events";
+import {
+  EVENT_RECURRENCES,
+  EVENT_RECURRENCE_LABELS,
+  type EventRecurrence,
+} from "@/lib/schedule-occurrence";
 import { cn } from "@/lib/utils";
 
 const toLocal = (iso?: string) => (iso ? iso.slice(0, 16) : "");
@@ -48,7 +53,9 @@ export default function EditEventPage({
   const branches = useBranchesList({ limit: 100 }, { enabled: isHq });
 
   const [form, setForm] = React.useState<null | {
-    title: string; type: EventType; start: string; end: string; location: string;
+    title: string; type: EventType; start: string; end: string;
+    recurrence: EventRecurrence;
+    location: string;
     description: string; capacity: string; isFree: boolean; price: string; branchId: string;
   }>(null);
 
@@ -60,6 +67,7 @@ export default function EditEventPage({
         type: e.type,
         start: toLocal(e.startDate),
         end: toLocal(e.endDate),
+        recurrence: e.recurrence ?? "one_time",
         location: e.location ?? "",
         description: e.description ?? "",
         capacity: e.capacity ? String(e.capacity) : "",
@@ -111,6 +119,7 @@ export default function EditEventPage({
         type: form.type,
         startDate: toIso(form.start),
         endDate: toIso(form.end),
+        recurrence: form.recurrence,
         location: form.location.trim() || undefined,
         description: form.description.trim() || undefined,
         capacity: form.capacity ? Number(form.capacity) : undefined,
@@ -171,6 +180,31 @@ export default function EditEventPage({
 
           <SectionCard eyebrow="When & where" title="On the calendar">
             <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label className="text-xs">Repeats</Label>
+                <div className="flex flex-wrap gap-1.5">
+                  {EVENT_RECURRENCES.map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      onClick={() => set("recurrence", item)}
+                      className={cn(
+                        "rounded-full border px-3 py-1.5 text-[11px] transition-colors",
+                        form.recurrence === item ? "border-ink/20 bg-ink text-paper" : "border-line bg-card text-ink-soft hover:border-ink/20",
+                      )}
+                    >
+                      {EVENT_RECURRENCE_LABELS[item]}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[10px] leading-relaxed text-ink-faint">
+                  {form.recurrence === "weekly"
+                    ? form.start
+                      ? `Repeats every ${new Date(form.start).toLocaleDateString("en-GB", { weekday: "long" })} from the start date until the end date (or indefinitely).`
+                      : "Repeats every week on the start date's weekday, until the end date or indefinitely."
+                    : "Open every day from the start date to the end date. Leave the end blank for a single day."}
+                </p>
+              </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Starts</Label>
                 <Input type="datetime-local" value={form.start} onChange={(e) => set("start", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
