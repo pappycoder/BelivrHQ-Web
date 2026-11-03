@@ -132,10 +132,7 @@ export const ROUTE_PERMISSIONS: RoutePermissionRule[] = [
   { prefix: "/gatherings/events/[eventId]", permission: "events:all:read" },
   { prefix: "/gatherings/events/[eventId]/edit", permission: "events:update" },
   { prefix: "/gatherings/events/tickets", permission: "events:tickets:read" },
-  // The calendar doubles as the services schedule: attendance readers (an
-  // Essentials-capable, plan-free grant) get the services-only view, while
-  // event readers keep the full events calendar.
-  { prefix: "/gatherings/events", permission: "events:calendar:read", anyOf: ["attendance:services:read"] },
+  { prefix: "/gatherings/events", permission: "events:calendar:read" },
   { prefix: "/events/check-in", permission: "events:checkin:create" },
   { prefix: "/events/new", permission: "events:create" },
   { prefix: "/events/management", permission: "events:tickets:read" },

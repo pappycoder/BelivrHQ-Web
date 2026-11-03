@@ -141,7 +141,6 @@ export const PAPER_AREAS: PaperArea[] = [
         children: [
           { title: "Overview", href: "/gatherings/attendance", description: "Headcount trends", permission: "attendance:dashboard:read", live: true, planPath: "/attendance" },
           { title: "Live check-in", href: "/gatherings/attendance/check-in", description: "Sunday morning", permission: "attendance:checkin:create", live: true, planPath: "/attendance/check-in" },
-          { title: "Calendar", href: "/gatherings/events", description: "Services and events, one page", permission: "attendance:services:read", live: true, planPath: "/attendance/services" },
           { title: "Services", href: "/gatherings/attendance/services", description: "Every gathering", permission: "attendance:services:read", live: true, planPath: "/attendance/services" },
           { title: "Records", href: "/gatherings/attendance/records", description: "History and exports", permission: "attendance:records:read", live: true, planPath: "/attendance/records" },
           { title: "Reports", href: "/gatherings/attendance/reports", description: "The room, reported", permission: "attendance:reports:read", live: true, planPath: "/attendance/reports" },
