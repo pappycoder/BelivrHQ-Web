@@ -179,11 +179,12 @@ const navItems: { section: string; items: NavItem[] }[] = [
         icon: Calendar,
         permission: "events:calendar:read",
         children: [
-          { title: "Calendar", href: "/gatherings/events", permission: "events:calendar:read" },
+          { title: "Calendar", href: "/gatherings/events", permission: "events:calendar:read", anyOf: ["attendance:services:read"] },
           {
             title: "All Events",
             href: "/gatherings/events",
             permission: "events:calendar:read",
+            anyOf: ["attendance:services:read"],
           },
           {
             title: "Check-In",

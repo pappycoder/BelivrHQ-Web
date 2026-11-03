@@ -22,7 +22,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { GeneralAttendancePanel } from "@/components/attendance/general-attendance-panel";
 import { usePermissions } from "@/hooks/use-permissions";
+import { useCanViewGeneralAttendance } from "@/hooks/use-attendance";
 import {
   useEventsList,
   useEventRegistrations,
@@ -48,6 +51,7 @@ export default function EventCheckInPage() {
 
   const [eventId, setEventId] = React.useState("");
   const [tab, setTab] = React.useState<TabRoute>("roster");
+  const canSeeReported = useCanViewGeneralAttendance("event");
   const [query, setQuery] = React.useState("");
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
   const [walkIn, setWalkIn] = React.useState({ firstName: "", lastName: "", phone: "", email: "", gender: "" });
@@ -230,6 +234,20 @@ export default function EventCheckInPage() {
         </div>
       </div>
 
+      <Tabs defaultValue="individual" className="min-w-0">
+        {canSeeReported ? (
+          <TabsList className="h-9 w-fit rounded-full border border-line bg-card p-0.5">
+            <TabsTrigger value="individual" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
+              Individual check-in
+            </TabsTrigger>
+            <TabsTrigger value="general" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
+              General attendance
+            </TabsTrigger>
+          </TabsList>
+        ) : null}
+
+        <TabsContent value="individual" className={canSeeReported ? "mt-4" : undefined}>
+          <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <FilterChip active={tab === "roster"} onClick={() => setTab("roster")}>Roster</FilterChip>
         <FilterChip active={tab === "walkin"} onClick={() => setTab("walkin")}>Walk-in</FilterChip>
@@ -354,6 +372,33 @@ export default function EventCheckInPage() {
           </div>
         </aside>
       </div>
+          </div>
+        </TabsContent>
+
+        {canSeeReported ? (
+          <TabsContent value="general" className="mt-4">
+            {activeEvent ? (
+              <GeneralAttendancePanel
+                context={{
+                  type: "event",
+                  id: activeEvent.eventId,
+                  name: activeEvent.title,
+                  branchId: activeEvent.branchId,
+                  active: !activeEvent.archivedAt,
+                }}
+                entryMode="inline"
+                showRecords={false}
+                attendanceDate={attendanceDate}
+                occursOn={occursOn}
+              />
+            ) : (
+              <p className="px-4 py-8 text-center text-xs text-ink-faint">
+                Pick an event above to report its headcount.
+              </p>
+            )}
+          </TabsContent>
+        ) : null}
+      </Tabs>
     </div>
   );
 }

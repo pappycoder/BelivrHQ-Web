@@ -22,12 +22,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GeneralAttendancePanel } from "@/components/attendance/general-attendance-panel";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
   useAttendanceServices,
   useAttendanceRecords,
   useRecordBulkAttendance,
   useRecordAttendance,
+  useCanViewGeneralAttendance,
   ATTENDANCE_CATEGORIES,
   SERVICE_CATEGORIES,
   attendanceCategoryLabel,
@@ -92,6 +94,7 @@ export default function AttendanceCheckInPage() {
   );
 
   const [tab, setTab] = React.useState<"roster" | "walkin">("roster");
+  const canSeeReported = useCanViewGeneralAttendance("service");
   const [query, setQuery] = React.useState("");
   const [category, setCategory] = React.useState<AttendanceCategory>("unspecified");
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
@@ -223,14 +226,20 @@ export default function AttendanceCheckInPage() {
         </div>
       </div>
 
-      {/* Reported headcount — the whole-room total, independent of named check-ins. */}
-      <GeneralAttendancePanel
-        service={activeService}
-        requireService
-        entryMode="inline"
-        showRecords={false}
-      />
+      <Tabs defaultValue="individual" className="min-w-0">
+        {canSeeReported ? (
+          <TabsList className="h-9 w-fit rounded-full border border-line bg-card p-0.5">
+            <TabsTrigger value="individual" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
+              Individual check-in
+            </TabsTrigger>
+            <TabsTrigger value="general" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
+              General attendance
+            </TabsTrigger>
+          </TabsList>
+        ) : null}
 
+        <TabsContent value="individual" className={canSeeReported ? "mt-4" : undefined}>
+          <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <FilterChip active={tab === "roster"} onClick={() => setTab("roster")}>Members roster</FilterChip>
         <FilterChip active={tab === "walkin"} onClick={() => setTab("walkin")}>Walk-in</FilterChip>
@@ -355,6 +364,28 @@ export default function AttendanceCheckInPage() {
           ) : null}
         </aside>
       </div>
+        </div>
+        </TabsContent>
+
+        {canSeeReported ? (
+          <TabsContent value="general" className="mt-4">
+            {activeService ? (
+              <GeneralAttendancePanel
+                service={activeService}
+                requireService
+                entryMode="inline"
+                showRecords={false}
+                attendanceDate={attendanceDate}
+                occursOn={occursOn}
+              />
+            ) : (
+              <p className="px-4 py-8 text-center text-xs text-ink-faint">
+                Create a service first — headcount is reported per service.
+              </p>
+            )}
+          </TabsContent>
+        ) : null}
+      </Tabs>
     </div>
   );
 }

@@ -89,6 +89,8 @@ function sameValues(a: typeof emptyCounts, b: typeof emptyCounts): boolean {
 export function GeneralAttendancePanel({
   service,
   context,
+  attendanceDate,
+  occursOn,
   canManage = true,
   requireService = false,
   readOnly = false,
@@ -101,6 +103,15 @@ export function GeneralAttendancePanel({
 }: {
   service?: ChurchService;
   context?: AttendanceSessionContext;
+  /**
+   * Controlled attendance day (`YYYY-MM-DD`). When supplied — e.g. from a
+   * check-in desk's shared date picker — the panel drops its own date input
+   * and every create/edit uses this day. The picker is expected to restrict
+   * selectable days to the schedule's occurrences.
+   */
+  attendanceDate?: string;
+  /** Occurrence rule for the controlled date; submit refuses a day it rejects. */
+  occursOn?: (date: string) => boolean;
   canManage?: boolean;
   requireService?: boolean;
   readOnly?: boolean;
@@ -161,9 +172,14 @@ export function GeneralAttendancePanel({
   const [editing, setEditing] = React.useState<GeneralAttendanceRecord | null>(
     null,
   );
-  const [date, setDate] = React.useState(() =>
+  const [internalDate, setInternalDate] = React.useState(() =>
     service ? defaultServiceDate(service) : format(new Date(), "yyyy-MM-dd"),
   );
+  // A desk's shared date picker drives the day when `attendanceDate` is set;
+  // standalone hosts (detail pages) keep the panel's own date control.
+  const controlled = !!attendanceDate;
+  const date = attendanceDate ?? internalDate;
+  const setDate = setInternalDate;
   const [recordBranch, setRecordBranch] = React.useState(
     target?.branchId ?? profile?.branchId ?? "",
   );
@@ -203,8 +219,10 @@ export function GeneralAttendancePanel({
     [target?.id, filters.branchId, filters.startDate, filters.endDate],
   );
   React.useEffect(() => {
-    if (service && !editing) setDate(defaultServiceDate(service));
-  }, [editing, service]);
+    if (service && !editing && !controlled) {
+      setInternalDate(defaultServiceDate(service));
+    }
+  }, [editing, service, controlled]);
   const inline = entryMode === "inline";
   const fieldId = React.useId();
   const dirty =
@@ -307,9 +325,18 @@ export function GeneralAttendancePanel({
       setError("Select the branch for this meeting attendance.");
       return;
     }
-    if (!editing && !matched && service && !serviceOccursOn(service, date)) {
-      setError(`${service.name} does not meet on ${date}. Choose a scheduled day.`);
-      return;
+    if (!editing && !matched) {
+      const guard =
+        occursOn ??
+        (service ? (day: string) => serviceOccursOn(service, day) : undefined);
+      if (guard && !guard(date)) {
+        setError(
+          `${target?.name ?? service?.name ?? "This gathering"} ${
+            target?.type === "event" ? "does not occur" : "does not meet"
+          } on ${date}. Choose a scheduled day.`,
+        );
+        return;
+      }
     }
     const recordId = editing?.id ?? matched?.id;
     const payload = {
@@ -412,14 +439,23 @@ export function GeneralAttendancePanel({
         <div className="grid items-start gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label htmlFor={id("date")}>Attendance date</Label>
-            <Input
-              id={id("date")}
-              type="date"
-              required
-              value={date}
-              disabled={!!editing || save.isPending}
-              onChange={(e) => setDate(e.target.value)}
-            />
+            {controlled && !editing ? (
+              <p
+                id={id("date")}
+                className="flex h-9 items-center rounded-lg border border-input bg-muted/40 px-3 text-sm text-muted-foreground"
+              >
+                {format(new Date(`${date}T00:00:00`), "EEE d MMM yyyy")}
+              </p>
+            ) : (
+              <Input
+                id={id("date")}
+                type="date"
+                required
+                value={date}
+                disabled={!!editing || save.isPending}
+                onChange={(e) => setDate(e.target.value)}
+              />
+            )}
           </div>
           {compact && countInput("total", "Total attendance")}
         </div>
@@ -508,7 +544,9 @@ export function GeneralAttendancePanel({
         </div>
         <CardDescription className="text-xs leading-relaxed">
           {inline
-            ? "Report totals separately from named check-ins. The headcount date is independent of the roster date."
+            ? controlled
+              ? "Report totals separately from named check-ins. The headcount follows the date chosen above."
+              : "Report totals separately from named check-ins. The headcount date is independent of the roster date."
             : "Reported meeting totals, separate from named check-ins. A dash means a breakdown was not supplied."}
         </CardDescription>
       </CardHeader>

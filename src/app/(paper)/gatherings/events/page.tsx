@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
+  CalendarClock,
   CalendarDays,
   ChevronLeft,
   ChevronRight,
@@ -16,6 +17,7 @@ import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
 import { FilterChip, IconAction } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
+import { ServiceFormDialog } from "@/components/attendance/service-form-dialog";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/paper/primitives";
@@ -25,8 +27,21 @@ import {
   EVENT_TYPES,
   type EventType,
 } from "@/hooks/use-events";
+import {
+  useAttendanceServices,
+} from "@/hooks/use-attendance";
 import { useBranchesList } from "@/hooks/use-branches";
 import { useCurrentProfile } from "@/hooks/use-profile";
+import {
+  projectGatherings,
+  serviceSchedule,
+} from "@/lib/event-calendar";
+import {
+  dayKey,
+  serviceOccursOn,
+  stepOccurrence,
+  todayKey,
+} from "@/lib/schedule-occurrence";
 import { cn } from "@/lib/utils";
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -38,6 +53,8 @@ const TYPE_COLORS: Record<EventType, string> = {
   training: "bg-moss",
   social: "bg-rose",
 };
+
+type KindFilter = "all" | "services" | "events";
 
 function iso(d: Date) {
   const y = d.getFullYear();
@@ -52,16 +69,22 @@ function sameDay(a: Date, b: Date) {
 
 export default function EventsCalendarPage() {
   const router = useRouter();
-  const { canAny, ready } = usePermissions();
+  const { can, canAny, ready } = usePermissions();
   const { data: profile } = useCurrentProfile();
   const isHq = !!profile?.isAdminHq;
-  const canRead = ready && canAny("events:calendar:read", "events:list:read", "events:all:read");
+  const canReadEvents = ready && canAny("events:calendar:read", "events:list:read", "events:all:read");
+  const canReadServices = ready && can("attendance:services", "read");
+  const canRead = canReadEvents || canReadServices;
+  const canCreateService = ready && (can("attendance:services", "create") || can("attendance", "create"));
+  const canCreateEvent = ready && can("events", "create");
 
   const [today, setToday] = React.useState(() => new Date());
   const [month, setMonth] = React.useState(() => new Date());
   const [selected, setSelected] = React.useState(() => new Date());
+  const [kind, setKind] = React.useState<KindFilter>("all");
   const [type, setType] = React.useState<EventType | "all">("all");
   const [branchId, setBranchId] = React.useState("all");
+  const [serviceFormOpen, setServiceFormOpen] = React.useState(false);
 
   React.useEffect(() => {
     const now = new Date();
@@ -70,30 +93,28 @@ export default function EventsCalendarPage() {
     setSelected(now);
   }, []);
 
+  const dayBranch = isHq && branchId !== "all" ? branchId : undefined;
   const events = useEventsList(
     {
       limit: 100,
       type: type === "all" ? undefined : type,
-      branchId: isHq && branchId !== "all" ? branchId : undefined,
+      branchId: dayBranch,
       sortBy: "startDate",
       sortOrder: "asc",
     },
-    { enabled: canRead },
+    { enabled: canReadEvents },
+  );
+  const services = useAttendanceServices(
+    { limit: 100, isActive: true, branchId: dayBranch },
+    { enabled: canReadServices },
   );
   const branches = useBranchesList({ limit: 100 }, { enabled: isHq });
 
   const rows = React.useMemo(() => events.data?.data ?? [], [events.data]);
-
-  const byDay = React.useMemo(() => {
-    const map = new Map<string, typeof rows>();
-    for (const event of rows) {
-      const d = new Date(event.startDate);
-      if (Number.isNaN(d.getTime())) continue;
-      const key = iso(d);
-      map.set(key, [...(map.get(key) ?? []), event]);
-    }
-    return map;
-  }, [rows]);
+  const serviceRows = React.useMemo(
+    () => (services.data?.data ?? []).filter((s) => s.isActive && !s.archivedAt),
+    [services.data],
+  );
 
   const grid = React.useMemo(() => {
     const first = new Date(month.getFullYear(), month.getMonth(), 1);
@@ -106,12 +127,57 @@ export default function EventsCalendarPage() {
     });
   }, [month]);
 
+  /** Events on every day they occur + service occurrences projected per visible day. */
+  const byDay = React.useMemo(
+    () =>
+      projectGatherings(rows, serviceRows, grid, {
+        events: canReadEvents && kind !== "services",
+        services: canReadServices && kind !== "events",
+      }),
+    [canReadEvents, canReadServices, kind, rows, serviceRows, grid],
+  );
+
   const selectedKey = iso(selected);
-  const dayEvents = byDay.get(selectedKey) ?? [];
-  const upcoming = rows
-    .filter((event) => new Date(event.startDate).getTime() >= today.getTime() - 86_400_000)
-    .slice(0, 5);
+  const dayEntries = byDay.get(selectedKey) ?? [];
+  const upcoming = React.useMemo(() => {
+    const today = todayKey();
+    const items: { id: string; title: string; day: string; kind: "event" | "service"; link?: string; registrations?: number }[] = [];
+    if (canReadEvents) {
+      for (const event of rows) {
+        const key = dayKey(event.startDate);
+        if (key >= today) {
+          items.push({
+            id: `event-${event.eventId}`,
+            title: event.title,
+            day: key,
+            kind: "event",
+            link: `/gatherings/events/${event.eventId}`,
+            registrations: event.registrationCount ?? 0,
+          });
+        }
+      }
+    }
+    if (canReadServices) {
+      for (const service of serviceRows) {
+        const next = stepOccurrence((d) => serviceOccursOn(serviceSchedule(service), d), today, 1);
+        if (next) {
+          items.push({
+            id: `service-${service.serviceId}`,
+            title: service.name,
+            day: next,
+            kind: "service",
+            link: `/gatherings/attendance/services/${service.serviceId}`,
+          });
+        }
+      }
+    }
+    return items
+      .sort((a, b) => (a.day === b.day ? a.kind.localeCompare(b.kind) : a.day.localeCompare(b.day)))
+      .slice(0, 6);
+  }, [canReadEvents, canReadServices, rows, serviceRows]);
   const monthLabel = month.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+  const showSkeleton =
+    (canReadEvents && events.isLoading) || (canReadServices && services.isLoading);
 
   return (
     <div className="space-y-6">
@@ -120,36 +186,71 @@ export default function EventsCalendarPage() {
         title="The season, laid out gently."
         description="Every service, conference and dinner — one calendar the whole team can trust."
         actions={
-          <>
-            <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
-              <Link href="/gatherings/events/tickets">
-                <Tickets className="size-3.5" /> Tickets
-              </Link>
-            </Button>
-            <Button asChild className="h-9 gap-1.5 rounded-full text-xs">
-              <Link href="/gatherings/events/new">
-                <Plus className="size-3.5" /> New event
-              </Link>
-            </Button>
-          </>
+          <div className="flex flex-wrap items-center gap-2">
+            {canCreateService ? (
+              <Button
+                variant="outline"
+                className="h-9 gap-1.5 rounded-full border-line bg-card text-xs"
+                onClick={() => setServiceFormOpen(true)}
+              >
+                <Plus className="size-3.5" /> Add service
+              </Button>
+            ) : null}
+            {canReadEvents && can("events:tickets", "read") ? (
+              <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
+                <Link href="/gatherings/events/tickets">
+                  <Tickets className="size-3.5" /> Tickets
+                </Link>
+              </Button>
+            ) : null}
+            {canCreateEvent ? (
+              <Button asChild className="h-9 gap-1.5 rounded-full text-xs">
+                <Link href="/gatherings/events/new">
+                  <Plus className="size-3.5" /> New event
+                </Link>
+              </Button>
+            ) : null}
+          </div>
         }
       />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatCard label="Events loaded" value={rows.length} tone="brand" icon={<CalendarDays className="size-4" />} deltaLabel="next hundred" />
-        <StatCard label="On the selected day" value={dayEvents.length} tone="gold" />
-        <StatCard label="Registrations shown" value={rows.reduce((sum, e) => sum + (e.registrationCount ?? 0), 0)} tone="moss" />
-        <StatCard label="Free events" value={rows.filter((e) => e.isFree).length} tone="sky" deltaLabel="no ticket required" />
+        {canReadServices ? (
+          <StatCard label="Services active" value={serviceRows.length} tone="moss" icon={<CalendarClock className="size-4" />} deltaLabel="recurring windows" />
+        ) : null}
+        {canReadEvents ? (
+          <>
+            <StatCard label="Events loaded" value={rows.length} tone="brand" icon={<CalendarDays className="size-4" />} deltaLabel="next hundred" />
+            <StatCard label="Registrations shown" value={rows.reduce((sum, e) => sum + (e.registrationCount ?? 0), 0)} tone="sky" />
+            <StatCard label="Free events" value={rows.filter((e) => e.isFree).length} tone="gold" deltaLabel="no ticket required" />
+          </>
+        ) : null}
+        <div className="paper-card flex flex-col justify-between gap-4 rounded-2xl p-5">
+          <span className="rule-label">On the selected day</span>
+          <span className="num font-display text-sm font-semibold leading-tight">{dayEntries.length}</span>
+        </div>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <FilterChip active={type === "all"} onClick={() => setType("all")}>All types</FilterChip>
-        {EVENT_TYPES.map((item) => (
-          <FilterChip key={item.value} active={type === item.value} onClick={() => setType(item.value)}>
-            {item.label}
-          </FilterChip>
-        ))}
-        {isHq ? (
+        {canReadEvents && canReadServices ? (
+          <>
+            <FilterChip active={kind === "all"} onClick={() => setKind("all")}>All</FilterChip>
+            <FilterChip active={kind === "services"} onClick={() => setKind("services")}>Services</FilterChip>
+            <FilterChip active={kind === "events"} onClick={() => setKind("events")}>Events</FilterChip>
+            <span className="mx-1 hidden h-4 w-px bg-line sm:block" />
+          </>
+        ) : null}
+        {canReadEvents && kind !== "services" ? (
+          <>
+            <FilterChip active={type === "all"} onClick={() => setType("all")}>All types</FilterChip>
+            {EVENT_TYPES.map((item) => (
+              <FilterChip key={item.value} active={type === item.value} onClick={() => setType(item.value)}>
+                {item.label}
+              </FilterChip>
+            ))}
+          </>
+        ) : null}
+        {isHq && canRead ? (
           <select
             value={branchId}
             onChange={(event) => setBranchId(event.target.value)}
@@ -166,7 +267,7 @@ export default function EventsCalendarPage() {
       </div>
 
       {ready && !canRead ? (
-        <EmptyState icon={<CalendarDays />} title="Events are outside your access" description="Your role can&apos;t view the calendar." />
+        <EmptyState icon={<CalendarDays />} title="Gatherings are outside your access" description="Your role can&apos;t view the calendar." />
       ) : (
         <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
           <div className="paper-card overflow-hidden rounded-2xl">
@@ -198,12 +299,12 @@ export default function EventsCalendarPage() {
               {WEEKDAYS.map((d) => <span key={d} className="px-1 text-center">{d}</span>)}
             </div>
             <div className="grid grid-cols-7">
-              {events.isLoading ? (
+              {showSkeleton ? (
                 Array.from({ length: 28 }).map((_, i) => <div key={i} className="min-h-20 border-b border-r border-line/40 p-1.5"><Skeleton className="h-full w-full rounded-lg" /></div>)
               ) : (
                 grid.map((d) => {
                   const key = iso(d);
-                  const dayEvents = byDay.get(key) ?? [];
+                  const entries = byDay.get(key) ?? [];
                   const inMonth = d.getMonth() === month.getMonth();
                   const isToday = sameDay(d, today);
                   const isSelected = sameDay(d, selected);
@@ -228,14 +329,20 @@ export default function EventsCalendarPage() {
                         {d.getDate()}
                       </span>
                       <span className="mt-1 flex flex-col gap-1">
-                        {dayEvents.slice(0, 2).map((event) => (
-                          <span key={event.eventId} className="flex min-w-0 items-center gap-1">
-                            <span className={cn("size-1.5 shrink-0 rounded-full", TYPE_COLORS[event.type])} />
-                            <span className="truncate text-[9px] font-medium">{event.title}</span>
+                        {entries.slice(0, 2).map((entry) => (
+                          <span key={entry.id} className="flex min-w-0 items-center gap-1">
+                            {entry.kind === "event" ? (
+                              <span className={cn("size-1.5 shrink-0 rounded-full", TYPE_COLORS[entry.event.type])} />
+                            ) : (
+                              <span className="size-1.5 shrink-0 rounded-full border border-ink/60" />
+                            )}
+                            <span className={cn("truncate text-[9px] font-medium", entry.kind === "service" && "text-ink-soft")}>
+                              {entry.title}
+                            </span>
                           </span>
                         ))}
-                        {dayEvents.length > 2 ? (
-                          <span className="pl-2.5 text-[8px] text-ink-faint">+{dayEvents.length - 2} more</span>
+                        {entries.length > 2 ? (
+                          <span className="pl-2.5 text-[8px] text-ink-faint">+{entries.length - 2} more</span>
                         ) : null}
                       </span>
                     </button>
@@ -253,25 +360,44 @@ export default function EventsCalendarPage() {
                 </p>
               </div>
               <div className="divide-y divide-line/70">
-                {dayEvents.length ? (
-                  dayEvents.map((event) => (
+                {dayEntries.length ? (
+                  dayEntries.map((entry) => (
                     <button
-                      key={event.eventId}
+                      key={entry.id}
                       type="button"
-                      onClick={() => router.push(`/gatherings/events/${event.eventId}`)}
+                      onClick={() =>
+                        entry.kind === "event"
+                          ? router.push(`/gatherings/events/${entry.event.eventId}`)
+                          : router.push(`/gatherings/attendance/services/${entry.service.serviceId}`)
+                      }
                       className="flex w-full items-start gap-2.5 px-4 py-3 text-left transition-colors hover:bg-muted/40"
                     >
-                      <span className={cn("mt-1 size-2 shrink-0 rounded-full", TYPE_COLORS[event.type])} />
+                      {entry.kind === "event" ? (
+                        <span className={cn("mt-1 size-2 shrink-0 rounded-full", TYPE_COLORS[entry.event.type])} />
+                      ) : (
+                        <span className="mt-1 size-2 shrink-0 rounded-full border-2 border-ink/60" />
+                      )}
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-xs font-semibold">{event.title}</span>
+                        <span className="block truncate text-xs font-semibold">{entry.title}</span>
                         <span className="block truncate text-[10px] text-ink-faint">
-                          {new Date(event.startDate).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
-                          {event.location ? ` · ${event.location}` : ""}
-                          {event.branchName ? ` · ${event.branchName}` : ""}
+                          {entry.at.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
+                          {entry.kind === "event" && entry.event.location ? ` · ${entry.event.location}` : ""}
+                          {entry.kind === "event" && entry.event.branchName ? ` · ${entry.event.branchName}` : ""}
                         </span>
                         <span className="mt-1 flex items-center gap-1.5">
-                          <Tag tone="neutral">{EVENT_TYPES.find((t) => t.value === event.type)?.label ?? event.type}</Tag>
-                          {!event.isFree ? <Tag tone="gold">Ticketed</Tag> : null}
+                          {entry.kind === "event" ? (
+                            <>
+                              <Tag tone="neutral">{EVENT_TYPES.find((t) => t.value === entry.event.type)?.label ?? entry.event.type}</Tag>
+                              {!entry.event.isFree ? <Tag tone="gold">Ticketed</Tag> : null}
+                            </>
+                          ) : (
+                            <>
+                              <Tag tone="sky">Service</Tag>
+                              {entry.service.dayOfWeek == null && entry.service.recurrence !== "one_time" && entry.service.recurrence !== "multi_day" ? (
+                                <Tag tone="neutral">Any day</Tag>
+                              ) : null}
+                            </>
+                          )}
                         </span>
                       </span>
                     </button>
@@ -287,12 +413,12 @@ export default function EventsCalendarPage() {
             <div className="paper-card rounded-2xl p-4">
               <p className="rule-label mb-3">Coming up</p>
               <StaggerGroup className="space-y-2.5">
-                {upcoming.map((event) => (
-                  <StaggerItem key={event.eventId}>
+                {upcoming.map((item) => (
+                  <StaggerItem key={item.id}>
                     <button
                       type="button"
                       onClick={() => {
-                        const d = new Date(event.startDate);
+                        const d = new Date(`${item.day}T00:00:00`);
                         setSelected(d);
                         setMonth(new Date(d.getFullYear(), d.getMonth(), 1));
                       }}
@@ -300,15 +426,16 @@ export default function EventsCalendarPage() {
                     >
                       <MapPin className="size-3 shrink-0 text-ink-faint" />
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[11px] font-medium">{event.title}</span>
+                        <span className="block truncate text-[11px] font-medium">{item.title}</span>
                         <span className="num block text-[10px] text-ink-faint">
-                          {new Date(event.startDate).toLocaleDateString("en-GB", { day: "numeric", month: "short" })} · {event.registrationCount ?? 0} in
+                          {new Date(`${item.day}T00:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                          {item.kind === "service" ? " · meets" : ` · ${item.registrations ?? 0} in`}
                         </span>
                       </span>
                     </button>
                   </StaggerItem>
                 ))}
-                {!upcoming.length && !events.isLoading ? (
+                {!upcoming.length && !showSkeleton ? (
                   <p className="flex items-center gap-2 text-[11px] text-ink-faint">
                     <Search className="size-3" /> Nothing scheduled ahead.
                   </p>
@@ -317,19 +444,29 @@ export default function EventsCalendarPage() {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <Button asChild variant="outline" size="sm" className="h-8 justify-start gap-2 rounded-full border-line bg-card text-[11px]">
-                <Link href="/gatherings/events/check-in">Door check-in</Link>
-              </Button>
+              {canReadEvents ? (
+                <Button asChild variant="outline" size="sm" className="h-8 justify-start gap-2 rounded-full border-line bg-card text-[11px]">
+                  <Link href="/gatherings/events/check-in">Door check-in</Link>
+                </Button>
+              ) : null}
               <Button asChild variant="outline" size="sm" className="h-8 justify-start gap-2 rounded-full border-line bg-card text-[11px]">
                 <Link href="/gatherings/attendance">Attendance &amp; reports</Link>
               </Button>
-              <Button asChild variant="outline" size="sm" className="h-8 justify-start gap-2 rounded-full border-line bg-card text-[11px]">
-                <Link href="/gatherings/events/registrations">All registrations</Link>
-              </Button>
+              {canReadEvents ? (
+                <Button asChild variant="outline" size="sm" className="h-8 justify-start gap-2 rounded-full border-line bg-card text-[11px]">
+                  <Link href="/gatherings/events/registrations">All registrations</Link>
+                </Button>
+              ) : null}
             </div>
           </aside>
         </div>
       )}
+
+      <ServiceFormDialog
+        open={serviceFormOpen}
+        onOpenChange={setServiceFormOpen}
+        defaultDayOfWeek={selected.getDay()}
+      />
     </div>
   );
 }
