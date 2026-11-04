@@ -28,14 +28,24 @@ import {
   ManageHeading,
   RowActions,
   SearchField,
+  SortDirectionToggle,
   ViewToggle,
   type RowAction,
 } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ExportDropdown } from "@/components/shared/export-dropdown";
 import { usePermissions } from "@/hooks/use-permissions";
+import { useCurrentProfile } from "@/hooks/use-profile";
+import { useBranchesList } from "@/hooks/use-branches";
 import {
   useSermonsList,
   useSermonsSeries,
@@ -75,6 +85,8 @@ function SermonsInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { can, ready } = usePermissions();
+  const { data: profile } = useCurrentProfile();
+  const isHq = !!profile?.isAdminHq;
   const canCreate = ready && can("sermons:new", "create");
   const canUpdate = ready && can("sermons", "update");
 
@@ -83,6 +95,8 @@ function SermonsInner() {
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [sortBy, setSortBy] = React.useState<"sermonDate" | "title" | "createdAt">("sermonDate");
+  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
+  const [branchId, setBranchId] = React.useState("all");
   const [archivedView, setArchivedView] = React.useState(false);
   const [view, setView] = React.useState<"rows" | "grid">("rows");
   const series = searchParams.get("series") ?? undefined;
@@ -93,6 +107,7 @@ function SermonsInner() {
     return () => clearTimeout(t);
   }, [query]);
 
+  const branches = useBranchesList({ limit: 100 }, { enabled: isHq });
   const params = React.useMemo(() => ({
     page,
     limit: perPage,
@@ -100,9 +115,10 @@ function SermonsInner() {
     series,
     speaker,
     sortBy,
-    sortOrder: "desc" as const,
+    sortOrder,
+    branchId: isHq && branchId !== "all" ? branchId : undefined,
     archived: archivedView ? true : undefined,
-  }), [page, perPage, search, series, speaker, sortBy, archivedView]);
+  }), [page, perPage, search, series, speaker, sortBy, sortOrder, isHq, branchId, archivedView]);
 
   const sermons = useSermonsList(params);
   const seriesAgg = useSermonsSeries();
@@ -169,10 +185,27 @@ function SermonsInner() {
 
       <div className="flex flex-wrap items-center gap-2">
         <SearchField value={query} onChange={setQuery} placeholder="Search title, speaker or scripture…" className="w-full max-w-xs" />
-        <FilterChip active={sortBy === "sermonDate"} onClick={() => setSortBy("sermonDate")}>Newest</FilterChip>
-        <FilterChip active={sortBy === "title"} onClick={() => setSortBy("title")}>A–Z</FilterChip>
-        <FilterChip active={sortBy === "createdAt"} onClick={() => setSortBy("createdAt")}>Recently added</FilterChip>
+        <FilterChip active={sortBy === "sermonDate"} onClick={() => { setSortBy("sermonDate"); setPage(1); }}>Newest</FilterChip>
+        <FilterChip active={sortBy === "title"} onClick={() => { setSortBy("title"); setPage(1); }}>A–Z</FilterChip>
+        <FilterChip active={sortBy === "createdAt"} onClick={() => { setSortBy("createdAt"); setPage(1); }}>Recently added</FilterChip>
         <FilterChip active={archivedView} onClick={() => { setArchivedView((v) => !v); setPage(1); }}>Archived</FilterChip>
+        <SortDirectionToggle
+          ascending={sortOrder === "asc"}
+          onToggle={() => { setSortOrder((o) => (o === "asc" ? "desc" : "asc")); setPage(1); }}
+        />
+        {isHq ? (
+          <Select value={branchId} onValueChange={(value) => { setBranchId(value); setPage(1); }}>
+            <SelectTrigger className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none">
+              <SelectValue placeholder="All branches" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All branches</SelectItem>
+              {(branches.data?.data ?? []).map((branch) => (
+                <SelectItem key={branch.branchId} value={branch.branchId}>{branch.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : null}
         <ViewToggle
           value={view}
           onChange={setView}
@@ -292,20 +325,7 @@ function SermonsInner() {
                   {sermon.videoUrl ? <Video className="size-3.5 text-sky" aria-label="Has video" /> : null}
                   {sermon.tags?.length ? <span className="truncate text-[9px]">#{sermon.tags[0]}</span> : null}
                 </span>
-                <RowActions
-                  actions={[
-                    {
-                      label: `Open ${sermon.title}`,
-                      icon: <ArrowUpRight />,
-                      href: `/library/sermons/${sermon.sermonId}`,
-                    },
-                    canUpdate && !sermon.archivedAt && {
-                      label: "Edit sermon",
-                      icon: <PencilLine />,
-                      href: `/library/sermons/${sermon.sermonId}/edit`,
-                    },
-                  ]}
-                />
+                <RowActions actions={manageActions(sermon)} />
               </div>
             </StaggerItem>
           ))}

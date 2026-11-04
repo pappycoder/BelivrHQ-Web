@@ -21,6 +21,8 @@ import {
   FilterChip,
   ListPaginationFooter,
   PersonAvatar,
+  SearchField,
+  SortDirectionToggle,
 } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -58,6 +60,8 @@ export default function FormDetailPage({
   const updateStatus = useUpdateSubmissionStatus(formId);
 
   const [status, setStatus] = React.useState<SubmissionStatus | "">("");
+  const [query, setQuery] = React.useState("");
+  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(15);
   const [detail, setDetail] = React.useState<FormSubmission | null>(null);
@@ -65,6 +69,8 @@ export default function FormDetailPage({
 
   const submissions = useFormSubmissions(formId, {
     status: status || undefined,
+    search: query.trim() || undefined,
+    sortOrder,
     page,
     limit: perPage,
   });
@@ -186,6 +192,17 @@ export default function FormDetailPage({
                 {SUBMISSION_STATUS_LABELS[s]}
               </FilterChip>
             ))}
+            <SearchField
+              value={query}
+              onChange={(value) => { setQuery(value); setPage(1); }}
+              placeholder="Search answers…"
+              className="w-full max-w-[220px]"
+            />
+            <SortDirectionToggle
+              ascending={sortOrder === "asc"}
+              onToggle={() => { setSortOrder((o) => (o === "asc" ? "desc" : "asc")); setPage(1); }}
+              className="ml-auto"
+            />
           </div>
 
           {submissions.isLoading ? (
@@ -193,7 +210,7 @@ export default function FormDetailPage({
           ) : rows.length === 0 ? (
             <EmptyState
               icon={<Inbox />}
-              title={status ? "Nothing in this state" : "No answers yet"}
+              title={query.trim() ? "No answers match that" : status ? "Nothing in this state" : "No answers yet"}
               description={f.isPublic ? "Share the link — answers land here the moment they&apos;re sent." : "Members can fill this from the link above."}
             />
           ) : (

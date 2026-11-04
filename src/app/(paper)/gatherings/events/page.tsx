@@ -37,7 +37,7 @@ import {
   serviceSchedule,
 } from "@/lib/event-calendar";
 import {
-  dayKey,
+  eventOccursOn,
   serviceOccursOn,
   stepOccurrence,
   todayKey,
@@ -144,12 +144,16 @@ export default function EventsCalendarPage() {
     const items: { id: string; title: string; day: string; kind: "event" | "service"; link?: string; registrations?: number }[] = [];
     if (canReadEvents) {
       for (const event of rows) {
-        const key = dayKey(event.startDate);
-        if (key >= today) {
+        // Occurrence-driven like services: a weekly meeting shows its NEXT day,
+        // not its (possibly past) start date.
+        const schedule = { recurrence: event.recurrence, startDate: event.startDate, endDate: event.endDate };
+        const occurs = (d: string) => eventOccursOn(schedule, d);
+        const when = occurs(today) ? today : stepOccurrence(occurs, today, 1);
+        if (when) {
           items.push({
             id: `event-${event.eventId}`,
             title: event.title,
-            day: key,
+            day: when,
             kind: "event",
             link: `/gatherings/events/${event.eventId}`,
             registrations: event.registrationCount ?? 0,
@@ -159,7 +163,8 @@ export default function EventsCalendarPage() {
     }
     if (canReadServices) {
       for (const service of serviceRows) {
-        const next = stepOccurrence((d) => serviceOccursOn(serviceSchedule(service), d), today, 1);
+        const occurs = (d: string) => serviceOccursOn(serviceSchedule(service), d);
+        const next = occurs(today) ? today : stepOccurrence(occurs, today, 1);
         if (next) {
           items.push({
             id: `service-${service.serviceId}`,

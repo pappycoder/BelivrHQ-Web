@@ -136,6 +136,8 @@ export interface ListFormsParams {
   limit?: number;
   archived?: boolean;
   branchId?: string;
+  sortBy?: 'title' | 'createdAt' | 'updatedAt' | 'submissionCount';
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface ListSubmissionsParams {
@@ -143,6 +145,7 @@ export interface ListSubmissionsParams {
   search?: string;
   page?: number;
   limit?: number;
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface CreateFormInput {

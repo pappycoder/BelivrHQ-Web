@@ -11,7 +11,7 @@ import {
   Send,
   Trash2,
 } from "lucide-react";
-import { toast } from "@/lib/toast";
+import { getToastErrorMessage, toast } from "@/lib/toast";
 import { StatCard } from "@/components/paper/stat";
 import {
   FilterChip,
@@ -25,6 +25,7 @@ import {
   useEmails,
   useEmailDetail,
   useMarkEmailRead,
+  useMarkEmailUnread,
   useTrashEmail,
   useRestoreEmail,
   useDeleteEmailForever,
@@ -45,6 +46,7 @@ function stamp(value: string) {
 export default function SharedInboxPage() {
   const { can, ready } = usePermissions();
   const canAnswer = ready && can("emails", "create");
+  const canReadMail = ready && can("emails", "read");
 
   const [box, setBox] = React.useState<EmailBox>("inbox");
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
@@ -54,6 +56,7 @@ export default function SharedInboxPage() {
   const emails = useEmails({ box, page: 1, limit: 30 });
   const detail = useEmailDetail(selectedId);
   const markRead = useMarkEmailRead();
+  const markUnread = useMarkEmailUnread();
   const trash = useTrashEmail();
   const restore = useRestoreEmail();
   const purge = useDeleteEmailForever();
@@ -61,9 +64,27 @@ export default function SharedInboxPage() {
   const rows = emails.data?.data ?? [];
   const unread = emails.data?.unreadCount ?? 0;
 
+  // Read state is a property of the CALLER'S inbox copy only — sent mail
+  // carries no read flag, so its rows must never paint as unread.
   const open = (id: string, wasRead: boolean) => {
     setSelectedId(id);
-    if (!wasRead) markRead.mutate(id);
+    if (!wasRead && box === "inbox") {
+      markRead.mutate(id, {
+        onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't mark that as read.")),
+      });
+    }
+  };
+
+  const markBackUnread = () => {
+    if (!active) return;
+    markUnread.mutate(active.id, {
+      onSuccess: () => {
+        // Reopening the detail re-marks read server-side, so leave the pane.
+        setSelectedId(null);
+        toast("Back in the unread pile.");
+      },
+      onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't mark it unread.")),
+    });
   };
 
   const startReply = () => {
@@ -131,10 +152,14 @@ export default function SharedInboxPage() {
                 <PersonAvatar name={email.senderName ?? "?"} src={email.senderAvatarUrl} size="sm" />
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2">
-                    <span className={cn("min-w-0 flex-1 truncate text-xs", email.readAt ? "text-ink-soft" : "font-semibold text-ink")}>
+                    <span className={cn(
+                      "min-w-0 flex-1 truncate text-xs",
+                      box === "inbox" && !email.readAt ? "font-semibold text-ink" : "text-ink-soft",
+                    )}
+                    >
                       {box === "inbox" ? email.senderName ?? "Member" : email.recipientName}
                     </span>
-                    {!email.readAt ? <span className="size-1.5 shrink-0 rounded-full bg-brand" /> : null}
+                    {box === "inbox" && !email.readAt ? <span className="size-1.5 shrink-0 rounded-full bg-brand" /> : null}
                     <span className="shrink-0 text-[9px] text-ink-faint">{stamp(email.createdAt)}</span>
                   </span>
                   <span className="mt-0.5 block truncate text-[11px] font-medium">{email.subject}</span>
@@ -170,17 +195,22 @@ export default function SharedInboxPage() {
                       <Send className="size-3.5" /> Reply
                     </Button>
                   ) : null}
+                  {canReadMail && box === "inbox" && active.readAt && !active.deletedAt ? (
+                    <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs" onClick={markBackUnread}>
+                      <Mail className="size-3.5" /> Mark unread
+                    </Button>
+                  ) : null}
                   {canAnswer && box === "inbox" ? (
-                    <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs" onClick={() => trash.mutate(active.id, { onSuccess: () => { setSelectedId(null); toast("Archived."); } })}>
+                    <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs" onClick={() => trash.mutate(active.id, { onSuccess: () => { setSelectedId(null); toast("Archived."); }, onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't archive this message.")) })}>
                       <Archive className="size-3.5" /> Archive
                     </Button>
                   ) : null}
                   {active.deletedAt ? (
                     <>
-                      <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs" onClick={() => restore.mutate(active.id, { onSuccess: () => toast("Back in the inbox.") })}>
+                      <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs" onClick={() => restore.mutate(active.id, { onSuccess: () => toast("Back in the inbox."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't restore it.")) })}>
                         <ArchiveRestore className="size-3.5" /> Restore
                       </Button>
-                      <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs text-destructive" onClick={() => purge.mutate(active.id, { onSuccess: () => { setSelectedId(null); toast("Deleted for good."); } })}>
+                      <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs text-destructive" onClick={() => purge.mutate(active.id, { onSuccess: () => { setSelectedId(null); toast("Deleted for good."); }, onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't delete it.")) })}>
                         <Trash2 className="size-3.5" /> Delete forever
                       </Button>
                     </>

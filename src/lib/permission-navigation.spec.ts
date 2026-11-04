@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { filterPermissionNavigation } from "./permission-navigation";
+import { activeLeafHref } from "./paper-nav";
 
 describe("permission-driven navigation", () => {
   const menu = [
@@ -50,4 +51,39 @@ it('recursively filters higher-plan leaves while preserving permitted sibling pa
   const menus = [{ href:'/events', children:[{href:'/events/registrations'},{href:'/events/management'}] }, {href:'/departments',children:[{href:'/departments/cell-groups'}]}];
   const result = filterPermissionNavigation(menus, () => true, path => !['/events/management','/departments/cell-groups'].includes(path));
   expect(result).toEqual([{href:'/events',children:[{href:'/events/registrations'}]}]);
+});
+
+describe("single active nav leaf", () => {
+  const areas = [
+    {
+      id: "gatherings",
+      label: "Gatherings",
+      href: "/gatherings",
+      children: [
+        {
+          title: "Attendance",
+          href: "/gatherings/attendance",
+          children: [
+            { title: "Overview", href: "/gatherings/attendance", live: true },
+            { title: "Live check-in", href: "/gatherings/attendance/check-in", live: true },
+            { title: "Services", href: "/gatherings/attendance/services", live: true },
+            { title: "Future", href: "/gatherings/attendance/future", live: false },
+          ],
+        },
+      ],
+    },
+  ] as unknown as Parameters<typeof activeLeafHref>[0];
+
+  it("prefers the most specific leaf so nested entries never both light up", () => {
+    expect(activeLeafHref(areas, "/gatherings/attendance/check-in")).toBe("/gatherings/attendance/check-in");
+  });
+
+  it("falls back to the section index for deep routes without their own leaf", () => {
+    expect(activeLeafHref(areas, "/gatherings/attendance/services/abc-123")).toBe("/gatherings/attendance/services");
+  });
+
+  it("answers nothing on unrelated paths and ignores not-yet-live leaves", () => {
+    expect(activeLeafHref(areas, "/people/members")).toBeUndefined();
+    expect(activeLeafHref(areas, "/gatherings/attendance/future")).toBe("/gatherings/attendance");
+  });
 });

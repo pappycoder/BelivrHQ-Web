@@ -346,6 +346,29 @@ export function flattenPaperNav(areas: readonly PaperArea[]): { leaf: PaperLeaf;
   return rows;
 }
 
+/**
+ * The single leaf href that best matches a pathname. Prefix-overlapping leaves
+ * (a section index like `/gatherings/attendance` beside its child
+ * `/gatherings/attendance/check-in`) must never both light up: the longest
+ * matching href wins. Same rule as the legacy sidebar's active-link fix.
+ */
+export function activeLeafHref(
+  areas: readonly PaperArea[],
+  pathname: string,
+): string | undefined {
+  let best: string | undefined;
+  for (const area of areas)
+    for (const mod of area.children)
+      for (const leaf of mod.children)
+        if (
+          leaf.live &&
+          (pathname === leaf.href || pathname.startsWith(leaf.href + "/")) &&
+          (!best || leaf.href.length > best.length)
+        )
+          best = leaf.href;
+  return best;
+}
+
 export function areaForPathname(pathname: string): PaperArea | undefined {
   const flat = flattenPaperNav(PAPER_AREAS).map((row) => row.area);
   const unique = [...new Map(flat.map((area) => [area.id, area])).values()];

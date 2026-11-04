@@ -75,26 +75,43 @@ describe("serviceOccursOn", () => {
 });
 
 describe("eventOccursOn", () => {
-  it("accepts every day inside the one-time window", () => {
+  it("accepts exactly the start day for a one-time event", () => {
     const schedule = {
       recurrence: "one_time",
+      startDate: "2026-11-01T09:00:00.000Z",
+      endDate: "2026-11-01T12:00:00.000Z",
+    };
+    expect(eventOccursOn(schedule, "2026-10-31")).toBe(false);
+    expect(eventOccursOn(schedule, SUNDAY)).toBe(true);
+    expect(eventOccursOn(schedule, MONDAY)).toBe(false);
+    expect(eventOccursOn(schedule, "2026-11-03")).toBe(false);
+  });
+
+  it("never occurs after the day for an open-ended one-time event", () => {
+    const schedule = {
+      recurrence: "one_time",
+      startDate: "2026-11-01T09:00:00.000Z",
+    };
+    expect(eventOccursOn(schedule, SUNDAY)).toBe(true);
+    expect(eventOccursOn(schedule, "2027-03-14")).toBe(false);
+    expect(eventOccursOn(schedule, "2026-10-31")).toBe(false);
+  });
+
+  it("covers every inclusive day of a date-range event", () => {
+    const schedule = {
+      recurrence: "multi_day",
       startDate: "2026-11-01T09:00:00.000Z",
       endDate: "2026-11-03T12:00:00.000Z",
     };
     expect(eventOccursOn(schedule, "2026-10-31")).toBe(false);
     expect(eventOccursOn(schedule, SUNDAY)).toBe(true);
+    expect(eventOccursOn(schedule, "2026-11-02")).toBe(true);
     expect(eventOccursOn(schedule, "2026-11-03")).toBe(true);
     expect(eventOccursOn(schedule, "2026-11-04")).toBe(false);
-  });
-
-  it("accepts any later date for an open-ended one-time event", () => {
-    const schedule = {
-      recurrence: "one_time",
-      startDate: "2026-11-01T09:00:00.000Z",
-    };
-    expect(eventOccursOn(schedule, SUNDAY)).toBe(true);
-    expect(eventOccursOn(schedule, "2027-03-14")).toBe(true);
-    expect(eventOccursOn(schedule, "2026-10-31")).toBe(false);
+    // Without an end bound a date range has no valid window.
+    expect(
+      eventOccursOn({ recurrence: "multi_day", startDate: SUNDAY }, SUNDAY),
+    ).toBe(false);
   });
 
   it("anchors weekly recurrence on the start date's weekday", () => {

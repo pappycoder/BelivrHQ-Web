@@ -12,8 +12,8 @@ import { addDays, format } from "date-fns";
 export const SCHEDULE_RECURRENCES = ["weekly", "one_time", "multi_day"] as const;
 export type ScheduleRecurrence = (typeof SCHEDULE_RECURRENCES)[number];
 
-/** Events only repeat weekly or happen once across their start/end window. */
-export const EVENT_RECURRENCES = ["one_time", "weekly"] as const;
+/** Events happen once, repeat weekly, or run across a bounded multi-day window. */
+export const EVENT_RECURRENCES = ["one_time", "weekly", "multi_day"] as const;
 export type EventRecurrence = (typeof EVENT_RECURRENCES)[number];
 
 export const SCHEDULE_RECURRENCE_LABELS: Record<ScheduleRecurrence, string> = {
@@ -25,6 +25,7 @@ export const SCHEDULE_RECURRENCE_LABELS: Record<ScheduleRecurrence, string> = {
 export const EVENT_RECURRENCE_LABELS: Record<EventRecurrence, string> = {
   one_time: "One-time",
   weekly: "Every week",
+  multi_day: "Date range",
 };
 
 export interface ServiceSchedule {
@@ -96,7 +97,9 @@ export function serviceOccursOn(schedule: ServiceSchedule, date: string): boolea
 /**
  * Whether an event occurs on the supplied calendar day.
  *
- * - one_time: every day inside `[startDate day, endDate day]` (end optional).
+ * - one_time: exactly the day of `startDate` (a same-day `endDate` only
+ *   carries the end time — multi-day windows are `multi_day`).
+ * - multi_day: every day from `startDate` through `endDate` inclusive.
  * - weekly: the same weekday as `startDate`, from `startDate` through
  *   `endDate` when present, otherwise indefinitely.
  */
@@ -107,10 +110,11 @@ export function eventOccursOn(schedule: EventSchedule, date: string): boolean {
   if (date < start) return false;
   if (end && date > end) return false;
 
-  if ((schedule.recurrence || "one_time") === "weekly")
-    return weekdayOf(date) === weekdayOf(start);
+  const recurrence = (schedule.recurrence || "one_time") as EventRecurrence;
+  if (recurrence === "weekly") return weekdayOf(date) === weekdayOf(start);
+  if (recurrence === "multi_day") return end !== null && date >= start && date <= end;
 
-  return true;
+  return date === start;
 }
 
 /**

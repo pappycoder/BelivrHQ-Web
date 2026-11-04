@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { format } from "date-fns";
 import { ArrowLeft, Save } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader, SectionCard } from "@/components/paper/section";
@@ -29,7 +30,17 @@ import {
 } from "@/lib/schedule-occurrence";
 import { cn } from "@/lib/utils";
 
-const toLocal = (iso?: string) => (iso ? iso.slice(0, 16) : "");
+/**
+ * Render a stored ISO timestamp inside a datetime-local control in the
+ * viewer's OWN wall time. The previous `iso.slice(0,16)` showed UTC values as
+ * local, so every save shifted the event by the timezone offset — which
+ * `toIso` (which parses local) then persisted.
+ */
+const toLocal = (iso?: string | null) => {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? "" : format(d, "yyyy-MM-dd'T'HH:mm");
+};
 const toIso = (local: string) => {
   if (!local) return undefined;
   const d = new Date(local);
@@ -113,12 +124,28 @@ export default function EditEventPage({
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) { toast.error("Even an event needs a name."); return; }
+    if (!form.start) { toast.error("Every event needs a start date and time."); return; }
+    // Same day-key rules the service dialog and the API enforce.
+    const startDay = form.start.slice(0, 10);
+    const endDay = form.end ? form.end.slice(0, 10) : "";
+    if (form.recurrence === "one_time" && endDay && endDay !== startDay) {
+      toast.error("A one-time event happens on a single day — pick Date range to run across several.");
+      return;
+    }
+    if (form.recurrence === "multi_day") {
+      if (!endDay) { toast.error("A date-range event needs an end date."); return; }
+      if (endDay < startDay) { toast.error("The end date must be on or after the start date."); return; }
+    }
+    if (form.recurrence === "weekly" && endDay && endDay < startDay) {
+      toast.error("The end date must be on or after the start date.");
+      return;
+    }
     updateEvent.mutate(
       {
         title: form.title.trim(),
         type: form.type,
         startDate: toIso(form.start),
-        endDate: toIso(form.end),
+        endDate: form.end ? toIso(form.end) : null,
         recurrence: form.recurrence,
         location: form.location.trim() || undefined,
         description: form.description.trim() || undefined,
@@ -202,7 +229,9 @@ export default function EditEventPage({
                     ? form.start
                       ? `Repeats every ${new Date(form.start).toLocaleDateString("en-GB", { weekday: "long" })} from the start date until the end date (or indefinitely).`
                       : "Repeats every week on the start date's weekday, until the end date or indefinitely."
-                    : "Open every day from the start date to the end date. Leave the end blank for a single day."}
+                    : form.recurrence === "multi_day"
+                      ? "Runs every day from the start date through the end date, inclusive — the check-in desk steps through the whole window."
+                      : "Happens on the start day alone — the end time just closes that day. Check-in rejects any other date."}
                 </p>
               </div>
               <div className="space-y-1.5">
@@ -210,7 +239,13 @@ export default function EditEventPage({
                 <Input type="datetime-local" value={form.start} onChange={(e) => set("start", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Ends</Label>
+                <Label className="text-xs">
+                  {form.recurrence === "one_time"
+                    ? "Ends (same day)"
+                    : form.recurrence === "multi_day"
+                      ? "Ends"
+                      : "Until (optional)"}
+                </Label>
                 <Input type="datetime-local" value={form.end} onChange={(e) => set("end", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">

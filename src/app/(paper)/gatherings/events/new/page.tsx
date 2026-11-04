@@ -60,6 +60,22 @@ export default function NewEventPage() {
     event.preventDefault();
     if (!form.title.trim()) { toast.error("Even a service needs a name."); return; }
     if (!form.start) { toast.error("When is it, at least roughly?"); return; }
+    // Same local-calendar-day arithmetic the service dialog uses: datetime-local
+    // values carry their day in the first 10 characters, so no timezone maths.
+    const startDay = form.start.slice(0, 10);
+    const endDay = form.end ? form.end.slice(0, 10) : "";
+    if (form.recurrence === "one_time" && endDay && endDay !== startDay) {
+      toast.error("A one-time event happens on a single day — pick Date range to run across several.");
+      return;
+    }
+    if (form.recurrence === "multi_day") {
+      if (!endDay) { toast.error("A date-range event needs an end date."); return; }
+      if (endDay < startDay) { toast.error("The end date must be on or after the start date."); return; }
+    }
+    if (form.recurrence === "weekly" && endDay && endDay < startDay) {
+      toast.error("The end date must be on or after the start date.");
+      return;
+    }
     createEvent.mutate(
       {
         title: form.title.trim(),
@@ -158,7 +174,9 @@ export default function NewEventPage() {
                       ? form.start
                         ? `Repeats every ${new Date(form.start).toLocaleDateString("en-GB", { weekday: "long" })} from the start date until the end date (or indefinitely).`
                         : "Repeats every week on the start date's weekday, until the end date or indefinitely."
-                      : "Open every day from the start date to the end date. Leave the end blank for a single day."}
+                      : form.recurrence === "multi_day"
+                        ? "Runs every day from the start date through the end date, inclusive — the check-in desk steps through the whole window."
+                        : "Happens on the start day alone — the end time just closes that day. Check-in rejects any other date."}
                   </p>
                 </div>
                 <div className="space-y-1.5">
@@ -166,7 +184,13 @@ export default function NewEventPage() {
                   <Input type="datetime-local" value={form.start} onChange={(e) => set("start", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Ends</Label>
+                  <Label className="text-xs">
+                    {form.recurrence === "one_time"
+                      ? "Ends (same day)"
+                      : form.recurrence === "multi_day"
+                        ? "Ends"
+                        : "Until (optional)"}
+                  </Label>
                   <Input type="datetime-local" value={form.end} onChange={(e) => set("end", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">

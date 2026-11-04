@@ -31,6 +31,11 @@ import {
   useEventTiers,
   EVENT_TYPE_MAP,
 } from "@/hooks/use-events";
+import {
+  eventOccursOn,
+  stepOccurrence,
+  todayKey,
+} from "@/lib/schedule-occurrence";
 import { cn } from "@/lib/utils";
 
 function fullDate(value?: string) {
@@ -92,7 +97,18 @@ export default function EventDetailPage({
   }
 
   const e = event.data;
-  const upcoming = new Date(e.startDate).getTime() >= Date.now();
+  const schedule = { recurrence: e.recurrence, startDate: e.startDate, endDate: e.endDate };
+  const occursToday = eventOccursOn(schedule, todayKey());
+  // A recurring event that meets today is not "Past" just because its first
+  // occurrence came and went — same evergreen rule as the service schedules.
+  const upcoming = occursToday || new Date(e.startDate).getTime() >= Date.now();
+  const recurrence = e.recurrence ?? "one_time";
+  const nextDay =
+    recurrence === "weekly" || recurrence === "multi_day"
+      ? occursToday
+        ? todayKey()
+        : stepOccurrence((d) => eventOccursOn(schedule, d), todayKey(), 1)
+      : null;
   const filled = e.capacity ? Math.min(100, Math.round(((e.registrationCount ?? 0) / e.capacity) * 100)) : null;
 
   return (
@@ -116,6 +132,16 @@ export default function EventDetailPage({
               <span>{fullDate(e.startDate)}{e.endDate && timeOf(e.endDate) ? ` → ${timeOf(e.endDate)}` : ""}</span>
               <span className="flex items-center gap-1"><MapPin className="size-3" /> {e.location ?? "Location to be announced"}</span>
             </p>
+            {recurrence !== "one_time" ? (
+              <p className="text-[10px] text-ink-faint">
+                {recurrence === "weekly"
+                  ? `Repeats every ${new Date(e.startDate).toLocaleDateString("en-GB", { weekday: "long" })}`
+                  : `Runs every day through ${e.endDate ? fullDate(e.endDate) : "its window"}`}
+                {nextDay
+                  ? ` · next up ${new Date(`${nextDay}T00:00:00`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}`
+                  : " · its window has closed"}
+              </p>
+            ) : null}
             {e.description ? (
               <p className="max-w-2xl text-xs leading-relaxed text-ink-soft">{e.description}</p>
             ) : null}

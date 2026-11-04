@@ -113,7 +113,8 @@ export interface CreateEventInput {
   description?: string;
   type: EventType;
   startDate: string;
-  endDate?: string;
+  /** `null` (update payloads) clears a saved window; omit leaves it untouched. */
+  endDate?: string | null;
   recurrence?: EventRecurrence;
   location?: string;
   capacity?: number;

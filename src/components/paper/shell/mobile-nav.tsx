@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutGrid } from "lucide-react";
 import type { PaperArea } from "@/lib/paper-nav";
+import { activeLeafHref } from "@/lib/paper-nav";
 import { cn } from "@/lib/utils";
 import {
   Sheet,
@@ -35,17 +36,14 @@ function landingOf(area: PaperArea) {
   return area.children[0]?.children[0]?.href ?? area.href;
 }
 
-function leafActive(leaf: { href: string }, pathname: string) {
-  return pathname === leaf.href || pathname.startsWith(leaf.href + "/");
-}
-
 function AreaSubmenu({
   area,
-  pathname,
+  activeHref,
   onNavigate,
 }: {
   area: PaperArea;
-  pathname: string;
+  /** Longest-matching leaf href for the current route — only that one lights. */
+  activeHref?: string;
   onNavigate: () => void;
 }) {
   return (
@@ -54,7 +52,7 @@ function AreaSubmenu({
         <div key={module.title} className="space-y-1.5">
           <p className="rule-label px-1">{module.title}</p>
           {module.children.map((leaf) => {
-            const active = leafActive(leaf, pathname);
+            const active = leaf.href === activeHref;
             return (
               <Link
                 key={leaf.href}
@@ -91,6 +89,7 @@ function AreaSubmenu({
 export function MobileNav({ areas }: { areas: PaperArea[] }) {
   const pathname = usePathname();
   const router = useRouter();
+  const activeHref = React.useMemo(() => activeLeafHref(areas, pathname), [areas, pathname]);
   const primary = areas.slice(0, 3);
   const rest = areas.slice(3);
   const [openAreaId, setOpenAreaId] = React.useState<string | null>(null);
@@ -175,7 +174,7 @@ export function MobileNav({ areas }: { areas: PaperArea[] }) {
                         </span>
                       </span>
                     </div>
-                    <AreaSubmenu area={area} pathname={pathname} onNavigate={() => setMoreOpen(false)} />
+                    <AreaSubmenu area={area} activeHref={activeHref} onNavigate={() => setMoreOpen(false)} />
                   </section>
                 ))}
               </div>
@@ -203,7 +202,7 @@ export function MobileNav({ areas }: { areas: PaperArea[] }) {
                 <SheetDescription className="text-left">{openArea.blurb}</SheetDescription>
               </SheetHeader>
               <div className="space-y-5 px-4 pt-4">
-                <AreaSubmenu area={openArea} pathname={pathname} onNavigate={() => setOpenAreaId(null)} />
+                <AreaSubmenu area={openArea} activeHref={activeHref} onNavigate={() => setOpenAreaId(null)} />
               </div>
             </>
           ) : null}

@@ -15,6 +15,7 @@ import {
 import { PersonAvatar } from "@/components/paper/primitives";
 import { spring } from "@/components/paper/motion/variants";
 import type { PaperArea } from "@/lib/paper-nav";
+import { activeLeafHref } from "@/lib/paper-nav";
 import { useCurrentProfile } from "@/hooks/use-profile";
 import { BrandLogo } from "@/components/shared/brand-logo";
 
@@ -45,18 +46,16 @@ export function NavRail({
   };
 
   const landingOf = (area: PaperArea) => area.children[0]?.children[0]?.href ?? area.href;
+  /** Longest matching leaf — its area is active, and only that leaf lights in the peek. */
+  const activeHref = React.useMemo(() => activeLeafHref(areas, pathname), [areas, pathname]);
   const activeArea = React.useMemo(() => {
-    let best: PaperArea | undefined;
-    for (const area of areas)
-      for (const mod of area.children)
-        for (const leaf of mod.children)
-          if (
-            (pathname === leaf.href || pathname.startsWith(leaf.href + "/")) &&
-            (!best || leaf.href.length > best.href.length)
-          )
-            best = area;
-    return best;
-  }, [areas, pathname]);
+    if (!activeHref) return undefined;
+    return areas.find((item) =>
+      item.children.some((mod) =>
+        mod.children.some((leaf) => leaf.live && leaf.href === activeHref),
+      ),
+    );
+  }, [areas, activeHref]);
 
   const area = areas.find((item) => item.id === openArea);
   const fullName = [profile?.firstName, profile?.lastName].filter(Boolean).join(" ") || "You";
@@ -204,8 +203,7 @@ export function NavRail({
                     <div key={module.title} className="space-y-1">
                       <p className="px-1 text-[11px] font-semibold text-ink">{module.title}</p>
                       {module.children.map((leaf) => {
-                        const active =
-                          pathname === leaf.href || pathname.startsWith(leaf.href + "/");
+                        const active = leaf.href === activeHref;
                         return (
                           <Link
                             key={leaf.href}

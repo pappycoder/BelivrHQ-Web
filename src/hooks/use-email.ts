@@ -88,6 +88,38 @@ function invalidateEmails(qc: ReturnType<typeof useQueryClient>) {
   qc.invalidateQueries({ queryKey: ["email-unread"] });
 }
 
+/**
+ * Flip a message's read flag in every mounted INBOX list cache so the dot and
+ * bold react instantly (the list only refetches on mutation success; a failed
+ * call resyncs below). Sent rows carry no read state — they are skipped.
+ */
+function applyOptimisticRead(
+  qc: ReturnType<typeof useQueryClient>,
+  messageId: string,
+  read: boolean,
+) {
+  for (const query of qc.getQueryCache().getAll()) {
+    const key = query.queryKey;
+    if (!Array.isArray(key) || key[0] !== "email-list") continue;
+    const params = key[1] as ListEmailsParams | undefined;
+    if (params?.box === "sent") continue;
+    const current = query.state.data as EmailListResponse | undefined;
+    if (!current) continue;
+    const row = current.data.find((m) => m.id === messageId);
+    if (!row || !!row.readAt === read) continue;
+    const wasUnread = row.readAt ? 0 : 1;
+    qc.setQueryData<EmailListResponse>(key, {
+      ...current,
+      data: current.data.map((m) =>
+        m.id === messageId
+          ? { ...m, readAt: read ? new Date().toISOString() : undefined }
+          : m,
+      ),
+      unreadCount: Math.max(0, current.unreadCount - wasUnread + (read ? 0 : 1)),
+    });
+  }
+}
+
 // ─── Queries ─────────────────────────────────────────────
 
 /** List emails for the current mailbox view. */
@@ -145,25 +177,36 @@ export function useSendEmail() {
   });
 }
 
-/** Mark a received email as read. */
+/** Mark a received email as read (optimistic — the inbox dot clears instantly). */
 export function useMarkEmailRead() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (messageId: string) =>
       api.post<{ success: boolean }>(`/email/${messageId}/read`),
+    onMutate: async (messageId) => {
+      applyOptimisticRead(queryClient, messageId, true);
+    },
     onSuccess: () => {
+      invalidateEmails(queryClient);
+    },
+    onError: () => {
+      // The optimistic flag may be wrong (offline, 4xx) — resync from the server.
       invalidateEmails(queryClient);
     },
   });
 }
 
-/** Mark a received email as unread. */
+/** Mark a received email as unread (optimistic; reopening the detail re-marks it read). */
 export function useMarkEmailUnread() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (messageId: string) =>
       api.post<{ success: boolean }>(`/email/${messageId}/unread`),
+    onMutate: async (messageId) => {
+      applyOptimisticRead(queryClient, messageId, false);
+    },
     onSuccess: () => invalidateEmails(queryClient),
+    onError: () => invalidateEmails(queryClient),
   });
 }
 
