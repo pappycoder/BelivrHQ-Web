@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { hasLivePublicFormLink } from "@/lib/public-form-link";
 import {
   ArrowLeft,
   CalendarX2,
@@ -98,7 +99,7 @@ export default function FormDetailPage({
   const f = form.data;
   const rows = submissions.data?.data ?? [];
   const total = submissions.data?.meta?.total ?? 0;
-  const shareUrl = f.isPublic && f.publicToken ? `${typeof window !== "undefined" ? window.location.origin : ""}/forms/public/${f.publicToken}` : null;
+  const shareUrl = hasLivePublicFormLink(f) ? `${typeof window !== "undefined" ? window.location.origin : ""}/forms/public/${f.publicToken}` : null;
 
   const copyLink = () => {
     if (!shareUrl) return;
@@ -175,6 +176,16 @@ export default function FormDetailPage({
           </div>
         </div>
       </div>
+
+      {f.isPublic && !shareUrl && (
+        <p role="status" className="text-sm text-ink-soft">
+          {f.archivedAt
+            ? "Restore this form before sharing its public link."
+            : f.status === "draft"
+              ? "Publish this form in the builder to activate its public link."
+              : "Reopen this form to activate its public link."}
+        </p>
+      )}
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
         <StatCard label="Answers" value={f.submissionCount ?? 0} tone="brand" icon={<Inbox className="size-4" />} />

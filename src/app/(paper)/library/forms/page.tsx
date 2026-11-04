@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { hasLivePublicFormLink } from "@/lib/public-form-link";
 import { useRouter } from "next/navigation";
 import {
   ArrowUpDown as ArrowUpDownIcon,
@@ -134,6 +135,7 @@ export default function FormsListPage() {
   const total = forms.data?.meta?.total ?? 0;
 
   const copyPublicLink = (form: Form) => {
+    if (!hasLivePublicFormLink(form)) return;
     const url = `${window.location.origin}/forms/public/${form.publicToken}`;
     navigator.clipboard?.writeText(url).catch(() => undefined);
     toast("Public link copied.");
@@ -148,7 +150,7 @@ export default function FormsListPage() {
       icon: <PencilLine />,
       href: `/library/forms/${form.id}/edit`,
     },
-    form.isPublic && form.publicToken && {
+    hasLivePublicFormLink(form) && {
       label: "Copy public link",
       icon: <Share2 />,
       onSelect: () => copyPublicLink(form),
@@ -245,7 +247,7 @@ export default function FormsListPage() {
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Forms" value={total} tone="brand" icon={<ClipboardList className="size-4" />} deltaLabel={archivedView ? "archived" : "matching"} />
         <StatCard label="Published" value={rows.filter((f) => f.status === "published" && !f.archivedAt).length} tone="moss" deltaLabel="this page" />
-        <StatCard label="Public links" value={rows.filter((f) => f.isPublic && f.publicToken).length} tone="sky" deltaLabel="fillable by anyone" />
+        <StatCard label="Public links" value={rows.filter(hasLivePublicFormLink).length} tone="sky" deltaLabel="fillable by anyone" />
         <StatCard label="Answers this page" value={rows.reduce((sum, f) => sum + (f.submissionCount ?? 0), 0)} tone="gold" />
       </div>
 
