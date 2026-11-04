@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { SubmissionRespondent } from "./submission-respondent";
 import {
   SUBMISSION_STATUS_LABELS,
   SUBMISSION_STATUS_TEXT,
@@ -49,6 +50,8 @@ export function SubmissionDetailDialog({
             </Badge>
           </DialogTitle>
         </DialogHeader>
+
+        <SubmissionRespondent submission={submission} fields={form?.fields} size="sm" />
 
         <div className="space-y-1 text-sm text-muted-foreground">
           <p>Submitted {format(new Date(submission.createdAt), "MMM d, yyyy 'at' h:mm a")}</p>

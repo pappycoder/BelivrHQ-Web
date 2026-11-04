@@ -1,5 +1,8 @@
 "use client";
 
+import { SubmissionRespondent } from "@/components/forms/submission-respondent";
+import { submissionRespondent } from "@/lib/submission-respondent";
+
 import * as React from "react";
 import Link from "next/link";
 import { CheckCheck, Eye, Inbox, LayoutGrid, Rows3, XCircle } from "lucide-react";
@@ -11,7 +14,6 @@ import {
   FilterChip,
   ListPaginationFooter,
   ManageHeading,
-  PersonAvatar,
   RowActions,
   SearchField,
   SortDirectionToggle,
@@ -42,6 +44,8 @@ const PAGE_SIZE = 15;
 
 const EXPORT_COLUMNS = [
   { key: "respondent", label: "Respondent" },
+  { key: "contact", label: "Contact" },
+  { key: "responseId", label: "Response ID" },
   { key: "status", label: "Status" },
   { key: "submitted", label: "Submitted" },
   { key: "attachments", label: "Attachments" },
@@ -110,7 +114,9 @@ export default function FormsSubmissionsPage() {
   ];
 
   const exportRow = (submission: FormSubmission) => ({
-    respondent: submission.submittedBy ?? "Anonymous",
+    respondent: submissionRespondent(submission, selected?.fields).name,
+    contact: submissionRespondent(submission, selected?.fields).contact,
+    responseId: submission.id,
     status: SUBMISSION_STATUS_LABELS[submission.status] ?? submission.status,
     submitted: formatDate(submission.createdAt),
     attachments: submission.attachments?.length ?? 0,
@@ -236,9 +242,8 @@ export default function FormsSubmissionsPage() {
                         className="group grid grid-cols-[minmax(0,1.6fr)_minmax(0,2fr)_minmax(0,1fr)_auto] items-center gap-3 px-5 py-3 transition-colors hover:bg-muted/40"
                       >
                         <button type="button" onClick={() => setDetail(submission)} className="flex min-w-0 items-center gap-2.5 text-left">
-                          <PersonAvatar name={submission.submittedBy ?? "Anonymous"} size="xs" />
                           <span className="min-w-0">
-                            <span className="block truncate text-xs font-medium">{submission.submittedBy ?? "Anonymous"}</span>
+                            <SubmissionRespondent submission={submission} fields={selected?.fields} />
                             <span className="block truncate text-[10px] text-ink-faint">
                               {SUBMISSION_STATUS_LABELS[submission.status]}
                               {submission.attachments?.length ? ` · ${submission.attachments.length} file(s)` : ""}
@@ -275,9 +280,8 @@ export default function FormsSubmissionsPage() {
                     <div className="paper-card flex h-full flex-col rounded-2xl p-4">
                       <div className="flex items-start justify-between gap-2">
                         <button type="button" onClick={() => setDetail(submission)} className="flex min-w-0 items-center gap-2.5 text-left">
-                          <PersonAvatar name={submission.submittedBy ?? "Anonymous"} size="sm" />
                           <span className="min-w-0">
-                            <span className="block truncate text-xs font-semibold hover:text-brand">{submission.submittedBy ?? "Anonymous"}</span>
+                            <SubmissionRespondent submission={submission} fields={selected?.fields} />
                             <span className="num block text-[10px] text-ink-faint">{formatDate(submission.createdAt)}</span>
                           </span>
                         </button>

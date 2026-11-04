@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { SubmissionRespondent } from "@/components/forms/submission-respondent";
 import { hasLivePublicFormLink } from "@/lib/public-form-link";
 import {
   ArrowLeft,
@@ -21,7 +22,6 @@ import {
   FieldRow,
   FilterChip,
   ListPaginationFooter,
-  PersonAvatar,
   SearchField,
   SortDirectionToggle,
 } from "@/components/paper/primitives";
@@ -228,9 +228,8 @@ export default function FormDetailPage({
             <div className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl">
               {rows.map((submission) => (
                 <div key={submission.id} className="flex items-center gap-3 px-5 py-3">
-                  <PersonAvatar name={submission.submittedBy ?? "Anonymous"} size="xs" />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs font-medium">{submission.submittedBy ?? "Anonymous"}</p>
+                    <SubmissionRespondent submission={submission} fields={f.fields} />
                     <p className="truncate text-[10px] text-ink-faint">{formatDate(submission.createdAt)}{submission.attachments?.length ? ` · ${submission.attachments.length} file(s)` : ""}</p>
                   </div>
                   <Tag tone={submission.status === "approved" ? "moss" : submission.status === "rejected" ? "rose" : "gold"} dot>
