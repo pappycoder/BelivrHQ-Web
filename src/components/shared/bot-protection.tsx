@@ -3,7 +3,7 @@
 import * as React from "react";
 import type { AltchaWidgetElement } from "altcha";
 import { refreshSession } from "@/lib/api";
-import { registerBotForm } from "@/lib/bot-protection";
+import { registerBotForm, setBotFormReady } from "@/lib/bot-protection";
 
 export function BotProtection({
   path,
@@ -21,7 +21,7 @@ export function BotProtection({
   const honeypot = React.useRef<HTMLInputElement>(null);
   const retry = React.useRef<() => void>(() => {});
   const [status, setStatus] = React.useState(
-    "Verification starts automatically.",
+    "Check the box to verify your browser.",
   );
   const [failed, setFailed] = React.useState(false);
   const [attempt, setAttempt] = React.useState(0);
@@ -38,10 +38,10 @@ export function BotProtection({
     let work: Promise<string> | undefined;
     let verifiedPayload: string | undefined;
     const lifecycle = new AbortController();
-    const form = container.closest("form") ?? container.parentElement;
+    let explicitlyVerified = false;
 
     const verify = async (signal?: AbortSignal): Promise<string> => {
-      if (verifiedPayload && widget?.getState() === "verified")
+      if (verifiedPayload && widget?.getState?.() === "verified")
         return verifiedPayload;
       if (!work) {
         work = (async () => {
@@ -54,7 +54,7 @@ export function BotProtection({
           signal?.addEventListener("abort", abort, { once: true });
           try {
             signal?.throwIfAborted();
-            const result = await widget?.verify({ controller });
+            const result = await widget?.verify?.({ controller });
             if (!result?.payload)
               throw new Error("Verification could not finish. Please retry.");
             verifiedPayload = result.payload;
@@ -77,25 +77,24 @@ export function BotProtection({
       }
       return work;
     };
-    const start = () => {
-      if (widget && !work) void verify().catch(() => {});
-    };
     retry.current = () => {
-      if (!widget) {
+      if (!widget || typeof widget.reset !== "function") {
         setAttempt((value) => value + 1);
         return;
       }
       if (work) return;
       verifiedPayload = undefined;
       widget.reset();
-      start();
+      setStatus("Check the box to verify your browser.");
+      setFailed(false);
     };
 
     void import("altcha")
       .then(async () => {
         if (disposed) return;
         widget = document.createElement("altcha-widget");
-        widget.setAttribute("display", "invisible");
+        widget.setAttribute("display", "standard");
+        widget.setAttribute("type", "native");
         // The API controller owns submission. Detach ALTCHA's internal checkbox
         // from native form validation so a pending solve cannot swallow Submit.
         widget.setAttribute("form", `altcha-detached-${id}`);
@@ -105,14 +104,25 @@ export function BotProtection({
         if (disposed) return;
         await widget.configure({
           auto: "off",
-          display: "invisible",
+          display: "standard",
+          type: "native",
           workers: 2,
+          timeout: 30000,
           name: "altcha",
           challenge: challengeUrl(path),
           fetch: async (input, init) => {
             const headers = new Headers(init?.headers);
             headers.set("X-ChurchOS-Client", "web");
-            const options = { ...init, headers, cache: "no-store" as const };
+            const options = {
+              ...init,
+              headers,
+              cache: "no-store" as const,
+              signal: AbortSignal.any([
+                lifecycle.signal,
+                AbortSignal.timeout(30000),
+                ...(init?.signal ? [init.signal] : []),
+              ]),
+            };
             let response = await fetch(input, options);
             if (
               authenticated &&
@@ -124,9 +134,35 @@ export function BotProtection({
           },
         });
         if (disposed) return;
+        widget.addEventListener("verified", (event) => {
+          if (disposed) return;
+          const payload = (event as CustomEvent<{ payload: string }>).detail
+            .payload;
+          if (!payload) return;
+          verifiedPayload = payload;
+          explicitlyVerified = true;
+          setBotFormReady(method, activePath, true);
+          setStatus("Browser verified.");
+          setFailed(false);
+        });
         widget.addEventListener("statechange", (event) => {
           const state = (event as CustomEvent<{ state: string }>).detail.state;
-          if (state === "expired" && !disposed) {
+          if (disposed) return;
+          if (state !== "verified") {
+            verifiedPayload = undefined;
+            setBotFormReady(method, activePath, false);
+          }
+          if (state === "verifying") {
+            setStatus("Checking your browser…");
+            setFailed(false);
+          }
+          if (state === "unverified")
+            setStatus("Check the box to verify your browser.");
+          if (state === "error") {
+            setStatus("Verification could not finish. Please retry.");
+            setFailed(true);
+          }
+          if (state === "expired") {
             verifiedPayload = undefined;
             setStatus("Verification expired. Please retry.");
             setFailed(true);
@@ -140,20 +176,29 @@ export function BotProtection({
             registerBotForm(method, targetPath, {
               acquire: async (signal) => {
                 if (activePath !== targetPath) {
+                  if (!explicitlyVerified)
+                    throw new Error(
+                      "Check the verification box before submitting.",
+                    );
                   // Registration may immediately sign in with a separately scoped proof.
                   await work?.catch(() => {});
                   signal?.throwIfAborted();
                   if (disposed)
                     throw new Error("Verification form closed. Please retry.");
                   verifiedPayload = undefined;
-                  widget?.reset();
+                  widget?.reset?.();
                   await widget?.configure({
                     challenge: challengeUrl(targetPath),
                   });
                   activePath = targetPath;
+                  await verify(signal);
                 }
                 // A submission joining background verification still observes its own cancellation.
-                const payload = await verify(signal);
+                if (!verifiedPayload || widget?.getState?.() !== "verified")
+                  throw new Error(
+                    "Check the verification box and wait for verification before submitting.",
+                  );
+                const payload = verifiedPayload;
                 signal?.throwIfAborted();
                 return {
                   altcha: payload,
@@ -162,16 +207,14 @@ export function BotProtection({
               },
               reset: () => {
                 verifiedPayload = undefined;
+                setBotFormReady(method, targetPath, false);
                 if (!disposed) {
-                  widget?.reset();
-                  setStatus("Verification starts automatically.");
+                  widget?.reset?.();
+                  setStatus("Check the box to verify your browser.");
                 }
               },
             }),
           );
-        form?.addEventListener("focusin", start);
-        form?.addEventListener("pointerdown", start);
-        if (form?.contains(document.activeElement)) start();
       })
       .catch(() => {
         if (!disposed) {
@@ -184,8 +227,8 @@ export function BotProtection({
       disposed = true;
       lifecycle.abort();
       unregister.forEach((remove) => remove());
-      form?.removeEventListener("focusin", start);
-      form?.removeEventListener("pointerdown", start);
+      // ALTCHA clears exported methods on disconnection before React effect cleanup.
+      widget?.reset?.();
       widget?.remove();
     };
   }, [method, path, authenticated, followUpPath, attempt, id]);

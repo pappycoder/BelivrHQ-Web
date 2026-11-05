@@ -1,4 +1,4 @@
-import { mockBotChallenges } from "../fixtures/bot-protection";
+import { mockBotChallenges, verifyBotForm } from "../fixtures/bot-protection";
 import { mockTawkWidget } from "../fixtures/tawk-widget";
 import { test, expect, type BrowserContext, type Page } from "@playwright/test";
 const reference = "COSUB_" + "a".repeat(32);
@@ -76,6 +76,7 @@ test("registration preserves edits and redirects to sign-in when email confirmat
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("checkbox", { name: /I am at least 18/ }).check();
+  await verifyBotForm(page);
   await page
     .getByRole("button", { name: "Create account & continue", exact: true })
     .click();
@@ -132,6 +133,7 @@ test("registration failure retains data for a safe retry", async ({
   await accountStep(page);
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("checkbox", { name: /I am at least 18/ }).check();
+  await verifyBotForm(page);
   await page
     .getByRole("button", { name: "Create account & continue", exact: true })
     .click();
@@ -271,6 +273,7 @@ test("registration signs in and opens the selected subscription for Flutterwave 
   await accountStep(page);
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("checkbox", { name: /I am at least 18/ }).check();
+  await verifyBotForm(page);
   await page.getByRole("button", { name: "Create account & continue", exact: true }).click();
   await expect(page).toHaveURL(/\/subscription$/);
   await expect(page.getByLabel("Billing period")).toHaveValue("annual");
@@ -307,6 +310,7 @@ test("an existing unpaid administrator is returned to billing after signing in",
   await page.goto("/login");
   await page.getByLabel("Email Address", { exact: true }).fill("grace@example.org");
   await page.getByLabel("Password", { exact: true }).fill("LongUniquePassword!27");
+  await verifyBotForm(page);
   await page.getByRole("button", { name: "Sign In", exact: true }).click();
   await expect(page).toHaveURL(/\/subscription$/);
   await expect(page.getByLabel("Payment provider")).toHaveValue("flutterwave");
@@ -537,6 +541,7 @@ test("password recovery sends the email and gives a non-enumerating confirmation
   await page
     .getByLabel("Email Address", { exact: true })
     .fill("recover@example.org");
+  await verifyBotForm(page);
   await page
     .getByRole("button", { name: "Send reset link", exact: true })
     .click();
@@ -564,6 +569,7 @@ test("reset password preserves the recovery token in memory and removes it from 
   await page
     .getByLabel("Confirm Password", { exact: true })
     .fill("LongNewPassword!29");
+  await verifyBotForm(page);
   await page
     .getByRole("button", { name: "Save new password", exact: true })
     .click();
@@ -602,6 +608,7 @@ test("redesigned sign-in retains the authenticator and recovery-code flow", asyn
   await page
     .getByLabel("Password", { exact: true })
     .fill("LongUniquePassword!29");
+  await verifyBotForm(page);
   await page.getByRole("button", { name: "Sign In", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Verify Your Identity", exact: true }),

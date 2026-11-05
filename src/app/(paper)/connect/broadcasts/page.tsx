@@ -1,6 +1,7 @@
 "use client";
 
 import { BotProtection } from "@/components/shared/bot-protection";
+import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
 import * as React from "react";
 import Link from "next/link";
@@ -88,6 +89,7 @@ export default function BroadcastsPage() {
   const publishedTemplates = useTemplatesList({ status: "published", limit: 100 });
   const branches = useBranchesList({ limit: 100 }, { enabled: isHq });
   const createBroadcast = useCreateBroadcast();
+  const captchaReady = useBotProtectionReady("/broadcasts");
   const cancel = useCancelBroadcast();
 
   const rows = React.useMemo(() => broadcasts.data?.data ?? [], [broadcasts.data]);
@@ -291,7 +293,7 @@ export default function BroadcastsPage() {
               <Input type="datetime-local" value={draft.scheduledAt} onChange={(e) => setDraft((d) => ({ ...d, scheduledAt: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
             <BotProtection path="/broadcasts" authenticated />
-            <Button type="submit" disabled={createBroadcast.isPending} className="h-10 w-full gap-2 rounded-lg text-sm">
+            <Button type="submit" disabled={createBroadcast.isPending || !captchaReady} className="h-10 w-full gap-2 rounded-lg text-sm">
               <Send className="size-4" /> {createBroadcast.isPending ? "Queueing…" : draft.scheduledAt ? "Schedule broadcast" : "Send now"}
             </Button>
           </form>

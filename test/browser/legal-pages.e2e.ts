@@ -1,4 +1,4 @@
-import { mockBotChallenges } from "../fixtures/bot-protection";
+import { mockBotChallenges, verifyBotForm } from "../fixtures/bot-protection";
 import { test, expect } from "@playwright/test";
 
 const documents = [
@@ -72,11 +72,13 @@ test("registration requires an explicit agreement before any signup request", as
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   const agreement = page.getByRole("checkbox", { name: /I am at least 18/ });
   await expect(agreement).not.toBeChecked();
+  await verifyBotForm(page);
   await page.getByRole("button", { name: "Create account & continue", exact: true }).click();
   expect(registrations).toBe(0);
   await expect(agreement).toBeFocused();
   await expect(page.getByText(/customer indemnity and limits on our/)).toBeVisible();
   await agreement.check();
+  await verifyBotForm(page);
   await page.getByRole("button", { name: "Create account & continue", exact: true }).click();
   await expect.poll(() => registrations).toBe(1);
 });

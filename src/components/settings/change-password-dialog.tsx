@@ -1,6 +1,7 @@
 "use client";
 
 import { BotProtection } from "@/components/shared/bot-protection";
+import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
 /**
  * @file Shared change-password dialog used by the profile page and the
@@ -81,6 +82,7 @@ export function ChangePasswordDialog({
   onOpenChange: (open: boolean) => void;
 }) {
   const changeMutation = useChangePassword();
+  const captchaReady = useBotProtectionReady("/auth/password", "PUT");
   const [showFields, setShowFields] = React.useState({ current: false, next: false, confirm: false });
   const toggle = (key: keyof typeof showFields) =>
     setShowFields((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -183,7 +185,7 @@ export function ChangePasswordDialog({
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button type="submit" disabled={changeMutation.isPending} loading={changeMutation.isPending}>
+              <Button type="submit" disabled={changeMutation.isPending || !captchaReady} loading={changeMutation.isPending}>
                 {changeMutation.isPending ? "Changing..." : "Change Password"}
               </Button>
             </DialogFooter>

@@ -1,6 +1,7 @@
 "use client";
 
 import { BotProtection } from "@/components/shared/bot-protection";
+import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
 import * as React from "react";
 import Link from "next/link";
@@ -28,6 +29,7 @@ export default function AcceptInvitationPage() {
     window.history.replaceState(null, "", window.location.pathname);
     setReady(true);
   }, []);
+  const captchaReady = useBotProtectionReady("/auth/accept-invitation");
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
     if (password.length < 8) {
@@ -109,7 +111,7 @@ export default function AcceptInvitationPage() {
               {error}
             </p>
           )}
-          <Button type="submit" className="w-full" disabled={accept.isPending}>
+          <Button type="submit" className="w-full" disabled={accept.isPending || !captchaReady}>
             {accept.isPending
               ? "Setting up your account..."
               : "Accept invitation & set password"}

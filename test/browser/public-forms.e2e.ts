@@ -1,4 +1,4 @@
-import { mockBotChallenges } from "../fixtures/bot-protection";
+import { mockBotChallenges, verifyBotForm } from "../fixtures/bot-protection";
 import { expect, test } from "@playwright/test";
 
 const form = {
@@ -44,6 +44,7 @@ test("public form is specific, tracks progress and submits without signing in", 
     "3",
   );
   await page.screenshot({ path: "/tmp/churchos-public-form-desktop.png", fullPage: true });
+  await verifyBotForm(page);
   await page.getByRole("button", { name: "Send response", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Thank you for being part of it.", exact: true }),
@@ -68,6 +69,7 @@ test("sending failures retain answers and allow retry", async ({ page }) => {
   await page.goto("/forms/public/token-a");
   await page.getByLabel("Full name", { exact: false }).fill("Grace Adeyemi");
   await page.getByLabel("Email address", { exact: false }).fill("grace@example.test");
+  await verifyBotForm(page);
   await page.getByRole("button", { name: "Send response", exact: true }).click();
   await expect(
     page.getByRole("alert")
@@ -75,6 +77,7 @@ test("sending failures retain answers and allow retry", async ({ page }) => {
       .first(),
   ).toBeVisible();
   await expect(page.getByLabel("Full name", { exact: false })).toHaveValue("Grace Adeyemi");
+  await verifyBotForm(page);
   await page.getByRole("button", { name: "Send response", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Thank you for being part of it.", exact: true }),
@@ -90,6 +93,7 @@ test("required questions prevent sending and an expired link has a useful retry 
     if (request.method() === "POST" && request.url().includes("/submit")) posts++;
   });
   await page.goto("/forms/public/token-a");
+  await verifyBotForm(page);
   await page.getByRole("button", { name: "Send response", exact: true }).click();
   await expect(
     page.getByRole("alert").filter({ hasText: "Please complete all required questions" }),

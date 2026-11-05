@@ -1,6 +1,7 @@
 "use client";
 
 import { BotProtection } from "@/components/shared/bot-protection";
+import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
 import * as React from "react";
 import Link from "next/link";
@@ -18,6 +19,7 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = React.useState("");
   const forgotPasswordMutation = useForgotPassword();
 
+  const captchaReady = useBotProtectionReady("/auth/forgot-password");
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     forgotPasswordMutation.mutate(
@@ -64,7 +66,7 @@ export default function ForgotPasswordPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <Button type="submit" size="lg" className="w-full" disabled={forgotPasswordMutation.isPending} loading={forgotPasswordMutation.isPending}>
+            <Button type="submit" size="lg" className="w-full" disabled={forgotPasswordMutation.isPending || !captchaReady} loading={forgotPasswordMutation.isPending}>
               {forgotPasswordMutation.isPending ? "Sending..." : "Send reset link"}
             </Button>
             <div className="text-center text-sm text-muted-foreground">

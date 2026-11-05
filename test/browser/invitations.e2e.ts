@@ -1,4 +1,4 @@
-import { mockBotChallenges } from "../fixtures/bot-protection";
+import { mockBotChallenges, verifyBotForm } from "../fixtures/bot-protection";
 import { test, expect } from '@playwright/test';
 import { mockTawkWidget } from '../fixtures/tawk-widget';
 
@@ -21,10 +21,12 @@ test('an anonymous recipient explicitly sets a password before signing in', asyn
   expect(payload).toBeUndefined();
   await page.getByLabel('Your Password', { exact: true }).fill('StrongPassword123!');
   await page.getByLabel('Confirm Password', { exact: true }).fill('DifferentPassword123!');
+  await verifyBotForm(page);
   await page.getByRole('button', { name: 'Accept invitation & set password' }).click();
   await expect(page.locator('p[role=alert]')).toHaveText('Passwords do not match.');
   expect(payload).toBeUndefined();
   await page.getByLabel('Confirm Password', { exact: true }).fill('StrongPassword123!');
+  await verifyBotForm(page);
   await page.getByRole('button', { name: 'Accept invitation & set password' }).click();
   await expect(page.getByText('Your password is set. Sign in to open your church workspace.')).toBeVisible();
   expect(payload).toEqual({ token: 'invitation-fixture', newPassword: 'StrongPassword123!', altcha: expect.any(String), website: '' });
@@ -37,6 +39,7 @@ test('an expired invitation shows recovery guidance', async ({ page }) => {
   await page.goto('/accept-invitation#token_hash=expired');
   await page.getByLabel('Your Password', { exact: true }).fill('StrongPassword123!');
   await page.getByLabel('Confirm Password', { exact: true }).fill('StrongPassword123!');
+  await verifyBotForm(page);
   await page.getByRole('button', { name: 'Accept invitation & set password' }).click();
   await expect(page.locator('p[role=alert]')).toContainText('expired');
   await expect(page.getByRole('link', { name: 'Invitation expired? Request a password link' })).toHaveAttribute('href', '/forgot-password');

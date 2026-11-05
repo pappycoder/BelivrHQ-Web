@@ -1,6 +1,7 @@
 "use client";
 
 import { BotProtection } from "@/components/shared/bot-protection";
+import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
 import * as React from "react";
 import { useForm } from "react-hook-form";
@@ -70,6 +71,7 @@ export function UserFormDialog({
   user,
 }: UserFormDialogProps) {
   const inviteMutation = useInviteUser();
+  const captchaReady = useBotProtectionReady("/profiles/invite");
   const updateRoleMutation = useUpdateUserRole();
   const assignableRoles = useAssignableRoles(mode === "edit-role" ? user?.role : []);
   const { data: profile } = useCurrentProfile();
@@ -308,7 +310,7 @@ export function UserFormDialog({
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isPending || !profile || branchQuery.isLoading || (loadBranches && branchQuery.isError)}>
+                <Button type="submit" disabled={isPending || !captchaReady || !profile || branchQuery.isLoading || (loadBranches && branchQuery.isError)}>
                   {isPending ? "Sending..." : "Send Invitation"}
                 </Button>
               </DialogFooter>

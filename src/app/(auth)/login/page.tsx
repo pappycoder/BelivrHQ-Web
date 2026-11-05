@@ -1,6 +1,7 @@
 "use client";
 
 import { BotProtection } from "@/components/shared/bot-protection";
+import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
 import * as React from "react";
 import Link from "next/link";
@@ -35,6 +36,7 @@ export default function LoginPage() {
   const [migration, setMigration] = React.useState(false);
   const [providerMigration, setProviderMigration] = React.useState(false);
   const [otpCode, setOtpCode] = React.useState("");
+  const captchaReady = useBotProtectionReady(otpStep ? "/auth/login/2fa" : "/auth/login");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -171,7 +173,7 @@ export default function LoginPage() {
                 type="submit"
                 size="lg"
                 className="w-full"
-                disabled={verifyMutation.isPending}
+                disabled={verifyMutation.isPending || !captchaReady}
                loading={verifyMutation.isPending}>
                 {verifyMutation.isPending ? "Verifying..." : "Verify & Sign In"}
               </Button>
@@ -243,7 +245,7 @@ export default function LoginPage() {
                 type="submit"
                 size="lg"
                 className="w-full"
-                disabled={loginMutation.isPending}
+                disabled={loginMutation.isPending || !captchaReady}
                loading={loginMutation.isPending}>
                 {loginMutation.isPending ? "Signing in..." : "Sign In"}
               </Button>

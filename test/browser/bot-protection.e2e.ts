@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { mockBotChallenges } from "../fixtures/bot-protection";
+import { mockBotChallenges, verifyBotForm } from "../fixtures/bot-protection";
 
 const path = "/forms/public/token-a/submit";
 test.beforeEach(async ({ context }) => {
@@ -24,29 +24,133 @@ test.beforeEach(async ({ context }) => {
   );
 });
 
-test("login and second-factor submissions each use an independently scoped proof", async ({ page, context }) => {
+test("submission stays disabled before verification, while solving, after unchecking and after expiry", async ({
+  page,
+  context,
+}) => {
+  await mockBotChallenges(context);
+  let release!: () => void;
+  let requested = false;
+  await page.route(
+    "**/api/backend/bot-protection/challenge?*",
+    async (route) => {
+      requested = true;
+      await new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      return route.fallback();
+    },
+  );
+  let posts = 0;
+  await page.route(`**/api/backend${path}`, (route) => {
+    posts++;
+    return route.fulfill({ json: { success: true, data: {} } });
+  });
+  await page.goto("/forms/public/token-a");
+  await page.getByLabel("Full name").fill("Grace");
+  const submit = page.getByRole("button", {
+    name: "Send response",
+    exact: true,
+  });
+  const checkbox = page.locator("[data-bot-protection]").getByRole("checkbox");
+  await expect(checkbox).toBeVisible();
+  await expect(checkbox).not.toBeChecked();
+  await expect(submit).toBeDisabled();
+  expect(requested).toBe(false);
+  await page
+    .locator("form")
+    .evaluate((form) =>
+      form.dispatchEvent(
+        new Event("submit", { bubbles: true, cancelable: true }),
+      ),
+    );
+  await expect(page.getByLabel("Full name")).toHaveValue("Grace");
+  expect(posts).toBe(0);
+  await checkbox.click();
+  await expect.poll(() => requested).toBe(true);
+  await expect(submit).toBeDisabled();
+  release();
+  await page.unroute("**/api/backend/bot-protection/challenge?*");
+  await expect(
+    page.getByText("Browser verified.", { exact: true }),
+  ).toBeVisible();
+  await expect(checkbox).toBeChecked();
+  await expect(submit).toBeEnabled();
+  await checkbox.click();
+  await expect(submit).toBeDisabled();
+  await verifyBotForm(page);
+  await page.locator("altcha-widget").evaluate((element) => {
+    (element as HTMLElement & { reset: (state: string) => void }).reset(
+      "expired",
+    );
+  });
+  await expect(submit).toBeDisabled();
+  expect(posts).toBe(0);
+  await checkbox.focus();
+  await page.keyboard.press("Space");
+  await expect(checkbox).toBeChecked();
+  await expect(submit).toBeEnabled();
+  await submit.click();
+  await expect(
+    page.getByRole("heading", { name: "Thank you for being part of it." }),
+  ).toBeVisible();
+  expect(posts).toBe(1);
+});
+
+test("login and second-factor submissions each use an independently scoped proof", async ({
+  page,
+  context,
+}) => {
   const valid = await mockBotChallenges(context);
   let secondFactor = false;
-  await page.route("**/api/backend/auth/login", async route => {
-    expect(await valid(route.request().postDataJSON(), "POST", "/auth/login")).toBe(true);
-    return route.fulfill({ json: { success: true, data: {
-      requiresTwoFactor: true, twoFactorMethod: "authenticator", challengeToken: "fixture-challenge", userId: "user-a",
-    } } });
+  await page.route("**/api/backend/auth/login", async (route) => {
+    expect(
+      await valid(route.request().postDataJSON(), "POST", "/auth/login"),
+    ).toBe(true);
+    return route.fulfill({
+      json: {
+        success: true,
+        data: {
+          requiresTwoFactor: true,
+          twoFactorMethod: "authenticator",
+          challengeToken: "fixture-challenge",
+          userId: "user-a",
+        },
+      },
+    });
   });
-  await page.route("**/api/backend/auth/login/2fa", async route => {
-    expect(await valid(route.request().postDataJSON(), "POST", "/auth/login/2fa")).toBe(true);
+  await page.route("**/api/backend/auth/login/2fa", async (route) => {
+    expect(
+      await valid(route.request().postDataJSON(), "POST", "/auth/login/2fa"),
+    ).toBe(true);
     secondFactor = true;
-    return route.fulfill({ status: 401, json: { success: false, error: { message: "Incorrect authenticator code" } } });
+    return route.fulfill({
+      status: 401,
+      json: {
+        success: false,
+        error: { message: "Incorrect authenticator code" },
+      },
+    });
   });
   await page.goto("/login");
-  await page.getByLabel("Email Address", { exact: true }).fill("grace@example.test");
+  await page
+    .getByLabel("Email Address", { exact: true })
+    .fill("grace@example.test");
   await page.getByLabel("Password", { exact: true }).fill("Password123!");
+  await verifyBotForm(page);
   await page.getByRole("button", { name: "Sign In", exact: true }).click();
   await page.getByLabel("Verification Code", { exact: true }).fill("123456");
-  await page.getByRole("button", { name: "Verify & Sign In", exact: true }).click();
-  await expect(page.getByText("Incorrect authenticator code", { exact: true })).toBeVisible();
+  await verifyBotForm(page);
+  await page
+    .getByRole("button", { name: "Verify & Sign In", exact: true })
+    .click();
+  await expect(
+    page.getByText("Incorrect authenticator code", { exact: true }),
+  ).toBeVisible();
   expect(secondFactor).toBe(true);
-  await expect(page.getByLabel("Verification Code", { exact: true })).toHaveValue("123456");
+  await expect(
+    page.getByLabel("Verification Code", { exact: true }),
+  ).toHaveValue("123456");
 });
 
 test("a real worker proof is accepted once and retries use fresh proofs", async ({
@@ -75,9 +179,11 @@ test("a real worker proof is accepted once and retries use fresh proofs", async 
   });
   await page.goto("/forms/public/token-a");
   await page.getByLabel("Full name").fill("Grace");
+  await verifyBotForm(page);
   await expect(
     page.getByText("Browser verified.", { exact: true }),
   ).toBeVisible();
+  await verifyBotForm(page);
   await page
     .getByRole("button", { name: "Send response", exact: true })
     .click();
@@ -85,6 +191,7 @@ test("a real worker proof is accepted once and retries use fresh proofs", async 
   await expect(
     page.getByText("Please verify again.", { exact: true }).first(),
   ).toBeVisible();
+  await verifyBotForm(page);
   await page
     .getByRole("button", { name: "Send response", exact: true })
     .click();
@@ -111,18 +218,24 @@ test("challenge outages block submission and offer a retry while preserving answ
   await page.goto("/forms/public/token-a");
   await page.getByLabel("Full name").fill("Grace");
   await expect(
+    page.getByRole("button", { name: "Send response", exact: true }),
+  ).toBeDisabled();
+  await page.locator("[data-bot-protection]").getByRole("checkbox").click();
+  await expect(
     page.getByRole("button", { name: "Retry verification" }),
   ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Send response", exact: true })
-    .click();
+  await expect(
+    page.getByRole("button", { name: "Send response", exact: true }),
+  ).toBeDisabled();
   await expect(page.getByLabel("Full name")).toHaveValue("Grace");
   expect(posts).toBe(0);
   await page.unroute("**/api/backend/bot-protection/challenge?*");
   await page.getByRole("button", { name: "Retry verification" }).click();
+  await verifyBotForm(page);
   await expect(
     page.getByText("Browser verified.", { exact: true }),
   ).toBeVisible();
+  await verifyBotForm(page);
   await page
     .getByRole("button", { name: "Send response", exact: true })
     .click();
@@ -167,6 +280,7 @@ test("honeypots stay outside keyboard/accessibility flow and filled values reach
     .evaluate((input: HTMLInputElement) => {
       input.value = "https://spam.test";
     });
+  await verifyBotForm(page);
   await page
     .getByRole("button", { name: "Send response", exact: true })
     .click();
@@ -198,6 +312,7 @@ test("a mobile browser completes the upper-bound challenge without horizontal ov
   await page.goto("/forms/public/token-a");
   const started = Date.now();
   await page.getByLabel("Full name").fill("Grace");
+  await verifyBotForm(page);
   await expect(
     page.getByText("Browser verified.", { exact: true }),
   ).toBeVisible({ timeout: 30000 });
@@ -207,6 +322,7 @@ test("a mobile browser completes the upper-bound challenge without horizontal ov
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+  await verifyBotForm(page);
   await page
     .getByRole("button", { name: "Send response", exact: true })
     .click();
@@ -274,6 +390,7 @@ test("password changes preserve a proof through silent session refresh", async (
     .fill("OldPassword123!");
   await page.getByPlaceholder("A phrase, not a word").fill("NewPassword123!");
   await page.locator("input[type=password]").last().fill("NewPassword123!");
+  await verifyBotForm(page);
   await page
     .getByRole("button", { name: "Update password", exact: true })
     .click();
@@ -362,6 +479,7 @@ test("staff invitations use the authenticated challenge and retain branch assign
   await dialog.getByLabel("Email", { exact: true }).fill("invite@example.test");
   await dialog.getByRole("combobox", { name: "Role", exact: true }).click();
   await page.getByRole("option", { name: "Secretary", exact: true }).click();
+  await verifyBotForm(page);
   await dialog
     .getByRole("button", { name: "Send Invitation", exact: true })
     .click();
@@ -453,6 +571,7 @@ for (const scheduled of [false, true])
       await dialog
         .locator("input[type=datetime-local]")
         .fill("2099-01-01T12:00");
+    await verifyBotForm(page);
     await dialog
       .getByRole("button", {
         name: scheduled ? "Schedule broadcast" : "Send now",

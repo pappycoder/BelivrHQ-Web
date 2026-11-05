@@ -1,6 +1,7 @@
 "use client";
 
 import { BotProtection } from "@/components/shared/bot-protection";
+import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 import { LEGAL_VERSION } from "@/lib/legal/company";
 import { SubscriptionCurrencySwitcher } from "@/components/billing/subscription-currency";
 import {
@@ -49,6 +50,7 @@ export default function RegisterPage() {
   const pricing = useSubscriptionPricing();
   const register = useRegister();
   const [step, setStep] = React.useState(0);
+  const captchaReady = useBotProtectionReady("/auth/register");
   const [direction, setDirection] = React.useState(1);
   const [details, setDetails] = React.useState({
     churchName: "",
@@ -541,7 +543,7 @@ export default function RegisterPage() {
             size="lg"
             className="flex-1 rounded-xl"
             loading={register.isPending}
-            disabled={register.isPending}
+            disabled={register.isPending || (step === 3 && !captchaReady)}
           >
             {step === 3 ? "Create account & continue" : "Continue"}
             <ArrowRight className="size-4" />

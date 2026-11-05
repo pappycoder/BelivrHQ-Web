@@ -1,6 +1,7 @@
 "use client";
 
 import { BotProtection } from "@/components/shared/bot-protection";
+import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
 import * as React from "react";
 import { Suspense } from "react";
@@ -43,6 +44,7 @@ function ResetPasswordForm() {
   const strength = getPasswordStrength(password);
   const strengthColors = ["", "bg-destructive", "bg-amber-500", "bg-emerald-500", "bg-emerald-500"];
 
+  const captchaReady = useBotProtectionReady("/auth/reset-password", "PATCH");
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setClientError(null);
@@ -188,7 +190,7 @@ function ResetPasswordForm() {
                 </motion.p>
               )}
 
-              <Button type="submit" size="lg" className="w-full" disabled={resetPasswordMutation.isPending} loading={resetPasswordMutation.isPending}>
+              <Button type="submit" size="lg" className="w-full" disabled={resetPasswordMutation.isPending || !captchaReady} loading={resetPasswordMutation.isPending}>
                 {resetPasswordMutation.isPending ? "Resetting..." : "Save new password"}
               </Button>
             </div>

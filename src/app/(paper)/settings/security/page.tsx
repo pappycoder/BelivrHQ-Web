@@ -1,6 +1,7 @@
 "use client";
 
 import { BotProtection } from "@/components/shared/bot-protection";
+import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
 import * as React from "react";
 import { Eye, EyeOff, KeyRound, RefreshCcw, ShieldCheck, Smartphone } from "lucide-react";
@@ -23,6 +24,7 @@ import {
 
 function PasswordCard() {
   const change = useChangePassword();
+  const captchaReady = useBotProtectionReady("/auth/password", "PUT");
   const [show, setShow] = React.useState(false);
   const [form, setForm] = React.useState({ currentPassword: "", newPassword: "", confirm: "" });
   const tooShort = form.newPassword.length > 0 && form.newPassword.length < 8;
@@ -86,7 +88,7 @@ function PasswordCard() {
       </div>
       <BotProtection path="/auth/password" method="PUT" authenticated />
       <div className="mt-4 flex justify-end">
-        <Button className="h-9 gap-1.5 rounded-full text-xs" disabled={!canSubmit || change.isPending} onClick={submit}>
+        <Button className="h-9 gap-1.5 rounded-full text-xs" disabled={!canSubmit || change.isPending || !captchaReady} onClick={submit}>
           <ShieldCheck className="size-3.5" /> {change.isPending ? "Updating…" : "Update password"}
         </Button>
       </div>

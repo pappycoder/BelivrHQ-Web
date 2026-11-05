@@ -10,6 +10,31 @@ export interface BotFormController {
 
 const controllers = new Map<string, BotFormController>();
 const inFlight = new Set<string>();
+const ready = new Set<string>();
+const listeners = new Set<() => void>();
+
+export function setBotFormReady(
+  method: string,
+  path: string,
+  verified: boolean,
+) {
+  const key = `${method}:${path}`;
+  if (ready.has(key) === verified) return;
+  if (verified) ready.add(key);
+  else ready.delete(key);
+  listeners.forEach((listener) => listener());
+}
+
+export function isBotFormReady(method: string, path: string) {
+  return ready.has(`${method}:${path}`);
+}
+
+export function subscribeBotForms(listener: () => void) {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
 
 export function requiresBotProtection(method: string, path: string): boolean {
   return (
@@ -35,8 +60,12 @@ export function registerBotForm(
 ) {
   const key = `${method}:${path}`;
   controllers.set(key, controller);
+  setBotFormReady(method, path, false);
   return () => {
-    if (controllers.get(key) === controller) controllers.delete(key);
+    if (controllers.get(key) === controller) {
+      controllers.delete(key);
+      setBotFormReady(method, path, false);
+    }
   };
 }
 

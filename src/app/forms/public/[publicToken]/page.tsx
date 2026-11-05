@@ -1,6 +1,7 @@
 "use client";
 
 import { BotProtection } from "@/components/shared/bot-protection";
+import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
 import * as React from "react";
 import Link from "next/link";
@@ -50,6 +51,7 @@ function PublicFormContent({ token }: { token: string }) {
   const [submitted, setSubmitted] = React.useState(false);
   const [failure, setFailure] = React.useState<string | null>(null);
   const publicMutation = useSubmitFormPublic(token);
+  const captchaReady = useBotProtectionReady(`/forms/public/${token}/submit`);
   const [form, setForm] = React.useState<PublicFormPayload | null>(null);
   const [isPending, setPending] = React.useState(true);
   const [error, setError] = React.useState(false);
@@ -279,7 +281,7 @@ function PublicFormContent({ token }: { token: string }) {
                   type="submit"
                   size="lg"
                   className="w-full rounded-xl bg-[var(--brand)] text-white transition hover:brightness-110"
-                  disabled={sending}
+                  disabled={sending || !captchaReady}
                 >
                   {sending ? (
                     <>
