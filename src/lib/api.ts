@@ -1,3 +1,4 @@
+import { withBotProtection } from "@/lib/bot-protection";
 import type { AuthError } from "@/types/auth";
 import { clearTokens } from "@/lib/session";
 
@@ -106,7 +107,12 @@ class ApiClient {
     this.baseUrl = `${API_BASE}${API_PREFIX}`;
   }
 
-  private async request<T>(
+  private request<T>(method: string, path: string, body?: unknown, options?: RequestOptions): Promise<T> {
+    return withBotProtection(method, path, body, options?.signal,
+      protectedBody => this.requestInternal<T>(method, path, protectedBody, options));
+  }
+
+  private async requestInternal<T>(
     method: string,
     path: string,
     body?: unknown,
@@ -150,7 +156,7 @@ class ApiClient {
         const refreshed = await tryRefreshSession();
         if (generation !== authGeneration) throw new DOMException("Session changed", "AbortError");
         if (refreshed) {
-          return this.request<T>(method, path, body, options, false);
+          return this.requestInternal<T>(method, path, body, options, false);
         }
       }
       if (unauthorizedHandler) unauthorizedHandler();

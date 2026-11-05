@@ -1,5 +1,7 @@
 "use client";
 
+import { BotProtection } from "@/components/shared/bot-protection";
+
 import * as React from "react";
 import { Eye, EyeOff, KeyRound, RefreshCcw, ShieldCheck, Smartphone } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
@@ -82,6 +84,7 @@ function PasswordCard() {
           {mismatch ? <p className="text-[10px] text-rose">The two don&apos;t match yet.</p> : null}
         </div>
       </div>
+      <BotProtection path="/auth/password" method="PUT" authenticated />
       <div className="mt-4 flex justify-end">
         <Button className="h-9 gap-1.5 rounded-full text-xs" disabled={!canSubmit || change.isPending} onClick={submit}>
           <ShieldCheck className="size-3.5" /> {change.isPending ? "Updating…" : "Update password"}

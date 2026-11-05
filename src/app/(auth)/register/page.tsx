@@ -1,4 +1,6 @@
 "use client";
+
+import { BotProtection } from "@/components/shared/bot-protection";
 import { LEGAL_VERSION } from "@/lib/legal/company";
 import { SubscriptionCurrencySwitcher } from "@/components/billing/subscription-currency";
 import {
@@ -251,6 +253,7 @@ export default function RegisterPage() {
             {subtitles[step]}
           </p>
         </div>
+        <BotProtection path="/auth/register" followUpPath="/auth/login" />
         <AnimatePresence mode="wait" initial={false} custom={direction}>
           <motion.div
             key={step}

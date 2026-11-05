@@ -1,5 +1,7 @@
 "use client";
 
+import { BotProtection } from "@/components/shared/bot-protection";
+
 import * as React from "react";
 import Link from "next/link";
 import { toast } from "@/lib/toast";
@@ -50,6 +52,7 @@ export default function ForgotPasswordPage() {
         </motion.div>
       ) : (
         <form onSubmit={handleSubmit}>
+              <BotProtection path="/auth/forgot-password" />
           <div className="space-y-4">
             <AuthField
               label="Email Address"

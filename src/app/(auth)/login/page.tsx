@@ -1,5 +1,7 @@
 "use client";
 
+import { BotProtection } from "@/components/shared/bot-protection";
+
 import * as React from "react";
 import Link from "next/link";
 import { toast } from "@/lib/toast";
@@ -122,6 +124,7 @@ export default function LoginPage() {
             exit={{ opacity: 0, x: -24 }}
             transition={{ duration: 0.35, ease: AUTH_EASE }}
           >
+            <BotProtection path="/auth/login/2fa" />
             <div className="mb-5 flex items-center gap-3 rounded-lg border bg-muted/40 p-3.5">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <ShieldCheck className="h-5 w-5" />
@@ -202,6 +205,7 @@ export default function LoginPage() {
             exit={{ opacity: 0, x: 24 }}
             transition={{ duration: 0.35, ease: AUTH_EASE }}
           >
+            <BotProtection path="/auth/login" />
             <div className="space-y-4">
               <AuthField
                 label="Email Address"

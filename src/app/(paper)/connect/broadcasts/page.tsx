@@ -1,5 +1,7 @@
 "use client";
 
+import { BotProtection } from "@/components/shared/bot-protection";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -288,6 +290,7 @@ export default function BroadcastsPage() {
               <Label className="text-xs">Send later? (optional)</Label>
               <Input type="datetime-local" value={draft.scheduledAt} onChange={(e) => setDraft((d) => ({ ...d, scheduledAt: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
+            <BotProtection path="/broadcasts" authenticated />
             <Button type="submit" disabled={createBroadcast.isPending} className="h-10 w-full gap-2 rounded-lg text-sm">
               <Send className="size-4" /> {createBroadcast.isPending ? "Queueing…" : draft.scheduledAt ? "Schedule broadcast" : "Send now"}
             </Button>

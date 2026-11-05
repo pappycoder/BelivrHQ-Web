@@ -1,5 +1,7 @@
 "use client";
 
+import { BotProtection } from "@/components/shared/bot-protection";
+
 /**
  * @file Shared change-password dialog used by the profile page and the
  * Security settings tab. Verifies the current password, then sets a new one
@@ -176,6 +178,7 @@ export function ChangePasswordDialog({
                 </FormItem>
               )}
             />
+            <BotProtection path="/auth/password" method="PUT" authenticated />
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel

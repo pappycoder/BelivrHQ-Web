@@ -43,7 +43,8 @@ async function proxy(request: NextRequest, context: Context) {
     token &&
     !sessionEndpoints.has(endpoint) &&
     endpoint !== "auth/accept-invitation" &&
-    !isAnonymousPublicFormRequest(endpoint, request.method)
+    !isAnonymousPublicFormRequest(endpoint, request.method) &&
+    endpoint !== "bot-protection/challenge"
   )
     headers.set("authorization", `Bearer ${token}`);
   const range = request.headers.get("range");

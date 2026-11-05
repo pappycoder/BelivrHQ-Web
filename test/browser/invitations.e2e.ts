@@ -1,7 +1,9 @@
+import { mockBotChallenges } from "../fixtures/bot-protection";
 import { test, expect } from '@playwright/test';
 import { mockTawkWidget } from '../fixtures/tawk-widget';
 
 test.beforeEach(async ({ context, page }) => {
+  await mockBotChallenges(context);
   await context.route('**/api/session', route => route.fulfill({ json: { hasSession: false } }));
   await context.route('https://embed.tawk.to/**', route => route.fulfill({ contentType: 'application/javascript', body: mockTawkWidget }));
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -25,7 +27,7 @@ test('an anonymous recipient explicitly sets a password before signing in', asyn
   await page.getByLabel('Confirm Password', { exact: true }).fill('StrongPassword123!');
   await page.getByRole('button', { name: 'Accept invitation & set password' }).click();
   await expect(page.getByText('Your password is set. Sign in to open your church workspace.')).toBeVisible();
-  expect(payload).toEqual({ token: 'invitation-fixture', newPassword: 'StrongPassword123!' });
+  expect(payload).toEqual({ token: 'invitation-fixture', newPassword: 'StrongPassword123!', altcha: expect.any(String), website: '' });
   await expect(page.getByRole('link', { name: 'Sign In', exact: true })).toHaveAttribute('href', '/login');
   expect(await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }))).not.toContain('StrongPassword123');
 });

@@ -1,5 +1,7 @@
 "use client";
 
+import { BotProtection } from "@/components/shared/bot-protection";
+
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -296,6 +298,7 @@ export function UserFormDialog({
                   </Button>
                 </div>
               )}
+              <BotProtection path="/profiles/invite" authenticated />
               <DialogFooter>
                 <Button
                   type="button"

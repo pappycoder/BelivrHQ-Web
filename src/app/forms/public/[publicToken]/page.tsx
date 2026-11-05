@@ -1,5 +1,7 @@
 "use client";
 
+import { BotProtection } from "@/components/shared/bot-protection";
+
 import * as React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -248,6 +250,7 @@ function PublicFormContent({ token }: { token: string }) {
             </div>
           ) : (
             <form onSubmit={submit} className="space-y-7">
+              <BotProtection path={`/forms/public/${token}/submit`} />
               <div className="border-b pb-5">
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                   Your response

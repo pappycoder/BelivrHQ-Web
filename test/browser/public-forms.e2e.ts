@@ -1,3 +1,4 @@
+import { mockBotChallenges } from "../fixtures/bot-protection";
 import { expect, test } from "@playwright/test";
 
 const form = {
@@ -12,6 +13,7 @@ const form = {
 };
 
 test.beforeEach(async ({ context }) => {
+  await mockBotChallenges(context);
   await context.route("**/api/session", (route) => route.fulfill({ json: { hasSession: false } }));
   await context.route("**/api/backend/forms/public/token-a/meta", (route) =>
     route.fulfill({ json: { success: true, data: form } }),
@@ -47,7 +49,7 @@ test("public form is specific, tracks progress and submits without signing in", 
     page.getByRole("heading", { name: "Thank you for being part of it.", exact: true }),
   ).toBeVisible();
   expect(bodies).toEqual([
-    { data: { name: "Grace Adeyemi", email: "grace@example.test", teams: ["Music"], notes: "" } },
+    { data: { name: "Grace Adeyemi", email: "grace@example.test", teams: ["Music"], notes: "" }, altcha: expect.any(String), website: "" },
   ]);
 });
 

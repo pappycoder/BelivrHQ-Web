@@ -1,3 +1,4 @@
+import { mockBotChallenges } from "../fixtures/bot-protection";
 import { test, expect } from "@playwright/test";
 
 const documents = [
@@ -9,6 +10,7 @@ const documents = [
 test.beforeEach(async ({ context }) => {
   await context.route("**/api/session", (route) => route.fulfill({ json: { hasSession: false } }));
   await context.route("**/api/backend/**", (route) => route.fulfill({ status: 404, json: { success: false, error: { message: "Unused fixture endpoint" } } }));
+  await mockBotChallenges(context);
 });
 
 for (const width of [390, 1440]) for (const [path, title] of documents) {

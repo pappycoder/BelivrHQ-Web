@@ -1,3 +1,4 @@
+import { mockBotChallenges } from "../fixtures/bot-protection";
 import { mockTawkWidget } from "../fixtures/tawk-widget";
 import { test, expect, type BrowserContext, type Page } from "@playwright/test";
 const reference = "COSUB_" + "a".repeat(32);
@@ -27,6 +28,7 @@ async function accountStep(page: Page) {
   await page.getByRole("button", { name: "Continue", exact: true }).click();
 }
 test.beforeEach(async ({ page, context }) => {
+  await mockBotChallenges(context);
   await context.route("https://embed.tawk.to/**", route => route.fulfill({ contentType: "application/javascript", body: mockTawkWidget }));
   await page.emulateMedia({ reducedMotion: "reduce" });
 });
@@ -78,7 +80,7 @@ test("registration preserves edits and redirects to sign-in when email confirmat
     .getByRole("button", { name: "Create account & continue", exact: true })
     .click();
   await expect(page).toHaveURL(/\/login\?returnTo=%2Fsubscription&registered=1$/);
-  await expect(page.getByRole("status")).toContainText("Your account has been created");
+  await expect(page.getByRole("status").filter({ hasText: "Your account has been created" })).toContainText("Your account has been created");
   expect(payload).toMatchObject({
     termsAccepted: true,
     acceptedTermsVersion: "2026-10-24",
@@ -172,7 +174,7 @@ async function billingSession(
           input instanceof Request ? input.url : String(input),
           location.origin,
         ).pathname;
-        if (!path.startsWith("/api/")) return original(input, init);
+        if (!path.startsWith("/api/") || path.startsWith("/api/backend/bot-protection/")) return original(input, init);
         if (path === "/api/session")
           return new Response(JSON.stringify({ hasSession: authenticated }));
         const body = init?.body ? JSON.parse(String(init.body)) : undefined;
@@ -542,7 +544,7 @@ test("password recovery sends the email and gives a non-enumerating confirmation
     page.getByRole("heading", { name: "Check your email", exact: true }),
   ).toBeVisible();
   await expect(page.getByText(/If an account exists/)).toBeVisible();
-  expect(body).toEqual({ email: "recover@example.org" });
+  expect(body).toEqual({ email: "recover@example.org", altcha: expect.any(String), website: "" });
 });
 test("reset password preserves the recovery token in memory and removes it from the URL", async ({
   page,
@@ -570,6 +572,7 @@ test("reset password preserves the recovery token in memory and removes it from 
   ).toBeVisible();
   expect(body).toEqual({
     token: "test-recovery-token",
+    altcha: expect.any(String), website: "",
     newPassword: "LongNewPassword!29",
   });
 });

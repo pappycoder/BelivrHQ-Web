@@ -1,5 +1,7 @@
 "use client";
 
+import { BotProtection } from "@/components/shared/bot-protection";
+
 import * as React from "react";
 import { Suspense } from "react";
 import Link from "next/link";
@@ -135,6 +137,7 @@ function ResetPasswordForm() {
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.35, ease: AUTH_EASE }}
           >
+            <BotProtection path="/auth/reset-password" method="PATCH" />
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <AuthField
