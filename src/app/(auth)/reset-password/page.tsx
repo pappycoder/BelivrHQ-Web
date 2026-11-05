@@ -139,7 +139,6 @@ function ResetPasswordForm() {
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.35, ease: AUTH_EASE }}
           >
-            <BotProtection path="/auth/reset-password" method="PATCH" />
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <AuthField
@@ -190,6 +189,7 @@ function ResetPasswordForm() {
                 </motion.p>
               )}
 
+              <BotProtection path="/auth/reset-password" method="PATCH" />
               <Button type="submit" size="lg" className="w-full" disabled={resetPasswordMutation.isPending || !captchaReady} loading={resetPasswordMutation.isPending}>
                 {resetPasswordMutation.isPending ? "Resetting..." : "Save new password"}
               </Button>

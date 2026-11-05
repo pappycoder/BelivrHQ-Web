@@ -126,7 +126,6 @@ export default function LoginPage() {
             exit={{ opacity: 0, x: -24 }}
             transition={{ duration: 0.35, ease: AUTH_EASE }}
           >
-            <BotProtection path="/auth/login/2fa" />
             <div className="mb-5 flex items-center gap-3 rounded-lg border bg-muted/40 p-3.5">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <ShieldCheck className="h-5 w-5" />
@@ -169,6 +168,7 @@ export default function LoginPage() {
               {useRecovery ? "Use authenticator code" : "Use a recovery code"}
             </Button>}
             <div className="mt-5">
+              <BotProtection path="/auth/login/2fa" />
               <Button
                 type="submit"
                 size="lg"
@@ -207,7 +207,6 @@ export default function LoginPage() {
             exit={{ opacity: 0, x: 24 }}
             transition={{ duration: 0.35, ease: AUTH_EASE }}
           >
-            <BotProtection path="/auth/login" />
             <div className="space-y-4">
               <AuthField
                 label="Email Address"
@@ -241,6 +240,7 @@ export default function LoginPage() {
             </div>
 
             <div className="mt-5">
+              <BotProtection path="/auth/login" />
               <Button
                 type="submit"
                 size="lg"

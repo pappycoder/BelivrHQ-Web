@@ -83,7 +83,6 @@ export default function AcceptInvitationPage() {
         </div>
       ) : (
         <form onSubmit={submit} className="space-y-5">
-          <BotProtection path="/auth/accept-invitation" />
           <AuthField
             label="Your Password"
             type="password"
@@ -111,6 +110,7 @@ export default function AcceptInvitationPage() {
               {error}
             </p>
           )}
+          <BotProtection path="/auth/accept-invitation" />
           <Button type="submit" className="w-full" disabled={accept.isPending || !captchaReady}>
             {accept.isPending
               ? "Setting up your account..."

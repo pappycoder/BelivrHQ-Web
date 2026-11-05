@@ -5,12 +5,14 @@ import { expect, type BrowserContext, type Page } from "@playwright/test";
 const secret = "browser-test-only-altcha-secret-".repeat(2);
 
 export async function verifyBotForm(page: Page) {
-  const protection = page.locator("[data-bot-protection]:visible").last();
+  const protection = page.locator("[data-bot-protection]").last();
+  if ((await protection.getAttribute("data-bot-verified")) === "true") return;
   const checkbox = protection.getByRole("checkbox");
   if (!(await checkbox.isChecked())) await checkbox.click();
-  await expect(
-    protection.getByRole("status", { name: "Browser verification" }),
-  ).toHaveText("Browser verified.", { timeout: 30000 });
+  await expect(protection).toHaveAttribute("data-bot-verified", "true", {
+    timeout: 30000,
+  });
+  await expect(protection).toBeHidden();
 }
 
 /** Real signed challenges and real worker solves; no widget test mode or production bypass. */

@@ -54,7 +54,6 @@ export default function ForgotPasswordPage() {
         </motion.div>
       ) : (
         <form onSubmit={handleSubmit}>
-              <BotProtection path="/auth/forgot-password" />
           <div className="space-y-4">
             <AuthField
               label="Email Address"
@@ -66,6 +65,7 @@ export default function ForgotPasswordPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
+            <BotProtection path="/auth/forgot-password" />
             <Button type="submit" size="lg" className="w-full" disabled={forgotPasswordMutation.isPending || !captchaReady} loading={forgotPasswordMutation.isPending}>
               {forgotPasswordMutation.isPending ? "Sending..." : "Send reset link"}
             </Button>

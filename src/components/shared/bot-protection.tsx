@@ -24,6 +24,7 @@ export function BotProtection({
     "Check the box to verify your browser.",
   );
   const [failed, setFailed] = React.useState(false);
+  const [verified, setVerified] = React.useState(false);
   const [attempt, setAttempt] = React.useState(0);
 
   React.useEffect(() => {
@@ -141,6 +142,20 @@ export function BotProtection({
           if (!payload) return;
           verifiedPayload = payload;
           explicitlyVerified = true;
+          const moveFocus = container.contains(document.activeElement);
+          setVerified(true);
+          if (moveFocus)
+            requestAnimationFrame(() => {
+              if (disposed) return;
+              const submit =
+                container
+                  .closest("form")
+                  ?.querySelector<HTMLButtonElement>('button[type="submit"]') ??
+                container.nextElementSibling?.querySelector<HTMLButtonElement>(
+                  "button",
+                );
+              if (submit && !submit.disabled) submit.focus();
+            });
           setBotFormReady(method, activePath, true);
           setStatus("Browser verified.");
           setFailed(false);
@@ -149,6 +164,7 @@ export function BotProtection({
           const state = (event as CustomEvent<{ state: string }>).detail.state;
           if (disposed) return;
           if (state !== "verified") {
+            setVerified(false);
             verifiedPayload = undefined;
             setBotFormReady(method, activePath, false);
           }
@@ -237,6 +253,8 @@ export function BotProtection({
     <div
       className="my-3 space-y-1 text-xs text-muted-foreground"
       data-bot-protection
+      data-bot-verified={verified ? "true" : "false"}
+      hidden={verified}
     >
       <div
         aria-hidden="true"

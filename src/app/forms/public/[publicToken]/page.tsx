@@ -252,7 +252,6 @@ function PublicFormContent({ token }: { token: string }) {
             </div>
           ) : (
             <form onSubmit={submit} className="space-y-7">
-              <BotProtection path={`/forms/public/${token}/submit`} />
               <div className="border-b pb-5">
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                   Your response
@@ -277,6 +276,7 @@ function PublicFormContent({ token }: { token: string }) {
                 </div>
               )}
               <div className="border-t pt-6">
+                <BotProtection path={`/forms/public/${token}/submit`} />
                 <Button
                   type="submit"
                   size="lg"

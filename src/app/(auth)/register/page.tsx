@@ -255,7 +255,6 @@ export default function RegisterPage() {
             {subtitles[step]}
           </p>
         </div>
-        <BotProtection path="/auth/register" followUpPath="/auth/login" />
         <AnimatePresence mode="wait" initial={false} custom={direction}>
           <motion.div
             key={step}
@@ -524,6 +523,7 @@ export default function RegisterPage() {
             {error}
           </p>
         )}
+        {step === 3 && <BotProtection path="/auth/register" followUpPath="/auth/login" />}
         <div className="flex gap-3">
           {step > 0 && (
             <Button

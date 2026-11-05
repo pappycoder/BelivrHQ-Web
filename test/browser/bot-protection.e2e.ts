@@ -24,7 +24,7 @@ test.beforeEach(async ({ context }) => {
   );
 });
 
-test("submission stays disabled before verification, while solving, after unchecking and after expiry", async ({
+test("CAPTCHA sits above submit, hides after verification and returns after expiry", async ({
   page,
   context,
 }) => {
@@ -52,10 +52,25 @@ test("submission stays disabled before verification, while solving, after unchec
     name: "Send response",
     exact: true,
   });
-  const checkbox = page.locator("[data-bot-protection]").getByRole("checkbox");
+  const protection = page.locator("[data-bot-protection]");
+  const checkbox = protection.getByRole("checkbox", { includeHidden: true });
   await expect(checkbox).toBeVisible();
   await expect(checkbox).not.toBeChecked();
   await expect(submit).toBeDisabled();
+  const inputBounds = await page.getByLabel("Full name").boundingBox();
+  const captchaBounds = await protection.boundingBox();
+  const buttonBounds = await submit.boundingBox();
+  expect(inputBounds!.y + inputBounds!.height).toBeLessThanOrEqual(
+    captchaBounds!.y,
+  );
+  expect(captchaBounds!.y + captchaBounds!.height).toBeLessThanOrEqual(
+    buttonBounds!.y,
+  );
+  expect(
+    await protection.evaluate((element) =>
+      element.nextElementSibling?.getAttribute("type"),
+    ),
+  ).toBe("submit");
   expect(requested).toBe(false);
   await page
     .locator("form")
@@ -71,25 +86,28 @@ test("submission stays disabled before verification, while solving, after unchec
   await expect(submit).toBeDisabled();
   release();
   await page.unroute("**/api/backend/bot-protection/challenge?*");
-  await expect(
-    page.getByText("Browser verified.", { exact: true }),
-  ).toBeVisible();
+  await expect(page.locator("[data-bot-protection]").last()).toHaveAttribute(
+    "data-bot-verified",
+    "true",
+  );
   await expect(checkbox).toBeChecked();
   await expect(submit).toBeEnabled();
-  await checkbox.click();
-  await expect(submit).toBeDisabled();
-  await verifyBotForm(page);
+  await expect(protection).toBeHidden();
   await page.locator("altcha-widget").evaluate((element) => {
     (element as HTMLElement & { reset: (state: string) => void }).reset(
       "expired",
     );
   });
   await expect(submit).toBeDisabled();
+  await expect(protection).toBeVisible();
+  await expect(checkbox).not.toBeChecked();
   expect(posts).toBe(0);
   await checkbox.focus();
   await page.keyboard.press("Space");
   await expect(checkbox).toBeChecked();
+  await expect(protection).toBeHidden();
   await expect(submit).toBeEnabled();
+  await expect(submit).toBeFocused();
   await submit.click();
   await expect(
     page.getByRole("heading", { name: "Thank you for being part of it." }),
@@ -180,9 +198,10 @@ test("a real worker proof is accepted once and retries use fresh proofs", async 
   await page.goto("/forms/public/token-a");
   await page.getByLabel("Full name").fill("Grace");
   await verifyBotForm(page);
-  await expect(
-    page.getByText("Browser verified.", { exact: true }),
-  ).toBeVisible();
+  await expect(page.locator("[data-bot-protection]").last()).toHaveAttribute(
+    "data-bot-verified",
+    "true",
+  );
   await verifyBotForm(page);
   await page
     .getByRole("button", { name: "Send response", exact: true })
@@ -232,9 +251,10 @@ test("challenge outages block submission and offer a retry while preserving answ
   await page.unroute("**/api/backend/bot-protection/challenge?*");
   await page.getByRole("button", { name: "Retry verification" }).click();
   await verifyBotForm(page);
-  await expect(
-    page.getByText("Browser verified.", { exact: true }),
-  ).toBeVisible();
+  await expect(page.locator("[data-bot-protection]").last()).toHaveAttribute(
+    "data-bot-verified",
+    "true",
+  );
   await verifyBotForm(page);
   await page
     .getByRole("button", { name: "Send response", exact: true })
@@ -313,9 +333,10 @@ test("a mobile browser completes the upper-bound challenge without horizontal ov
   const started = Date.now();
   await page.getByLabel("Full name").fill("Grace");
   await verifyBotForm(page);
-  await expect(
-    page.getByText("Browser verified.", { exact: true }),
-  ).toBeVisible({ timeout: 30000 });
+  await expect(page.locator("[data-bot-protection]").last()).toHaveAttribute(
+    "data-bot-verified",
+    "true",
+  );
   expect(Date.now() - started).toBeLessThan(30000);
   expect(
     await page.evaluate(
