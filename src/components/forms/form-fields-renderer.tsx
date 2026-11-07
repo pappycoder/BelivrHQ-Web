@@ -17,6 +17,8 @@ import type { FormField } from "@/hooks/use-forms";
 
 export interface FormFieldsRendererProps {
   fields: FormField[];
+  initialValues?: Record<string, unknown>;
+  showOptional?: boolean;
   disabled?: boolean;
   onChange: (data: Record<string, unknown>) => void;
 }
@@ -29,13 +31,13 @@ function initialData(fields: FormField[]): Record<string, unknown> {
   return data;
 }
 
-export function FormFieldsRenderer({ fields, disabled, onChange }: FormFieldsRendererProps) {
+export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, showOptional }: FormFieldsRendererProps) {
   const fieldId = useId();
-  const [data, setData] = useState<Record<string, unknown>>(() => initialData(fields));
+  const [data, setData] = useState<Record<string, unknown>>(() => ({ ...initialData(fields), ...initialValues }));
 
   useEffect(() => {
-    setData(initialData(fields));
-  }, [fields]);
+    setData({ ...initialData(fields), ...initialValues });
+  }, [fields, initialValues]);
 
   const update = (key: string, value: unknown) => {
     const next = { ...data, [key]: value };
@@ -61,6 +63,7 @@ export function FormFieldsRenderer({ fields, disabled, onChange }: FormFieldsRen
           >
             {field.label}
             {field.required && <span className="ml-1 text-destructive">*</span>}
+            {showOptional && !field.required && <span className="ml-2 text-xs text-muted-foreground">(optional)</span>}
           </Label>
 
           {field.type === "textarea" && (

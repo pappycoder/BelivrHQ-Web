@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { IntakeRegister, PublicRegistrationLink } from "@/components/intake/intake-register";
 import Link from "next/link";
 import {
   Archive,
@@ -286,6 +287,7 @@ export default function PeopleMembersPage() {
         description="One directory for the whole church — people, households, and the story of how they're doing."
         actions={
           <>
+            <PublicRegistrationLink kind="members" />
             <ExportDropdown
               tableId="members"
               columns={EXPORT_COLUMNS}
@@ -304,6 +306,7 @@ export default function PeopleMembersPage() {
         }
       />
 
+      <IntakeRegister kind="members">
       <StaggerGroup className="grid grid-cols-2 gap-3 lg:grid-cols-3">
         <StaggerItem><StatCard label="In the register" value={total} tone="brand" icon={<Rows3 className="size-4" />} deltaLabel={archivedView ? "archived view" : "matching filters"} /></StaggerItem>
         <StaggerItem>
@@ -486,6 +489,8 @@ export default function PeopleMembersPage() {
           </div>
         </>
       )}
+
+      </IntakeRegister>
 
       <MemberFormDialog
         open={formOpen}

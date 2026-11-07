@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { IntakeRegister, PublicRegistrationLink } from "@/components/intake/intake-register";
 import Link from "next/link";
 import {
   Archive,
@@ -259,15 +260,15 @@ export default function VisitorsPage() {
         eyebrow="People · Visitors"
         title="Guests in the room."
         description="Every first-time guest, their follow-up status, and who&apos;s carrying the conversation."
-        actions={
-          canCreate ? (
+        actions={<><PublicRegistrationLink kind="visitors" />{canCreate ? (
             <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => { setEditTarget(null); setFormOpen(true); }}>
               <UserRoundPlus className="size-3.5" /> Add a guest
             </Button>
-          ) : null
-        }
+          ) : null}</>}
+
       />
 
+      <IntakeRegister kind="visitors">
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Total guests" value={stats.data?.total ?? 0} tone="brand" icon={<Users className="size-4" />} />
         <StatCard label="New this month" value={stats.data?.newThisMonth ?? 0} tone="gold" icon={<CalendarDays className="size-4" />} deltaLabel="first visits" />
@@ -401,6 +402,8 @@ export default function VisitorsPage() {
           </div>
         </>
       )}
+
+      </IntakeRegister>
 
       <VisitorFormDialog open={formOpen} onOpenChange={setFormOpen} visitor={editTarget} />
       <ConvertVisitorDialog open={!!convertTarget} onOpenChange={(v) => !v && setConvertTarget(null)} visitor={convertTarget} />

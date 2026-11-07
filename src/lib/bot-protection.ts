@@ -44,7 +44,7 @@ export function requiresBotProtection(method: string, path: string): boolean {
       )) ||
     (method === "PATCH" && path === "/auth/reset-password") ||
     (method === "POST" &&
-      /^\/forms\/public\/[a-zA-Z0-9_-]+\/submit$/.test(path)) ||
+      /^\/(?:forms|intake)\/public\/[a-zA-Z0-9_-]+\/submit$/.test(path)) ||
     (method === "PUT" && path === "/auth/password") ||
     (method === "POST" &&
       ["/profiles/invite", "/church/invite", "/broadcasts"].includes(path)) ||

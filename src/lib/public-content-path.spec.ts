@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { isPublicContentPath } from "./public-content-path";
 
 describe("public content navigation boundary", () => {
-  it.each(["/privacy-policy", "/privacy-policy/", "/terms-of-service", "/terms-and-conditions/", "/accept-invitation", "/accept-invitation/", "/help", "/help/contact-support", "/forms/public/token-a", "/forms/public/token-a/"])(
+  it.each(["/privacy-policy", "/privacy-policy/", "/terms-of-service", "/terms-and-conditions/", "/accept-invitation", "/accept-invitation/", "/help", "/help/contact-support", "/forms/public/token-a", "/forms/public/token-a/", "/register/public/token-a", "/register/public/token-a/"])(
     "keeps %s public during session restoration",
     (path) => {
       expect(isPublicContentPath(path)).toBe(true);

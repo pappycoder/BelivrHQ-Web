@@ -8,6 +8,7 @@ import { PageHeader, SectionCard } from "@/components/paper/section";
 import { EmptyState, Tag } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ChurchFormBranding } from "@/components/forms/church-form-branding";
 import { FormFieldsRenderer } from "@/components/forms/form-fields-renderer";
 import { SubmissionAttachments } from "@/components/forms/submission-attachments";
 import { useForm, useSubmitForm, type CreateSubmissionInput } from "@/hooks/use-forms";
@@ -98,7 +99,8 @@ export default function FillFormPage({
 
   if (submitted || already) {
     return (
-      <div className="mx-auto max-w-md pt-10 text-center">
+      <div className="mx-auto max-w-md space-y-4 pt-10 text-center">
+        <ChurchFormBranding churchName={f.churchName} churchLogoUrl={f.churchLogoUrl} />
         <CheckCircle2 className={`mx-auto size-12 ${already ? "text-sky" : "text-moss"}`} />
         <h1 className="mt-4 font-display text-2xl font-semibold tracking-tight">{already ? "Already submitted" : "Thank you!"}</h1>
         <p className="mt-2 text-xs leading-relaxed text-ink-soft">
@@ -116,6 +118,7 @@ export default function FillFormPage({
 
   return (
     <div className="space-y-6">
+      <ChurchFormBranding churchName={f.churchName} churchLogoUrl={f.churchLogoUrl} />
       <PageHeader
         eyebrow={
           <Link href={`/library/forms/${f.id}`} className="flex items-center gap-1.5 hover:text-ink">

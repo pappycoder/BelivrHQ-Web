@@ -4,7 +4,6 @@ import { BotProtection } from "@/components/shared/bot-protection";
 import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
 import * as React from "react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import {
@@ -21,11 +20,13 @@ import { api } from "@/lib/api";
 import { useSubmitFormPublic, type FormField } from "@/hooks/use-forms";
 import { FormFieldsRenderer } from "@/components/forms/form-fields-renderer";
 import { SubmissionAttachments } from "@/components/forms/submission-attachments";
-import { BrandLogo } from "@/components/shared/brand-logo";
+import { ChurchFormBranding } from "@/components/forms/church-form-branding";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface PublicFormPayload {
+  churchName?: string;
+  churchLogoUrl?: string | null;
   title: string;
   description?: string;
   fields: FormField[];
@@ -118,9 +119,7 @@ function PublicFormContent({ token }: { token: string }) {
   return (
     <div data-paper-root className="min-h-svh bg-background text-foreground">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-5 py-6 sm:px-8">
-        <Link href="/" aria-label="ChurchOS home">
-          <BrandLogo variant="full" emblemClassName="!h-9 dark:brightness-0 dark:invert" />
-        </Link>
+        {isPending ? <Skeleton className="h-12 w-48" /> : form ? <ChurchFormBranding churchName={form.churchName} churchLogoUrl={form.churchLogoUrl} /> : <span>Community forms</span>}
         <span className="flex items-center gap-2 rounded-full border border-current/10 bg-white/60 px-3 py-2 text-xs dark:bg-card">
           <ClipboardList className="size-3.5" />
           Community forms

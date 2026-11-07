@@ -2,6 +2,8 @@ import { mockBotChallenges, verifyBotForm } from "../fixtures/bot-protection";
 import { expect, test } from "@playwright/test";
 
 const form = {
+  churchName: "Grace Community Church",
+  churchLogoUrl: "/brand/churchos-logo.png",
   title: "Find your place to serve",
   description: "Share your interests and help us build a welcoming Sunday community.",
   fields: [
@@ -29,6 +31,7 @@ test("public form is specific, tracks progress and submits without signing in", 
     return route.fulfill({ json: { success: true, data: { id: "response-a" } } });
   });
   await page.goto("/forms/public/token-a");
+  await expect(page.getByTestId("church-form-branding").getByText(form.churchName)).toBeVisible();
   await expect(page.getByRole("heading", { name: form.title, exact: true })).toBeVisible();
   await expect(page.getByText(form.description, { exact: true })).toBeVisible();
   await expect(page.getByText("No sign-in needed", { exact: true })).toBeVisible();

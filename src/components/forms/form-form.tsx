@@ -24,6 +24,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ChurchFormBranding } from "./church-form-branding";
+import { useCurrentProfile } from "@/hooks/use-profile";
 import { FormFieldsRenderer } from "./form-fields-renderer";
 import { FormFieldsEditor } from "./form-fields-editor";
 import { FormSettingsCard } from "./form-settings-card";
@@ -97,6 +99,7 @@ const EMPTY_VALUES: FormValues = {
 
 export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
   const branchAssignment = useBranchAssignment(form);
+  const { data: profile } = useCurrentProfile();
   const [saving, setSaving] = useState(false);
   const [builderFields, setBuilderFields] = useState<FormFieldType[]>([]);
 
@@ -261,7 +264,7 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
           </CardContent>
         </Card>
 
-        <details className="rounded-lg border p-4"><summary className="cursor-pointer font-medium">Preview questions</summary><div className="mt-4 max-w-2xl"><FormFieldsRenderer fields={builderFields} onChange={() => {}} /></div></details>
+        <details className="rounded-lg border p-4"><summary className="cursor-pointer font-medium">Preview questions</summary><div className="mt-4 max-w-2xl"><ChurchFormBranding churchName={profile?.church?.name} churchLogoUrl={profile?.church?.logoUrl} /><FormFieldsRenderer fields={builderFields} onChange={() => {}} /></div></details>
         <div className="flex items-center justify-end gap-2">
           <Button type="submit" disabled={saving} loading={saving}>
             {saving ? "Saving..." : submitLabel}

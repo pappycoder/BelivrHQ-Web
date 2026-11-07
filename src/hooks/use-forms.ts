@@ -76,6 +76,8 @@ export interface FormField {
 }
 
 export interface Form {
+  churchName?: string;
+  churchLogoUrl?: string | null;
   branchName?: string;
   branchId?: string;
   id: string;
