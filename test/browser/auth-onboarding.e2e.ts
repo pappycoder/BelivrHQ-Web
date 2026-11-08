@@ -116,6 +116,10 @@ test("mismatched passwords block account progress", async ({
     page.getByRole("alert").filter({ hasText: "Passwords do not match." }),
   ).toHaveText("Passwords do not match.");
   await expect(page.getByLabel("Email Address", { exact: true })).toBeVisible();
+  const confirmation = page.getByLabel("Confirm Password", { exact: true });
+  await expect(confirmation).toHaveAttribute("aria-invalid", "true");
+  await confirmation.fill("LongPassword1!");
+  await expect(confirmation).not.toHaveAttribute("aria-invalid", "true");
 });
 test("registration failure retains data for a safe retry", async ({
   page,

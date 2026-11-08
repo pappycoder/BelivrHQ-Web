@@ -47,6 +47,7 @@ function answered(value: unknown) {
 }
 
 function PublicFormContent({ token }: { token: string }) {
+  const [validateFields, setValidateFields] = React.useState(false);
   const [answers, setAnswers] = React.useState<Record<string, unknown>>({});
   const [assetIds, setAssetIds] = React.useState<string[]>([]);
   const [submitted, setSubmitted] = React.useState(false);
@@ -90,6 +91,7 @@ function PublicFormContent({ token }: { token: string }) {
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!form || inFlight.current) return;
+    setValidateFields(true);
     if (required.some((field) => !answered(answers[field.key]))) {
       setFailure("Please complete all required questions before submitting.");
       return;
@@ -262,7 +264,7 @@ function PublicFormContent({ token }: { token: string }) {
                 </p>
               </div>
               <div className="[&>div]:space-y-6">
-                <FormFieldsRenderer fields={form.fields} onChange={setAnswers} disabled={sending} />
+                <FormFieldsRenderer validateRequired={validateFields} fields={form.fields} onChange={setAnswers} disabled={sending} />
               </div>
               <SubmissionAttachments onChange={setAssetIds} disabled={sending} />
               {failure && (

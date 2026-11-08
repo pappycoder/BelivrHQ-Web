@@ -39,6 +39,7 @@ function ResetPasswordForm() {
   const resetPasswordMutation = useResetPassword();
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [validationAttempted, setValidationAttempted] = React.useState(false);
   const [clientError, setClientError] = React.useState<string | null>(null);
 
   const strength = getPasswordStrength(password);
@@ -47,6 +48,7 @@ function ResetPasswordForm() {
   const captchaReady = useBotProtectionReady("/auth/reset-password", "PATCH");
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationAttempted(true);
     setClientError(null);
 
     if (password !== confirmPassword) {
@@ -146,6 +148,7 @@ function ResetPasswordForm() {
                   type="password"
                   placeholder="Enter a new password"
                   autoComplete="new-password"
+                  aria-invalid={validationAttempted && password.length < 8 ? true : undefined}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -174,6 +177,7 @@ function ResetPasswordForm() {
                 type="password"
                 placeholder="Confirm your new password"
                 autoComplete="new-password"
+                aria-invalid={validationAttempted && password !== confirmPassword ? true : undefined}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required

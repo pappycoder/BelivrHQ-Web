@@ -19,8 +19,13 @@ export interface FormFieldsRendererProps {
   fields: FormField[];
   initialValues?: Record<string, unknown>;
   showOptional?: boolean;
+  validateRequired?: boolean;
   disabled?: boolean;
   onChange: (data: Record<string, unknown>) => void;
+}
+
+function hasAnswer(value: unknown) {
+  return value !== undefined && value !== null && (typeof value !== "string" || !!value.trim()) && (!Array.isArray(value) || value.length > 0);
 }
 
 function initialData(fields: FormField[]): Record<string, unknown> {
@@ -31,7 +36,7 @@ function initialData(fields: FormField[]): Record<string, unknown> {
   return data;
 }
 
-export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, showOptional }: FormFieldsRendererProps) {
+export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, showOptional, validateRequired }: FormFieldsRendererProps) {
   const fieldId = useId();
   const [data, setData] = useState<Record<string, unknown>>(() => ({ ...initialData(fields), ...initialValues }));
 
@@ -69,29 +74,41 @@ export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, 
           {field.type === "textarea" && (
             <Textarea
               id={`${fieldId}-${field.key}`}
+              name={field.key}
+              data-field-label={field.label}
               value={String(data[field.key] ?? "")}
               onChange={(e) => update(field.key, e.target.value)}
               disabled={disabled}
+              aria-required={!!field.required}
+              aria-invalid={validateRequired && field.required && !hasAnswer(data[field.key]) ? true : undefined}
             />
           )}
 
           {field.type === "number" && (
             <Input
               id={`${fieldId}-${field.key}`}
+              name={field.key}
+              data-field-label={field.label}
               type="number"
               value={String(data[field.key] ?? "")}
               onChange={(e) => update(field.key, e.target.value)}
               disabled={disabled}
+              aria-required={!!field.required}
+              aria-invalid={validateRequired && field.required && !hasAnswer(data[field.key]) ? true : undefined}
             />
           )}
 
           {field.type === "date" && (
             <Input
               id={`${fieldId}-${field.key}`}
+              name={field.key}
+              data-field-label={field.label}
               type="date"
               value={String(data[field.key] ?? "")}
               onChange={(e) => update(field.key, e.target.value)}
               disabled={disabled}
+              aria-required={!!field.required}
+              aria-invalid={validateRequired && field.required && !hasAnswer(data[field.key]) ? true : undefined}
             />
           )}
 
@@ -101,7 +118,7 @@ export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, 
               onValueChange={(value) => update(field.key, value)}
               disabled={disabled}
             >
-              <SelectTrigger id={`${fieldId}-${field.key}`} className="w-full">
+              <SelectTrigger id={`${fieldId}-${field.key}`} className="w-full" aria-required={!!field.required} aria-invalid={validateRequired && field.required && !hasAnswer(data[field.key]) ? true : undefined}>
                 <SelectValue placeholder="Select an option" />
               </SelectTrigger>
               <SelectContent>
@@ -135,6 +152,7 @@ export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, 
                         )
                       }
                       disabled={disabled}
+                      aria-invalid={validateRequired && field.required && !hasAnswer(data[field.key]) ? true : undefined}
                     />
                     {opt}
                   </label>
@@ -146,10 +164,14 @@ export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, 
           {(field.type === "text" || field.type === "email" || field.type === "phone") && (
             <Input
               id={`${fieldId}-${field.key}`}
+              name={field.key}
+              data-field-label={field.label}
               type={field.type === "email" ? "email" : field.type === "phone" ? "tel" : "text"}
               value={String(data[field.key] ?? "")}
               onChange={(e) => update(field.key, e.target.value)}
               disabled={disabled}
+              aria-required={!!field.required}
+              aria-invalid={validateRequired && field.required && !hasAnswer(data[field.key]) ? true : undefined}
             />
           )}
         </div>

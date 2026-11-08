@@ -135,7 +135,7 @@ export default function FillFormPage({
           Submitting as a member of your church — your name travels with the answer.
         </div>
         <SectionCard eyebrow="Your answers" title="Take your time">
-          <FormFieldsRenderer fields={f.fields ?? []} disabled={submit.isPending} onChange={setAnswers} />
+          <FormFieldsRenderer validateRequired={missing !== null} fields={f.fields ?? []} disabled={submit.isPending} onChange={setAnswers} />
           {missing?.length ? (
             <div className="mt-4 rounded-xl border border-rose/40 bg-rose-soft/30 px-4 py-3 text-[11px] text-rose">
               Still needed: {missing.join(", ")}

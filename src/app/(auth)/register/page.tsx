@@ -68,6 +68,7 @@ export default function RegisterPage() {
   >("essentials");
   const [cycle, setCycle] = React.useState<"monthly" | "annual">("monthly");
   const [error, setError] = React.useState("");
+  const [validationAttempted, setValidationAttempted] = React.useState(false);
   const [termsAccepted, setTermsAccepted] = React.useState(false);
   const [created, setCreated] = React.useState(false);
   const heading = React.useRef<HTMLHeadingElement>(null);
@@ -87,10 +88,16 @@ export default function RegisterPage() {
   const selected = plans.find((p) => p.id === plan)!;
   const field = (key: keyof typeof details) => ({
     value: details[key],
+    "aria-invalid": validationAttempted && (
+      (["churchName", "firstName", "lastName"].includes(key) && !details[key].trim()) ||
+      (key === "password" && details.password.length < 8) ||
+      (key === "confirmPassword" && details.password !== details.confirmPassword)
+    ) ? true as const : undefined,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
       setDetails((v) => ({ ...v, [key]: e.target.value })),
   });
   function move(next: number) {
+    setValidationAttempted(false);
     setDirection(next > step ? 1 : -1);
     setError("");
     setStep(next);
@@ -98,6 +105,7 @@ export default function RegisterPage() {
   }
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setValidationAttempted(true);
     setError("");
     if (step === 0 && !details.churchName.trim()) {
       setError("Please enter your church name.");

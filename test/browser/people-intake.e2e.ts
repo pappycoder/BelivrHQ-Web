@@ -165,10 +165,14 @@ async function fixture(
       if (failAccept && request.method() === "POST") {
         failAccept = false;
         return route.fulfill({
-          status: 409,
+          status: request.postDataJSON().data.firstName ? 409 : 400,
           json: {
             success: false,
-            error: { message: "This phone already exists" },
+            error: {
+              message: request.postDataJSON().data.firstName
+                ? "This phone already exists"
+                : "First name is required",
+            },
           },
         });
       }
@@ -228,7 +232,11 @@ for (const kind of ["members", "visitors"]) {
     await page.getByLabel("First name", { exact: false }).fill("Grace");
     if (kind === "members")
       await page.getByLabel("Last name", { exact: false }).fill("Adeyemi");
-    if (kind === "members") await page.screenshot({ path: "/tmp/churchos-intake-members-mobile.png", fullPage: true });
+    if (kind === "members")
+      await page.screenshot({
+        path: "/tmp/churchos-intake-members-mobile.png",
+        fullPage: true,
+      });
     await verifyBotForm(page);
     await submit.click();
     await expect(
@@ -466,4 +474,28 @@ test("Forms-module builder previews use church branding", async ({
   await expect(
     page.getByTestId("church-form-branding").getByText(identity.churchName),
   ).toBeVisible();
+});
+
+test("intake review highlights missing required fields after a validation error", async ({
+  context,
+  page,
+}) => {
+  await fixture(context, { private: true, failAccept: true });
+  await page.goto("/people/members");
+  await page.getByRole("tab", { name: "Pending registrations" }).click();
+  await page.getByRole("button", { name: "Review", exact: true }).click();
+  const firstName = page.getByLabel("First name", { exact: false });
+  await firstName.fill("");
+  await page
+    .getByRole("button", { name: "Accept registration", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Confirm acceptance", exact: true })
+    .click();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "First name is required" }),
+  ).toBeVisible();
+  await expect(firstName).toHaveAttribute("aria-invalid", "true");
+  await firstName.fill("Grace");
+  await expect(firstName).not.toHaveAttribute("aria-invalid", "true");
 });

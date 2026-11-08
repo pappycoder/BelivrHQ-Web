@@ -456,6 +456,7 @@ export function IntakeRegister({
             <FormFieldsRenderer
               key={detail.id}
               fields={detail.fields}
+              validateRequired={!!error}
               initialValues={detail.data}
               disabled={review.isPending}
               onChange={setAnswers}

@@ -33,6 +33,7 @@ function Registration({ token }: { token: string }) {
         signal,
       }),
   });
+  const [validateFields, setValidateFields] = useState(false);
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -40,6 +41,7 @@ function Registration({ token }: { token: string }) {
   async function submit(event: FormEvent) {
     event.preventDefault();
     if (!form.data || sending || !ready) return;
+    setValidateFields(true);
     const missing = form.data.fields.filter(
       (f) =>
         f.required &&
@@ -115,7 +117,7 @@ function Registration({ token }: { token: string }) {
                 </div>
               ) : (
                 <form onSubmit={submit} className="space-y-5">
-                  <FormFieldsRenderer
+                  <FormFieldsRenderer validateRequired={validateFields}
                     fields={form.data.fields}
                     disabled={sending}
                     onChange={setAnswers}

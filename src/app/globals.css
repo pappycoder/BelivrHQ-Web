@@ -114,3 +114,33 @@
   .legal-document th, .legal-document td { min-width: 0 !important; overflow-wrap: anywhere; }
   .legal-document a { color: inherit; }
 }
+
+/* Decorative prefixes leave the native field, caret, refs and form semantics intact.
+   Native text must switch instantly when the short-lived text mirror is removed. */
+.app-field { transition-property: border-color, box-shadow, background-color, opacity; }
+.app-field[data-field-icon]:not([data-field-prefix="existing"]) {
+  background-image: var(--field-icon-light);
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  background-position: left 12px center;
+  padding-inline-start: 2.25rem !important;
+}
+.dark .app-field[data-field-icon]:not([data-field-prefix="existing"]) { background-image: var(--field-icon-dark); }
+textarea.app-field[data-field-icon]:not([data-field-prefix="existing"]) { background-position: left 12px top 12px; }
+.app-field[data-field-icon]:dir(rtl):not([data-field-prefix="existing"]) { background-position: right 12px center; }
+textarea.app-field[data-field-icon]:dir(rtl):not([data-field-prefix="existing"]) { background-position: right 12px top 12px; }
+:is(input,textarea,select,[data-slot="select-trigger"],[data-slot="checkbox"]):is([aria-invalid="true"],[data-field-native-invalid="true"]) {
+  border-color: var(--destructive) !important;
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--destructive) 14%, transparent);
+}
+.app-field[data-field-icon]:not([data-field-prefix="existing"]):is([aria-invalid="true"],[data-field-native-invalid="true"]) { background-image: var(--field-icon-error); }
+.app-field[data-field-animating="true"] {
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  caret-color: var(--field-caret-color) !important;
+}
+.app-field[data-field-animating="true"]::placeholder { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  [data-field-motion] { display: none; }
+  .app-field[data-field-animating="true"] { color: var(--field-caret-color) !important; -webkit-text-fill-color: var(--field-caret-color) !important; }
+}
