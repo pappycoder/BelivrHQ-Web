@@ -1,9 +1,13 @@
 import * as React from "react"
 
+import { WheelPickerInput } from "@/components/ui/wheel-date-time-picker"
+
+import { isWheelPickerType } from "@/lib/wheel-date-time"
+
 import { cn } from "@/lib/utils"
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
-  return (
+  const input = (
     <input
       type={type}
       data-slot="input"
@@ -16,6 +20,9 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
       {...props}
     />
   )
+  return isWheelPickerType(type)
+    ? <WheelPickerInput type={type}>{input}</WheelPickerInput>
+    : input
 }
 
 export { Input }

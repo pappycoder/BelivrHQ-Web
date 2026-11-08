@@ -21,3 +21,11 @@ Reduced-motion preferences suppress text motion and shaking, including when the 
 `src/lib/field-feedback.spec.ts` covers semantic matching and contiguous edits, including emoji. `test/browser/field-feedback.e2e.ts` covers native controls, additions/deletions, selection/caret, multiline text, error/retry/reset, reduced motion, masked passwords, composition/autofill, numeric partial edits, later-inserted controls, mobile layout and password confirmation. Registration/public-form browser suites cover integration with staff and respondent pages.
 
 Deploy the web application only; no API, database migration or new environment configuration is needed.
+
+## Placeholder coverage
+
+All rendered text inputs and textareas receive a nonempty placeholder through the shared field controller, including fields inserted later in dialogs and tabs. It derives copy from the field's explicit label, ARIA label, associated label or name, preserving authored placeholders. Generated public/private/intake forms also render their label-based placeholders in their initial markup. Labels and required/optional indicators remain separate, and the existing italic placeholder style applies.
+
+Examples: “Enter first name”, “Enter offering amount” and “Enter notes”. Native date/time inputs retain their fields and browser format display (browsers may ignore their placeholder attribute); opening a picker now uses the shared [measuring-tape wheels](wheel-date-time-picker.md). File uploads, checkboxes, radios, color/range pickers, buttons and hidden/bot-protection fields have no text placeholder. Values, validation, input motion and error feedback are unchanged.
+
+Placeholder validation: 601 unit tests and 22 focused browser checks passed, together with TypeScript, scoped lint and the production build. Browser coverage includes generated fields, dynamically added native inputs, custom placeholder preservation, label changes and existing field-feedback/mobile behavior.

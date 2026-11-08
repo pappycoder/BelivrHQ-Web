@@ -1,5 +1,7 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
+
 import * as React from "react";
 import {
   Download,
@@ -216,9 +218,9 @@ export default function GivingDonationsPage() {
           {activeCategories.map((c) => <option key={c.categoryId} value={c.categoryId}>{c.name}</option>)}
         </select>
         <span className="flex items-center gap-1.5 text-[11px] text-ink-faint">
-          <input type="date" value={startDate} onChange={(e) => { setStartDate(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-2.5 text-[11px] outline-none" aria-label="From date" />
+          <Input type="date" value={startDate} onChange={(e) => { setStartDate(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-2.5 text-[11px] outline-none" aria-label="From date" />
           →
-          <input type="date" value={endDate} onChange={(e) => { setEndDate(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-2.5 text-[11px] outline-none" aria-label="To date" />
+          <Input type="date" value={endDate} onChange={(e) => { setEndDate(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-2.5 text-[11px] outline-none" aria-label="To date" />
         </span>
       </div>
 

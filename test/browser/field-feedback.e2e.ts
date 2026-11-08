@@ -462,3 +462,35 @@ test("password reset mismatch highlights confirmation and clears as passwords ma
   await confirmation.fill("LongPassword1!");
   await expect(confirmation).not.toHaveAttribute("aria-invalid", "true");
 });
+
+test("generated fields have meaningful placeholders without changing their labels", async ({ page, context }) => {
+  await fixture(context);
+  await page.goto("/forms/public/feedback");
+  await expect(page.getByLabel(/^First name/)).toHaveAttribute("placeholder", "Enter first name");
+  await expect(page.getByLabel(/^Email/)).toHaveAttribute("placeholder", "Enter email");
+  await expect(page.getByLabel(/^Offering amount/)).toHaveAttribute("placeholder", "Enter offering amount");
+  await expect(page.getByLabel(/^Notes/)).toHaveAttribute("placeholder", "Enter notes");
+  await expect(page.getByLabel(/^Date of birth/)).toHaveAttribute("type", "date");
+  for (const field of await page.locator(':is(input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]), textarea):not([data-bot-protection] *, [aria-hidden="true"] *)').all()) {
+    if (await field.isVisible()) await expect(field).toHaveAttribute("placeholder", /\S/);
+  }
+});
+
+test("new raw fields receive label-based hints while authored copy and hidden fields are preserved", async ({ page, context }) => {
+  await fixture(context);
+  await page.goto("/forms/public/feedback");
+  await expect(page.getByLabel(/^First name/)).toHaveAttribute("data-field-icon", "user");
+  await page.evaluate(() => {
+    const section = document.createElement("section");
+    section.innerHTML = '<label for="placeholder-city">City (optional)</label><input id="placeholder-city"><label>Prayer request<textarea></textarea></label><input aria-label="Personal website" placeholder="https://example.org"><input aria-label="Access password" type="password"><input name="hidden-hint" type="hidden"><input aria-label="One-time code digit" maxlength="1">';
+    document.body.append(section);
+  });
+  await expect(page.getByLabel("City (optional)", { exact: true })).toHaveAttribute("placeholder", "Enter city");
+  await expect(page.getByLabel("Prayer request", { exact: true })).toHaveAttribute("placeholder", "Enter prayer request");
+  await expect(page.getByLabel("Personal website", { exact: true })).toHaveAttribute("placeholder", "https://example.org");
+  await expect(page.getByLabel("Access password", { exact: true })).toHaveAttribute("placeholder", "Enter access password");
+  await expect(page.getByLabel("One-time code digit", { exact: true })).toHaveAttribute("placeholder", "0");
+  await expect(page.locator('[name="hidden-hint"]')).not.toHaveAttribute("placeholder");
+  await page.getByLabel("City (optional)", { exact: true }).evaluate((field) => field.setAttribute("aria-label", "Town"));
+  await expect(page.getByLabel("Town", { exact: true })).toHaveAttribute("placeholder", "Enter town");
+});

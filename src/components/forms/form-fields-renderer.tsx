@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { AlertCircle } from "lucide-react";
+import { inputPlaceholder } from "@/lib/input-placeholder";
 import type { FormField } from "@/hooks/use-forms";
 
 export interface FormFieldsRendererProps {
@@ -76,6 +77,7 @@ export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, 
               id={`${fieldId}-${field.key}`}
               name={field.key}
               data-field-label={field.label}
+              placeholder={inputPlaceholder(field.type, field.label)}
               value={String(data[field.key] ?? "")}
               onChange={(e) => update(field.key, e.target.value)}
               disabled={disabled}
@@ -89,6 +91,7 @@ export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, 
               id={`${fieldId}-${field.key}`}
               name={field.key}
               data-field-label={field.label}
+              placeholder={inputPlaceholder(field.type, field.label)}
               type="number"
               value={String(data[field.key] ?? "")}
               onChange={(e) => update(field.key, e.target.value)}
@@ -103,6 +106,7 @@ export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, 
               id={`${fieldId}-${field.key}`}
               name={field.key}
               data-field-label={field.label}
+              placeholder={inputPlaceholder(field.type, field.label)}
               type="date"
               value={String(data[field.key] ?? "")}
               onChange={(e) => update(field.key, e.target.value)}
@@ -166,6 +170,7 @@ export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, 
               id={`${fieldId}-${field.key}`}
               name={field.key}
               data-field-label={field.label}
+              placeholder={inputPlaceholder(field.type, field.label)}
               type={field.type === "email" ? "email" : field.type === "phone" ? "tel" : "text"}
               value={String(data[field.key] ?? "")}
               onChange={(e) => update(field.key, e.target.value)}

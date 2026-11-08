@@ -1,5 +1,7 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
+
 import * as React from "react";
 import { toast } from "@/lib/toast";
 import {
@@ -217,7 +219,7 @@ export function NotificationsDrawer({
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <input
+            <Input
               type="date"
               value={startDate}
               onChange={(e) => {
@@ -229,7 +231,7 @@ export function NotificationsDrawer({
               aria-label="Start date"
             />
             <span className="text-xs text-muted-foreground">to</span>
-            <input
+            <Input
               type="date"
               value={endDate}
               onChange={(e) => {

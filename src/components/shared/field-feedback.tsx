@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { inputPlaceholder } from "@/lib/input-placeholder";
 import {
   FIELD_ICON_PATHS,
   fieldIconImage,
@@ -93,6 +94,7 @@ export function FieldFeedback() {
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const marked = new Set<AdornableControl>();
+    const generatedPlaceholders = new WeakMap<TextControl, string>();
     const shakes = new Map<HTMLElement, Animation>();
     let before:
       | {
@@ -140,6 +142,26 @@ export function FieldFeedback() {
         control.closest('[aria-hidden="true"],[data-bot-protection]')
       )
         return;
+      if (isTextControl(control)) {
+        const existing = control.getAttribute("placeholder");
+        if (!existing?.trim() || existing === generatedPlaceholders.get(control)) {
+          const labelledBy = (control.getAttribute("aria-labelledby") ?? "")
+            .split(/\s+/)
+            .map((id) => document.getElementById(id))
+            .filter((node): node is HTMLElement => !!node)
+            .map(labelText)
+            .join(" ");
+          const label = control.dataset.fieldLabel || control.getAttribute("aria-label") ||
+            Array.from(control.labels ?? []).map(labelText).join(" ") || labelledBy || control.name;
+          const placeholder = control instanceof HTMLInputElement && control.maxLength === 1
+            ? "0"
+            : inputPlaceholder(control instanceof HTMLTextAreaElement ? "textarea" : control.type, label);
+          if (placeholder && existing !== placeholder) {
+            generatedPlaceholders.set(control, placeholder);
+            control.setAttribute("placeholder", placeholder);
+          }
+        }
+      }
       marked.add(control);
       control.classList.add("app-field");
       if (
@@ -489,6 +511,7 @@ export function FieldFeedback() {
         "id",
         "placeholder",
         "aria-label",
+        "aria-labelledby",
         "autocomplete",
         "data-field-label",
         "data-prefix-icon",
