@@ -1,5 +1,6 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -277,7 +278,7 @@ function RegistrationsInner() {
           ) : view === "table" ? (
             <div className="paper-card overflow-hidden rounded-2xl">
               <div className="overflow-x-auto">
-                <div className="min-w-[760px]">
+                <ListTable className="min-w-[760px]" tableId="gatherings-events-registrations-1" records={rows ?? []} recordKey="registrationId">
                   <div className="rule-label grid grid-cols-[minmax(0,1.8fr)_1fr_0.8fr_0.8fr_0.8fr_1fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
                     <span>Attendee</span>
                     <span>Tier</span>
@@ -317,7 +318,7 @@ function RegistrationsInner() {
                       </div>
                     ))}
                   </div>
-                </div>
+                </ListTable>
               </div>
               <div className="border-t border-line px-5 py-3">
                 <ListPaginationFooter

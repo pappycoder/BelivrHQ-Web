@@ -1,5 +1,6 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -79,9 +80,9 @@ export default function AdminBranchesPage() {
   const manageActions = (branch: Branch): (RowAction | false | "" | undefined)[] => [
     { label: `Open ${branch.name}`, icon: <ArrowUpRight />, href: `/admin/locations/${branch.branchId}` },
     canUpdate && !branch.archivedAt && { label: "Edit branch", icon: <PencilLine />, onSelect: () => setFormTarget({ open: true, branch }) },
-    canDelete && !branch.archivedAt && { label: "Archive branch — keeps history", icon: <Archive />, onSelect: () => setArchiveState({ kind: "archive", branch }) },
-    canUpdate && branch.archivedAt && { label: "Restore branch", icon: <ArchiveRestore />, tone: "success", onSelect: () => setArchiveState({ kind: "restore", branch }) },
-    canDelete && branch.archivedAt && { label: "Delete forever", icon: <Trash2 />, tone: "danger", onSelect: () => setArchiveState({ kind: "purge", branch }) },
+    canDelete && !branch.archivedAt && { label: "Archive branch — keeps history", icon: <Archive />, onSelect: () => setArchiveState({ kind: "archive", branch }), bulk: { key: "archive", label: "Archive selected", run: () => archive.mutateAsync(branch.branchId) } },
+    canUpdate && branch.archivedAt && { label: "Restore branch", icon: <ArchiveRestore />, tone: "success", onSelect: () => setArchiveState({ kind: "restore", branch }), bulk: { key: "restore", label: "Restore selected", run: () => restore.mutateAsync(branch.branchId) } },
+    canDelete && branch.archivedAt && { label: "Delete forever", icon: <Trash2 />, tone: "danger", onSelect: () => setArchiveState({ kind: "purge", branch }), bulk: { key: "delete", label: "Delete selected permanently", destructive: true, run: () => del.mutateAsync(branch.branchId) } },
   ];
 
   return (
@@ -137,7 +138,7 @@ export default function AdminBranchesPage() {
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
           <div className="overflow-x-auto">
-            <div className="min-w-[640px]">
+            <ListTable className="min-w-[640px]" tableId="admin-locations-1" records={rows ?? []} recordKey="branchId">
               <div className="rule-label grid grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)_0.9fr_0.9fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
                 <span>Branch</span>
                 <span>Address</span>
@@ -170,7 +171,7 @@ export default function AdminBranchesPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </ListTable>
           </div>
         </div>
       ) : (

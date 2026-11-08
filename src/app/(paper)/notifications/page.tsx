@@ -1,5 +1,7 @@
 "use client";
 
+import { useManageConfirmation } from "@/components/shared/manage-confirmation";
+
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -77,6 +79,7 @@ const TYPES: ("all" | NotificationType)[] = [
 type DeleteTarget = { ids: string[]; label: string };
 
 export default function PaperNotificationsPage() {
+  const { confirm, dialog } = useManageConfirmation();
   const router = useRouter();
   const [read, setRead] = React.useState<"all" | "unread">("all");
   const [type, setType] = React.useState<"all" | NotificationType>("all");
@@ -131,17 +134,13 @@ export default function PaperNotificationsPage() {
         : new Set(items.map((item) => item.id)),
     );
 
-  const runBulk = (
-    mutation: { mutate: (ids: string[], opts: { onSuccess: () => void; onError: (e: Error) => void }) => void },
-    done: (n: number) => string,
-  ) => {
-    mutation.mutate(selectedIds, {
-      onSuccess: () => {
-        toast(done(selectedIds.length));
-        setSelected(new Set());
-      },
+  const runBulk = (mutation: typeof bulkRead, done: (n: number) => string, title: string) => {
+    const ids = [...selectedIds];
+    const names = items.filter((item) => ids.includes(item.id)).map((item) => item.title);
+    confirm({ title, subject: names.join(" · "), description: `Update ${ids.length} selected notifications?`, onConfirm: () => mutation.mutateAsync(ids, {
+      onSuccess: () => { toast(done(ids.length)); setSelected((current) => { const next = new Set(current); ids.forEach((id) => next.delete(id)); return next; }); },
       onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't complete that.")),
-    });
+    }) });
   };
 
   const confirmDelete = () => {
@@ -168,6 +167,7 @@ export default function PaperNotificationsPage() {
 
   return (
     <div className="space-y-6">
+      {dialog}
       <PageHeader
         eyebrow="Today"
         title="Notifications"
@@ -182,9 +182,9 @@ export default function PaperNotificationsPage() {
             className="h-9 gap-1.5 rounded-full border-line bg-card text-xs"
             disabled={!list.data?.unreadCount || markAll.isPending}
             onClick={() =>
-              markAll.mutate(undefined, {
+              confirm({ title: "Mark all notifications read?", subject: "All unread notifications", onConfirm: () => markAll.mutateAsync(undefined, {
                 onSuccess: () => toast("All caught up."),
-              })
+              }) })
             }
           >
             <CheckCheck className="size-3.5" /> Mark all read
@@ -245,7 +245,7 @@ export default function PaperNotificationsPage() {
                     size="xs"
                     className="gap-1.5 rounded-full bg-paper text-ink hover:bg-paper/90"
                     disabled={bulkRead.isPending}
-                    onClick={() => runBulk(bulkRead, (n) => `${n} marked read.`)}
+                    onClick={() => runBulk(bulkRead, (n) => `${n} marked read.`, "Mark selected notifications read?")}
                   >
                     <CheckCheck className="size-3" /> Mark read
                   </Button>
@@ -254,7 +254,7 @@ export default function PaperNotificationsPage() {
                     variant="outline"
                     className="gap-1.5 rounded-full border-paper/30 bg-transparent text-paper hover:bg-paper/10 hover:text-paper"
                     disabled={bulkUnread.isPending}
-                    onClick={() => runBulk(bulkUnread, (n) => `${n} marked unread.`)}
+                    onClick={() => runBulk(bulkUnread, (n) => `${n} marked unread.`, "Mark selected notifications unread?")}
                   >
                     <Undo2 className="size-3" /> Mark unread
                   </Button>
@@ -328,15 +328,15 @@ export default function PaperNotificationsPage() {
                   <RowActions
                     actions={[
                       !item.readAt && {
-                        label: "Mark as read",
+                        label: "Mark as read", confirmation: { subject: item.title },
                         icon: <Check />,
-                        onSelect: () => markRead.mutate(item.id),
+                        onSelect: () => markRead.mutateAsync(item.id),
                       },
                       item.readAt && {
-                        label: "Mark as unread",
+                        label: "Mark as unread", confirmation: { subject: item.title },
                         icon: <Undo2 />,
                         onSelect: () =>
-                          bulkUnread.mutate([item.id], {
+                          bulkUnread.mutateAsync([item.id], {
                             onSuccess: () => toast("Marked unread."),
                             onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't change that.")),
                           }),

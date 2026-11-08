@@ -1,5 +1,6 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -56,6 +57,7 @@ import { useCurrentProfile } from "@/hooks/use-profile";
 import { useBranchesList } from "@/hooks/use-branches";
 import {
   useFamiliesList,
+  useDeleteFamily,
   useArchiveFamily,
   useRestoreArchiveFamily,
   type Family,
@@ -136,6 +138,7 @@ export default function FamiliesPage() {
   const list = useFamiliesList(params);
   const branches = useBranchesList({ limit: 100 }, { enabled: isHq });
   const archive = useArchiveFamily();
+  const bulkDelete = useDeleteFamily();
   const restoreArchive = useRestoreArchiveFamily();
 
   const families = list.data?.data ?? [];
@@ -145,11 +148,11 @@ export default function FamiliesPage() {
 
   const toggleArchive = (family: Family) => {
     if (family.archivedAt) {
-      restoreArchive.mutate(family.familyId, {
+      return restoreArchive.mutateAsync(family.familyId, {
         onSuccess: () => toast(`${family.name} restored to the active register.`),
       });
     } else {
-      archive.mutate(family.familyId, {
+      return archive.mutateAsync(family.familyId, {
         onSuccess: () => toast(`${family.name} archived — records are kept.`),
       });
     }
@@ -168,15 +171,17 @@ export default function FamiliesPage() {
       onSelect: () => { setEditTarget(family); setFormOpen(true); },
     },
     canUpdate && {
-      label: family.archivedAt ? "Restore household" : "Archive household",
+      label: family.archivedAt ? "Restore household" : "Archive household", confirmation: { subject: family.name },
       icon: family.archivedAt ? <ArchiveRestore /> : <Archive />,
       onSelect: () => toggleArchive(family),
+      bulk: { key: family.archivedAt ? "restore" : "archive", label: family.archivedAt ? "Restore selected" : "Archive selected", run: () => family.archivedAt ? restoreArchive.mutateAsync(family.familyId) : archive.mutateAsync(family.familyId) },
     },
     canDelete && !family.archivedAt && {
       label: "Delete household",
       icon: <Trash2 />,
       tone: "danger",
       onSelect: () => setDeleteTarget([family]),
+      bulk: { key: "delete", label: "Delete selected", destructive: true, run: () => bulkDelete.mutateAsync(family.familyId) },
     },
   ];
 
@@ -378,7 +383,7 @@ export default function FamiliesPage() {
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
           <div className="overflow-x-auto">
-            <div className="min-w-[680px]">
+            <ListTable className="min-w-[680px]" tableId="people-families-1" records={families ?? []} recordKey="familyId">
               <div className="rule-label grid grid-cols-[minmax(0,2fr)_1.2fr_1fr_auto] items-center gap-4 border-b border-line px-5 py-2.5">
                 <span>Household</span>
                 <span>People</span>
@@ -410,7 +415,7 @@ export default function FamiliesPage() {
                   );
                 })}
               </div>
-            </div>
+            </ListTable>
           </div>
           <ListPaginationFooter
             page={page}

@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import {
   CalendarClock,
   CalendarDays,
+  ChevronsLeft,
+  ChevronsRight,
   ChevronLeft,
   ChevronRight,
   MapPin,
@@ -19,6 +21,7 @@ import { FilterChip, IconAction } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { ServiceFormDialog } from "@/components/attendance/service-form-dialog";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/paper/primitives";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -44,6 +47,8 @@ import {
 } from "@/lib/schedule-occurrence";
 import { cn } from "@/lib/utils";
 
+const MONTHS = Array.from({ length: 12 }, (_, month) => new Date(2026, month, 1).toLocaleDateString("en-GB", { month: "long" }));
+
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const TYPE_COLORS: Record<EventType, string> = {
@@ -57,7 +62,7 @@ const TYPE_COLORS: Record<EventType, string> = {
 type KindFilter = "all" | "services" | "events";
 
 function iso(d: Date) {
-  const y = d.getFullYear();
+  const y = String(d.getFullYear()).padStart(4, "0");
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
@@ -117,7 +122,9 @@ export default function EventsCalendarPage() {
   );
 
   const grid = React.useMemo(() => {
-    const first = new Date(month.getFullYear(), month.getMonth(), 1);
+    const first = new Date(month);
+    first.setDate(1);
+    first.setHours(0, 0, 0, 0);
     const start = new Date(first);
     start.setDate(first.getDate() - ((first.getDay() + 6) % 7));
     return Array.from({ length: 42 }).map((_, i) => {
@@ -181,6 +188,23 @@ export default function EventsCalendarPage() {
       .slice(0, 6);
   }, [canReadEvents, canReadServices, rows, serviceRows]);
   const monthLabel = month.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+  const years = Array.from({ length: Math.min(9999, month.getFullYear() + 100) - Math.max(1, month.getFullYear() - 100) + 1 }, (_, index) => Math.max(1, month.getFullYear() - 100) + index);
+  function moveCalendar(yearOffset: number, monthOffset = 0) {
+    setMonth((current) => {
+      const next = new Date(current);
+      next.setDate(1);
+      next.setFullYear(current.getFullYear() + yearOffset, current.getMonth() + monthOffset, 1);
+      return next;
+    });
+  }
+  function chooseCalendar(year: number, monthIndex: number) {
+    setMonth((current) => {
+      const next = new Date(current);
+      next.setFullYear(year, monthIndex, 1);
+      return next;
+    });
+  }
+
   const showSkeleton =
     (canReadEvents && events.isLoading) || (canReadServices && services.isLoading);
 
@@ -192,6 +216,7 @@ export default function EventsCalendarPage() {
         description="Every service, conference and dinner — one calendar the whole team can trust."
         actions={
           <div className="flex flex-wrap items-center gap-2">
+            {ready && can("events:all", "read") && can("events:list", "read") && <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-xs"><Link href="/gatherings/events/list">View events</Link></Button>}
             {canCreateService ? (
               <Button
                 variant="outline"
@@ -276,13 +301,25 @@ export default function EventsCalendarPage() {
       ) : (
         <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
           <div className="paper-card overflow-hidden rounded-2xl">
-            <div className="flex items-center justify-between border-b border-line px-5 py-3">
-              <p className="font-display text-sm font-semibold">{monthLabel}</p>
-              <div className="flex items-center gap-1">
+            <div role="group" aria-label="Calendar navigation" className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3">
+              <p className="sr-only" aria-live="polite" data-calendar-period>{monthLabel}</p>
+              <div className="flex items-center gap-2">
+                <Select value={String(month.getMonth())} onValueChange={(value) => chooseCalendar(month.getFullYear(), Number(value))}>
+                  <SelectTrigger aria-label="Calendar month" data-prefix-icon="none" className="h-8 w-32 rounded-full border-line bg-card font-display text-sm font-semibold shadow-none"><SelectValue /></SelectTrigger>
+                  <SelectContent>{MONTHS.map((name, index) => <SelectItem key={name} value={String(index)}>{name}</SelectItem>)}</SelectContent>
+                </Select>
+                <Select value={String(month.getFullYear())} onValueChange={(value) => chooseCalendar(Number(value), month.getMonth())}>
+                  <SelectTrigger aria-label="Calendar year" data-prefix-icon="none" className="h-8 w-24 rounded-full border-line bg-card text-sm shadow-none"><SelectValue /></SelectTrigger>
+                  <SelectContent>{years.map((year) => <SelectItem key={year} value={String(year)}>{year}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div className="ml-auto flex items-center gap-1">
+                <IconAction label="Previous year" icon={<ChevronsLeft className="size-4" />} onSelect={() => moveCalendar(-1)} disabled={month.getFullYear() <= 1} className="size-8" />
                 <IconAction
                   label="Previous month"
                   icon={<ChevronLeft className="size-4" />}
-                  onSelect={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
+                  onSelect={() => moveCalendar(0, -1)}
+                  disabled={month.getFullYear() === 1 && month.getMonth() === 0}
                   className="size-8"
                 />
                 <button
@@ -295,9 +332,11 @@ export default function EventsCalendarPage() {
                 <IconAction
                   label="Next month"
                   icon={<ChevronRight className="size-4" />}
-                  onSelect={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
+                  onSelect={() => moveCalendar(0, 1)}
+                  disabled={month.getFullYear() === 9999 && month.getMonth() === 11}
                   className="size-8"
                 />
+                <IconAction label="Next year" icon={<ChevronsRight className="size-4" />} onSelect={() => moveCalendar(1)} disabled={month.getFullYear() >= 9999} className="size-8" />
               </div>
             </div>
             <div className="rule-label grid grid-cols-7 border-b border-line px-2 py-2">
@@ -317,6 +356,7 @@ export default function EventsCalendarPage() {
                     <button
                       type="button"
                       key={key}
+                      data-calendar-day={key}
                       onClick={() => setSelected(d)}
                       className={cn(
                         "min-h-20 border-b border-r border-line/40 p-1.5 text-left transition-colors",

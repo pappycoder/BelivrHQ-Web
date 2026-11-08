@@ -8,6 +8,7 @@ export interface TableColumn {
   label: string;
   hideable: boolean;
   exportKeys?: string[];
+  defaultHidden?: boolean;
 }
 interface ColumnState {
   columns: TableColumn[];
@@ -25,7 +26,13 @@ export function TableColumnsProvider({ children }: { children: React.ReactNode }
   const register = React.useCallback((id: string, columns: TableColumn[]) => {
     setTables((previous) => {
       if (JSON.stringify(previous[id]?.columns) === JSON.stringify(columns)) return previous;
-      return { ...previous, [id]: { columns, hidden: (previous[id]?.hidden ?? []).filter((key) => columns.some((column) => column.id === key && column.hideable)) } };
+      const old = previous[id];
+      columns = [...columns, ...(old?.columns ?? []).filter((column) => column.defaultHidden && !columns.some((next) => next.id === column.id))];
+      const hidden = [
+        ...(old?.hidden ?? []).filter((key) => columns.some((column) => column.id === key && column.hideable)),
+        ...columns.filter((column) => column.defaultHidden && !old?.columns.some((known) => known.id === column.id)).map((column) => column.id),
+      ];
+      return { ...previous, [id]: { columns, hidden: [...new Set(hidden)] } };
     });
   }, []);
   const setHidden = React.useCallback((id: string, hidden: string[]) => {
@@ -37,15 +44,26 @@ export function TableColumnsProvider({ children }: { children: React.ReactNode }
 
 export function useTableColumns(id: string, columns?: TableColumn[]) {
   const context = React.useContext(ColumnContext);
-  const [localHidden, setLocalHidden] = React.useState<string[]>([]);
+  const [localHidden, setLocalHidden] = React.useState<string[]>(() => (columns ?? []).filter((column) => column.defaultHidden).map((column) => column.id));
+  const knownColumns = React.useRef(new Set((columns ?? []).map((column) => column.id)));
   const signature = JSON.stringify(columns);
   const register = context?.register;
   React.useEffect(() => {
     if (register && signature) register(id, JSON.parse(signature));
+    else if (signature) {
+      const next: TableColumn[] = JSON.parse(signature);
+      const newlyHidden = next.filter((column) => column.defaultHidden && !knownColumns.current.has(column.id)).map((column) => column.id);
+      if (newlyHidden.length) setLocalHidden((previous) => [...new Set([...previous, ...newlyHidden])]);
+      knownColumns.current = new Set(next.map((column) => column.id));
+    }
   }, [id, signature, register]);
+  const available = columns ? [...columns, ...(context?.tables[id]?.columns ?? []).filter((column) => column.defaultHidden && !columns.some((next) => next.id === column.id))] : context?.tables[id]?.columns ?? [];
   return {
-    columns: columns ?? context?.tables[id]?.columns ?? [],
-    hidden: context?.tables[id]?.hidden ?? localHidden,
+    columns: available,
+    hidden: [...new Set([
+      ...(context?.tables[id]?.hidden ?? localHidden),
+      ...(columns ?? []).filter((column) => column.defaultHidden && !(context?.tables[id]?.columns.some((known) => known.id === column.id) ?? knownColumns.current.has(column.id))).map((column) => column.id),
+    ])],
     setHidden: (hidden: string[]) => context ? context.setHidden(id, hidden) : setLocalHidden(hidden),
   };
 }

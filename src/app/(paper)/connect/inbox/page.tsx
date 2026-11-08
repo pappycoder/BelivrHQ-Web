@@ -1,5 +1,7 @@
 "use client";
 
+import { useManageConfirmation } from "@/components/shared/manage-confirmation";
+
 import * as React from "react";
 import {
   Archive,
@@ -44,6 +46,7 @@ function stamp(value: string) {
 }
 
 export default function SharedInboxPage() {
+  const { confirm, dialog } = useManageConfirmation();
   const { can, ready } = usePermissions();
   const canAnswer = ready && can("emails", "create");
   const canReadMail = ready && can("emails", "read");
@@ -77,7 +80,7 @@ export default function SharedInboxPage() {
 
   const markBackUnread = () => {
     if (!active) return;
-    markUnread.mutate(active.id, {
+    return markUnread.mutateAsync(active.id, {
       onSuccess: () => {
         // Reopening the detail re-marks read server-side, so leave the pane.
         setSelectedId(null);
@@ -103,6 +106,7 @@ export default function SharedInboxPage() {
 
   return (
     <div className="space-y-4">
+      {dialog}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="rule-label">Connect · Inbox</p>
@@ -196,21 +200,21 @@ export default function SharedInboxPage() {
                     </Button>
                   ) : null}
                   {canReadMail && box === "inbox" && active.readAt && !active.deletedAt ? (
-                    <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs" onClick={markBackUnread}>
+                    <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs" onClick={() => confirm({ title: "Mark message unread?", subject: active.subject, onConfirm: markBackUnread })}>
                       <Mail className="size-3.5" /> Mark unread
                     </Button>
                   ) : null}
                   {canAnswer && box === "inbox" ? (
-                    <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs" onClick={() => trash.mutate(active.id, { onSuccess: () => { setSelectedId(null); toast("Archived."); }, onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't archive this message.")) })}>
+                    <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs" onClick={() => confirm({ title: "Archive message?", subject: active.subject, onConfirm: () => trash.mutateAsync(active.id, { onSuccess: () => { setSelectedId(null); toast("Archived."); }, onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't archive this message.")) }) })}>
                       <Archive className="size-3.5" /> Archive
                     </Button>
                   ) : null}
                   {active.deletedAt ? (
                     <>
-                      <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs" onClick={() => restore.mutate(active.id, { onSuccess: () => toast("Back in the inbox."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't restore it.")) })}>
+                      <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs" onClick={() => confirm({ title: "Restore message?", subject: active.subject, onConfirm: () => restore.mutateAsync(active.id, { onSuccess: () => toast("Back in the inbox."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't restore it.")) }) })}>
                         <ArchiveRestore className="size-3.5" /> Restore
                       </Button>
-                      <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs text-destructive" onClick={() => purge.mutate(active.id, { onSuccess: () => { setSelectedId(null); toast("Deleted for good."); }, onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't delete it.")) })}>
+                      <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs text-destructive" onClick={() => confirm({ title: "Delete message forever?", subject: active.subject, destructive: true, description: "This permanently deletes the message and cannot be undone.", onConfirm: () => purge.mutateAsync(active.id, { onSuccess: () => { setSelectedId(null); toast("Deleted for good."); }, onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't delete it.")) }) })}>
                         <Trash2 className="size-3.5" /> Delete forever
                       </Button>
                     </>

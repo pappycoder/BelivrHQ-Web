@@ -1,5 +1,6 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -166,7 +167,7 @@ export default function MediaFoldersPage() {
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
           <div className="overflow-x-auto">
-            <div className="min-w-[560px]">
+            <ListTable className="min-w-[560px]" tableId="library-media-folders-1" records={pageRows ?? []} recordKey="folder">
               <div className="rule-label grid grid-cols-[minmax(0,2fr)_0.9fr_1.2fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
                 <span>Folder</span>
                 <span className="text-right">Files</span>
@@ -207,7 +208,7 @@ export default function MediaFoldersPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </ListTable>
           </div>
           <div className="border-t border-line px-5 py-3">
             <ListPaginationFooter

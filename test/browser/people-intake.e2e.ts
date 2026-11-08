@@ -260,10 +260,10 @@ for (const kind of ["members", "visitors"]) {
     const calls = await fixture(context, { private: true });
     await page.goto(`/people/${kind}`);
     await page.getByRole("tab", { name: "Pending registrations" }).click();
-    await page.getByRole("button", { name: "Review", exact: true }).click();
+    await page.getByRole("button", { name: "View", exact: true }).click();
     await page.getByLabel("First name", { exact: false }).fill("Corrected");
     await page
-      .getByRole("button", { name: "Accept registration", exact: true })
+      .getByRole("button", { name: "Approve registration", exact: true })
       .click();
     await expect(
       page.getByRole("heading", { name: "Accept registration?", exact: true }),
@@ -272,7 +272,7 @@ for (const kind of ["members", "visitors"]) {
     await page.getByRole("button", { name: "Cancel", exact: true }).click();
     expect(calls).toHaveLength(0);
     await page
-      .getByRole("button", { name: "Accept registration", exact: true })
+      .getByRole("button", { name: "Approve registration", exact: true })
       .click();
     await page
       .getByRole("button", { name: "Confirm acceptance", exact: true })
@@ -302,11 +302,11 @@ for (const path of [
       .click();
     await page.getByRole("button", { name: "Get link", exact: true }).click();
     await expect(page.getByLabel("Public registration URL")).toHaveValue(
-      "http://127.0.0.1:3107/register/public/token-a",
+      `${new URL(page.url()).origin}/register/public/token-a`,
     );
     await expect(
       page.getByRole("link", { name: "Preview form" }),
-    ).toHaveAttribute("href", "http://127.0.0.1:3107/register/public/token-a");
+    ).toHaveAttribute("href", `${new URL(page.url()).origin}/register/public/token-a`);
     await expect(page.getByRole("button", { name: "Copy link" })).toBeVisible();
     expect(calls[0].body).toEqual({
       kind: path.includes("visitors") ? "visitors" : "members",
@@ -341,9 +341,9 @@ test("rejection requires confirmation and deletes only after confirmation", asyn
   const calls = await fixture(context, { private: true });
   await page.goto("/people/visitors");
   await page.getByRole("tab", { name: "Pending registrations" }).click();
-  await page.getByRole("button", { name: "Review", exact: true }).click();
+  await page.getByRole("button", { name: "View", exact: true }).click();
   await page
-    .getByRole("button", { name: "Reject registration", exact: true })
+    .getByRole("button", { name: "Decline registration", exact: true })
     .click();
   await expect(
     page.getByText("This cannot be undone.", { exact: false }),
@@ -352,7 +352,7 @@ test("rejection requires confirmation and deletes only after confirmation", asyn
   await page.getByRole("button", { name: "Cancel", exact: true }).click();
   expect(calls).toHaveLength(0);
   await page
-    .getByRole("button", { name: "Reject registration", exact: true })
+    .getByRole("button", { name: "Decline registration", exact: true })
     .click();
   await page
     .getByRole("button", { name: "Delete permanently", exact: true })
@@ -370,10 +370,10 @@ test("failed acceptance retains the draft for correction and retry", async ({
   const calls = await fixture(context, { private: true, failAccept: true });
   await page.goto("/people/members");
   await page.getByRole("tab", { name: "Pending registrations" }).click();
-  await page.getByRole("button", { name: "Review", exact: true }).click();
+  await page.getByRole("button", { name: "View", exact: true }).click();
   await page.getByLabel("First name", { exact: false }).fill("Corrected");
   await page
-    .getByRole("button", { name: "Accept registration", exact: true })
+    .getByRole("button", { name: "Approve registration", exact: true })
     .click();
   await page
     .getByRole("button", { name: "Confirm acceptance", exact: true })
@@ -386,7 +386,7 @@ test("failed acceptance retains the draft for correction and retry", async ({
   );
   expect(calls).toHaveLength(1);
   await page
-    .getByRole("button", { name: "Accept registration", exact: true })
+    .getByRole("button", { name: "Approve registration", exact: true })
     .click();
   await page
     .getByRole("button", { name: "Confirm acceptance", exact: true })
@@ -483,11 +483,11 @@ test("intake review highlights missing required fields after a validation error"
   await fixture(context, { private: true, failAccept: true });
   await page.goto("/people/members");
   await page.getByRole("tab", { name: "Pending registrations" }).click();
-  await page.getByRole("button", { name: "Review", exact: true }).click();
+  await page.getByRole("button", { name: "View", exact: true }).click();
   const firstName = page.getByLabel("First name", { exact: false });
   await firstName.fill("");
   await page
-    .getByRole("button", { name: "Accept registration", exact: true })
+    .getByRole("button", { name: "Approve registration", exact: true })
     .click();
   await page
     .getByRole("button", { name: "Confirm acceptance", exact: true })

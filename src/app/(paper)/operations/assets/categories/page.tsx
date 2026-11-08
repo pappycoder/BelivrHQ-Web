@@ -1,5 +1,7 @@
 "use client";
 
+import { useManageConfirmation } from "@/components/shared/manage-confirmation";
+
 import * as React from "react";
 import Link from "next/link";
 import { getToastErrorMessage, toast } from "@/lib/toast";
@@ -30,6 +32,7 @@ import {
 import { formatDate } from "@/hooks/use-media";
 
 export default function AssetCategoriesPage() {
+  const { confirm, dialog } = useManageConfirmation();
   const { can, ready } = usePermissions();
   const canCreate = ready && can("assets:categories", "create");
   const canUpdate = ready && can("assets:categories", "update");
@@ -48,6 +51,7 @@ export default function AssetCategoriesPage() {
 
   return (
     <div className="space-y-6">
+      {dialog}
       <PageHeader
         eyebrow={
           <Link href="/operations/assets" className="flex items-center gap-1.5 hover:text-ink">← Operations · Assets</Link>
@@ -115,11 +119,11 @@ export default function AssetCategoriesPage() {
                       </ActionTooltip>
                       <DropdownMenuContent align="end" className="w-40">
                         {category.archivedAt ? (
-                          <DropdownMenuItem className="text-xs" onClick={() => restore.mutate(category.id, { onSuccess: () => toast("Category restored."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't restore it.")) })}>
+                          <DropdownMenuItem className="text-xs" onClick={() => confirm({ title: "Restore category?", subject: category.name, onConfirm: () => restore.mutateAsync(category.id, { onSuccess: () => toast("Category restored."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't restore it.")) }) })}>
                             Restore
                           </DropdownMenuItem>
                         ) : (
-                          <DropdownMenuItem className="text-xs" onClick={() => archive.mutate(category.id, { onSuccess: () => toast("Category archived."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't archive it.")) })}>
+                          <DropdownMenuItem className="text-xs" onClick={() => confirm({ title: "Archive category?", subject: category.name, onConfirm: () => archive.mutateAsync(category.id, { onSuccess: () => toast("Category archived."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't archive it.")) }) })}>
                             Archive
                           </DropdownMenuItem>
                         )}

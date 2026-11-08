@@ -72,6 +72,9 @@ export interface ChurchService {
 }
 
 export interface ListServicesParams {
+  search?: string;
+  sortBy?: "name" | "day_of_week" | "created_at";
+  sortOrder?: "asc" | "desc";
   page?: number;
   limit?: number;
   branchId?: string;
@@ -100,6 +103,7 @@ export interface AttendanceRecord {
 }
 
 export interface ListAttendanceParams {
+  search?: string;
   page?: number;
   limit?: number;
   serviceId?: string;

@@ -1,5 +1,7 @@
 "use client";
 
+import { useManageConfirmation } from "@/components/shared/manage-confirmation";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -55,6 +57,7 @@ export default function VisitorDetailPage({
 }: {
   params: Promise<{ visitorId: string }>;
 }) {
+  const { confirm, dialog } = useManageConfirmation();
   const { visitorId } = React.use(params);
   const { can, canAny, ready } = usePermissions();
   const canUpdate = ready && (can("visitors:list", "update") || can("visitors", "update"));
@@ -100,6 +103,7 @@ export default function VisitorDetailPage({
 
   return (
     <div className="space-y-6">
+      {dialog}
       <Link
         href="/people/visitors"
         className="inline-flex items-center gap-1.5 text-[11px] text-ink-faint hover:text-ink"
@@ -186,12 +190,10 @@ export default function VisitorDetailPage({
               <select
                 value={v.followUpStatus}
                 disabled={updateVisitor.isPending}
-                onChange={(event) =>
-                  updateVisitor.mutate(
-                    { visitorId: v.id, input: { followUpStatus: event.target.value as FollowUpStatus } },
+                onChange={(event) => { const nextStatus = event.target.value; confirm({ title: "Update follow-up status?", subject: fullName, description: `Change follow-up status to ${nextStatus.replaceAll("_", " ")}?`, onConfirm: () => updateVisitor.mutateAsync(
+                    { visitorId: v.id, input: { followUpStatus: nextStatus as FollowUpStatus } },
                     { onSuccess: () => toast("Status updated."), onError: () => toast.error("Couldn't update the status.") },
-                  )
-                }
+                  ) }); }}
                 className="h-10 w-full rounded-lg border border-line bg-card px-2 text-xs outline-none"
               >
                 {FOLLOW_UP_OPTIONS.map((item) => (

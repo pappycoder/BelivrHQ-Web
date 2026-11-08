@@ -1,5 +1,6 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -212,7 +213,7 @@ export default function SettingsBillingPage() {
                 No payments recorded yet — the register stays honest either way.
               </div>
             ) : (
-              <StaggerGroup className="divide-y divide-line/70">
+              <ListTable className="divide-y divide-line/70" tableId="settings-billing-1" records={d.payments.slice(0, 12) ?? []} recordKey="reference"><StaggerGroup className="divide-y divide-line/70">
                 <div className="rule-label grid grid-cols-[1.2fr_1fr_0.8fr_1fr_0.9fr] items-center gap-3 border-b border-line px-5 py-2.5">
                   <span>Invoice</span>
                   <span>Date</span>
@@ -240,7 +241,7 @@ export default function SettingsBillingPage() {
                     <Download className="size-3" /> How billing &amp; renewals work — the guide
                   </Link>
                 </div>
-              </StaggerGroup>
+              </StaggerGroup></ListTable>
             )}
           </div>
         </div>

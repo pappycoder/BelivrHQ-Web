@@ -96,6 +96,8 @@ export interface EventStats {
 }
 
 export interface ListEventsParams {
+  startDate?: string;
+  endDate?: string;
   branchId?: string;
   page?: number;
   limit?: number;

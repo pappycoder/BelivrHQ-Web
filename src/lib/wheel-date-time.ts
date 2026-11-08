@@ -41,3 +41,9 @@ export function writeDateTime(type: WheelPickerType, parts: DateTimeParts, secon
   const time = `${pad(parts.hour)}:${pad(parts.minute)}${seconds ? `:${pad(parts.second)}` : ""}`;
   return type === "date" ? date : type === "time" ? time : `${date}T${time}`;
 }
+
+/** Human-readable preview; submitted values keep their native ISO/local format. */
+export function displayWheelDate(parts: DateTimeParts) {
+  const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][parts.month - 1];
+  return `${month} ${parts.day}, ${parts.year}`;
+}

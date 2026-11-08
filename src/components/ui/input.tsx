@@ -6,7 +6,12 @@ import { isWheelPickerType } from "@/lib/wheel-date-time"
 
 import { cn } from "@/lib/utils"
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+type InputProps = React.ComponentProps<"input"> & {
+  /** Form date/time fields opt into wheels; filters and navigation stay native. */
+  picker?: "native" | "wheel"
+}
+
+function Input({ className, type, picker = "native", ...props }: InputProps) {
   const input = (
     <input
       type={type}
@@ -20,7 +25,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
       {...props}
     />
   )
-  return isWheelPickerType(type)
+  return picker === "wheel" && isWheelPickerType(type)
     ? <WheelPickerInput type={type}>{input}</WheelPickerInput>
     : input
 }

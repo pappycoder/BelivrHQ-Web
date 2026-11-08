@@ -3,7 +3,7 @@
 import * as React from "react";
 import { format } from "date-fns";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
-import { WheelDateTimePanel } from "@/components/ui/wheel-date-time-picker";
+import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -27,7 +27,7 @@ function parseDayKey(value: string): Date {
  *
  * Opens on a valid occurrence and only lets the operator pick days the
  * service/event actually meets on. The `‹ Sun 1 Nov ›` stepper walks adjacent
- * occurrences for fast backfill; the scroll wheels are there for longer jumps.
+ * occurrences for fast backfill; the calendar is there for longer jumps.
  */
 export function CheckInDatePicker({
   value,
@@ -48,6 +48,7 @@ export function CheckInDatePicker({
   className?: string;
 }) {
   const [open, setOpen] = React.useState(false);
+  const [month, setMonth] = React.useState<Date>(() => parseDayKey(value));
 
   const selected = React.useMemo(() => parseDayKey(value), [value]);
   const previous = stepOccurrence(occursOn, value, -1);
@@ -56,6 +57,10 @@ export function CheckInDatePicker({
   const todayTarget = occursOn(today)
     ? today
     : nearestOccurrence(occursOn, today);
+
+  React.useEffect(() => {
+    setMonth(parseDayKey(value));
+  }, [value]);
 
   return (
     <div className={cn("flex items-center gap-1", className)}>
@@ -71,6 +76,7 @@ export function CheckInDatePicker({
         open={open}
         onOpenChange={(nextOpen) => {
           setOpen(nextOpen);
+          if (nextOpen) setMonth(selected);
         }}
       >
         <PopoverTrigger asChild>
@@ -85,16 +91,22 @@ export function CheckInDatePicker({
             <span>{format(selected, "EEE d MMM")}</span>
           </Button>
         </PopoverTrigger>
-        <PopoverContent align="start" className="w-[min(22rem,calc(100vw-2rem))] p-0">
-          <div className="p-4">
-            <p className="mb-3 text-xs text-muted-foreground">Scroll to an occurrence date, then apply.</p>
-            <WheelDateTimePanel key={value} type="date" value={value}
-              validate={(date) => occursOn(date) ? undefined : "This gathering does not meet on the selected date."}
-              onApply={(date) => { onChange(date); setOpen(false); }} onCancel={() => setOpen(false)} />
-          </div>
+        <PopoverContent align="start" className="w-auto p-0">
+          <Calendar
+            mode="single"
+            selected={selected}
+            month={month}
+            onMonthChange={setMonth}
+            disabled={(date) => !occursOn(localDayKey(date))}
+            onSelect={(date) => {
+              if (!date) return;
+              onChange(localDayKey(date));
+              setOpen(false);
+            }}
+          />
           <div className="flex items-center justify-between gap-3 border-t border-line px-3 py-2">
             <span className="text-[10px] text-ink-faint">
-              Only occurrence dates can be applied
+              Only valid dates are selectable
             </span>
             <Button
               type="button"

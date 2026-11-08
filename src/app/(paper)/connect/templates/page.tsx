@@ -227,21 +227,21 @@ export default function TemplatesPage() {
                           onSelect: () => openForm(t),
                         },
                         canUpdate && !t.archivedAt && t.status === "draft" && {
-                          label: "Publish — usable in broadcasts now",
+                          label: "Publish — usable in broadcasts now", confirmation: { subject: t.name },
                           icon: <Rocket />,
                           tone: "success",
-                          onSelect: () => publish.mutate(t.templateId, { onSuccess: () => toast("Published — usable in broadcasts now.") }),
+                          onSelect: () => publish.mutateAsync(t.templateId, { onSuccess: () => toast("Published — usable in broadcasts now.") }),
                         },
                         canUpdate && !t.archivedAt && {
-                          label: "Archive template",
+                          label: "Archive template", confirmation: { subject: t.name },
                           icon: <Archive />,
-                          onSelect: () => archive.mutate(t.templateId, { onSuccess: () => toast("Archived.") }),
+                          onSelect: () => archive.mutateAsync(t.templateId, { onSuccess: () => toast("Archived.") }),
                         },
                         canUpdate && t.archivedAt && {
-                          label: "Restore template",
+                          label: "Restore template", confirmation: { subject: t.name },
                           icon: <ArchiveRestore />,
                           tone: "success",
-                          onSelect: () => restore.mutate(t.templateId, { onSuccess: () => toast("Restored.") }),
+                          onSelect: () => restore.mutateAsync(t.templateId, { onSuccess: () => toast("Restored.") }),
                         },
                         canDelete && !t.archivedAt && {
                           label: "Delete template",

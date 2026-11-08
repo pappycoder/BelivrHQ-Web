@@ -1,5 +1,6 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -117,7 +118,7 @@ export default function AdminRolesPage() {
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
           <div className="overflow-x-auto">
-            <div className="min-w-[620px]">
+            <ListTable className="min-w-[620px]" tableId="admin-permissions-1" records={paged ?? []} recordKey="roleName">
               <div className="rule-label grid grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_1fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
                 <span>Role</span>
                 <span>Permissions</span>
@@ -166,7 +167,7 @@ export default function AdminRolesPage() {
                   );
                 })}
               </div>
-            </div>
+            </ListTable>
           </div>
         </div>
       ) : (

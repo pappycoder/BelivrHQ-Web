@@ -1,7 +1,10 @@
 "use client";
 
+import { useManageConfirmation } from "@/components/shared/manage-confirmation";
+
 import * as React from "react";
 import Link from "next/link";
+import { submissionRespondent } from "@/lib/submission-respondent";
 import { SubmissionRespondent } from "@/components/forms/submission-respondent";
 import { hasLivePublicFormLink } from "@/lib/public-form-link";
 import {
@@ -49,6 +52,7 @@ export default function FormDetailPage({
 }: {
   params: Promise<{ formId: string }>;
 }) {
+  const { confirm, dialog } = useManageConfirmation();
   const { formId } = React.use(params);
   const { can, ready } = usePermissions();
   const canUpdate = ready && can("forms:list", "update");
@@ -107,15 +111,16 @@ export default function FormDetailPage({
     toast("Public link copied.");
   };
 
-  const approve = (submission: FormSubmission) => {
-    updateStatus.mutate(
+  const approve = (submission: FormSubmission) => confirm({
+    title: "Approve answer?", subject: submissionRespondent(submission, f.fields).name, onConfirm: () => updateStatus.mutateAsync(
       { submissionId: submission.id, input: { status: "approved" } },
       { onSuccess: () => toast("Answer approved."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't approve it.")) },
-    );
-  };
+    ),
+  });
 
   return (
     <div className="space-y-6">
+      {dialog}
       <Link href="/library/forms" className="inline-flex items-center gap-1.5 text-[11px] text-ink-faint hover:text-ink">
         <ArrowLeft className="size-3" /> Library · Forms
       </Link>
@@ -149,17 +154,17 @@ export default function FormDetailPage({
               </>
             ) : null}
             {canUpdate && f.status === "published" ? (
-              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" disabled={close.isPending} onClick={() => close.mutate(f.id, { onSuccess: () => toast("Form closed — no new answers."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't close it.")) })}>
+              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" disabled={close.isPending} onClick={() => confirm({ title: "Close form?", subject: f.title, onConfirm: () => close.mutateAsync(f.id, { onSuccess: () => toast("Form closed — no new answers."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't close it.")) }) })}>
                 <CalendarX2 className="size-3.5" /> Close form
               </Button>
             ) : null}
             {canUpdate && f.status === "closed" ? (
-              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" disabled={reopen.isPending} onClick={() => reopen.mutate(f.id, { onSuccess: () => toast("Form reopened."), onError: () => toast.error("Couldn't reopen it.") })}>
+              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" disabled={reopen.isPending} onClick={() => confirm({ title: "Reopen form?", subject: f.title, onConfirm: () => reopen.mutateAsync(f.id, { onSuccess: () => toast("Form reopened."), onError: () => toast.error("Couldn't reopen it.") }) })}>
                 Reopen
               </Button>
             ) : null}
             {canUpdate && f.isPublic ? (
-              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" disabled={regenerate.isPending} onClick={() => regenerate.mutate(f.id, { onSuccess: () => toast("New link issued — the old one is dead."), onError: () => toast.error("Couldn't regenerate.") })}>
+              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" disabled={regenerate.isPending} onClick={() => confirm({ title: "Replace public link?", subject: f.title, description: "The current public link will stop working. Share the replacement link with respondents.", destructive: true, onConfirm: () => regenerate.mutateAsync(f.id, { onSuccess: () => toast("New link issued — the old one is dead."), onError: () => toast.error("Couldn't regenerate.") }) })}>
                 <RefreshCcw className="size-3.5" /> New link
               </Button>
             ) : null}

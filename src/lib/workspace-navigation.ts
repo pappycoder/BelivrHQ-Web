@@ -2,7 +2,7 @@
 export const workspaceAreas = [
   { id: "home", title: "Home", description: "Your church, at a glance", modules: ["Dashboard"] },
   { id: "people", title: "People", description: "Care for your community", modules: ["Members", "Visitors", "Pastoral Care", "Departments"] },
-  { id: "gatherings", title: "Gatherings", description: "Bring your community together", modules: ["Events", "Attendance"] },
+  { id: "gatherings", title: "Gatherings", description: "Bring your community together", modules: ["Events", "Services"] },
   { id: "giving", title: "Giving", description: "Steward every contribution", modules: ["Giving"] },
   { id: "communication", title: "Communication", description: "Keep the conversation going", modules: ["Inbox", "Messages", "Broadcasts", "Templates", "Appointments"] },
   { id: "resources", title: "Resources", description: "Everything your ministry needs", modules: ["Sermons", "Media", "Assets", "Forms"] },

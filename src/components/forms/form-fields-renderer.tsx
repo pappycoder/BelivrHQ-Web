@@ -102,7 +102,7 @@ export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, 
           )}
 
           {field.type === "date" && (
-            <Input
+            <Input picker="wheel"
               id={`${fieldId}-${field.key}`}
               name={field.key}
               data-field-label={field.label}

@@ -1,5 +1,7 @@
 "use client";
 
+import { useBulkRowActions, type BulkManageAction } from "@/contexts/list-bulk-context";
+import { useManageConfirmation, type ManageConfirmationOptions } from "@/components/shared/manage-confirmation";
 import * as React from "react";
 import Link from "next/link";
 import { ChevronDown, Search, X } from "lucide-react";
@@ -242,9 +244,12 @@ export interface RowAction {
   label: string;
   icon: React.ReactNode;
   href?: string;
-  onSelect?: () => void;
+  onSelect?: () => unknown | Promise<unknown>;
   tone?: IconActionTone;
   disabled?: boolean;
+  bulk?: BulkManageAction;
+  /** Required for direct record writes. Actions opening an existing dialog omit it. */
+  confirmation?: ManageConfirmationOptions;
 }
 
 type Falsy = false | null | undefined | 0 | "";
@@ -264,9 +269,11 @@ export function RowActions({
   className?: string;
 }) {
   const visible = actions.filter((action): action is RowAction => Boolean(action));
+  const { confirm, dialog } = useManageConfirmation();
+  useBulkRowActions(visible);
   if (visible.length === 0) return null;
   return (
-    <div
+    <><div
       className={cn(
         "row-actions flex items-center justify-end gap-1",
         reveal && "row-actions--reveal",
@@ -287,13 +294,22 @@ export function RowActions({
             key={action.label}
             label={action.label}
             icon={action.icon}
-            onSelect={action.onSelect}
+            onSelect={() => {
+              if (!action.onSelect || action.disabled) return;
+              if (action.confirmation) confirm({
+                ...action.confirmation,
+                title: action.confirmation.title ?? `${action.label}?`,
+                destructive: action.confirmation.destructive ?? action.tone === "danger",
+                onConfirm: action.onSelect,
+              });
+              else void action.onSelect();
+            }}
             tone={action.tone}
             disabled={action.disabled}
           />
         ),
       )}
-    </div>
+    </div>{dialog}</>
   );
 }
 
@@ -497,9 +513,9 @@ export function ListPaginationFooter({
         <span className="num font-medium text-ink">{total.toLocaleString()}</span>{" "}
         {itemName}
       </span>
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         {onPerPageChange ? (
-          <label className="flex items-center gap-1.5">
+          <label className="flex items-center gap-1.5 whitespace-nowrap">
             <span>Rows per page</span>
             <select
               value={perPage}
@@ -528,7 +544,7 @@ export function ListPaginationFooter({
           >
             Prev
           </Button>
-          <span className="num">
+          <span className="num whitespace-nowrap">
             {page} / {totalPages}
           </span>
           <Button

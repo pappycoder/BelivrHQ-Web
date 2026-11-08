@@ -847,7 +847,7 @@ export default function SubscriptionPage() {
                   </p>
                 ) : (
                   <div className="overflow-x-auto">
-                    <Table className="w-full text-left text-sm">
+                    <Table className="w-full text-left text-sm" records={data.payments ?? []} recordKey="reference" recordType="subscriptionPayment">
                       <TableHeader>
                         <TableRow className="border-b">
                           <TableHead className="p-2">Reference</TableHead>

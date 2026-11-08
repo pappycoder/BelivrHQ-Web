@@ -129,7 +129,7 @@ export function ReturnLoanDialog({
                   <FormItem>
                     <FormLabel>Return Date *</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <Input picker="wheel" type="date" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

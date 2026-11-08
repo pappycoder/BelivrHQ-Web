@@ -211,7 +211,7 @@ export function AssetWorklist({ kind }: { kind: "loans" | "maintenance" }) {
         ) : query.isLoading ? (
           <LoadingState label="Loading records" variant="table" />
         ) : (
-          <Table exportable>
+          <Table exportable records={query.data?.data ?? []} recordKey="id" recordType="assetWorklist">
             <TableHeader>
               <TableRow>
                 <TableHead>Asset</TableHead>

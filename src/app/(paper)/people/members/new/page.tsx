@@ -368,7 +368,7 @@ function RhfField({
         <FormItem className={className}>
           <FormLabel className="text-xs">{label}{required ? <span className="text-rose"> *</span> : null}</FormLabel>
           <FormControl>
-            <Input
+            <Input picker="wheel"
               type={type}
               autoFocus={autoFocus}
               placeholder={placeholder}

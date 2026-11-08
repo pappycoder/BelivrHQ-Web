@@ -89,7 +89,7 @@ export function InfoField<T extends FieldValues>({
           <FormLabel>{label}</FormLabel>
           <div className="min-w-0">
             <FormControl>
-              <Input type={type} placeholder={placeholder} disabled={disabled} {...field} />
+              <Input picker="wheel" type={type} placeholder={placeholder} disabled={disabled} {...field} />
             </FormControl>
             <FormMessage />
           </div>

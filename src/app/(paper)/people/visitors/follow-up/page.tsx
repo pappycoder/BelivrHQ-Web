@@ -1,5 +1,8 @@
 "use client";
 
+import { useManageConfirmation } from "@/components/shared/manage-confirmation";
+
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -79,6 +82,7 @@ function daysSince(iso: string) {
 }
 
 export default function VisitorFollowUpBoardPage() {
+  const { confirm, dialog } = useManageConfirmation();
   const { can, ready } = usePermissions();
   const canUpdate = ready && (can("visitors:list", "update") || can("visitors", "update"));
   const canCreate = ready && can("visitors:new", "create");
@@ -116,13 +120,13 @@ export default function VisitorFollowUpBoardPage() {
 
   const setStatus = (visitor: Visitor, next: FollowUpStatus) => {
     if (visitor.followUpStatus === next) return;
-    updateVisitor.mutate(
+    confirm({ title: "Update follow-up status?", subject: fullName(visitor), description: `Change follow-up status to ${next.replaceAll("_", " ")}?`, onConfirm: () => updateVisitor.mutateAsync(
       { visitorId: visitor.id, input: { followUpStatus: next } },
       {
         onSuccess: () => toast(`${visitor.firstName} moved to ${COLUMNS.find((c) => c.statuses.includes(next))?.label ?? next}.`),
         onError: () => toast.error("Couldn't move that card — it snapped back."),
       },
-    );
+    ) });
   };
 
   const onDragEnd = (event: DragEndEvent) => {
@@ -140,6 +144,7 @@ export default function VisitorFollowUpBoardPage() {
 
   return (
     <div className="space-y-6">
+      {dialog}
       <PageHeader
         eyebrow={
           <Link href="/people/visitors" className="flex items-center gap-1.5 hover:text-ink">
@@ -180,7 +185,7 @@ export default function VisitorFollowUpBoardPage() {
       </div>
 
       {view === "list" ? (
-        <div className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl">
+        <ListTable className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="people-visitors-follow-up-1" records={rows ?? []} recordKey="id">
           <div className="rule-label grid grid-cols-[minmax(0,2.2fr)_1.2fr_1fr_150px] items-center gap-3 border-b border-line px-5 py-2.5">
             <span>Guest</span>
             <span>Assigned</span>
@@ -188,7 +193,7 @@ export default function VisitorFollowUpBoardPage() {
             <span className="text-right">Follow-up</span>
           </div>
           {rows.map((visitor) => (
-            <div key={visitor.id} className="flex items-center gap-3 px-5 py-3">
+            <div key={visitor.id} className="grid grid-cols-[minmax(0,2.2fr)_1.2fr_1fr_150px] items-center gap-3 px-5 py-3">
               <Link href={`/people/visitors/${visitor.id}`} className="flex min-w-0 flex-1 items-center gap-3">
                 <PersonAvatar name={fullName(visitor)} size="xs" />
                 <span className="min-w-0">
@@ -203,12 +208,7 @@ export default function VisitorFollowUpBoardPage() {
               <select
                 value={visitor.followUpStatus}
                 aria-label={`Follow-up stage for ${fullName(visitor)}`}
-                onChange={(event) =>
-                  updateVisitor.mutate(
-                    { visitorId: visitor.id, input: { followUpStatus: event.target.value as FollowUpStatus } },
-                    { onSuccess: () => toast("Follow-up updated."), onError: () => toast.error("Couldn't update the stage.") },
-                  )
-                }
+                onChange={(event) => setStatus(visitor, event.target.value as FollowUpStatus)}
                 className="ml-auto h-8 shrink-0 rounded-full border border-line bg-card px-2.5 text-[11px] outline-none hover:border-ink/20"
               >
                 {FOLLOW_UP_STATUSES.map((stage) => <option key={stage.value} value={stage.value}>{stage.label}</option>)}
@@ -218,7 +218,7 @@ export default function VisitorFollowUpBoardPage() {
           <div className="bg-muted/20 px-5 py-2.5 text-[10px] text-ink-faint">
             Same live mutations as the board — switch back whenever the picture helps more than the list.
           </div>
-        </div>
+        </ListTable>
       ) : list.isLoading ? (
         <div className="grid min-w-0 gap-3 md:grid-cols-5">
           {COLUMNS.map((c) => <Skeleton key={c.key} className="h-64 rounded-2xl" />)}

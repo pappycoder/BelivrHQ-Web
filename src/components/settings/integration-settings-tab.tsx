@@ -244,6 +244,7 @@ function ProviderAccounts({
       if (action === "archive") setArchiveAccountId(null);
     } catch (error) {
       setNotice(errorText(error));
+      if (action === "verify") throw error;
     } finally {
       setBusy(false);
     }
@@ -294,10 +295,10 @@ function ProviderAccounts({
                 reveal={false}
                 actions={[
                   {
-                    label: "Check credentials",
+                    label: "Check credentials", confirmation: { subject: account.label },
                     icon: <ShieldCheck />,
                     disabled: busy,
-                    onSelect: () => void accountAction(account.id, "verify"),
+                    onSelect: () => accountAction(account.id, "verify"),
                   },
                   {
                     label: "Archive account",

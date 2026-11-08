@@ -786,7 +786,7 @@ export function PeopleImportPage({
 
             {dryRunResult.errors.length > 0 && (
               <div className="rounded-md border overflow-hidden">
-                <Table>
+                <Table records={dryRunResult.errors.slice(0,25).map((error,index)=>({...error,__rowKey:`${error.row}-${index}`}))} recordKey="__rowKey" recordType="importError">
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-20">Row</TableHead>

@@ -787,7 +787,7 @@ export function OfflineWorkspace() {
                           ))}
                         </select>
                       ) : (
-                        <Input
+                        <Input picker="wheel"
                           id={`answer-${field.key}`}
                           type={
                             field.type === "number"

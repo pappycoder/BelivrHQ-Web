@@ -1,5 +1,6 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import { IntakeRegister, PublicRegistrationLink } from "@/components/intake/intake-register";
 import Link from "next/link";
@@ -54,6 +55,7 @@ import { useCurrentProfile } from "@/hooks/use-profile";
 import { useBranchesList } from "@/hooks/use-branches";
 import {
   useMembersList,
+  useDeleteMember,
   useArchiveMember,
   useRestoreArchiveMember,
   type Member,
@@ -164,6 +166,7 @@ export default function PeopleMembersPage() {
   );
 
   const archive = useArchiveMember();
+  const bulkDeactivate = useDeleteMember();
   const restoreArchive = useRestoreArchiveMember();
 
   const rows = list.data?.data ?? [];
@@ -239,11 +242,11 @@ export default function PeopleMembersPage() {
 
   const toggleArchive = (member: Member) => {
     if (member.archivedAt) {
-      restoreArchive.mutate(member.memberId, {
+      return restoreArchive.mutateAsync(member.memberId, {
         onSuccess: () => toast(`${member.firstName} is back in the active register.`),
       });
     } else {
-      archive.mutate(member.memberId, {
+      return archive.mutateAsync(member.memberId, {
         onSuccess: () => toast(`${member.firstName} archived — records are kept.`),
       });
     }
@@ -258,15 +261,17 @@ export default function PeopleMembersPage() {
       onSelect: () => { setEditTarget(member); setFormOpen(true); },
     },
     canUpdate && {
-      label: member.archivedAt ? "Restore member" : "Archive member",
+      label: member.archivedAt ? "Restore member" : "Archive member", confirmation: { subject: `${member.firstName} ${member.lastName}` },
       icon: member.archivedAt ? <ArchiveRestore /> : <Archive />,
       onSelect: () => toggleArchive(member),
+      bulk: { key: member.archivedAt ? "restore" : "archive", label: member.archivedAt ? "Restore selected" : "Archive selected", run: () => member.archivedAt ? restoreArchive.mutateAsync(member.memberId) : archive.mutateAsync(member.memberId) },
     },
     canDeactivate && !member.archivedAt && {
       label: "Deactivate member",
       icon: <UserRoundX />,
       tone: "danger",
       onSelect: () => setDeactivateTarget([member]),
+      bulk: { key: "deactivate", label: "Deactivate selected", destructive: true, run: () => bulkDeactivate.mutateAsync(member.memberId) },
     },
   ];
 
@@ -402,7 +407,7 @@ export default function PeopleMembersPage() {
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
           <div className="overflow-x-auto">
-            <div className="min-w-[720px]">
+            <ListTable className="min-w-[720px]" tableId="people-members-1" records={rows ?? []} recordKey="memberId">
               <div className="rule-label grid grid-cols-[minmax(0,2fr)_1fr_1.1fr_0.9fr_auto] items-center gap-4 border-b border-line px-5 py-2.5">
                 <span>Person</span>
                 <span>Status</span>
@@ -440,7 +445,7 @@ export default function PeopleMembersPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </ListTable>
           </div>
           <ListPaginationFooter
             page={page}

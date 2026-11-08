@@ -1,5 +1,8 @@
 "use client";
 
+import { useManageConfirmation } from "@/components/shared/manage-confirmation";
+
+import { ListTable } from "@/components/shared/list-table";
 import { Input } from "@/components/ui/input";
 
 import * as React from "react";
@@ -81,6 +84,7 @@ function exportRows(rows: GivingTransaction[]) {
 }
 
 function ReceiptActions({ transaction }: { transaction: GivingTransaction }) {
+  const { confirm, dialog } = useManageConfirmation();
   const send = useSendReceipt(transaction.transactionId);
   const [busy, setBusy] = React.useState(false);
 
@@ -103,14 +107,16 @@ function ReceiptActions({ transaction }: { transaction: GivingTransaction }) {
   };
 
   const sendTo = (channel: "whatsapp" | "email") => {
-    send.mutate(channel, {
+    confirm({ title: `Send receipt via ${channel === "email" ? "email" : "WhatsApp"}?`, subject: transaction.memberName ?? transaction.cellGroupName ?? transaction.receiptNumber ?? "Giving receipt", description: "The receipt will be sent using the configured delivery channel.", onConfirm: () => send.mutateAsync(channel, {
       onSuccess: () => toast(`Receipt sent by ${channel}.`),
       onError: (e) => toast.error("Failed to send receipt", { description: getToastErrorMessage(e, "The delivery channel may need configuring.") }),
-    });
+    }) });
   };
 
   return (
-    <>
+    <>{dialog}<DropdownMenu>
+      <ActionTooltip label={`Receipt actions for gift of ${transaction.amount}`}><DropdownMenuTrigger asChild><button type="button" aria-label={`Receipt actions for gift of ${transaction.amount}`} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink"><MoreHorizontal className="size-3.5" /></button></DropdownMenuTrigger></ActionTooltip>
+      <DropdownMenuContent align="end" className="w-52">
       <DropdownMenuItem className="gap-2 text-xs" disabled={busy} onClick={download}>
         <FileDown className="size-3.5" /> {busy ? "Preparing…" : "Download receipt"}
       </DropdownMenuItem>
@@ -121,7 +127,7 @@ function ReceiptActions({ transaction }: { transaction: GivingTransaction }) {
       <DropdownMenuItem className="gap-2 text-xs" disabled={send.isPending} onClick={() => sendTo("email")}>
         <Mail className="size-3.5" /> Send via Email
       </DropdownMenuItem>
-    </>
+      </DropdownMenuContent></DropdownMenu></>
   );
 }
 
@@ -218,9 +224,9 @@ export default function GivingDonationsPage() {
           {activeCategories.map((c) => <option key={c.categoryId} value={c.categoryId}>{c.name}</option>)}
         </select>
         <span className="flex items-center gap-1.5 text-[11px] text-ink-faint">
-          <Input type="date" value={startDate} onChange={(e) => { setStartDate(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-2.5 text-[11px] outline-none" aria-label="From date" />
+          <Input picker="native" type="date" value={startDate} onChange={(e) => { setStartDate(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-2.5 text-[11px] outline-none" aria-label="From date" />
           →
-          <Input type="date" value={endDate} onChange={(e) => { setEndDate(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-2.5 text-[11px] outline-none" aria-label="To date" />
+          <Input picker="native" type="date" value={endDate} onChange={(e) => { setEndDate(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-2.5 text-[11px] outline-none" aria-label="To date" />
         </span>
       </div>
 
@@ -231,7 +237,7 @@ export default function GivingDonationsPage() {
       ) : rows.length === 0 ? (
         <EmptyState icon={<HandCoins />} title={anyFilter ? "Nothing matches these filters" : "No gifts recorded yet"} description="Recording the Sunday plate is where the season's story starts." />
       ) : (
-        <StaggerGroup className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl">
+        <ListTable className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="giving-donations-1" recordType="givingTransaction" records={rows ?? []} recordKey="transactionId"><StaggerGroup className="divide-y divide-line/70">
           <div className="rule-label grid grid-cols-[0.9fr_minmax(0,1.6fr)_1fr_0.9fr_1fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
             <span>Date</span>
             <span>Giver &amp; link</span>
@@ -262,18 +268,7 @@ export default function GivingDonationsPage() {
                 <span className="num text-right text-xs font-semibold">{formatNaira(tx.amount)}</span>
                 <span className="flex justify-end">
                   {tx.status === "success" ? (
-                    <DropdownMenu>
-                      <ActionTooltip label={`Receipt actions for gift of ${tx.amount}`}>
-                        <DropdownMenuTrigger asChild>
-                          <button type="button" aria-label={`Receipt actions for gift of ${tx.amount}`} className="grid size-7 place-items-center rounded-full text-ink-faint hover:bg-muted hover:text-ink">
-                            <MoreHorizontal className="size-3.5" />
-                          </button>
-                        </DropdownMenuTrigger>
-                      </ActionTooltip>
-                      <DropdownMenuContent align="end" className="w-52">
-                        <ReceiptActions transaction={tx} />
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <ReceiptActions transaction={tx} />
                   ) : (
                     <span className="num text-[9px] text-ink-faint">{tx.receiptNumber ?? "—"}</span>
                   )}
@@ -290,7 +285,7 @@ export default function GivingDonationsPage() {
             itemName="gifts"
             pending={transactions.isFetching}
           />
-        </StaggerGroup>
+        </StaggerGroup></ListTable>
       )}
 
       <p className="flex items-center justify-center gap-1.5 text-[10px] text-ink-faint">

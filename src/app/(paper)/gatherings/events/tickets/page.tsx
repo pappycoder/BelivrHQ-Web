@@ -1,5 +1,6 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -141,7 +142,7 @@ function TicketsInner() {
               action={canAssign ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => setAssignOpen(true)}>Assign the first</Button> : undefined}
             />
           ) : (
-            <div className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl">
+            <ListTable className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="gatherings-events-tickets-1" records={rows ?? []} recordKey="ticketId">
               <div className="rule-label grid grid-cols-[minmax(0,1.6fr)_1fr_0.8fr_1fr_0.8fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
                 <span>Holder</span>
                 <span>Code</span>
@@ -188,7 +189,7 @@ function TicketsInner() {
                 itemName="passes"
                 pending={tickets.isFetching}
               />
-            </div>
+            </ListTable>
           )}
         </>
       ) : (

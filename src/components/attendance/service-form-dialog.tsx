@@ -227,53 +227,53 @@ export function ServiceFormDialog({
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Starts</Label>
-                <Input type="time" value={draft.startTime} onChange={(e) => setDraft((d) => ({ ...d, startTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Input picker="wheel" type="time" value={draft.startTime} onChange={(e) => setDraft((d) => ({ ...d, startTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Ends</Label>
-                <Input type="time" value={draft.endTime} onChange={(e) => setDraft((d) => ({ ...d, endTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Input picker="wheel" type="time" value={draft.endTime} onChange={(e) => setDraft((d) => ({ ...d, endTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">From (optional)</Label>
-                <Input type="date" value={draft.startsOn} onChange={(e) => setDraft((d) => ({ ...d, startsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Input picker="wheel" type="date" value={draft.startsOn} onChange={(e) => setDraft((d) => ({ ...d, startsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5 sm:col-span-2">
                 <Label className="text-xs">Until (optional)</Label>
-                <Input type="date" value={draft.endsOn} onChange={(e) => setDraft((d) => ({ ...d, endsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Input picker="wheel" type="date" value={draft.endsOn} onChange={(e) => setDraft((d) => ({ ...d, endsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
             </div>
           ) : draft.recurrence === "one_time" ? (
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5 sm:col-span-2">
                 <Label className="text-xs">Date</Label>
-                <Input type="date" value={draft.startsOn} onChange={(e) => setDraft((d) => ({ ...d, startsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Input picker="wheel" type="date" value={draft.startsOn} onChange={(e) => setDraft((d) => ({ ...d, startsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Starts</Label>
-                <Input type="time" value={draft.startTime} onChange={(e) => setDraft((d) => ({ ...d, startTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Input picker="wheel" type="time" value={draft.startTime} onChange={(e) => setDraft((d) => ({ ...d, startTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Ends</Label>
-                <Input type="time" value={draft.endTime} onChange={(e) => setDraft((d) => ({ ...d, endTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Input picker="wheel" type="time" value={draft.endTime} onChange={(e) => setDraft((d) => ({ ...d, endTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label className="text-xs">Start date</Label>
-                <Input type="date" value={draft.startsOn} onChange={(e) => setDraft((d) => ({ ...d, startsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Input picker="wheel" type="date" value={draft.startsOn} onChange={(e) => setDraft((d) => ({ ...d, startsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">End date</Label>
-                <Input type="date" value={draft.endsOn} onChange={(e) => setDraft((d) => ({ ...d, endsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Input picker="wheel" type="date" value={draft.endsOn} onChange={(e) => setDraft((d) => ({ ...d, endsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Starts</Label>
-                <Input type="time" value={draft.startTime} onChange={(e) => setDraft((d) => ({ ...d, startTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Input picker="wheel" type="time" value={draft.startTime} onChange={(e) => setDraft((d) => ({ ...d, startTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Ends</Label>
-                <Input type="time" value={draft.endTime} onChange={(e) => setDraft((d) => ({ ...d, endTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Input picker="wheel" type="time" value={draft.endTime} onChange={(e) => setDraft((d) => ({ ...d, endTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
             </div>
           )}

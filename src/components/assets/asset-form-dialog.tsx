@@ -540,7 +540,7 @@ export function AssetFormDialog({
                 <FormItem>
                   <FormLabel>Purchase Date</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} />
+                    <Input picker="wheel" type="date" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -488,7 +488,7 @@ export function AppointmentFormDialog({
                   <FormItem>
                     <FormLabel>Date & time *</FormLabel>
                     <FormControl>
-                      <Input type="datetime-local" {...field} />
+                      <Input picker="wheel" type="datetime-local" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

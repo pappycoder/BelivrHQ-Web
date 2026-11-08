@@ -206,7 +206,7 @@ export function MaintenanceFormDialog({
                     <FormItem>
                       <FormLabel>Scheduled Date *</FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} />
+                        <Input picker="wheel" type="date" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -248,7 +248,7 @@ export function MaintenanceFormDialog({
                     <FormItem>
                       <FormLabel>Completed Date</FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} />
+                        <Input picker="wheel" type="date" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

@@ -125,6 +125,7 @@ export const ROUTE_PERMISSIONS: RoutePermissionRule[] = [
   { prefix: "/giving", permission: "giving:dashboard:read" },
 
   // Events
+  { prefix: "/gatherings/events/list", permission: "events:all:read" },
   { prefix: "/gatherings/events/new", permission: "events:create" },
   { prefix: "/gatherings/events/check-in", permission: "events:checkin:create" },
   { prefix: "/gatherings/events/registrations", permission: "events:registrations:read" },

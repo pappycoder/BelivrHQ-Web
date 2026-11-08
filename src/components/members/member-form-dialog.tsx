@@ -292,7 +292,7 @@ export function MemberFormDialog({
                     <FormItem>
                       <FormLabel>Date of Birth</FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} />
+                        <Input picker="wheel" type="date" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

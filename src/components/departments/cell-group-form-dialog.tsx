@@ -312,7 +312,7 @@ export function CellGroupFormDialog({
                     <FormItem>
                       <FormLabel>Meeting Time</FormLabel>
                       <FormControl>
-                        <Input type="time" {...field} />
+                        <Input picker="wheel" type="time" {...field} />
                       </FormControl>
                       <FormDescription>
                         Local group meeting time (HH:MM).

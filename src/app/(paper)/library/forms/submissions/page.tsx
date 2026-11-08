@@ -1,5 +1,8 @@
 "use client";
 
+import { useManageConfirmation } from "@/components/shared/manage-confirmation";
+
+import { ListTable } from "@/components/shared/list-table";
 import { SubmissionRespondent } from "@/components/forms/submission-respondent";
 import { submissionRespondent } from "@/lib/submission-respondent";
 
@@ -59,6 +62,7 @@ function answersSummary(submission: FormSubmission): string {
 }
 
 export default function FormsSubmissionsPage() {
+  const { confirm, dialog } = useManageConfirmation();
   const { can, ready } = usePermissions();
   const canReview = ready && can("forms:submissions", "update");
 
@@ -88,12 +92,12 @@ export default function FormsSubmissionsPage() {
   const rows = submissions.data?.data ?? [];
   const total = submissions.data?.meta?.total ?? 0;
 
-  const approve = (submission: FormSubmission) => {
-    updateStatus.mutate(
+  const approve = (submission: FormSubmission) => confirm({
+    title: "Approve answer?", subject: submissionRespondent(submission, selected?.fields).name, onConfirm: () => updateStatus.mutateAsync(
       { submissionId: submission.id, input: { status: "approved" } },
       { onSuccess: () => toast("Answer approved."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't approve it.")) },
-    );
-  };
+    ),
+  });
 
   // One Manage builder feeds rows and cards alike.
   const manageActions = (submission: FormSubmission) => [
@@ -104,12 +108,14 @@ export default function FormsSubmissionsPage() {
       tone: "success" as const,
       disabled: updateStatus.isPending,
       onSelect: () => approve(submission),
+      bulk: { key: "approve", label: "Approve selected answers", run: () => updateStatus.mutateAsync({ submissionId: submission.id, input: { status: "approved" } }) },
     },
     canReview && submission.status === "pending" && {
       label: "Reject answer",
       icon: <XCircle />,
       tone: "danger" as const,
       onSelect: () => setRejectTarget(submission),
+      bulk: { key: "reject", label: "Reject selected answers", destructive: true, requiresReason: true, run: (input?: { reason?: string }) => updateStatus.mutateAsync({ submissionId: submission.id, input: { status: "rejected", rejectionReason: input?.reason } }) },
     },
   ];
 
@@ -131,6 +137,7 @@ export default function FormsSubmissionsPage() {
 
   return (
     <div className="space-y-6">
+      {dialog}
       <PageHeader
         eyebrow="Library · Forms"
         title="Every answer, one inbox."
@@ -228,7 +235,7 @@ export default function FormsSubmissionsPage() {
           ) : view === "table" ? (
             <div className="paper-card overflow-hidden rounded-2xl">
               <div className="overflow-x-auto">
-                <div className="min-w-[680px]">
+                <ListTable className="min-w-[680px]" tableId="library-forms-submissions-1" fields={selected?.fields} records={rows ?? []} recordKey="id">
                   <div className="rule-label grid grid-cols-[minmax(0,1.6fr)_minmax(0,2fr)_minmax(0,1fr)_auto] items-center gap-3 border-b border-line px-5 py-2.5">
                     <span>Respondent</span>
                     <span>Answers</span>
@@ -258,7 +265,7 @@ export default function FormsSubmissionsPage() {
                       </div>
                     ))}
                   </div>
-                </div>
+                </ListTable>
               </div>
               <div className="border-t border-line px-5 py-3">
                 <ListPaginationFooter

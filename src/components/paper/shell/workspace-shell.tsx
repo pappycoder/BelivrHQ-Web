@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
+import { TableColumnsProvider } from "@/contexts/table-columns-context";
 import { motion } from "motion/react";
 import { NavRail } from "./nav-rail";
 import { ContextBar } from "./context-bar";
@@ -19,6 +21,7 @@ import { PermissionRouteGate } from "@/components/shared/permission-route-gate";
  * does for the legacy UI.
  */
 export function WorkspaceShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   const [searchOpen, setSearchOpen] = React.useState(false);
   const { areas } = usePaperNav();
 
@@ -53,7 +56,7 @@ export function WorkspaceShell({ children }: { children: React.ReactNode }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
               >
-                {children}
+                <TableColumnsProvider key={pathname}>{children}</TableColumnsProvider>
               </motion.div>
             </PermissionRouteGate>
           </main>

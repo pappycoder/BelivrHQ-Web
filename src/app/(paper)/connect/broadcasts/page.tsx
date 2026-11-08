@@ -1,5 +1,6 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import { BotProtection } from "@/components/shared/bot-protection";
 import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
@@ -183,7 +184,7 @@ export default function BroadcastsPage() {
       ) : (
         <div className="paper-card overflow-hidden rounded-2xl">
           <div className="overflow-x-auto">
-            <div className="min-w-[640px]">
+            <ListTable className="min-w-[640px]" tableId="connect-broadcasts-1" records={filtered ?? []} recordKey="broadcastId">
               <div className="rule-label grid grid-cols-[minmax(0,1.5fr)_1fr_1fr_0.8fr_1.1fr_1fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
                 <span>Broadcast</span>
                 <span>Template</span>
@@ -208,17 +209,18 @@ export default function BroadcastsPage() {
                     <RowActions
                       actions={[
                         canUpdate && b.status === "scheduled" && {
-                          label: "Cancel scheduled send",
+                          label: "Cancel scheduled send", confirmation: { subject: `${b.templateName ?? "Scheduled broadcast"} · ${b.scheduledAt ?? b.createdAt}` },
                           icon: <Ban />,
                           tone: "danger",
-                          onSelect: () => cancel.mutate(b.broadcastId, { onSuccess: () => toast("Scheduled send cancelled."), onError: () => toast.error("Couldn't cancel it.") }),
+                          bulk: { key: "cancel", label: "Cancel selected sends", destructive: true, run: () => cancel.mutateAsync(b.broadcastId) },
+                          onSelect: () => cancel.mutateAsync(b.broadcastId, { onSuccess: () => toast("Scheduled send cancelled."), onError: () => toast.error("Couldn't cancel it.") }),
                         },
                       ]}
                     />
                   </div>
                 ))}
               </div>
-            </div>
+            </ListTable>
           </div>
           <div className="flex items-center justify-between border-t border-line px-5 py-2.5 text-[10px] text-ink-faint">
             <span>Recipients are computed when a scheduled send runs — branch and audience rules honoured at the server.</span>
@@ -290,7 +292,7 @@ export default function BroadcastsPage() {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Send later? (optional)</Label>
-              <Input type="datetime-local" value={draft.scheduledAt} onChange={(e) => setDraft((d) => ({ ...d, scheduledAt: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              <Input picker="wheel" type="datetime-local" value={draft.scheduledAt} onChange={(e) => setDraft((d) => ({ ...d, scheduledAt: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
             <BotProtection path="/broadcasts" authenticated />
             <Button type="submit" disabled={createBroadcast.isPending || !captchaReady} className="h-10 w-full gap-2 rounded-lg text-sm">

@@ -9,19 +9,24 @@ import {
 } from "@/components/ui/dialog";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { UrlTabs } from "@/components/shared/url-tabs";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { GeneralAttendancePanel } from "@/components/attendance/general-attendance-panel";
 
 import * as React from "react";
 import { format, parseISO } from "date-fns";
 import { toast } from "@/lib/toast";
-import { ExportDropdown } from "@/components/shared/export-dropdown";
+
 import { DepartmentAttendancePanel } from "./department-attendance-panel";
-import { ArrowLeft, UserPlus, X } from "lucide-react";
-import { WorkspaceHeader as PageHeader } from "@/components/workspace/workspace-presentation";
-import { PermissionLink } from "@/components/shared/permission-link";
-import { ErrorState } from "@/components/shared/error-state";
+import { ArrowLeft, UserPlus, PencilLine, Users } from "lucide-react";
+import Link from "next/link";
+import { PageHeader, SectionCard } from "@/components/paper/section";
+import { StatCard, Tag } from "@/components/paper/stat";
+import { DataList, FieldRow, EmptyState } from "@/components/paper/primitives";
+import { GroupMemberRoster } from "./group-member-roster";
+import { DepartmentFormDialog } from "./department-form-dialog";
+import { useCanViewGeneralAttendance } from "@/hooks/use-attendance";
+
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -34,6 +39,7 @@ import {
 import { MemberCombobox } from "@/components/members/member-combobox";
 import {
   useDepartment,
+  useDepartmentsList,
   useAddDepartmentMember,
   useRemoveDepartmentMember,
 } from "@/hooks/use-admin";
@@ -47,15 +53,6 @@ function formatDate(value: string | undefined): string {
   } catch {
     return value;
   }
-}
-
-function InfoRow({ label, value }: { label: string; value?: React.ReactNode }) {
-  return (
-    <div className="flex items-start justify-between gap-4 py-1.5 text-sm">
-      <span className="text-muted-foreground shrink-0">{label}</span>
-      <span className="text-right font-medium">{value ?? "—"}</span>
-    </div>
-  );
 }
 
 export function DepartmentDetailContent({
@@ -107,232 +104,257 @@ export function DepartmentDetailContent({
     );
   };
 
-  const handleRemove = (memberIdToRemove: string) => {
-    removeMember.mutate(memberIdToRemove, {
-      onSuccess: () => toast.success("Member removed from department"),
-      onError: (err) => {
-        toast.error("Failed to remove member", {
-          description: err?.message || "Please try again.",
-        });
-      },
-    });
-  };
-
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        title={department?.name ?? "Department"}
-        breadcrumbs={[
-          { label: "Departments", href: "/departments" },
-          { label: department?.name ?? "Department" },
-        ]}
+  const canManage =
+    canUpdate &&
+    (!isDepartmentHead || !!isOwnDepartment) &&
+    !department?.archivedAt;
+  const canReported = useCanViewGeneralAttendance("department");
+  const [editing, setEditing] = React.useState(false);
+  const departments = useDepartmentsList({ enabled: editing && canManage });
+  if (isLoading)
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-20 rounded-2xl" />
+        <div className="grid grid-cols-2 gap-3">
+          {[0, 1].map((i) => (
+            <Skeleton key={i} className="h-28 rounded-2xl" />
+          ))}
+        </div>
+        <Skeleton className="h-64 rounded-2xl" />
+      </div>
+    );
+  if (error || !department)
+    return (
+      <EmptyState
+        title="Department could not be loaded"
+        description="Try again or return to the department list."
         action={
-          <Button variant="outline" asChild>
-            <PermissionLink href="/departments">
-              <ArrowLeft className="h-4 w-4" /> Back to departments
-            </PermissionLink>
+          <Button variant="outline" onClick={() => query.refetch()}>
+            Retry
           </Button>
         }
       />
-      {error ? (
-        <ErrorState
-          title="Could not load department"
-          onRetry={() => void query.refetch()}
+    );
+  const head =
+    `${department.headFirstName || ""} ${department.headLastName || ""}`.trim();
+  const tabs = [
+    "overview",
+    "members",
+    "attendance",
+    ...(canReported ? ["reported"] : []),
+  ];
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Gatherings · Departments"
+        title={department.name}
+        description={
+          department.description ||
+          "Members, meeting attendance and department details in one place."
+        }
+        actions={
+          <>
+            <Button
+              asChild
+              variant="outline"
+              className="h-9 rounded-full text-xs"
+            >
+              <Link href="/gatherings/groups">
+                <ArrowLeft className="size-3.5" /> Departments
+              </Link>
+            </Button>
+            {canManage && (
+              <Button
+                variant="outline"
+                className="h-9 rounded-full text-xs"
+                onClick={() => setEditing(true)}
+              >
+                <PencilLine className="size-3.5" /> Edit department
+              </Button>
+            )}
+          </>
+        }
+      >
+        <div className="flex flex-wrap gap-2">
+          <Tag tone="sky">{department.branchName || "Unassigned branch"}</Tag>
+          {department.archivedAt && <Tag>Archived</Tag>}
+          {isOwnDepartment && <Tag tone="moss">Your department</Tag>}
+        </div>
+      </PageHeader>
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+        <StatCard
+          label="Members"
+          value={department.memberCount ?? department.members.length}
+          tone="brand"
+          icon={<Users className="size-4" />}
         />
-      ) : isLoading || !department ? (
-        <div className="space-y-4 mt-6">
-          <Skeleton className="h-6 w-3/4" />
-          <Skeleton className="h-40 w-full" />
+        <StatCard
+          label="Roster leaders"
+          value={
+            department.members.filter(
+              (member) =>
+                member.role === "leader" || member.role === "assistant_leader",
+            ).length
+          }
+          tone="moss"
+        />
+        <div className="paper-card col-span-2 rounded-2xl p-5 lg:col-span-1">
+          <p className="rule-label">Department head</p>
+          <p className="mt-4 font-display text-lg font-semibold">
+            {head || "Not assigned"}
+          </p>
         </div>
-      ) : (
-        <div className="mt-6 space-y-6">
-          <UrlTabs defaultValue="members" values={["members", "attendance"]}>
-            <TabsList aria-label="Department workspace">
-              <TabsTrigger value="members">Members & details</TabsTrigger>
-              <TabsTrigger value="attendance">Attendance</TabsTrigger>
-            </TabsList>
-            <TabsContent
-              value="members"
-              forceMount
-              className="space-y-4 data-[state=inactive]:hidden"
+      </div>
+      <UrlTabs defaultValue="overview" values={tabs}>
+        <TabsList
+          aria-label="Department workspace"
+          className="h-auto group-data-[orientation=horizontal]/tabs:h-auto max-w-full flex-wrap overflow-visible justify-start rounded-2xl border border-line bg-card p-1"
+        >
+          {tabs.map((tab) => (
+            <TabsTrigger
+              key={tab}
+              value={tab}
+              className="h-9 flex-none rounded-full px-4 py-2 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper"
             >
-              <section>
-                <p className="text-sm font-medium mb-2">Details</p>
-                <div className="rounded-lg border px-4 py-1">
-                  <InfoRow
-                    label="Description"
-                    value={department.description || "—"}
-                  />
-                  <InfoRow label="Members" value={department.memberCount} />
-                  <InfoRow
-                    label="Created"
-                    value={formatDate(department.createdAt)}
-                  />
-                </div>
-              </section>
-
-              <section>
-                <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-medium">
-                    Members ({department.memberCount})
-                  </p>
-                  <ExportDropdown
-                    title="Department members"
-                    filename="department-members"
-                    columns={[
-                      { key: "firstName", label: "First name" },
-                      { key: "lastName", label: "Last name" },
-                      { key: "role", label: "Role" },
-                      { key: "joinedAt", label: "Joined" },
-                    ]}
-                    data={department.members.map((member) => ({ ...member }))}
-                  />
-                </div>
-                <div className="rounded-lg border divide-y">
-                  {department.members.length === 0 ? (
-                    <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-                      No members assigned yet.
-                    </p>
-                  ) : (
-                    department.members.map((m) => (
-                      <div
-                        key={m.id}
-                        className="flex items-center gap-3 px-4 py-3"
+              {
+                {
+                  overview: "Overview",
+                  members: "Members",
+                  attendance: "Attendance",
+                  reported: "Reported totals",
+                }[tab]
+              }
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        <TabsContent value="overview" className="mt-5">
+          <SectionCard eyebrow="Department details" title="About this team">
+            <DataList>
+              <FieldRow label="Description">
+                {department.description || "—"}
+              </FieldRow>
+              <FieldRow label="Head">{head || "Not assigned"}</FieldRow>
+              <FieldRow label="Branch">
+                {department.branchName || "Unassigned"}
+              </FieldRow>
+              <FieldRow label="Status">
+                {department.archivedAt ? "Archived" : "Active"}
+              </FieldRow>
+              <FieldRow label="Created">
+                {formatDate(department.createdAt)}
+              </FieldRow>
+              <FieldRow label="Updated">
+                {formatDate(department.updatedAt)}
+              </FieldRow>
+            </DataList>
+          </SectionCard>
+        </TabsContent>
+        <TabsContent value="members" className="mt-5">
+          <GroupMemberRoster
+            members={department.members}
+            tableId={`department-roster-${department.id}`}
+            onRemove={
+              canManage
+                ? (member) =>
+                    removeMember.mutateAsync(member.memberId, {
+                      onSuccess: () =>
+                        toast.success("Member removed from department"),
+                    })
+                : undefined
+            }
+            action={
+              canManage ? (
+                <Dialog open={addOpen} onOpenChange={setAddOpen}>
+                  <DialogTrigger asChild>
+                    <Button
+                      className="h-8 rounded-full text-xs"
+                      variant="outline"
+                    >
+                      <UserPlus className="size-4" />
+                      Add member
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Add department member</DialogTitle>
+                      <DialogDescription>
+                        Choose a member and their role in this department.
+                      </DialogDescription>
+                    </DialogHeader>{" "}
+                    <div className="mt-4 space-y-3 rounded-lg border p-4">
+                      <p className="text-sm font-medium flex items-center gap-2">
+                        <UserPlus className="h-4 w-4" /> Add Member
+                      </p>
+                      <MemberCombobox
+                        value={memberId}
+                        onChange={(id, member) => {
+                          setMemberId(id);
+                          setSelectedMemberName(
+                            member
+                              ? `${member.firstName} ${member.lastName}`
+                              : "",
+                          );
+                        }}
+                        selectedName={selectedMemberName}
+                        excludeIds={department.members.map((m) => m.memberId)}
+                        placeholder="Select a member..."
+                        branchId={department.branchId}
+                      />
+                      <Select value={role} onValueChange={setRole}>
+                        <SelectTrigger aria-label="Department membership role">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="member">Member</SelectItem>
+                          <SelectItem value="leader">Leader</SelectItem>
+                          <SelectItem value="assistant_leader">
+                            Assistant Leader
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        className="w-full"
+                        onClick={handleAdd}
+                        disabled={!memberId || addMember.isPending}
                       >
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">
-                            {m.firstName} {m.lastName}
-                          </p>
-                          <p className="text-xs text-muted-foreground capitalize">
-                            {m.role}
-                          </p>
-                        </div>
-                        {canUpdate &&
-                          (!isDepartmentHead || isOwnDepartment) && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                              disabled={removeMember.isPending}
-                              onClick={() => handleRemove(m.memberId)}
-                              aria-label={`Remove ${m.firstName} ${m.lastName}`}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          )}
-                      </div>
-                    ))
-                  )}
-                </div>
-
-                {canUpdate && (!isDepartmentHead || isOwnDepartment) && (
-                  <Dialog open={addOpen} onOpenChange={setAddOpen}>
-                    <DialogTrigger asChild>
-                      <Button className="mt-4" variant="outline">
-                        <UserPlus className="size-4" />
-                        Add member
+                        {addMember.isPending
+                          ? "Adding..."
+                          : "Add to Department"}
                       </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Add department member</DialogTitle>
-                        <DialogDescription>
-                          Choose a member and their role in this department.
-                        </DialogDescription>
-                      </DialogHeader>{" "}
-                      <div className="mt-4 space-y-3 rounded-lg border p-4">
-                        <p className="text-sm font-medium flex items-center gap-2">
-                          <UserPlus className="h-4 w-4" /> Add Member
-                        </p>
-                        <MemberCombobox
-                          value={memberId}
-                          onChange={(id, member) => {
-                            setMemberId(id);
-                            setSelectedMemberName(
-                              member
-                                ? `${member.firstName} ${member.lastName}`
-                                : "",
-                            );
-                          }}
-                          selectedName={selectedMemberName}
-                          excludeIds={department.members.map((m) => m.memberId)}
-                          placeholder="Select a member..."
-                          branchId={department.branchId}
-                        />
-                        <Select value={role} onValueChange={setRole}>
-                          <SelectTrigger aria-label="Department membership role">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="member">Member</SelectItem>
-                            <SelectItem value="leader">Leader</SelectItem>
-                            <SelectItem value="assistant_leader">
-                              Assistant Leader
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Button
-                          className="w-full"
-                          onClick={handleAdd}
-                          disabled={!memberId || addMember.isPending}
-                        >
-                          {addMember.isPending
-                            ? "Adding..."
-                            : "Add to Department"}
-                        </Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                )}
-              </section>
-            </TabsContent>
-            <TabsContent
-              value="attendance"
-              forceMount
-              className="data-[state=inactive]:hidden"
-            >
-              <Tabs defaultValue="named">
-                <TabsList className="h-9 w-fit rounded-full border border-line bg-card p-0.5">
-                  <TabsTrigger
-                    value="named"
-                    className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper"
-                  >
-                    Check-ins
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="reported"
-                    className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper"
-                  >
-                    Reported totals
-                  </TabsTrigger>
-                </TabsList>
-                <TabsContent value="named" className="mt-4">
-                  <DepartmentAttendancePanel
-                    department={department}
-                    canManage={
-                      canUpdate && (!isDepartmentHead || !!isOwnDepartment)
-                    }
-                  />
-                </TabsContent>
-                <TabsContent value="reported" className="mt-4">
-                  <GeneralAttendancePanel
-                    context={{
-                      type: "department",
-                      id: department.id,
-                      name: department.name,
-                      branchId: department.branchId,
-                      active: !department.archivedAt,
-                    }}
-                    canManage={
-                      canUpdate && (!isDepartmentHead || !!isOwnDepartment)
-                    }
-                  />
-                </TabsContent>
-              </Tabs>
-            </TabsContent>
-          </UrlTabs>
-        </div>
-      )}
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              ) : undefined
+            }
+          />
+        </TabsContent>
+        <TabsContent value="attendance" className="mt-5">
+          <DepartmentAttendancePanel
+            department={department}
+            canManage={canManage}
+          />
+        </TabsContent>
+        {canReported && (
+          <TabsContent value="reported" className="mt-5">
+            <GeneralAttendancePanel
+              context={{
+                type: "department",
+                id: department.id,
+                name: department.name,
+                branchId: department.branchId,
+                active: !department.archivedAt,
+              }}
+              canManage={canManage}
+            />
+          </TabsContent>
+        )}
+      </UrlTabs>
+      <DepartmentFormDialog
+        open={editing}
+        onOpenChange={setEditing}
+        department={department}
+        departments={departments.data || [department]}
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -38,7 +39,7 @@ import { UserFormDialog } from "@/components/users/user-form-dialog";
 import { DeleteUserDialog } from "@/components/users/delete-user-dialog";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useRoleLabelMap, resolveRoleLabel } from "@/hooks/use-roles";
-import { useUsers, type UserProfile } from "@/hooks/use-users";
+import { useUsers, useDeleteUser, useDeactivateUser, type UserProfile } from "@/hooks/use-users";
 
 const PAGE_SIZE = 12;
 
@@ -71,6 +72,8 @@ export default function AdminTeamPage() {
   const canUpdate = ready && can("users", "update");
   const canDelete = ready && can("users", "delete");
   const labelMap = useRoleLabelMap();
+  const bulkDelete = useDeleteUser();
+  const bulkDeactivate = useDeactivateUser();
 
   const [query, setQuery] = React.useState("");
   const [search, setSearch] = React.useState("");
@@ -120,12 +123,14 @@ export default function AdminTeamPage() {
       icon: <PauseCircle />,
       tone: "warning",
       onSelect: () => setDeleteState({ users: [member], mode: "deactivate" }),
+      bulk: { key: "deactivate", label: "Pause selected accounts", destructive: true, run: () => bulkDeactivate.mutateAsync(member.profileId) },
     },
     canDelete && member.status !== "active" && {
       label: "Remove from workspace",
       icon: <Trash2 />,
       tone: "danger",
       onSelect: () => setDeleteState({ users: [member], mode: "delete" }),
+      bulk: { key: "delete", label: "Remove selected accounts", destructive: true, run: () => bulkDelete.mutateAsync(member.profileId) },
     },
   ];
 
@@ -198,7 +203,7 @@ export default function AdminTeamPage() {
           {view === "table" ? (
             <div className="paper-card overflow-hidden rounded-2xl">
               <div className="overflow-x-auto">
-                <div className="min-w-[720px]">
+                <ListTable className="min-w-[720px]" tableId="admin-team-1" records={rows ?? []} recordKey="profileId">
                   <div className="rule-label grid grid-cols-[minmax(0,1.8fr)_minmax(0,1.1fr)_1fr_0.9fr_0.9fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
                     <span>Person</span>
                     <span>Roles</span>
@@ -234,7 +239,7 @@ export default function AdminTeamPage() {
                       </div>
                     ))}
                   </div>
-                </div>
+                </ListTable>
               </div>
             </div>
           ) : (

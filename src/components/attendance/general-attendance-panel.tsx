@@ -1,5 +1,6 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import { LoadingState } from "@/components/shared/loading-state";
 
 import * as React from "react";
@@ -449,7 +450,7 @@ export function GeneralAttendancePanel({
                 {format(new Date(`${date}T00:00:00`), "EEE d MMM yyyy")}
               </p>
             ) : (
-              <Input
+              <Input picker="wheel"
                 id={id("date")}
                 type="date"
                 required
@@ -562,7 +563,7 @@ export function GeneralAttendancePanel({
               <Label htmlFor={`general-start-${target?.id ?? "all"}`}>
                 From
               </Label>
-              <Input
+              <Input picker="native"
                 id={`general-start-${target?.id ?? "all"}`}
                 type="date"
                 value={params.startDate ?? ""}
@@ -575,7 +576,7 @@ export function GeneralAttendancePanel({
             </div>
             <div>
               <Label htmlFor={`general-end-${target?.id ?? "all"}`}>To</Label>
-              <Input
+              <Input picker="native"
                 id={`general-end-${target?.id ?? "all"}`}
                 type="date"
                 value={params.endDate ?? ""}
@@ -610,7 +611,7 @@ export function GeneralAttendancePanel({
           ) : (
             <>
               <div className="overflow-x-auto">
-                <div className="min-w-[760px]">
+                <ListTable className="min-w-[760px]" tableId="attendance-general-attendance-panel-1" recordType="generalAttendance" records={rows ?? []} recordKey="id">
                   <div
                     className={cn(
                       "rule-label grid items-center gap-3 border-b border-line px-2 py-2.5",
@@ -678,7 +679,7 @@ export function GeneralAttendancePanel({
                       </p>
                     ) : null}
                   </div>
-                </div>
+                </ListTable>
               </div>
               <ListPaginationFooter
                 page={page}

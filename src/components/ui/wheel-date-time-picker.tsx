@@ -1,10 +1,9 @@
 "use client";
 
 import { cloneElement, useEffect, useLayoutEffect, useRef, useState, type ComponentProps, type ReactElement } from "react";
-import { CalendarDays, Clock3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { daysInMonth, readDateTime, updateDateTime, writeDateTime, type DateTimeParts, type WheelPickerType } from "@/lib/wheel-date-time";
+import { displayWheelDate, daysInMonth, readDateTime, updateDateTime, writeDateTime, type DateTimeParts, type WheelPickerType } from "@/lib/wheel-date-time";
 
 const ROW = 40;
 const numbers = (start: number, end: number) => Array.from({ length: end - start + 1 }, (_, i) => start + i);
@@ -33,8 +32,9 @@ function WheelColumn({ label, values, value, onChange, format = String }: {
     setPosition(index);
   }, [index, value]);
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
-  const start = values.length > 150 ? Math.max(0, position - 8) : 0;
-  const end = values.length > 150 ? Math.min(values.length, position + 9) : values.length;
+  const centre = Math.round(position);
+  const start = values.length > 150 ? Math.max(0, centre - 8) : 0;
+  const end = values.length > 150 ? Math.min(values.length, centre + 9) : values.length;
   function select(next: number) {
     emitted.current = null;
     onChange(values[Math.max(0, Math.min(values.length - 1, next))]);
@@ -42,7 +42,6 @@ function WheelColumn({ label, values, value, onChange, format = String }: {
   return <div className="wheel-column">
     <span className="wheel-column-label">{label}</span>
     <div className="wheel-ruler">
-      <div className="wheel-selection-rail" aria-hidden="true" />
       <div ref={ref} role="spinbutton" tabIndex={0} aria-label={label}
         aria-valuemin={values[0]} aria-valuemax={values[values.length - 1]} aria-valuenow={value} aria-valuetext={format(value)}
         className="wheel-scroll" data-scrolling={scrolling ? "true" : "false"}
@@ -52,7 +51,7 @@ function WheelColumn({ label, values, value, onChange, format = String }: {
         }}
         onScroll={(event) => {
           const next = Math.max(0, Math.min(values.length - 1, Math.round(event.currentTarget.scrollTop / ROW)));
-          setPosition(next);
+          setPosition(event.currentTarget.scrollTop / ROW);
           setScrolling(true);
           if (timer.current) clearTimeout(timer.current);
           timer.current = setTimeout(() => {
@@ -70,7 +69,12 @@ function WheelColumn({ label, values, value, onChange, format = String }: {
           {values.slice(start, end).map((item, offset) => <div key={item}
             style={{ position: "absolute", top: (start + offset) * ROW, left: 0, right: 0 }}
             className="wheel-tick" data-selected={item === value ? "true" : "false"} data-major={(start + offset) % 5 === 0 ? "true" : "false"}
-            onClick={() => select(start + offset)}>{format(item)}</div>)}
+            onClick={() => select(start + offset)}>
+              <span className="wheel-tick-label" style={{
+                transform: `perspective(180px) rotateX(${Math.max(-65, Math.min(65, (position - start - offset) * 24))}deg) scale(${Math.max(.7, 1.08 - Math.abs(start + offset - position) * .12)})`,
+                opacity: Math.max(.25, 1 - Math.abs(start + offset - position) * .2),
+              }}>{format(item)}</span>
+            </div>)}
         </div>
       </div>
     </div>
@@ -87,7 +91,12 @@ export function WheelDateTimePanel({ type, value, onApply, onCancel, onClear, va
   const column = (key: keyof DateTimeParts, label: string, values: number[], format?: (value: number) => string) =>
     <WheelColumn key={key} label={label} values={values} value={parts[key]} format={format}
       onChange={(next) => setParts((current) => updateDateTime(current, key, next))} />;
-  return <div className="space-y-4" data-wheel-picker={type}>
+  return <div className="space-y-3" data-wheel-picker={type}>
+    <output className="wheel-preview" aria-live="polite" aria-atomic="true" data-wheel-preview>
+      <span>{type === "time" ? candidate : displayWheelDate(parts)}</span>
+      {type === "time" && <span className="wheel-preview-time">24-hour time</span>}
+      {type === "datetime-local" && <> <span className="wheel-preview-time">{writeDateTime("time", parts, seconds)} · 24h</span></>}
+    </output>
     {type !== "time" && <div className="wheel-columns" role="group" aria-label="Date">
       {column("day", "Day", numbers(1, daysInMonth(parts.year, parts.month)), twoDigits)}
       {column("month", "Month", MONTHS, monthLabel)}
@@ -98,13 +107,10 @@ export function WheelDateTimePanel({ type, value, onApply, onCancel, onClear, va
       {column("minute", "Minute", MINUTES, twoDigits)}
       {seconds && column("second", "Second", MINUTES, twoDigits)}
     </div>}
-    <div className="rounded-lg border border-primary/15 bg-primary/5 px-3 py-2 text-center text-sm font-medium tabular-nums" aria-live="polite" aria-atomic="true" data-wheel-preview>
-      {type === "date" ? candidate : type === "time" ? `${candidate} · 24h` : candidate.replace("T", " · ")}
-    </div>
     {error && <p className="text-sm text-destructive" role="status">{error}</p>}
     <div className="flex flex-wrap items-center justify-end gap-2">
       {onClear && <Button type="button" variant="ghost" className="mr-auto" onClick={onClear}>Clear</Button>}
-      <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
+      <Button type="button" variant="ghost" onClick={onCancel}>Cancel</Button>
       <Button type="button" disabled={!!error} onClick={() => onApply(candidate)}>Apply</Button>
     </div>
   </div>;
@@ -145,17 +151,14 @@ export function WheelPickerInput({ children, type }: { children: ReactElement<Co
       },
     })}
     <Dialog open={!!control} onOpenChange={(open) => { if (!open) setControl(null); }}>
-      <DialogContent className="wheel-picker-dialog sm:max-w-sm" onCloseAutoFocus={(event) => {
+      <DialogContent className="wheel-picker-dialog gap-3 border-0 sm:max-w-xs" onCloseAutoFocus={(event) => {
         event.preventDefault();
         // The native field remains the focus target even inside another form dialog.
         if (origin.current?.isConnected) origin.current.focus();
       }}>
         <DialogHeader>
-          <div className="mb-1 flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary" aria-hidden="true">
-            {type === "time" ? <Clock3 className="size-4" /> : <CalendarDays className="size-4" />}
-          </div>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>Scroll the ruler to choose. Use arrow keys for precise changes.</DialogDescription>
+          <DialogTitle className="text-sm">{title}</DialogTitle>
+          <DialogDescription className="sr-only">Scroll the ruler to choose. Use arrow keys for precise changes.</DialogDescription>
         </DialogHeader>
         {control && <WheelDateTimePanel type={type} value={control.value}
           seconds={type !== "date" && ((control.step !== "" && control.step !== "any" && Number(control.step) < 60) || /:\d{2}:\d{2}/.test(control.value))}

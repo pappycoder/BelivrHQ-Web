@@ -256,7 +256,7 @@ export function RecordCashDialog({
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="block space-y-1.5">
                 <span className="text-sm font-medium">Giving Date *</span>
-                <Input
+                <Input picker="wheel"
                   aria-label="Giving Date"
                   type="date"
                   required

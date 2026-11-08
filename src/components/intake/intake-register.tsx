@@ -1,5 +1,10 @@
 "use client";
 
+import { ArrowUpDown, Check, ClipboardList, Eye, X } from "lucide-react";
+import { StatCard } from "@/components/paper/stat";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ListTable } from "@/components/shared/list-table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { LoadingState } from "@/components/shared/loading-state";
 
 import { useEffect, useState, type ReactNode } from "react";
@@ -23,7 +28,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FormFieldsRenderer } from "@/components/forms/form-fields-renderer";
 import {
+  EmptyState,
   ListPaginationFooter,
+  ManageHeading, PersonAvatar, RowActions, SortDirectionToggle,
   SearchField,
 } from "@/components/paper/primitives";
 
@@ -36,6 +43,7 @@ interface PendingRow {
   data: Record<string, unknown>;
 }
 interface PendingList {
+  fields?: FormField[];
   data: PendingRow[];
   meta: { total: number };
 }
@@ -232,6 +240,8 @@ export function IntakeRegister({
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(15);
   const [branchId, setBranchId] = useState("");
+  const [sortBy, setSortBy] = useState("createdAt");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const branches = useIntakeBranches(access.review && !!profile?.isAdminHq);
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -249,11 +259,11 @@ export function IntakeRegister({
       ),
   });
   const list = useQuery({
-    queryKey: ["intake-list", kind, search, page, limit, branchId],
+    queryKey: ["intake-list", kind, search, page, limit, branchId, sortBy, sortOrder],
     enabled: access.review && tab === "pending",
     queryFn: () =>
       fetchPending(
-        `/intake/submissions?${new URLSearchParams({ kind, search, page: String(page), limit: String(limit), ...(branchId ? { branchId } : {}) })}`,
+        `/intake/submissions?${new URLSearchParams({ kind, search, sortBy, sortOrder, page: String(page), limit: String(limit), ...(branchId ? { branchId } : {}) })}`,
       ),
   });
   const [target, setTarget] = useState<string | null>(null);
@@ -263,13 +273,14 @@ export function IntakeRegister({
   const [error, setError] = useState("");
   const queryClient = useQueryClient();
   const inspect = useMutation({
-    mutationFn: (id: string) =>
+    mutationFn: ({ id }: { id: string; action?: "accept" | "reject" }) =>
       api.get<PendingDetail>(`/intake/submissions/${id}?kind=${kind}`),
-    onSuccess: (response) => {
+    onSuccess: (response, variables) => {
       setDetail(response);
       setAnswers(response.data);
       setError("");
       setTarget(response.id);
+      setConfirm(variables.action ?? null);
     },
     onError: (err) =>
       toast.error(
@@ -313,8 +324,44 @@ export function IntakeRegister({
       );
     },
   });
+  async function refreshRegisters() {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["intake-list"] }),
+      queryClient.invalidateQueries({ queryKey: ["intake-count"] }),
+      queryClient.invalidateQueries({ queryKey: ["members-list"] }),
+      queryClient.invalidateQueries({ queryKey: ["visitors-list"] }),
+      queryClient.invalidateQueries({ queryKey: ["visitors-stats"] }),
+    ]);
+  }
+  const manageActions = (row: PendingRow) => [
+    { label: "Approve", icon: <Check />, disabled: inspect.isPending,
+      onSelect: () => inspect.mutate({ id: row.id, action: "accept" }),
+      bulk: { key: "approve", label: "Approve selected", description: `Approved registrations are added to the ${kind === "members" ? "member" : "visitor"} register for their original branch.`, run: async () => {
+        const response = await api.get<PendingDetail>(`/intake/submissions/${row.id}?kind=${kind}`);
+        await api.post(`/intake/submissions/${row.id}/accept?kind=${kind}`, { data: response.data });
+        await refreshRegisters();
+      } } },
+    { label: "Decline", icon: <X />, tone: "danger" as const, disabled: inspect.isPending,
+      onSelect: () => inspect.mutate({ id: row.id, action: "reject" }),
+      bulk: { key: "decline", label: "Decline selected permanently", destructive: true, description: "The selected pending responses will be permanently removed and cannot be recovered.", run: async () => {
+        await api.delete(`/intake/submissions/${row.id}?kind=${kind}`); await refreshRegisters();
+      } } },
+    { label: "View", icon: <Eye />, disabled: inspect.isPending, onSelect: () => inspect.mutate({ id: row.id }) },
+  ];
   if (!access.review) return <>{children}</>;
   const name = `${answers.firstName ?? ""} ${answers.lastName ?? ""}`.trim();
+  const hasFilters = !!searchInput.trim() || !!branchId;
+  const scopeName = profile?.isAdminHq
+    ? branchId
+      ? branches.data?.data.find((branch) => branch.branchId === branchId)?.name ?? "Selected branch"
+      : "All branches"
+    : profile?.branch?.name ?? "Your branch";
+  function clearFilters() {
+    setSearchInput("");
+    setSearch("");
+    setBranchId("");
+    setPage(1);
+  }
   return (
     <Tabs value={tab} onValueChange={setTab} className="space-y-5">
       <TabsList>
@@ -326,101 +373,84 @@ export function IntakeRegister({
       <TabsContent value="records" className="space-y-6">
         {children}
       </TabsContent>
-      <TabsContent value="pending" className="space-y-4">
-        <div className="flex flex-wrap items-center gap-3">
+      <TabsContent value="pending" className="space-y-6 min-w-0">
+        <section aria-label="Pending registration summary" className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+          {count.isLoading ? <Skeleton className="h-32 rounded-2xl" /> : count.isError ? (
+            <div className="paper-card flex flex-col justify-between gap-4 rounded-2xl p-5"><span className="rule-label">Awaiting review</span><Button size="sm" variant="ghost" className="w-fit rounded-full text-xs" onClick={() => void count.refetch()}>Retry count</Button></div>
+          ) : (
+            <StatCard label="Awaiting review" value={count.data?.meta.total ?? 0} tone="brand" icon={<ClipboardList className="size-4" />} deltaLabel={`${kind === "members" ? "Member" : "Visitor"} registrations`} />
+          )}
+          <div className="paper-card flex h-full flex-col justify-between gap-4 rounded-2xl p-5">
+            <span className="rule-label">On this page</span>
+            {list.isLoading ? <Skeleton className="h-8 w-12" /> : <span className="num font-display text-[1.9rem] font-semibold leading-none tracking-tight">{list.isError ? "—" : list.data?.data.length ?? 0}</span>}
+          </div>
+          <div className="paper-card col-span-2 flex h-full flex-col justify-between gap-4 rounded-2xl p-5 lg:col-span-1">
+            <span className="rule-label">Scope</span>
+            <span className="font-display text-lg font-semibold leading-tight">{scopeName}</span>
+          </div>
+        </section>
+        <div aria-label="Pending registration filters" role="group" className="flex flex-wrap items-center gap-2">
           <SearchField
             value={searchInput}
             onChange={setSearchInput}
-            placeholder="Search registrations…"
+            placeholder="Search name, email or phone…"
+            className="w-full max-w-xs"
           />
-          {profile?.isAdminHq && (
-            <label className="flex items-center gap-2 text-sm">
-              Branch
-              <select
-                aria-label="Filter registrations by branch"
-                className="h-9 rounded-md border bg-background px-3"
-                value={branchId}
-                onChange={(event) => {
-                  setBranchId(event.target.value);
-                  setPage(1);
-                }}
-              >
-                <option value="">All branches</option>
-                {branches.data?.data.map((b) => (
-                  <option key={b.branchId} value={b.branchId}>
-                    {b.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
+          <div className="ml-auto flex max-w-full flex-wrap items-center gap-2">
+            {profile?.isAdminHq && (
+              <Select value={branchId || "all"} onValueChange={(value) => { setBranchId(value === "all" ? "" : value); setPage(1); }}>
+                <SelectTrigger aria-label="Filter registrations by branch" data-prefix-icon="building" className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none" disabled={branches.isLoading || branches.isError}>
+                  <SelectValue placeholder="All branches" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All branches</SelectItem>
+                  {(branches.data?.data ?? []).map((branch) => <SelectItem key={branch.branchId} value={branch.branchId}>{branch.name}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            )}
+            <Select value={sortBy} onValueChange={(value) => { setSortBy(value); setPage(1); }}>
+              <SelectTrigger aria-label="Sort registrations" data-prefix-icon="none" className="h-8 w-32 rounded-full border-line bg-card text-[11px] shadow-none">
+                <ArrowUpDown className="size-3 shrink-0" /> <SelectValue />
+              </SelectTrigger>
+              <SelectContent>{[["createdAt", "Date added"], ["firstName", "First name"], ["lastName", "Last name"], ["email", "Email"], ["phone", "Phone"], ["branch", "Branch"]].map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
+            </Select>
+            <SortDirectionToggle ascending={sortOrder === "asc"} onToggle={() => { setSortOrder((order) => order === "asc" ? "desc" : "asc"); setPage(1); }} />
+            {hasFilters && <Button size="sm" variant="ghost" className="h-8 rounded-full text-[11px]" onClick={clearFilters}>Clear filters</Button>}
+          </div>
         </div>
+        {profile?.isAdminHq && branches.isError && <p role="alert" className="text-xs text-destructive">Could not load branch filters. <Button size="sm" variant="link" className="h-auto p-0 text-xs" onClick={() => void branches.refetch()}>Retry branches</Button></p>}
         {list.isLoading ? (
           <LoadingState label="Loading registrations" variant="table" />
         ) : list.isError ? (
-          <div role="alert">
-            Could not load registrations.{" "}
-            <Button variant="outline" onClick={() => void list.refetch()}>
-              Retry
-            </Button>
-          </div>
+          <EmptyState
+            icon={<ClipboardList />}
+            title="Couldn’t load registrations"
+            description="The review queue could not be loaded. Please try again."
+            action={<Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => void list.refetch()}>Retry</Button>}
+          />
         ) : (
           <div className="paper-card overflow-hidden rounded-2xl">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="rule-label border-b border-line">
-                    <th className="p-4">Name</th>
-                    <th className="p-4">Contact</th>
-                    <th className="p-4">Branch</th>
-                    <th className="p-4">Submitted</th>
-                    <th className="p-4">Manage</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {list.data?.data.map((row) => (
-                    <tr key={row.id} className="border-b border-line">
-                      <td className="p-4">
-                        {String(row.data.firstName ?? "")}{" "}
-                        {String(row.data.lastName ?? "")}
-                      </td>
-                      <td className="p-4">
-                        <div>{String(row.data.email ?? "")}</div>
-                        <div>
-                          {String(
-                            row.data.phone ?? row.data.whatsappNumber ?? "",
-                          )}
-                        </div>
-                      </td>
-                      <td className="p-4">{row.branchName}</td>
-                      <td className="whitespace-nowrap p-4">
-                        {new Date(row.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="p-4">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          disabled={inspect.isPending}
-                          onClick={() => inspect.mutate(row.id)}
-                        >
-                          Review
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                  {!list.data?.data.length && (
-                    <tr>
-                      <td
-                        colSpan={5}
-                        className="p-8 text-center text-muted-foreground"
-                      >
-                        No pending registrations
-                        {search ? " match your search" : ""}.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+              <ListTable tableId={`pending-${kind}`} label={`Pending ${kind} registrations`} className="min-w-[720px]" records={list.data?.data ?? []} recordKey="id" fields={list.data?.fields ?? count.data?.fields}>
+                <div className="rule-label grid grid-cols-[minmax(0,2fr)_1.2fr_1fr_1fr_auto] items-center gap-4 border-b border-line px-5 py-2.5">
+                  <span>Person</span><span>Contact</span><span>Branch</span><span>Submitted</span><ManageHeading />
+                </div>
+                <div className="divide-y divide-line/70">
+                  {list.data?.data.map((row) => {
+                    const person = `${row.data.firstName ?? ""} ${row.data.lastName ?? ""}`.trim();
+                    return <div key={row.id} className="group grid grid-cols-[minmax(0,2fr)_1.2fr_1fr_1fr_auto] items-center gap-4 px-5 py-3 transition-colors hover:bg-muted/40">
+                      <button type="button" className="flex min-w-0 items-center gap-3 text-left" onClick={() => inspect.mutate({ id: row.id })}>
+                        <PersonAvatar name={person} size="sm" /><span className="min-w-0"><span className="block truncate text-xs font-semibold">{person}</span><span className="block truncate text-[11px] text-ink-faint">{String(row.data.email ?? row.data.phone ?? "No contact on file")}</span></span>
+                      </button>
+                      <span className="text-[11px] text-ink-soft"><span className="block truncate">{String(row.data.phone ?? row.data.whatsappNumber ?? "—")}</span><span className="block truncate text-ink-faint">{String(row.data.email ?? "")}</span></span>
+                      <span className="truncate text-[11px] text-ink-soft">{row.branchName}</span>
+                      <span className="num text-[11px] text-ink-soft">{new Date(row.createdAt).toLocaleDateString()}</span>
+                      <RowActions reveal={false} actions={manageActions(row)} />
+                    </div>;
+                  })}
+                </div>
+                {!list.data?.data.length && <p className="p-8 text-center text-sm text-muted-foreground">No pending registrations{search ? " match your search" : ""}.</p>}
+              </ListTable>
             </div>
             <ListPaginationFooter
               page={page}
@@ -438,7 +468,7 @@ export function IntakeRegister({
         )}
       </TabsContent>
       <Dialog
-        open={!!target}
+        open={!!target && !confirm}
         onOpenChange={(open) => {
           if (!open && !review.isPending) {
             setTarget(null);
@@ -459,7 +489,7 @@ export function IntakeRegister({
               key={detail.id}
               fields={detail.fields}
               validateRequired={!!error}
-              initialValues={detail.data}
+              initialValues={answers}
               disabled={review.isPending}
               onChange={setAnswers}
               showOptional
@@ -476,13 +506,13 @@ export function IntakeRegister({
               disabled={review.isPending}
               onClick={() => setConfirm("reject")}
             >
-              Reject registration
+              Decline registration
             </Button>
             <Button
               disabled={review.isPending}
               onClick={() => setConfirm("accept")}
             >
-              Accept registration
+              Approve registration
             </Button>
           </DialogFooter>
         </DialogContent>

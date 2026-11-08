@@ -1,5 +1,8 @@
 "use client";
 
+import { useManageConfirmation } from "@/components/shared/manage-confirmation";
+
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import { IntakeRegister, PublicRegistrationLink } from "@/components/intake/intake-register";
 import Link from "next/link";
@@ -50,6 +53,7 @@ import {
   useVisitorsList,
   useVisitorsStats,
   useUpdateVisitorById,
+  useDeleteVisitor,
   useArchiveVisitor,
   useRestoreArchiveVisitor,
   type Visitor,
@@ -98,6 +102,7 @@ function fullName(v: Visitor) {
 }
 
 export default function VisitorsPage() {
+  const { confirm, dialog } = useManageConfirmation();
   const { open, close } = useInspector();
   const { can, ready } = usePermissions();
   const canCreate = ready && can("visitors:new", "create");
@@ -140,6 +145,7 @@ export default function VisitorsPage() {
   const stats = useVisitorsStats();
   const updateVisitor = useUpdateVisitorById();
   const archive = useArchiveVisitor();
+  const bulkDelete = useDeleteVisitor();
   const restoreArchive = useRestoreArchiveVisitor();
 
   const rows = list.data?.data ?? [];
@@ -147,11 +153,11 @@ export default function VisitorsPage() {
 
   const toggleArchive = (visitor: Visitor) => {
     if (visitor.archivedAt) {
-      restoreArchive.mutate(visitor.id, {
+      return restoreArchive.mutateAsync(visitor.id, {
         onSuccess: () => toast(`${visitor.firstName} restored to the active register.`),
       });
     } else {
-      archive.mutate(visitor.id, {
+      return archive.mutateAsync(visitor.id, {
         onSuccess: () => toast(`${visitor.firstName} archived — records are kept.`),
       });
     }
@@ -175,15 +181,17 @@ export default function VisitorsPage() {
       onSelect: () => setConvertTarget(visitor),
     },
     canUpdate && {
-      label: visitor.archivedAt ? "Restore guest" : "Archive guest",
+      label: visitor.archivedAt ? "Restore guest" : "Archive guest", confirmation: { subject: `${visitor.firstName} ${visitor.lastName ?? ""}`.trim() },
       icon: visitor.archivedAt ? <ArchiveRestore /> : <Archive />,
       onSelect: () => toggleArchive(visitor),
+      bulk: { key: visitor.archivedAt ? "restore" : "archive", label: visitor.archivedAt ? "Restore selected" : "Archive selected", run: () => visitor.archivedAt ? restoreArchive.mutateAsync(visitor.id) : archive.mutateAsync(visitor.id) },
     },
     canDelete && !visitor.archivedAt && {
       label: "Delete guest",
       icon: <Trash2 />,
       tone: "danger",
       onSelect: () => setDeleteTarget([visitor]),
+      bulk: { key: "delete", label: "Delete selected", destructive: true, run: () => bulkDelete.mutateAsync(visitor.id) },
     },
   ];
 
@@ -219,12 +227,10 @@ export default function VisitorsPage() {
                 size="sm"
                 className="h-9 rounded-lg text-xs"
                 disabled={updateVisitor.isPending}
-                onClick={() =>
-                  updateVisitor.mutate(
+                onClick={() => confirm({ title: "Mark guest contacted?", subject: [visitor.firstName, visitor.lastName].filter(Boolean).join(" "), onConfirm: () => updateVisitor.mutateAsync(
                     { visitorId: visitor.id, input: { followUpStatus: "contacted" } },
                     { onSuccess: () => toast(`${visitor.firstName} marked as contacted.`) },
-                  )
-                }
+                  ) })}
               >
                 Mark contacted
               </Button>
@@ -256,6 +262,7 @@ export default function VisitorsPage() {
 
   return (
     <div className="space-y-6">
+      {dialog}
       <PageHeader
         eyebrow="People · Visitors"
         title="Guests in the room."
@@ -330,7 +337,7 @@ export default function VisitorsPage() {
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
           <div className="overflow-x-auto">
-            <div className="min-w-[680px]">
+            <ListTable className="min-w-[680px]" tableId="people-visitors-1" records={rows ?? []} recordKey="id">
               <div className="rule-label grid grid-cols-[minmax(0,2fr)_1fr_1.1fr_0.9fr_auto] items-center gap-4 border-b border-line px-5 py-2.5">
                 <span>Guest</span>
                 <span>Status</span>
@@ -355,7 +362,7 @@ export default function VisitorsPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </ListTable>
           </div>
           <ListPaginationFooter
             page={page}

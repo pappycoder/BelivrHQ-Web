@@ -176,7 +176,7 @@ export function CellGroupAttendanceDialog({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="meeting-date">Meeting Date *</Label>
-              <Input
+              <Input picker="wheel"
                 id="meeting-date"
                 type="date"
                 value={meetingDate}

@@ -1,5 +1,6 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
 import { hasLivePublicFormLink } from "@/lib/public-form-link";
@@ -156,18 +157,20 @@ export default function FormsListPage() {
       onSelect: () => copyPublicLink(form),
     },
     canDelete && !form.archivedAt && {
-      label: "Archive form",
+      label: "Archive form", confirmation: { subject: form.title },
       icon: <ClipboardList />,
-      onSelect: () => archive.mutate(form.id, {
+      bulk: { key: "archive", label: "Archive selected forms", run: () => archive.mutateAsync(form.id) },
+      onSelect: () => archive.mutateAsync(form.id, {
         onSuccess: () => toast("Form archived."),
         onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't archive.")),
       }),
     },
     canDelete && form.archivedAt && {
-      label: "Restore form",
+      label: "Restore form", confirmation: { subject: form.title },
       icon: <Plus />,
       tone: "success",
-      onSelect: () => restore.mutate(form.id, {
+      bulk: { key: "restore", label: "Restore selected forms", run: () => restore.mutateAsync(form.id) },
+      onSelect: () => restore.mutateAsync(form.id, {
         onSuccess: () => toast("Form restored."),
         onError: () => toast.error("Couldn't restore."),
       }),
@@ -177,6 +180,7 @@ export default function FormsListPage() {
       icon: <Trash2 />,
       tone: "danger",
       onSelect: () => setDeleteTarget(form),
+      bulk: { key: "delete", label: "Delete selected forms", destructive: true, run: () => del.mutateAsync(form.id) },
     },
   ];
 
@@ -325,7 +329,7 @@ export default function FormsListPage() {
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
           <div className="overflow-x-auto">
-            <div className="min-w-[720px]">
+            <ListTable className="min-w-[720px]" tableId="library-forms-1" records={rows ?? []} recordKey="id">
               <div className="rule-label grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1.2fr)_repeat(3,minmax(0,0.7fr))_auto] items-center gap-3 border-b border-line px-5 py-2.5">
                 <span>Form</span>
                 <span>State</span>
@@ -362,7 +366,7 @@ export default function FormsListPage() {
                   </div>
                 ))}
               </div>
-            </div>
+            </ListTable>
           </div>
           <div className="border-t border-line px-5 py-3">
             <ListPaginationFooter

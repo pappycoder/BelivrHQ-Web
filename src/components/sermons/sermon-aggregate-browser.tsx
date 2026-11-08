@@ -1,5 +1,6 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -207,7 +208,7 @@ export function SermonAggregateBrowser({
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
           <div className="overflow-x-auto">
-            <div className="min-w-[560px]">
+            <ListTable className="min-w-[560px]" tableId="sermons-sermon-aggregate-browser-1" recordType="aggregate" records={rowsPage ?? []} recordKey="name">
               <div className="rule-label grid grid-cols-[minmax(0,2.2fr)_0.8fr_1.2fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
                 <span>{nameColumnLabel}</span>
                 <span className="text-right">Sermons</span>
@@ -231,7 +232,7 @@ export function SermonAggregateBrowser({
                   </div>
                 ))}
               </div>
-            </div>
+            </ListTable>
           </div>
           <div className="border-t border-line px-5 py-3">
             <ListPaginationFooter

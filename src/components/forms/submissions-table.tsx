@@ -1,5 +1,8 @@
 "use client";
 
+import { useManageConfirmation } from "@/components/shared/manage-confirmation";
+
+import { submissionRespondent } from "@/lib/submission-respondent";
 import { useRef, useState } from "react";
 import { toast, getToastErrorMessage } from "@/lib/toast";
 import { VisibleDataExport } from "@/components/shared/visible-data-export";
@@ -57,9 +60,10 @@ export function SubmissionsTable({
   canReview: boolean;
   busy?: boolean;
   onOpen: (submission: FormSubmission) => void;
-  onApprove: (submission: FormSubmission) => void;
+  onApprove: (submission: FormSubmission) => unknown | Promise<unknown>;
   onReject: (submission: FormSubmission) => void;
 }) {
+  const { confirm, dialog } = useManageConfirmation();
   const root = useRef<HTMLDivElement>(null);
   const [selection, setSelection] = useState<string[]>([]);
   const [bulkStatus, setBulkStatus] = useState<"approved" | "rejected" | null>(null);
@@ -112,6 +116,7 @@ export function SubmissionsTable({
   const columnCount = 7 + Math.max(1, fields.length);
   return (
     <div ref={root} className="min-w-0">
+      {dialog}
       {selected.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 border-b bg-accent/30 p-3">
           <span role="status" className="mr-auto text-xs font-medium">
@@ -163,7 +168,7 @@ export function SubmissionsTable({
         tableId={`submissions-${form.id}`}
         aria-label={`${form.title} submissions`}
         exportable
-      >
+       records={submissions} recordKey="id" recordType="formSubmission" fields={form.fields}>
         <TableHeader>
           <TableRow>
             <TableHead hideable={false} className="w-10">
@@ -305,7 +310,7 @@ export function SubmissionsTable({
                             className="text-emerald-600"
                             aria-label={`Approve submission ${submission.id}`}
                             disabled={locked}
-                            onClick={() => onApprove(submission)}
+                            onClick={() => confirm({ title: "Approve answer?", subject: submissionRespondent(submission, form.fields).name, onConfirm: () => onApprove(submission) })}
                           >
                             <Check />
                           </Button>

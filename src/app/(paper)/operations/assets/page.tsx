@@ -1,15 +1,16 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Boxes, Download, Plus, QrCode } from "lucide-react";
+import { Archive, ArchiveRestore, ArrowUpRight, Boxes, Download, Plus, QrCode } from "lucide-react";
 import { api } from "@/lib/api";
 import { fetchAllPages, listUrl } from "@/lib/export-all";
 import type { ExportColumn } from "@/lib/export-utils";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { EmptyState, FilterChip, ListPaginationFooter, SearchField } from "@/components/paper/primitives";
+import { EmptyState, FilterChip, ListPaginationFooter, ManageHeading, RowActions, SearchField } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,6 +18,8 @@ import { ExportDropdown } from "@/components/shared/export-dropdown";
 import { AssetDetailDrawer } from "@/components/assets/asset-detail-drawer";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
+  useArchiveAsset,
+  useRestoreAsset,
   useAssetsList,
   useAssetStats,
   useAssetCategories,
@@ -65,6 +68,9 @@ export default function AssetsPage() {
   const router = useRouter();
   const { can, ready } = usePermissions();
   const canCreate = ready && can("assets:list", "create");
+  const canUpdate = ready && can("assets:list", "update");
+  const archive = useArchiveAsset();
+  const restore = useRestoreAsset();
 
   const [query, setQuery] = React.useState("");
   const [search, setSearch] = React.useState("");
@@ -162,24 +168,24 @@ export default function AssetsPage() {
       ) : (
         <div className="paper-card overflow-hidden rounded-2xl">
           <div className="overflow-x-auto">
-            <div className="min-w-[760px]">
-              <div className="rule-label grid grid-cols-[minmax(0,1.8fr)_0.9fr_0.9fr_1fr_0.8fr_0.8fr] items-center gap-3 border-b border-line px-5 py-2.5">
+            <ListTable className="min-w-[760px]" tableId="operations-assets-1" records={rows ?? []} recordKey="id">
+              <div className="rule-label grid grid-cols-[minmax(0,1.8fr)_0.9fr_0.9fr_1fr_0.8fr_0.8fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
                 <span>Asset</span>
                 <span>Category</span>
                 <span>Status</span>
                 <span>Custodian</span>
                 <span className="text-right">Condition</span>
-                <span className="text-right">Value</span>
+                <span className="text-right">Value</span><ManageHeading />
               </div>
               <StaggerGroup className="divide-y divide-line/70">
                 {rows.map((asset) => (
                   <StaggerItem key={asset.id}>
-                    <button
-                      type="button"
-                      onClick={() => setDrawerAssetId(asset.id)}
-                      className="grid w-full grid-cols-[minmax(0,1.8fr)_0.9fr_0.9fr_1fr_0.8fr_0.8fr] items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-muted/40"
+                    <div
+
+
+                      className="grid w-full grid-cols-[minmax(0,1.8fr)_0.9fr_0.9fr_1fr_0.8fr_0.8fr_auto] items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-muted/40"
                     >
-                      <span className="flex min-w-0 items-center gap-2.5">
+                      <button className="flex min-w-0 items-center gap-2.5" type="button" onClick={() => setDrawerAssetId(asset.id)}>
                         <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-muted text-ink-faint">
                           <QrCode className="size-3.5" />
                         </span>
@@ -187,7 +193,7 @@ export default function AssetsPage() {
                           <span className="block truncate text-xs font-medium">{asset.name}</span>
                           <span className="block font-mono text-[9px] text-ink-faint">{asset.assetTag}{asset.serialNumber ? ` · ${asset.serialNumber}` : ""}</span>
                         </span>
-                      </span>
+                      </button>
                       <span className="truncate text-[11px] text-ink-soft">{asset.categoryName ?? "—"}</span>
                       <span>
                         <Tag tone={asset.archivedAt ? "neutral" : STATUS_TONES[asset.status]} dot>
@@ -197,11 +203,16 @@ export default function AssetsPage() {
                       <span className="truncate text-[11px] text-ink-soft">{asset.custodianName ?? asset.location ?? "Unassigned"}</span>
                       <span className="text-right text-[11px] text-ink-faint">{ASSET_CONDITION_LABELS[asset.condition]}</span>
                       <span className="num text-right text-xs font-semibold">{asset.currentValue ? formatNaira(asset.currentValue) : "—"}</span>
-                    </button>
+                    <RowActions actions={[
+ { label: "View asset", icon: <ArrowUpRight />, onSelect: () => setDrawerAssetId(asset.id) },
+ canUpdate && { label: asset.archivedAt ? "Restore asset" : "Archive asset", confirmation: { subject: asset.name }, icon: asset.archivedAt ? <ArchiveRestore /> : <Archive />,
+ onSelect: () => asset.archivedAt ? restore.mutateAsync(asset.id) : archive.mutateAsync(asset.id),
+ bulk: { key: asset.archivedAt ? "restore" : "archive", label: asset.archivedAt ? "Restore selected assets" : "Archive selected assets", run: () => asset.archivedAt ? restore.mutateAsync(asset.id) : archive.mutateAsync(asset.id) } },
+ ]} /></div>
                   </StaggerItem>
                 ))}
               </StaggerGroup>
-            </div>
+            </ListTable>
           </div>
           <ListPaginationFooter
             page={page}

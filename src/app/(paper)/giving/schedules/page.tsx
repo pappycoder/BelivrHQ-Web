@@ -1,5 +1,6 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import { Ban, CalendarClock, Pause, PlayCircle, Repeat, ShieldOff } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
@@ -58,7 +59,7 @@ export default function GivingSchedulesPage() {
     .reduce((sum, r) => sum + (r.frequency === "monthly" ? r.amount : r.frequency === "quarterly" ? Math.round(r.amount / 3) : Math.round(r.amount / 4)), 0);
 
   const act = (mutation: typeof pause, id: string, message: string) =>
-    mutation.mutate(id, {
+    mutation.mutateAsync(id, {
       onSuccess: () => toast(message),
       onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't reach the schedule.")),
     });
@@ -101,7 +102,7 @@ export default function GivingSchedulesPage() {
           description="Recurring giving is the calmest money in the church — one household at a time."
         />
       ) : (
-        <StaggerGroup className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl">
+        <ListTable className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="giving-schedules-1" records={rows ?? []} recordKey="id"><StaggerGroup className="divide-y divide-line/70">
           <div className="rule-label grid grid-cols-[minmax(0,1.6fr)_1fr_0.9fr_1fr_1fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
             <span>Giver</span>
             <span>Fund</span>
@@ -133,21 +134,24 @@ export default function GivingSchedulesPage() {
                 <RowActions
                   actions={[
                     canManage && schedule.isActive && {
-                      label: "Pause schedule",
+                      label: "Pause schedule", confirmation: { subject: `${schedule.memberName ?? "Giver"} · ${schedule.categoryName ?? "Giving schedule"}` },
                       icon: <Pause />,
                       onSelect: () => act(pause, schedule.id, "Schedule paused — the giver can breathe."),
+                      bulk: { key: "pause", label: "Pause selected schedules", run: () => pause.mutateAsync(schedule.id) },
                     },
                     canManage && !schedule.isActive && {
-                      label: "Resume schedule",
+                      label: "Resume schedule", confirmation: { subject: `${schedule.memberName ?? "Giver"} · ${schedule.categoryName ?? "Giving schedule"}` },
                       icon: <PlayCircle />,
                       tone: "success",
                       onSelect: () => act(resume, schedule.id, "Schedule resumed — the floor rebuilds quietly."),
+                      bulk: { key: "resume", label: "Resume selected schedules", run: () => resume.mutateAsync(schedule.id) },
                     },
                     canManage && schedule.isActive && {
                       label: "Cancel schedule",
                       icon: <Ban />,
                       tone: "danger",
                       onSelect: () => setCancelTarget(schedule),
+                      bulk: { key: "cancel", label: "Cancel selected schedules", destructive: true, run: () => cancel.mutateAsync(schedule.id) },
                     },
                   ]}
                 />
@@ -163,7 +167,7 @@ export default function GivingSchedulesPage() {
             itemName="schedules"
             pending={recurring.isFetching}
           />
-        </StaggerGroup>
+        </StaggerGroup></ListTable>
       )}
 
       <RecurringGivingDialog open={dialogOpen} onOpenChange={setDialogOpen} />

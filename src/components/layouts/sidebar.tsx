@@ -114,17 +114,17 @@ const navItems: { section: string; items: NavItem[] }[] = [
         ],
       },
       {
-        title: "Attendance",
+        title: "Services",
         href: "/gatherings/attendance",
         icon: CalendarCheck,
         children: [
           {
-            title: "Dashboard",
+            title: "Overview",
             href: "/gatherings/attendance",
             permission: "attendance:dashboard:read",
           },
           {
-            title: "Services",
+            title: "View services",
             href: "/gatherings/attendance/services",
             permission: "attendance:services:read",
           },
@@ -181,9 +181,9 @@ const navItems: { section: string; items: NavItem[] }[] = [
         children: [
           { title: "Calendar", href: "/gatherings/events", permission: "events:calendar:read" },
           {
-            title: "All Events",
-            href: "/gatherings/events",
-            permission: "events:calendar:read",
+            title: "View events",
+            href: "/gatherings/events/list",
+            permission: "events:all:read",
           },
           {
             title: "Check-In",
@@ -347,7 +347,7 @@ const navItems: { section: string; items: NavItem[] }[] = [
         icon: Building2,
         children: [
           {
-            title: "All Departments",
+            title: "Departments",
             href: "/gatherings/groups",
             permission: "departments:read",
           },

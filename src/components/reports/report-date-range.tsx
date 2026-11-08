@@ -87,7 +87,7 @@ export function ReportDateRange({ value, onChange }: ReportDateRangeProps) {
         ))}
       </div>
 
-      <Input
+      <Input picker="native"
         type="date"
         value={value.startDate}
         onChange={(e) => onChange({ ...value, startDate: e.target.value })}
@@ -95,7 +95,7 @@ export function ReportDateRange({ value, onChange }: ReportDateRangeProps) {
         aria-label="Start date"
       />
       <span className="text-xs text-muted-foreground">to</span>
-      <Input
+      <Input picker="native"
         type="date"
         value={value.endDate}
         onChange={(e) => onChange({ ...value, endDate: e.target.value })}

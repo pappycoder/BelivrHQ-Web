@@ -181,7 +181,7 @@ export default function NewEventPage() {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">Starts</Label>
-                  <Input type="datetime-local" value={form.start} onChange={(e) => set("start", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                  <Input picker="wheel" type="datetime-local" value={form.start} onChange={(e) => set("start", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">
@@ -191,7 +191,7 @@ export default function NewEventPage() {
                         ? "Ends"
                         : "Until (optional)"}
                   </Label>
-                  <Input type="datetime-local" value={form.end} onChange={(e) => set("end", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                  <Input picker="wheel" type="datetime-local" value={form.end} onChange={(e) => set("end", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">Location</Label>

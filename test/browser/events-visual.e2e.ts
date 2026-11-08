@@ -24,6 +24,7 @@ async function fixture(
   context: BrowserContext,
   options: {
     permissions?: string[];
+    eventCount?: number;
     failServices?: boolean;
     failTiers?: boolean;
     failTickets?: boolean;
@@ -51,17 +52,18 @@ async function fixture(
     registrationCount: 5,
     createdAt: "2026-10-20T08:00:00Z",
     updatedAt: "2026-10-20T08:00:00Z",
+    archivedAt: null as string | null,
   };
   const events = options.empty
     ? []
     : [
         event,
-        ...Array.from({ length: 4 }, (_, i) => ({
+        ...Array.from({ length: (options.eventCount ?? 5) - 1 }, (_, i) => ({
           ...event,
           eventId: `event-${i}`,
           title: `Community session ${i + 1}`,
           type: i % 2 ? "training" : "lifecycle",
-          startDate: `2026-11-01T${10 + i}:00:00Z`,
+          startDate: new Date(Date.UTC(2026, 10, 1, 10 + i)).toISOString(),
         })),
       ];
   await context.addCookies([
@@ -101,6 +103,14 @@ async function fixture(
     const path = url.pathname;
     if (request.method() === "GET") state.reads.push(url.pathname + url.search);
     else state.writes.push(path);
+    const eventMutation = path.match(/\/events\/([^/]+)\/(archive|restore)$/);
+    if (request.method() !== "GET" && eventMutation) {
+      const row = events.find((item) => item.eventId === eventMutation[1]);
+      if (row)
+        row.archivedAt =
+          eventMutation[2] === "archive" ? "2026-11-08T08:00:00Z" : null;
+      return route.fulfill({ json: { success: true, data: row } });
+    }
     if (
       (options.failTiers && path.endsWith("/tiers")) ||
       (options.failTickets && path.endsWith("/tickets"))
@@ -181,9 +191,31 @@ async function fixture(
         },
       ];
     else if (path.endsWith("/events/gathering")) data = event;
-    else if (path.endsWith("/events"))
-      data = { data: events, total: events.length };
-    else if (path.endsWith("/unread-count")) data = { count: 0 };
+    else if (path.endsWith("/events")) {
+      const search = url.searchParams.get("search")?.toLowerCase();
+      const archived = url.searchParams.get("archived") === "true";
+      const filtered = events.filter(
+        (item) =>
+          !!item.archivedAt === archived &&
+          (!search || item.title.toLowerCase().includes(search)) &&
+          (!url.searchParams.get("type") ||
+            item.type === url.searchParams.get("type")) &&
+          (!url.searchParams.get("branchId") ||
+            item.branchId === url.searchParams.get("branchId")) &&
+          (!url.searchParams.get("startDate") ||
+            new Date(item.startDate) >=
+              new Date(url.searchParams.get("startDate")!)) &&
+          (!url.searchParams.get("endDate") ||
+            new Date(item.startDate) <=
+              new Date(url.searchParams.get("endDate")!)),
+      );
+      const page = Number(url.searchParams.get("page") ?? 1),
+        limit = Number(url.searchParams.get("limit") ?? 100);
+      data = {
+        data: filtered.slice((page - 1) * limit, page * limit),
+        total: filtered.length,
+      };
+    } else if (path.endsWith("/unread-count")) data = { count: 0 };
     else if (
       path.endsWith("/notifications") ||
       path.endsWith("/tickets") ||
@@ -467,3 +499,338 @@ for (const [path, title] of [
     ).toHaveCount(0);
   });
 }
+
+for (const width of [1280, 320])
+  test(`calendar month and year navigation at ${width}px`, async ({
+    page,
+    context,
+  }) => {
+    const state = await fixture(context);
+    await page.clock.setFixedTime(new Date("2026-11-08T08:00:00Z"));
+    await page.setViewportSize({ width, height: 960 });
+    await page.goto("/gatherings/events");
+    const navigation = page.getByRole("group", {
+      name: "Calendar navigation",
+      exact: true,
+    });
+    const period = navigation.locator("[data-calendar-period]");
+    await expect(period).toHaveText("November 2026");
+    await navigation
+      .getByRole("combobox", { name: "Calendar month", exact: true })
+      .click();
+    await page.getByRole("option", { name: "December", exact: true }).click();
+    await navigation
+      .getByRole("button", { name: "Next month", exact: true })
+      .click();
+    await expect(period).toHaveText("January 2027");
+    await navigation
+      .getByRole("button", { name: "Next year", exact: true })
+      .click();
+    await expect(period).toHaveText("January 2028");
+    await navigation
+      .getByRole("button", { name: "Previous year", exact: true })
+      .click();
+    await expect(period).toHaveText("January 2027");
+    await navigation
+      .getByRole("button", { name: "Previous month", exact: true })
+      .click();
+    await expect(period).toHaveText("December 2026");
+    await navigation
+      .getByRole("combobox", { name: "Calendar year", exact: true })
+      .click();
+    await page.getByRole("option", { name: "2024", exact: true }).click();
+    await navigation
+      .getByRole("combobox", { name: "Calendar month", exact: true })
+      .click();
+    await page.getByRole("option", { name: "February", exact: true }).click();
+    await expect(
+      page.locator('[data-calendar-day="2024-02-29"]'),
+    ).toBeVisible();
+    await expect(
+      page.locator('[data-calendar-day="2024-02-04"]'),
+    ).toContainText("Sunday Worship");
+    await navigation
+      .getByRole("combobox", { name: "Calendar year", exact: true })
+      .click();
+    await page.getByRole("option", { name: "2025", exact: true }).click();
+    await expect(period).toHaveText("February 2025");
+    await expect(page.locator('[data-calendar-day="2025-02-29"]')).toHaveCount(
+      0,
+    );
+    await navigation
+      .getByRole("button", { name: "Today", exact: true })
+      .click();
+    await expect(period).toHaveText("November 2026");
+    await expect(page.locator('[data-calendar-day="2026-11-08"]')).toHaveClass(
+      /bg-brand-soft/,
+    );
+    await expect(
+      page.getByRole("listbox", { includeHidden: true }),
+    ).toHaveCount(0);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    expect(state.writes).toEqual([]);
+    await page.screenshot({
+      path: `/tmp/churchos-calendar-navigation-${width}.png`,
+      fullPage: true,
+    });
+  });
+
+test("calendar month and year navigation remains available to calendar-only readers", async ({
+  page,
+  context,
+}) => {
+  const state = await fixture(context, {
+    permissions: ["events:calendar:read"],
+  });
+  await page.clock.setFixedTime(new Date("2026-11-08T08:00:00Z"));
+  await page.goto("/gatherings/events");
+  const navigation = page.getByRole("group", {
+    name: "Calendar navigation",
+    exact: true,
+  });
+  await navigation
+    .getByRole("combobox", { name: "Calendar year", exact: true })
+    .click();
+  await page.getByRole("option", { name: "2035", exact: true }).click();
+  await expect(navigation.locator("[data-calendar-period]")).toHaveText(
+    "November 2035",
+  );
+  expect(state.writes).toEqual([]);
+  expect(
+    state.reads.some((path) => path.includes("/attendance/services")),
+  ).toBe(false);
+});
+
+test.describe("event register", () => {
+  test.use({ timezoneId: "Africa/Lagos" });
+  for (const width of [1280, 320])
+    test(`View events navigation, filters, native dates and extra columns at ${width}px`, async ({
+      page,
+      context,
+    }) => {
+      const state = await fixture(context, {
+        hq: width === 1280,
+        eventCount: 20,
+      });
+      await page.setViewportSize({ width, height: 960 });
+      await page.goto("/gatherings/events");
+      await page
+        .getByRole("link", { name: "View events", exact: true })
+        .click();
+      await expect(page).toHaveURL(/\/gatherings\/events\/list$/);
+      await expect(
+        page.getByRole("heading", {
+          name: "Every event, in one place.",
+          exact: true,
+        }),
+      ).toBeVisible();
+      const table = page.locator('[data-list-table="events-list"]');
+      await expect(
+        table.getByRole("button", { name: "Open event", exact: true }),
+      ).toHaveCount(0);
+      await expect(
+        table.getByRole("link", { name: "Open event", exact: true }),
+      ).toHaveCount(15);
+      await table
+        .getByRole("button", { name: "Choose visible columns", exact: true })
+        .click();
+      await page
+        .getByRole("menuitemcheckbox", { name: "Capacity", exact: true })
+        .click();
+      await page.keyboard.press("Escape");
+      await expect(
+        table.getByRole("columnheader", { name: "Capacity", exact: true }),
+      ).toBeVisible();
+      await expect(
+        table.getByRole("cell", { name: "100", exact: true }),
+      ).toHaveCount(15);
+      const filters = page.getByRole("group", {
+        name: "Event list filters",
+        exact: true,
+      });
+      await filters.getByRole("textbox", { name: "Search events…", exact: true }).fill("Community");
+      await expect
+        .poll(() =>
+          state.reads.some((path) => path.includes("search=Community")),
+        )
+        .toBe(true);
+      await filters
+        .getByRole("combobox", { name: "Event type", exact: true })
+        .click();
+      await page
+        .getByRole("option", { name: "Conference", exact: true })
+        .click();
+      await expect(
+        table.getByRole("link", { name: "Open event", exact: true }),
+      ).toHaveCount(1);
+      if (width === 1280) {
+        await filters
+          .getByRole("combobox", { name: "Event branch", exact: true })
+          .click();
+        await page
+          .getByRole("option", { name: "East Branch", exact: true })
+          .click();
+        await expect(
+          table.getByRole("link", { name: "Open event", exact: true }),
+        ).toHaveCount(0);
+      }
+      await filters
+        .getByRole("button", { name: "Clear filters", exact: true })
+        .click();
+      const start = page.locator('input[type="date"][aria-label="From date"]');
+      await start.fill("2026-12-25");
+      await start.click();
+      await expect(page.getByRole("dialog")).toHaveCount(0);
+      await start.press("Escape");
+      await page
+        .locator('input[type="date"][aria-label="To date"]')
+        .fill("2026-12-25");
+      await expect
+        .poll(() =>
+          state.reads.some((path) => {
+            const url = new URL(path, "http://test");
+            return (
+              url.searchParams.get("startDate") ===
+                "2026-12-24T23:00:00.000Z" &&
+              url.searchParams.get("endDate") === "2026-12-25T22:59:59.999Z"
+            );
+          }),
+        )
+        .toBe(true);
+      await expect(
+        page.getByRole("spinbutton", { name: "Year", exact: true }),
+      ).toHaveCount(0);
+      await filters
+        .getByRole("button", { name: "Clear filters", exact: true })
+        .click();
+      await expect(
+        table.getByRole("link", { name: "Open event", exact: true }),
+      ).toHaveCount(15);
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth,
+        ),
+      ).toBe(true);
+      await page.screenshot({
+        path: `/tmp/churchos-event-register-${width}.png`,
+        fullPage: true,
+      });
+      expect(state.writes).toHaveLength(0);
+    });
+
+  test("event register paging and sorting use the server query", async ({
+    page,
+    context,
+  }) => {
+    const state = await fixture(context, { eventCount: 20 });
+    await page.goto("/gatherings/events/list");
+    await page.getByRole("button", { name: "Next", exact: true }).click();
+    await expect
+      .poll(() =>
+        state.reads.some(
+          (path) =>
+            new URL(path, "http://test").searchParams.get("page") === "2",
+        ),
+      )
+      .toBe(true);
+    await expect(
+      page
+        .locator('[data-list-table="events-list"]')
+        .getByRole("link", { name: "Open event", exact: true }),
+    ).toHaveCount(5);
+    await page
+      .getByRole("combobox", { name: "Sort events", exact: true })
+      .click();
+    await page.getByRole("option", { name: "Title", exact: true }).click();
+    await page
+      .getByRole("button", { name: "Sort descending", exact: true })
+      .click();
+    await expect
+      .poll(() =>
+        state.reads.some((path) => {
+          const url = new URL(path, "http://test");
+          return (
+            url.searchParams.get("page") === "1" &&
+            url.searchParams.get("sortBy") === "title" &&
+            url.searchParams.get("sortOrder") === "desc"
+          );
+        }),
+      )
+      .toBe(true);
+  });
+
+  test("event archive and restore use confirmed management actions", async ({
+    page,
+    context,
+  }) => {
+    const state = await fixture(context);
+    await page.goto("/gatherings/events/list");
+    const table = page.locator('[data-list-table="events-list"]');
+    const row = table
+      .getByRole("row")
+      .filter({ hasText: "Community Gathering" });
+    await row
+      .getByRole("button", { name: "Archive event", exact: true })
+      .click();
+    const dialog = page.getByTestId("manage-confirmation");
+    await expect(dialog).toContainText("Community Gathering");
+    expect(state.writes).toHaveLength(0);
+    await dialog.getByRole("button", { name: "Cancel", exact: true }).click();
+    expect(state.writes).toHaveLength(0);
+    await row
+      .getByRole("button", { name: "Archive event", exact: true })
+      .click();
+    await dialog
+      .getByRole("button", { name: "Confirm action", exact: true })
+      .click();
+    await expect(dialog).toBeHidden();
+    expect(state.writes).toHaveLength(1);
+    await page.getByRole("button", { name: "Archived", exact: true }).click();
+    await row
+      .getByRole("button", { name: "Restore event", exact: true })
+      .click();
+    expect(state.writes).toHaveLength(1);
+    await dialog
+      .getByRole("button", { name: "Confirm action", exact: true })
+      .click();
+    await expect(dialog).toBeHidden();
+    expect(state.writes).toHaveLength(2);
+  });
+
+  test("calendar-only readers cannot access the event register", async ({
+    page,
+    context,
+  }) => {
+    const state = await fixture(context, {
+      permissions: ["events:calendar:read", "events:list:read"],
+    });
+    await page.goto("/gatherings/events");
+    await expect(
+      page.getByRole("heading", {
+        name: "The season, laid out gently.",
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "View events", exact: true }),
+    ).toHaveCount(0);
+    await expect(page.locator("[data-calendar-day]")).toHaveCount(42);
+    state.reads.length = 0;
+    await page.goto("/gatherings/events/list");
+    await expect(
+      page.getByRole("heading", {
+        name: "Every event, in one place.",
+        exact: true,
+      }),
+    ).toHaveCount(0);
+    expect(
+      state.reads.some((path) =>
+        new URL(path, "http://test").pathname.endsWith("/events"),
+      ),
+    ).toBe(false);
+  });
+});

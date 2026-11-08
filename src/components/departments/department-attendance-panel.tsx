@@ -44,6 +44,7 @@ export function DepartmentAttendancePanel({
         onDateChange={setDate}
         loading={query.isLoading}
         error={query.isError}
+        onRetry={() => query.refetch()}
         action={
           canManage && !department.archivedAt ? (
             <Button
@@ -100,6 +101,7 @@ export function DepartmentAttendancePanel({
               <Label className="grid gap-2">
                 Meeting date
                 <Input
+                  picker="wheel"
                   aria-label="Department meeting date"
                   type="date"
                   required

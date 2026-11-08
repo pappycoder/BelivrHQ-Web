@@ -1,5 +1,7 @@
 "use client";
 
+import { useManageConfirmation } from "@/components/shared/manage-confirmation";
+
 import { LoadingState } from "@/components/shared/loading-state";
 
 import { ErrorState } from "@/components/shared/error-state";
@@ -96,6 +98,7 @@ export function AssetDetailDrawer({
   assetId,
   children,
 }: AssetDetailDrawerProps) {
+  const { confirm, dialog } = useManageConfirmation();
   const { can } = usePermissions();
   const assetQuery = useAsset(open ? assetId : undefined);
   const qrQuery = useAssetQr(open ? assetId : undefined);
@@ -133,6 +136,7 @@ export function AssetDetailDrawer({
 
   const content = (
     <div className="px-6 pb-6">
+      {dialog}
       {assetQuery.isLoading ? (
         <div className="space-y-4 pt-4">
           <Skeleton className="h-6 w-1/2" />
@@ -258,15 +262,13 @@ export function AssetDetailDrawer({
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() =>
-                    generateQrMutation.mutate(undefined, {
+                  onClick={() => confirm({ title: "Generate or refresh asset QR?", subject: asset.name, onConfirm: () => generateQrMutation.mutateAsync(undefined, {
                       onSuccess: () => toast.success("QR code generated"),
                       onError: (e) =>
                         toast.error(
                           getToastErrorMessage(e, "Failed to generate QR code"),
                         ),
-                    })
-                  }
+                    }) })}
                   disabled={generateQrMutation.isPending}
                 >
                   <RefreshCw className="h-4 w-4 mr-1" />
@@ -382,7 +384,7 @@ export function AssetDetailDrawer({
                   </div>
                   {depreciationQuery.data.entries.length > 0 && (
                     <div className="rounded-md border">
-                      <Table>
+                      <Table records={depreciationQuery.data.entries ?? []} recordKey="id" recordType="assetDepreciation">
                         <TableHeader>
                           <TableRow>
                             <TableHead>Year</TableHead>

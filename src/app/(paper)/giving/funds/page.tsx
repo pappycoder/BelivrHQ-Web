@@ -115,15 +115,15 @@ export default function GivingFundsPage() {
                       onSelect: () => setFormTarget({ open: true, category }),
                     },
                     canDelete && !category.archivedAt && {
-                      label: `Archive ${category.name}`,
+                      label: `Archive ${category.name}`, confirmation: { subject: category.name },
                       icon: <Archive />,
-                      onSelect: () => archive.mutate(category.categoryId, { onSuccess: () => toast(`${category.name} archived.`), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't archive it.")) }),
+                      onSelect: () => archive.mutateAsync(category.categoryId, { onSuccess: () => toast(`${category.name} archived.`), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't archive it.")) }),
                     },
                     canUpdate && category.archivedAt && {
-                      label: `Restore ${category.name}`,
+                      label: `Restore ${category.name}`, confirmation: { subject: category.name },
                       icon: <ArchiveRestore />,
                       tone: "success",
-                      onSelect: () => restore.mutate(category.categoryId, { onSuccess: () => toast(`${category.name} restored.`), onError: () => toast.error("Couldn't restore it.") }),
+                      onSelect: () => restore.mutateAsync(category.categoryId, { onSuccess: () => toast(`${category.name} restored.`), onError: () => toast.error("Couldn't restore it.") }),
                     },
                     canDelete && category.archivedAt && {
                       label: `Delete ${category.name} forever`,

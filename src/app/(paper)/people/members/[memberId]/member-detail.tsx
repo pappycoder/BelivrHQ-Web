@@ -1,5 +1,7 @@
 "use client";
 
+import { useManageConfirmation } from "@/components/shared/manage-confirmation";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -54,6 +56,7 @@ export default function MemberDetail({
 }: {
   params: Promise<{ memberId: string }>;
 }) {
+  const { confirm, dialog } = useManageConfirmation();
   const { memberId } = React.use(params);
   const { can, canAny, ready } = usePermissions();
   const member = useMember(memberId);
@@ -120,6 +123,7 @@ export default function MemberDetail({
 
   return (
     <div className="space-y-6">
+      {dialog}
       <Link
         href="/people/members"
         className="inline-flex items-center gap-1.5 text-[11px] text-ink-faint hover:text-ink"
@@ -176,11 +180,9 @@ export default function MemberDetail({
                 size="sm"
                 className="h-8 gap-1.5 rounded-full border-line bg-card text-xs"
                 disabled={archive.isPending || restoreArchive.isPending}
-                onClick={() =>
-                  data.archivedAt
-                    ? restoreArchive.mutate(data.memberId, { onSuccess: () => toast(`${data.firstName} is back in the active register.`) })
-                    : archive.mutate(data.memberId, { onSuccess: () => toast(`${data.firstName} archived — their records are kept.`) })
-                }
+                onClick={() => confirm({ title: data.archivedAt ? "Restore member?" : "Archive member?", subject: fullName, onConfirm: () => data.archivedAt
+                    ? restoreArchive.mutateAsync(data.memberId, { onSuccess: () => toast(`${data.firstName} is back in the active register.`) })
+                    : archive.mutateAsync(data.memberId, { onSuccess: () => toast(`${data.firstName} archived — their records are kept.`) }) })}
               >
                 {data.archivedAt ? <ArchiveRestore className="size-3.5" /> : <Archive className="size-3.5" />}
                 {data.archivedAt ? "Restore" : "Archive"}

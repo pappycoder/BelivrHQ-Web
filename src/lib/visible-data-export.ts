@@ -42,16 +42,18 @@ export function collectVisibleData(
 ): PdfReportSection[] {
   const sections: PdfReportSection[] = [];
   for (const [index, table] of Array.from(
-    includeTables ? root.querySelectorAll("table") : [],
+    includeTables ? root.querySelectorAll('table, [role="table"]') : [],
   ).entries()) {
     if (!visible(table) || table.closest('nav, [role="navigation"], [data-export-ignore]'))
       continue;
-    const heads = Array.from(table.querySelectorAll("thead tr:last-child th"));
+    const native = table.tagName === "TABLE";
+    const heads = Array.from(table.querySelectorAll(native ? "thead tr:last-child th" : '[role="columnheader"]'));
     const selected = heads
       .map((head, i) => ({ label: dataText(head), i }))
-      .filter((head) => head.label && !/^(actions?|select( all)?)$/i.test(head.label));
+      .filter((head) => head.label && !/^(actions?|manage|options?|select( all)?)$/i.test(head.label));
     if (!selected.length) continue;
-    const rows = Array.from(table.querySelectorAll("tbody tr"))
+    const rows = Array.from(table.querySelectorAll(native ? "tbody tr" : '[role="row"]'))
+      .filter((row) => native || !!row.querySelector('[role="cell"]'))
       .filter(visible)
       .filter((row) => !selectedOnly || row.getAttribute("data-row-selected") === "true")
       .filter((row) => !row.querySelector("[colspan]"))

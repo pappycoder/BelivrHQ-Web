@@ -1,5 +1,6 @@
 "use client";
 
+import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -290,7 +291,7 @@ function SermonsInner() {
           </div>
         </>
       ) : (
-        <StaggerGroup className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl">
+        <ListTable className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="library-sermons-1" records={rows ?? []} recordKey="sermonId">
           <div className="rule-label grid grid-cols-[minmax(0,2.4fr)_1fr_0.8fr_0.9fr_0.8fr_1fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
             <span>Sermon</span>
             <span>Speaker</span>
@@ -338,7 +339,7 @@ function SermonsInner() {
             itemName="messages"
             pending={sermons.isFetching}
           />
-        </StaggerGroup>
+        </ListTable>
       )}
 
       <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] text-ink-faint">
