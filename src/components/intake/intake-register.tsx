@@ -1,5 +1,7 @@
 "use client";
 
+import { LoadingState } from "@/components/shared/loading-state";
+
 import { useEffect, useState, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -354,7 +356,7 @@ export function IntakeRegister({
           )}
         </div>
         {list.isLoading ? (
-          <p role="status">Loading registrations…</p>
+          <LoadingState label="Loading registrations" variant="table" />
         ) : list.isError ? (
           <div role="alert">
             Could not load registrations.{" "}

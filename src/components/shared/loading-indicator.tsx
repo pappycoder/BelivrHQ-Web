@@ -8,7 +8,7 @@ interface LoadingIndicatorProps {
   decorative?: boolean;
 }
 
-/** Animated, accessible progress indicator for data and page loading states. */
+/** Accessible progress for in-flight actions such as saving and uploading. Content fetching uses LoadingState skeletons. */
 export function LoadingIndicator({
   label = "Loading",
   size = "md",

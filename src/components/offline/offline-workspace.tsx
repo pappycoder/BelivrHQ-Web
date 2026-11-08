@@ -1,11 +1,12 @@
 "use client";
+
+import { LoadingState } from "@/components/shared/loading-state";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   LockKeyhole,
   RefreshCw,
   WifiOff,
-  LoaderCircle,
   Download,
 } from "lucide-react";
 import { api } from "@/lib/api";
@@ -422,10 +423,7 @@ export function OfflineWorkspace() {
           </div>
         </header>
         {busy && (
-          <div role="status">
-            <LoaderCircle className="animate-spin" size={20} />
-            <span className="sr-only">Working</span>
-          </div>
+          <LoadingState label="Loading offline workspace" variant="detail" />
         )}
         {!workspace ? (
           <Card className="mx-auto max-w-lg">

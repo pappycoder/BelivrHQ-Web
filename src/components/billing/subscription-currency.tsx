@@ -1,4 +1,5 @@
 "use client";
+import { LoadingState } from "@/components/shared/loading-state";
 import {
   subscriptionCurrencies,
   useSubscriptionPricing,
@@ -28,11 +29,15 @@ export function SubscriptionCurrencySwitcher() {
       </p>
       {pricing.currency !== "USD" && (
         <p className="text-xs text-muted-foreground">
-          {pricing.isError
-            ? "Conversion unavailable. Try again or select USD. "
-            : pricing.data?.rateUpdatedAt
-              ? `Rate updated ${new Date(pricing.data.rateUpdatedAt).toLocaleDateString()}. `
-              : "Loading conversion. "}
+          {pricing.isError ? (
+            "Conversion unavailable. Try again or select USD. "
+          ) : pricing.data?.rateUpdatedAt ? (
+            `Rate updated ${new Date(pricing.data.rateUpdatedAt).toLocaleDateString()}. `
+          ) : pricing.isPending ? (
+            <LoadingState label="Loading conversion" variant="inline" />
+          ) : (
+            ""
+          )}
           <a
             href="https://www.exchangerate-api.com"
             target="_blank"
@@ -57,5 +62,34 @@ export function SubscriptionCurrencySwitcher() {
 }
 export function SubscriptionStartingPrice() {
   const pricing = useSubscriptionPricing();
-  return <>Plans from {pricing.price("essentials", "monthly")} / month</>;
+  return (
+    <>
+      Plans from{" "}
+      <SubscriptionPrice pricing={pricing} plan="essentials" cycle="monthly" />{" "}
+      / month
+    </>
+  );
+}
+
+/** Price content stays a skeleton while a non-USD quote is being fetched. */
+export function SubscriptionPrice({
+  pricing,
+  plan,
+  cycle,
+}: {
+  pricing: Pick<ReturnType<typeof useSubscriptionPricing>, "currency" | "isPending" | "isError" | "data" | "price">;
+  plan: string;
+  cycle: "monthly" | "annual";
+}) {
+  if (
+    pricing.currency !== "USD" &&
+    !pricing.data?.plans.some((item) => item.id === plan)
+  ) {
+    return pricing.isPending && !pricing.isError ? (
+      <LoadingState label="Loading price" variant="inline" />
+    ) : (
+      <>Rate unavailable</>
+    );
+  }
+  return <span className="not-italic">{pricing.price(plan, cycle)}</span>;
 }

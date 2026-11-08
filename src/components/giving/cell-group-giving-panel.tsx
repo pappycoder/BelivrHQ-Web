@@ -47,7 +47,7 @@ export function CellGroupGivingPanel({ groupId, archived = false }: { groupId: s
       toast.error("Could not record meeting giving", { description: message });
     }
   };
-  if (query.isLoading) return <LoadingState label="Loading group giving" />;
+  if (query.isLoading) return <LoadingState label="Loading group giving" variant="table" rows={3} />;
   if (query.error) return <ErrorState title="Could not load group giving" onRetry={() => void query.refetch()} />;
   const data = query.data;
   return <div className="space-y-4">

@@ -1,5 +1,7 @@
 "use client";
 
+import { LoadingState } from "@/components/shared/loading-state";
+
 import { ErrorState } from "@/components/shared/error-state";
 import { UrlTabs } from "@/components/shared/url-tabs";
 import { ContentImage } from "@/components/shared/content-image";
@@ -247,11 +249,7 @@ export function AssetDetailDrawer({
                   height={180}
                 />
               ) : (
-                <p className="text-sm text-muted-foreground">
-                  {qrQuery.isLoading
-                    ? "Generating QR..."
-                    : "No QR code generated yet."}
-                </p>
+                qrQuery.isLoading ? <div role="status" aria-label="Loading asset QR code" aria-busy="true"><Skeleton className="size-[180px] rounded-lg" /></div> : <p className="text-sm text-muted-foreground">No QR code generated yet.</p>
               )}
               <p className="text-center text-xs text-muted-foreground break-all">
                 {qrQuery.data?.qrData}
@@ -283,7 +281,7 @@ export function AssetDetailDrawer({
               {maintenanceQuery.isError ? (
                 <ErrorState title="Unable to load maintenance history" />
               ) : maintenanceQuery.isLoading ? (
-                <p role="status">Loading maintenance history…</p>
+                <LoadingState label="Loading maintenance history" variant="table" rows={3} />
               ) : maintenanceQuery.data?.length ? (
                 maintenanceQuery.data.map((record) => (
                   <div key={record.id} className="rounded-lg border p-3">
@@ -318,7 +316,7 @@ export function AssetDetailDrawer({
               {loansQuery.isError ? (
                 <ErrorState title="Unable to load loan history" />
               ) : loansQuery.isLoading ? (
-                <p role="status">Loading loan history…</p>
+                <LoadingState label="Loading loan history" variant="table" rows={3} />
               ) : loansQuery.data?.length ? (
                 loansQuery.data.map((loan) => (
                   <div key={loan.id} className="rounded-lg border p-3">

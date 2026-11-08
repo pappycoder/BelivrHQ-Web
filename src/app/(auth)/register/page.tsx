@@ -1,9 +1,11 @@
 "use client";
 
+import { LoadingState } from "@/components/shared/loading-state";
+
 import { BotProtection } from "@/components/shared/bot-protection";
 import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 import { LEGAL_VERSION } from "@/lib/legal/company";
-import { SubscriptionCurrencySwitcher } from "@/components/billing/subscription-currency";
+import { SubscriptionCurrencySwitcher, SubscriptionPrice } from "@/components/billing/subscription-currency";
 import {
   selectSubscriptionCurrency,
   useSubscriptionPricing,
@@ -163,9 +165,10 @@ export default function RegisterPage() {
     return (
       <AuthFormWrapper
         heading="Your church has a home."
-        subtitle="Your account is ready. Opening your subscription checkout…"
+        subtitle="Your account is ready. Continue to your subscription."
       >
         <div className="space-y-5 rounded-2xl border bg-card/70 p-6">
+          <LoadingState label="Opening your subscription checkout" variant="form" rows={2} className="p-0 sm:p-0" />
           <CheckCircle2 className="size-10 text-primary" />
           <p className="text-sm leading-relaxed">
             Continuing to your {selected.name} subscription as{" "}
@@ -424,7 +427,7 @@ export default function RegisterPage() {
                         <span className="flex items-center justify-between gap-2 text-sm">
                           <strong className="font-semibold">{p.name}</strong>
                           <span className="whitespace-nowrap font-semibold">
-                            {pricing.price(p.id, cycle)}
+                            <SubscriptionPrice pricing={pricing} plan={p.id} cycle={cycle} />
                             <span className="font-normal text-muted-foreground">
                               /{cycle === "annual" ? "yr" : "mo"}
                             </span>
@@ -490,7 +493,7 @@ export default function RegisterPage() {
                       Plan price · confirmed at checkout
                     </span>
                     <strong className="text-2xl tracking-tight">
-                      {pricing.price(selected.id, cycle)}
+                      <SubscriptionPrice pricing={pricing} plan={selected.id} cycle={cycle} />
                     </strong>
                   </div>
                 </div>

@@ -1,4 +1,8 @@
 "use client";
+
+import { LoadingState } from "@/components/shared/loading-state";
+
+import { Skeleton } from "@/components/ui/skeleton";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { confirmDiscardChanges } from "@/hooks/use-unsaved-changes";
 
@@ -560,7 +564,7 @@ export function PeopleImportPage({
                   )}
                 >
                   {parsing ? (
-                    <Loader2 className="h-7 w-7 animate-spin text-muted-foreground" />
+                    <Skeleton className="size-7 rounded-full" />
                   ) : (
                     <Upload
                       className={cn(
@@ -571,13 +575,9 @@ export function PeopleImportPage({
                   )}
                 </div>
                 <div className="text-center px-4">
-                  <p className="font-medium text-base">
-                    {parsing
-                      ? "Parsing file..."
-                      : isDragging
-                        ? "Drop your file to start"
-                        : "Drag & drop your file here"}
-                  </p>
+                  <div className="font-medium text-base">
+                    {parsing ? <LoadingState label="Parsing spreadsheet" variant="inline" /> : isDragging ? "Drop your file to start" : "Drag & drop your file here"}
+                  </div>
                   <p className="text-sm text-muted-foreground mt-1.5">
                     or{" "}
                     <span className="font-medium underline underline-offset-2">

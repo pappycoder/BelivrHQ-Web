@@ -1,4 +1,6 @@
 "use client";
+
+import { LoadingState } from "@/components/shared/loading-state";
 import { useMemo, useState, type ReactNode } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,7 +30,7 @@ export function MeetingAttendanceTable({ records, loading, error, date, onDateCh
       <Button variant="ghost" onClick={() => { onDateChange(""); setSearch(""); setStatus(""); }}>Clear filters</Button>
     </div>
     {error ? <p role="alert">Unable to load attendance records.</p> : <Table selectable exportable={false} aria-label={title}><TableHeader><TableRow><TableHead>Attendee</TableHead><TableHead>Type</TableHead><TableHead>Meeting date</TableHead><TableHead>Status</TableHead><TableHead>Notes</TableHead></TableRow></TableHeader>
-      <TableBody>{loading ? <TableRow><TableCell colSpan={5}>Loading attendance…</TableCell></TableRow> : rows.length ? rows.map(row => <TableRow key={row.id}><TableCell>{row.attendee}</TableCell><TableCell>{row.type}</TableCell><TableCell>{row.date}</TableCell><TableCell>{row.status}</TableCell><TableCell>{row.notes}</TableCell></TableRow>) : <TableRow><TableCell colSpan={5}>No attendance records match the filters.</TableCell></TableRow>}</TableBody>
+      <TableBody>{loading ? <TableRow><TableCell colSpan={5}><LoadingState label="Loading attendance" variant="table" rows={3} className="p-0 sm:p-0" /></TableCell></TableRow> : rows.length ? rows.map(row => <TableRow key={row.id}><TableCell>{row.attendee}</TableCell><TableCell>{row.type}</TableCell><TableCell>{row.date}</TableCell><TableCell>{row.status}</TableCell><TableCell>{row.notes}</TableCell></TableRow>) : <TableRow><TableCell colSpan={5}>No attendance records match the filters.</TableCell></TableRow>}</TableBody>
     </Table>}
   </section>;
 }

@@ -1,9 +1,11 @@
 "use client";
 
+import { LoadingState } from "@/components/shared/loading-state";
+
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowUp, BookOpen, CheckCircle2, Loader2, MessageCircleQuestion, RotateCcw, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowUp, BookOpen, CheckCircle2, MessageCircleQuestion, RotateCcw, ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
@@ -130,12 +132,12 @@ function AssistantPanel({ profile }: { profile: CurrentProfile }) {
       <div className="flex min-h-0 flex-1 flex-col">
         <div className="shrink-0 border-b px-5 py-3 text-xs text-muted-foreground">
           <p className="flex items-center gap-2 font-medium text-foreground"><ShieldCheck className="size-3.5" />Product guidance · {context?.mode === "ai" ? "AI assisted" : "ChurchOS references"}</p>
-          <p className="mt-1 break-words">Page: {page.replace(/\[.*?\]/g, "record")} · {context?.scope.location ?? "Checking your access…"}</p>
+          <p className="mt-1 break-words">Page: {page.replace(/\[.*?\]/g, "record")} · {context?.scope.location ?? <LoadingState label="Checking your access" variant="inline" />}</p>
           {context?.mode === "ai" && <p className="mt-1">Your question and selected product guidance are sent to OpenAI. Keep questions general; avoid personal records, passwords and secrets.</p>}
           <p className="mt-1">This assistant explains the product. It cannot read church records or change anything.</p>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5" role="log" aria-label="ChurchOS assistant conversation" aria-live="polite" aria-relevant="additions text">
-          {contextError ? <div role="alert" className="space-y-3 rounded-xl border p-4 text-sm"><p>{contextError}</p><Button variant="outline" size="sm" onClick={() => setContextAttempt(value => value + 1)}>Retry assistant</Button><p><Link href="/help" onClick={() => setOpen(false)} className="underline">Open Help Centre</Link></p></div> : !context ? <p role="status" className="flex items-center gap-2 text-sm"><Loader2 className="size-4 animate-spin" />Checking your access…</p> : turns.length === 0 ? <div className="space-y-5">
+          {contextError ? <div role="alert" className="space-y-3 rounded-xl border p-4 text-sm"><p>{contextError}</p><Button variant="outline" size="sm" onClick={() => setContextAttempt(value => value + 1)}>Retry assistant</Button><p><Link href="/help" onClick={() => setOpen(false)} className="underline">Open Help Centre</Link></p></div> : !context ? <LoadingState label="Checking your access" variant="detail" className="p-0 sm:p-0" /> : turns.length === 0 ? <div className="space-y-5">
             <div className="rounded-2xl border bg-muted/30 p-5"><MessageCircleQuestion className="mb-3 size-7 text-primary" /><h3 className="font-semibold">What would you like to understand?</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">Find a page, understand your access, or get steps for a ChurchOS workflow. Answers include their references.</p></div>
             <div className="grid gap-2">{SUGGESTIONS.map(suggestion => <Button key={suggestion} variant="outline" className="h-auto justify-start whitespace-normal px-3 py-3 text-left" onClick={() => void send(suggestion)}>{suggestion}</Button>)}</div>
           </div> : <div className="space-y-6">{turns.map(turn => <article key={turn.id} className="space-y-3">
@@ -150,13 +152,13 @@ function AssistantPanel({ profile }: { profile: CurrentProfile }) {
               {turn.reply.sources.length > 0 && <div className="space-y-2 border-t pt-3"><p className="flex items-center gap-1.5 text-xs font-medium"><BookOpen className="size-3" />References</p>{turn.reply.sources.map(source => source.path && /^\/help(?:\/[a-z0-9-]+)?$/.test(source.path) ? <Link key={source.id} href={source.path} onClick={() => setOpen(false)} className="block text-xs leading-5 text-primary underline underline-offset-2">{source.title}</Link> : <p key={source.id} className="text-xs leading-5 text-muted-foreground">{source.title} · ChurchOS product reference</p>)}</div>}
             </div>}
           </article>)}</div>}
-          {pending && <p role="status" className="mt-4 flex items-center gap-2 text-sm text-muted-foreground"><Loader2 className="size-4 animate-spin" />Finding your next step…</p>}
+          {pending && <LoadingState label="Finding your next step" variant="detail" className="mt-4 rounded-2xl border bg-muted/20" />}
           <div ref={end} />
         </div>
         <form className="shrink-0 space-y-2 border-t bg-background p-4" onSubmit={event => { event.preventDefault(); void send(); }}>
           <label htmlFor="churchos-question" className="sr-only">Your ChurchOS question</label>
           <Textarea id="churchos-question" aria-describedby="churchos-question-hint" value={question} onChange={event => setQuestion(event.target.value)} maxLength={1200} placeholder="Ask about ChurchOS…" disabled={!context || pending} className="max-h-32 min-h-20 resize-none" onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); void send(); } }} />
-          <p id="churchos-question-hint" className="text-xs text-muted-foreground">{!context ? (contextError ? "Retry assistant access to send a question." : "Checking access before you can send.") : pending ? "Waiting for an answer…" : question.trim().length === 0 ? "Type a question to send." : "Press Enter to send, or Shift+Enter for a new line."}</p>
+          <div id="churchos-question-hint" className="text-xs text-muted-foreground">{!context ? (contextError ? "Retry assistant access to send a question." : <LoadingState label="Checking access before you can send" variant="inline" />) : pending ? <LoadingState label="Waiting for an answer" variant="inline" /> : question.trim().length === 0 ? "Type a question to send." : "Press Enter to send, or Shift+Enter for a new line."}</div>
           <div className="flex items-center justify-between gap-2"><Button type="button" variant="ghost" size="sm" onClick={reset} disabled={!turns.length}><RotateCcw className="size-3.5" />New conversation</Button><Button type="submit" size="sm" disabled={!context || pending || question.trim().length === 0} aria-label="Send ChurchOS question"><ArrowUp className="size-4" />Send</Button></div>
           <p className="text-[11px] leading-4 text-muted-foreground">{context?.mode === "ai" ? `AI allowance: up to ${context.limits.userDailyQuestions} questions per person and ${context.limits.churchDailyQuestions} per church daily, subject to shared availability. ` : "Answers use ChurchOS product references. "}Conversation stays in this tab and clears when your access changes.</p>
         </form>

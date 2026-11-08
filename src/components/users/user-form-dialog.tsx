@@ -1,5 +1,7 @@
 "use client";
 
+import { LoadingState } from "@/components/shared/loading-state";
+
 import { BotProtection } from "@/components/shared/bot-protection";
 import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
@@ -276,7 +278,7 @@ export function UserFormDialog({
                     <Select value={field.value} onValueChange={field.onChange} disabled={isPending || branchQuery.isLoading || !profile?.isAdminHq}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder={branchQuery.isLoading ? "Loading branches..." : "Select a branch"} />
+                          {branchQuery.isLoading ? <LoadingState label="Loading branches" variant="inline" /> : <SelectValue placeholder="Select a branch" />}
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

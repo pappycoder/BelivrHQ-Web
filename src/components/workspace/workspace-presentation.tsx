@@ -1,5 +1,7 @@
 "use client";
 
+import { LoadingState } from "@/components/shared/loading-state";
+
 import * as React from "react";
 import { ChartPie, Layers, type LucideIcon } from "lucide-react";
 import { PageHeader } from "@/components/shared/page-header";
@@ -42,7 +44,7 @@ export function WorkspaceHeader({
               aria-label={`${loading ? "Loading" : count.toLocaleString()} ${countLabel}`}
               className="inline-flex items-center gap-1.5 rounded-full border bg-muted/50 px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground"
             >
-              {loading ? "…" : count.toLocaleString()}
+              {loading ? <LoadingState label={`Loading ${countLabel}`} variant="inline" className="max-w-8" /> : count.toLocaleString()}
               <span className="sr-only"> {countLabel}</span>
             </span>
           ))

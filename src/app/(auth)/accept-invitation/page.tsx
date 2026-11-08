@@ -1,5 +1,7 @@
 "use client";
 
+import { LoadingState } from "@/components/shared/loading-state";
+
 import { BotProtection } from "@/components/shared/bot-protection";
 import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
@@ -9,7 +11,6 @@ import { CheckCircle } from "lucide-react";
 import { AuthFormWrapper } from "@/components/shared/auth-form-wrapper";
 import { AuthField } from "@/components/shared/auth-field";
 import { Button } from "@/components/ui/button";
-import { LoadingIndicator } from "@/components/shared/loading-indicator";
 import { useAcceptInvitation } from "@/hooks/use-auth";
 
 export default function AcceptInvitationPage() {
@@ -62,7 +63,7 @@ export default function AcceptInvitationPage() {
       subtitle="Create your password, then sign in with the email address that received this invitation."
     >
       {!ready ? (
-        <LoadingIndicator label="Loading invitation" />
+        <LoadingState label="Loading invitation" variant="form" rows={3} className="p-0 sm:p-0" />
       ) : accept.isSuccess ? (
         <div className="space-y-5 text-center">
           <CheckCircle className="mx-auto h-12 w-12 text-primary" />

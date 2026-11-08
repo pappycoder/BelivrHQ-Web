@@ -26,7 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { SubscriptionCurrencySwitcher } from "@/components/billing/subscription-currency";
+import { SubscriptionCurrencySwitcher, SubscriptionPrice } from "@/components/billing/subscription-currency";
 import { useSubscriptionPricing } from "@/hooks/use-subscription-pricing";
 import { launchPlans, type LaunchPlan } from "./plans";
 import styles from "./landing.module.css";
@@ -395,7 +395,7 @@ export function PricingSection() {
                 ) : (
                   <>
                     <strong>
-                      {pricing.price(item.id, annual ? "annual" : "monthly")}
+                      <SubscriptionPrice pricing={pricing} plan={item.id} cycle={annual ? "annual" : "monthly"} />
                     </strong>
                     <span>/ {annual ? "year" : "month"}</span>
                   </>
@@ -405,8 +405,8 @@ export function PricingSection() {
                 {item.id === "enterprise"
                   ? "Pricing and billing terms agreed with you"
                   : annual
-                    ? `${pricing.price(item.id, "annual")} billed yearly`
-                    : `${pricing.price(item.id, "annual")} when billed yearly`}
+                    ? <><SubscriptionPrice pricing={pricing} plan={item.id} cycle="annual" /> billed yearly</>
+                    : <><SubscriptionPrice pricing={pricing} plan={item.id} cycle="annual" /> when billed yearly</>}
               </p>
               <p className={styles.planCapacity}>{item.capacity}</p>
               <button
@@ -478,7 +478,7 @@ export function PricingSection() {
                 ) : (
                   <>
                     <strong>
-                      {pricing.price(plan.id, annual ? "annual" : "monthly")}
+                      <SubscriptionPrice pricing={pricing} plan={plan.id} cycle={annual ? "annual" : "monthly"} />
                     </strong>
                     <span>/ {annual ? "year" : "month"}</span>
                   </>

@@ -1,5 +1,7 @@
 "use client";
 
+import { LoadingState } from "@/components/shared/loading-state";
+
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -167,7 +169,7 @@ export function MemberAttendanceRoster({
             </Button>
           </div>
         ) : loading ? (
-          <p role="status">Loading roster…</p>
+          <LoadingState label="Loading roster" variant="table" />
         ) : (
           <div
             data-export-list
@@ -211,6 +213,7 @@ export function MemberAttendanceRoster({
             )}
           </div>
         )}
+        {loadingMore && <LoadingState label="Loading more members" variant="table" rows={2} />}
         {hasMore && (
           <Button
             type="button"
@@ -218,7 +221,7 @@ export function MemberAttendanceRoster({
             disabled={busy || loadingMore}
             onClick={onLoadMore}
           >
-            {loadingMore ? "Loading..." : "Load more members"}
+            Load more members
           </Button>
         )}
       </CardContent>

@@ -1,4 +1,7 @@
 "use client";
+
+import { LoadingState } from "@/components/shared/loading-state";
+import { showCheckoutLoading } from "@/lib/checkout-loading";
 import { ExistingBillingPresentation } from "@/components/workspace/existing-billing-presentation";
 import { LegalNavigation } from "@/components/legal/legal-navigation";
 import {
@@ -23,7 +26,7 @@ import { paymentOutcome } from "@/lib/payment-confirmation";
 import { publishPaymentHint, subscribePaymentHints } from "@/lib/payment-sync";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { SubscriptionCurrencySwitcher } from "@/components/billing/subscription-currency";
+import { SubscriptionCurrencySwitcher, SubscriptionPrice } from "@/components/billing/subscription-currency";
 import {
   useSubscriptionPricing,
   subscriptionMoney,
@@ -316,9 +319,7 @@ export default function SubscriptionPage() {
         return;
       }
       popup.opener = null;
-      popup.document.title = "Opening Flutterwave checkout";
-      popup.document.body.textContent =
-        "Preparing your secure Flutterwave checkout…";
+      showCheckoutLoading(popup);
       try {
         popup.sessionStorage.setItem(
           "churchos:subscription-payment-window",
@@ -352,9 +353,7 @@ export default function SubscriptionPage() {
   });
   if (isLoading)
     return (
-      <div role="status" className="p-8">
-        Loading your account…
-      </div>
+      <LoadingState label="Loading your account" variant="detail" className="mx-auto max-w-6xl" />
     );
   if (!isAuthenticated)
     return (
@@ -383,9 +382,7 @@ export default function SubscriptionPage() {
     );
   if (!status.allowed)
     return (
-      <div role="status" className="p-8">
-        Checking access…
-      </div>
+      <LoadingState label="Checking access" variant="detail" className="mx-auto max-w-6xl" />
     );
   return (
     <ExistingBillingPresentation
@@ -423,7 +420,7 @@ export default function SubscriptionPage() {
           </div>
         </header>
         <SubscriptionCurrencySwitcher />
-        {status.isPending && <p role="status">Loading subscription…</p>}
+        {status.isPending && <LoadingState label="Loading subscription" variant="cards" rows={3} />}
         {status.isError && (
           <div role="alert" className="rounded-xl border p-4">
             <p>{status.error.message}</p>
@@ -596,7 +593,7 @@ export default function SubscriptionPage() {
                           <p className="text-xl font-semibold">
                             {item.id === "enterprise"
                               ? "Negotiated"
-                              : pricing.price(item.id, cycle)}
+                              : <SubscriptionPrice pricing={pricing} plan={item.id} cycle={cycle} />}
                           </p>
                           <p className="text-sm">{item.capacity}</p>
                           <ul className="space-y-1 text-xs text-muted-foreground">
@@ -784,7 +781,7 @@ export default function SubscriptionPage() {
                             </button>
                           </p>
                         ) : (
-                          <p role="status">Calculating your payment…</p>
+                          <LoadingState label="Calculating your payment" variant="inline" className="h-9" />
                         )}
                         <div className="space-y-2 rounded-lg border p-3 text-xs leading-5 text-muted-foreground">
                           <p>

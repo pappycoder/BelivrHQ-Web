@@ -5,7 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { getToastErrorMessage } from "@/lib/toast";
 import type { FormField } from "@/hooks/use-forms";
-import { ChurchFormBranding } from "@/components/forms/church-form-branding";
+import {
+  PublicFormFrame,
+  PublicFormLoading,
+} from "@/components/forms/public-form-frame";
 import { FormFieldsRenderer } from "@/components/forms/form-fields-renderer";
 import { BotProtection } from "@/components/shared/bot-protection";
 import { useBotProtectionReady } from "@/hooks/use-bot-protection";
@@ -70,78 +73,96 @@ function Registration({ token }: { token: string }) {
       setSending(false);
     }
   }
+  if (form.isLoading) return <PublicFormLoading />;
+  if (form.isError || !form.data)
+    return (
+      <PublicFormFrame
+        title="Registration unavailable"
+        description="Please contact the church or try again with the link they shared."
+      >
+        <div className="flex min-h-72 flex-col items-start justify-center gap-4">
+          <h2 className="text-xl font-semibold">We couldn’t open this form</h2>
+          <p role="alert" className="text-sm leading-6 text-muted-foreground">
+            This registration link may be unavailable.
+          </p>
+          <Button variant="outline" onClick={() => void form.refetch()}>
+            Try again
+          </Button>
+        </div>
+      </PublicFormFrame>
+    );
   return (
-    <main
-      data-paper-root
-      className="min-h-svh bg-background px-4 py-8 text-foreground sm:py-12"
+    <PublicFormFrame
+      churchName={form.data.churchName}
+      churchLogoUrl={form.data.churchLogoUrl}
+      eyebrow={form.data.branchName}
+      title={form.data.title}
+      description="Share your details with the church team. They will review your registration before adding it to their records."
+      aside={
+        <div className="mt-7 flex flex-wrap gap-2 text-xs">
+          {[
+            `${form.data.fields.length} questions`,
+            `${form.data.fields.filter((field) => field.required).length} required`,
+            "No sign-in needed",
+          ].map((text) => (
+            <span
+              key={text}
+              className="rounded-full border border-white/15 px-3 py-2"
+            >
+              {text}
+            </span>
+          ))}
+        </div>
+      }
     >
-      <div className="mx-auto max-w-2xl space-y-6">
-        {form.isLoading ? (
-          <p role="status">Loading registration form…</p>
-        ) : form.isError || !form.data ? (
-          <div className="paper-card space-y-3 rounded-2xl p-6">
-            <h1 className="text-2xl font-semibold">Registration unavailable</h1>
-            <p>
-              This link may be unavailable. Please contact the church or try
-              again.
+      {sent ? (
+        <div
+          role="status"
+          className="flex min-h-72 flex-col justify-center gap-3"
+        >
+          <h2 className="text-2xl font-semibold">Registration received</h2>
+          <p className="text-sm leading-7 text-muted-foreground">
+            Thank you. The church team will review your registration before
+            adding it to their records.
+          </p>
+        </div>
+      ) : (
+        <>
+          <header className="mb-7 space-y-3 border-b pb-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Your registration
             </p>
-            <Button variant="outline" onClick={() => void form.refetch()}>
-              Try again
-            </Button>
-          </div>
-        ) : (
-          <>
-            <ChurchFormBranding
-              churchName={form.data.churchName}
-              churchLogoUrl={form.data.churchLogoUrl}
+            <h2 className="text-2xl font-semibold">Let’s get started.</h2>
+            <p className="text-sm leading-7 text-muted-foreground">
+              Fields marked * are required. Take your time before sending.
+            </p>
+          </header>
+          <form onSubmit={submit} className="space-y-7">
+            <FormFieldsRenderer
+              validateRequired={validateFields}
+              fields={form.data.fields}
+              disabled={sending}
+              onChange={setAnswers}
+              showOptional
             />
-            <section className="paper-card space-y-5 rounded-2xl p-5 sm:p-8">
-              <header className="space-y-2">
-                <p className="text-sm text-muted-foreground">
-                  {form.data.branchName}
-                </p>
-                <h1 className="text-2xl font-semibold">{form.data.title}</h1>
-                <p className="text-sm text-muted-foreground">
-                  No sign-in needed. Fields marked * are required.
-                </p>
-              </header>
-              {sent ? (
-                <div role="status" className="space-y-2">
-                  <h2 className="text-xl font-semibold">
-                    Registration received
-                  </h2>
-                  <p>
-                    Thank you. The church team will review your registration
-                    before adding it to their records.
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={submit} className="space-y-5">
-                  <FormFieldsRenderer validateRequired={validateFields}
-                    fields={form.data.fields}
-                    disabled={sending}
-                    onChange={setAnswers}
-                    showOptional
-                  />
-                  {error && (
-                    <p role="alert" className="text-sm text-destructive">
-                      {error}
-                    </p>
-                  )}
-                  <BotProtection path={path} />
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={!ready || sending}
-                  >
-                    {sending ? "Sending…" : "Send registration"}
-                  </Button>
-                </form>
-              )}
-            </section>
-          </>
-        )}
-      </div>
-    </main>
+            {error && (
+              <p role="alert" className="text-sm text-destructive">
+                {error}
+              </p>
+            )}
+            <div className="space-y-4 border-t pt-6">
+              <BotProtection path={path} />
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={!ready || sending}
+              >
+                {sending ? "Sending…" : "Send registration"}
+              </Button>
+            </div>
+          </form>
+        </>
+      )}
+    </PublicFormFrame>
   );
 }

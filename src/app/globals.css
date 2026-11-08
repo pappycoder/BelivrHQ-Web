@@ -144,3 +144,11 @@ textarea.app-field[data-field-icon]:dir(rtl):not([data-field-prefix="existing"])
   [data-field-motion] { display: none; }
   .app-field[data-field-animating="true"] { color: var(--field-caret-color) !important; -webkit-text-fill-color: var(--field-caret-color) !important; }
 }
+
+/* Consistent field typography, including raw controls and shared form primitives. */
+label, [data-slot="label"], [data-slot="form-label"] { font-style: italic; }
+input, textarea, select, [role="combobox"], [data-slot="select-trigger"], [data-slot="command-input"] { font-style: normal; }
+input::placeholder, textarea::placeholder { font-style: italic; }
+[data-slot="select-trigger"][data-placeholder] [data-slot="select-value"],
+[role="combobox"][data-placeholder] [data-slot="select-value"],
+select:has(option[value=""]:checked), option[value=""] { font-style: italic; }

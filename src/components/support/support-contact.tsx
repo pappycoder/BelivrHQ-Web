@@ -1,5 +1,7 @@
 "use client";
 
+import { LoadingState } from "@/components/shared/loading-state";
+
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
@@ -69,9 +71,7 @@ export function SupportContact({
               Open support chat
             </Button>
           ) : isLoading ? (
-            <p role="status" className="text-sm text-muted-foreground">
-              Checking chat availability…
-            </p>
+            <LoadingState label="Checking chat availability" variant="inline" className="h-9" />
           ) : !isAuthenticated ? (
             <Button asChild variant="outline">
               <Link href="/login?returnTo=%2Fhelp%2Fcontact-support">

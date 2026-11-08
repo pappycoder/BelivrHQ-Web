@@ -1,5 +1,7 @@
 "use client";
 
+import { LoadingState } from "@/components/shared/loading-state";
+
 import * as React from "react";
 import { PencilLine } from "lucide-react";
 import styles from "./general-attendance-panel.module.css";
@@ -604,7 +606,7 @@ export function GeneralAttendancePanel({
               </Button>
             </div>
           ) : query.isLoading ? (
-            <p>Loading general attendance…</p>
+            <LoadingState label="Loading general attendance" variant="table" />
           ) : (
             <>
               <div className="overflow-x-auto">

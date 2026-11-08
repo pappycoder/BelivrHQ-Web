@@ -1,5 +1,7 @@
 "use client";
 
+import { LoadingState } from "@/components/shared/loading-state";
+
 import { BotProtection } from "@/components/shared/bot-protection";
 import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
@@ -14,7 +16,6 @@ import { CheckCircle } from "lucide-react";
 import { AUTH_EASE, scaleIn } from "@/lib/auth-motion";
 import { cn } from "@/lib/utils";
 import { AuthFormWrapper } from "@/components/shared/auth-form-wrapper";
-import { LoadingIndicator } from "@/components/shared/loading-indicator";
 import { AuthField } from "@/components/shared/auth-field";
 import { Button } from "@/components/ui/button";
 import { useResetPassword } from "@/hooks/use-auth";
@@ -210,7 +211,7 @@ export default function ResetPasswordPage() {
     <Suspense
       fallback={
         <div className="flex min-h-screen items-center justify-center">
-          <LoadingIndicator label="Loading reset password page" size="lg" />
+          <LoadingState label="Loading reset password page" variant="form" rows={2} className="max-w-md" />
         </div>
       }
     >

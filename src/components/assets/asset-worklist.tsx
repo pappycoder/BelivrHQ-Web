@@ -1,5 +1,7 @@
 "use client";
 
+import { LoadingState } from "@/components/shared/loading-state";
+
 import * as React from "react";
 import Link from "next/link";
 import { WorkspaceHeader as PageHeader } from "@/components/workspace/workspace-presentation";
@@ -55,7 +57,7 @@ function AssetPicker({ onSelect }: { onSelect: (asset: Asset) => void }) {
       {query.error ? (
         <ErrorState title="Unable to load assets" />
       ) : query.isLoading ? (
-        <p role="status">Loading assets…</p>
+        <LoadingState label="Loading assets" variant="cards" rows={3} />
       ) : (
         <>
           <ul className="max-h-72 space-y-2 overflow-y-auto">
@@ -207,9 +209,7 @@ export function AssetWorklist({ kind }: { kind: "loans" | "maintenance" }) {
             title={`Unable to load ${isLoan ? "loans" : "maintenance jobs"}`}
           />
         ) : query.isLoading ? (
-          <p role="status" className="p-6">
-            Loading records…
-          </p>
+          <LoadingState label="Loading records" variant="table" />
         ) : (
           <Table exportable>
             <TableHeader>

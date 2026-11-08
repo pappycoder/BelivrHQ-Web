@@ -1,4 +1,6 @@
 "use client";
+
+import { LoadingState } from "@/components/shared/loading-state";
 import { UrlTabs } from "@/components/shared/url-tabs";
 import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ConfirmDeleteDialog } from "@/components/pastoral/confirm-delete-dialog";
@@ -85,7 +87,7 @@ export function IntegrationSettingsTab() {
     staleTime: 60_000,
   });
   if (!can("integrations", "read")) return null;
-  if (query.isLoading) return <p role="status" className="text-xs text-ink-faint">Loading integrations…</p>;
+  if (query.isLoading) return <LoadingState label="Loading integrations" variant="cards" rows={3} />;
   if (query.isError)
     return (
       <div

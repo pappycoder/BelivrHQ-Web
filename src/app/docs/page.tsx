@@ -1,5 +1,7 @@
 "use client";
 
+import { LoadingState } from "@/components/shared/loading-state";
+
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,12 +15,11 @@ export default function DocsPage() {
     router.replace(slug ? `/help/${slug}` : `/help${window.location.search}`);
   }, [router]);
   return (
-    <p className="p-6">
-      Opening the{" "}
+    <div className="space-y-4 p-6">
+      <LoadingState label="Opening the Help Centre" variant="detail" />
       <Link href="/help" className="underline">
         Help Centre
       </Link>
-      …
-    </p>
+    </div>
   );
 }
