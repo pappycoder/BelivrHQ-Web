@@ -14,7 +14,7 @@ export function GuestOnly({ children }: { children: React.ReactNode }) {
     if (!isLoading && enteredAsGuest === null) setEnteredAsGuest(!isAuthenticated);
   }, [isLoading, isAuthenticated, enteredAsGuest]);
   useEffect(() => {
-    if (enteredAsGuest === false) router.replace("/dashboard");
+    if (enteredAsGuest === false) router.replace("/home");
   }, [enteredAsGuest, router]);
   if (enteredAsGuest !== true) return <LoadingState label="Checking your session" variant="form" rows={3} />;
   return children;

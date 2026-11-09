@@ -384,7 +384,7 @@ export function OfflineWorkspace() {
               workspace.
             </p>
             <Button asChild>
-              <Link href="/dashboard" prefetch={false}>Back to ChurchOS</Link>
+              <Link href="/home" prefetch={false}>Back to ChurchOS</Link>
             </Button>
           </CardContent>
         </Card>
@@ -412,7 +412,7 @@ export function OfflineWorkspace() {
               {online ? "Connected" : "Offline"}
             </span>
             <Button variant="outline" asChild>
-              <Link href="/dashboard" prefetch={false}>Back to ChurchOS</Link>
+              <Link href="/home" prefetch={false}>Back to ChurchOS</Link>
             </Button>
             {workspace && (
               <Button variant="outline" onClick={lock}>

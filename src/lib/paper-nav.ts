@@ -57,15 +57,15 @@ export const PAPER_AREAS: PaperArea[] = [
     href: "/home",
     icon: House,
     blurb: "Your day, at a glance",
-    planPath: "/dashboard",
+    planPath: "/home",
     children: [
       {
         title: "Workspace",
         href: "/home",
         children: [
-          { title: "Overview", href: "/home", description: "Today's rhythm", live: true, planPath: "/dashboard" },
-          { title: "Notifications", href: "/notifications", description: "Everything waiting on you", live: true, planPath: "/dashboard" },
-          { title: "Search", href: "/search", description: "Find anyone or anything", live: true, planPath: "/dashboard" },
+          { title: "Overview", href: "/home", description: "Today's rhythm", live: true, planPath: "/home" },
+          { title: "Notifications", href: "/notifications", description: "Everything waiting on you", live: true, planPath: "/home" },
+          { title: "Search", href: "/search", description: "Find anyone or anything", live: true, planPath: "/home" },
         ],
       },
     ],
@@ -235,8 +235,8 @@ export const PAPER_AREAS: PaperArea[] = [
         href: "/library/forms",
         planPath: "/forms",
         children: [
+          { title: "Form Builder", href: "/library/forms/new", description: "Start from a blank page", permission: "forms:list:create", live: true, planPath: "/forms/new" },
           { title: "All forms", href: "/library/forms", description: "Build and send", permission: "forms:list:read", live: true, planPath: "/forms" },
-          { title: "Builder", href: "/library/forms/new", description: "Start from a blank page", permission: "forms:list:create", live: true, planPath: "/forms/new" },
           { title: "Submissions", href: "/library/forms/submissions", description: "Answers inbox", permission: "forms:submissions:read", live: true, planPath: "/forms/submissions" },
         ],
       },

@@ -53,7 +53,7 @@ function AssistantPanel({ profile }: { profile: CurrentProfile }) {
   const active = useRef<AbortController | null>(null);
   const end = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const page = matchRoutePermission(pathname)?.prefix ?? "/dashboard";
+  const page = matchRoutePermission(pathname)?.prefix ?? "/home";
   const { canAny } = usePermissions();
   const { setChatSuppressed } = useSupportChat();
 

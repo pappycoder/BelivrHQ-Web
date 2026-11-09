@@ -8,9 +8,9 @@ export default function IntegrationsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Admin · Church"
-        title="Connect the tools behind the scenes."
-        description="Email, messaging, calls and payments — provider accounts stay church-owned, encrypted and write-only."
+        eyebrow="Admin · Integrations"
+        title="Your tools, working together."
+        description="Manage the accounts and services that keep your church connected — from messages to payments."
       />
       <IntegrationSettingsTab />
     </div>

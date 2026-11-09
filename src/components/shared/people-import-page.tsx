@@ -473,7 +473,7 @@ export function PeopleImportPage({
       <ImportHeader
         title={`Import ${plural}`}
         breadcrumbs={[
-          { label: "Home", href: "/dashboard" },
+          { label: "Home", href: "/home" },
           { label: plural, href: `/${kind}` },
           { label: "Import" },
         ]}

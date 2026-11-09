@@ -52,6 +52,8 @@ export interface BroadcastListResponse {
 }
 
 export interface ListBroadcastsParams {
+  sortBy?: 'name' | 'createdAt' | 'scheduledAt' | 'sentAt' | 'totalRecipients' | 'channel' | 'status';
+  sortOrder?: 'asc' | 'desc';
   branchId?: string;
   page?: number;
   limit?: number;

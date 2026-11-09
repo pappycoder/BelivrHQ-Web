@@ -36,11 +36,11 @@ export function PageHeader({ title, titleMeta, breadcrumbs, action, description 
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/dashboard">
-                <Home className="h-4 w-4" /><span className="sr-only">Dashboard</span>
+              <BreadcrumbLink href="/home">
+                <Home className="h-4 w-4" /><span className="sr-only">Home</span>
               </BreadcrumbLink>
             </BreadcrumbItem>
-            {breadcrumbs.filter((item) => !(item.href === "/dashboard" || /^(home|dashboard)$/i.test(item.label))).map((item, i) => (
+            {breadcrumbs.filter((item) => !(item.href === "/home" || item.href === "/dashboard" || /^(home|dashboard)$/i.test(item.label))).map((item, i) => (
               <React.Fragment key={i}>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>

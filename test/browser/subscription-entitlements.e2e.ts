@@ -155,7 +155,7 @@ test("ordinary staff cannot see billing screens and do not request billing data"
   await fixture(context, "secretary");
   await page.goto("/subscription");
   await expect(
-    page.getByRole("heading", { name: "Contact your administrator" }),
+    page.getByRole("heading", { name: "Access denied" }),
   ).toBeVisible();
   await expect(page.getByRole("progressbar")).toHaveCount(0);
   expect(

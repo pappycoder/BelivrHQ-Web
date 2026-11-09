@@ -1,5 +1,6 @@
 "use client";
 
+import { FormStatusDialog } from "@/components/forms/form-status-dialog";
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
@@ -14,6 +15,7 @@ import {
   Plus,
   Rows3,
   Share2,
+  SlidersHorizontal,
   Trash2,
 } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
@@ -101,6 +103,7 @@ export default function FormsListPage() {
   const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [archivedView, setArchivedView] = React.useState(false);
   const [view, setView] = React.useState<"table" | "cards">("cards");
+  const [statusTarget, setStatusTarget] = React.useState<Form | null>(null);
   const [deleteTarget, setDeleteTarget] = React.useState<Form | null>(null);
 
   // Debounced server search — every keystroke was a fresh query and could
@@ -151,6 +154,7 @@ export default function FormsListPage() {
       icon: <PencilLine />,
       href: `/library/forms/${form.id}/edit`,
     },
+    canUpdate && !form.archivedAt && { label: "Change form status", icon: <SlidersHorizontal />, onSelect: () => setStatusTarget(form) },
     hasLivePublicFormLink(form) && {
       label: "Copy public link",
       icon: <Share2 />,
@@ -422,6 +426,8 @@ export default function FormsListPage() {
           </div>
         </>
       )}
+
+      {statusTarget && <FormStatusDialog key={statusTarget.id} form={statusTarget} onClose={() => setStatusTarget(null)} />}
 
       <ConfirmDeleteDialog
         open={!!deleteTarget}

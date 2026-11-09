@@ -18,7 +18,6 @@ export interface RoutePermissionRule {
 
 export const ROUTE_PERMISSIONS: RoutePermissionRule[] = [
   // Shared pages require an active authenticated profile, without a module grant.
-  { prefix: "/dashboard" },
   // Paper (Abide IA) workspace shell — Home and Notifications are shared.
   { prefix: "/home" },
   { prefix: "/support" },
@@ -249,6 +248,7 @@ export function checkRule(
 export function permissionReturnTo(destination: string | null, can: (permission: string) => boolean): string {
   if (!destination?.startsWith("/") || destination.startsWith("//") || /[\\\u0000-\u001f]/.test(destination)) return "/home";
   const url = new URL(destination, "https://churchos.invalid");
+  if (url.pathname === "/dashboard") url.pathname = "/home";
   return checkRule(matchRoutePermission(url.pathname), can)
     ? `${url.pathname}${url.search}${url.hash}`
     : "/home";

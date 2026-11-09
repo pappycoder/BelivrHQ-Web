@@ -6,6 +6,13 @@ function getTokenFromRequest(request: NextRequest): string | null {
 }
 
 export function middleware(request: NextRequest) {
+  // Keep bookmarked dashboard URLs on the current workspace entry point.
+  if (request.nextUrl.pathname === "/dashboard") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/home";
+    return NextResponse.redirect(url);
+  }
+
   const token = getTokenFromRequest(request);
   // Presence is only a routing hint. The backend verifies the actual session.
   const authenticated = !!token || !!request.cookies.get("churchos_refresh_token")?.value;

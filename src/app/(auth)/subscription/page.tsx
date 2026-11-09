@@ -2,22 +2,37 @@
 
 import { LoadingState } from "@/components/shared/loading-state";
 import { showCheckoutLoading } from "@/lib/checkout-loading";
-import { ExistingBillingPresentation } from "@/components/workspace/existing-billing-presentation";
 import { LegalNavigation } from "@/components/legal/legal-navigation";
+import { PageHeader } from "@/components/paper/section";
+import { Tag } from "@/components/paper/stat";
 import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from "@/components/ui/table";
+  EmptyState,
+  ListPaginationFooter,
+  ManageHeading,
+  RowActions,
+} from "@/components/paper/primitives";
+import { ListTable } from "@/components/shared/list-table";
+import { cn } from "@/lib/utils";
 import { SupportChatButton } from "@/components/support/support-chat-button";
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, CreditCard, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Building2,
+  Check,
+  CreditCard,
+  CheckCircle2,
+  AlertCircle,
+  Clock3,
+  ReceiptText,
+  RefreshCcw,
+  ShieldCheck,
+  SlidersHorizontal,
+  UserRound,
+  UsersRound,
+} from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useBillingStatus } from "@/hooks/use-billing";
 import { api } from "@/lib/api";
@@ -25,8 +40,10 @@ import { subscriptionCheckoutUrl } from "@/lib/subscription-checkout";
 import { paymentOutcome } from "@/lib/payment-confirmation";
 import { publishPaymentHint, subscribePaymentHints } from "@/lib/payment-sync";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { SubscriptionCurrencySwitcher, SubscriptionPrice } from "@/components/billing/subscription-currency";
+import {
+  SubscriptionCurrencySwitcher,
+  SubscriptionPrice,
+} from "@/components/billing/subscription-currency";
 import {
   useSubscriptionPricing,
   subscriptionMoney,
@@ -51,7 +68,7 @@ const date = (value?: string | null) =>
     : "Not activated";
 export default function SubscriptionPage() {
   const router = useRouter();
-  const { isAuthenticated, isLoading, logout } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const status = useBillingStatus();
   const pricing = useSubscriptionPricing();
   const [paymentChoice, setPaymentChoice] = React.useState<{
@@ -66,6 +83,7 @@ export default function SubscriptionPage() {
   const [message, setMessage] = React.useState("");
   const [reference, setReference] = React.useState("");
   const [manage, setManage] = React.useState(false);
+  const [paymentPage, setPaymentPage] = React.useState(1);
   const initialized = React.useRef(false);
   const checkoutWindow = React.useRef<Window | null>(null);
   const preparingWindow = React.useRef(false);
@@ -351,88 +369,121 @@ export default function SubscriptionPage() {
     },
     onError: (e) => setMessage(e.message),
   });
+  const heading = (
+    <PageHeader
+      eyebrow="Settings · Subscription"
+      title="Plan & Billing"
+      description="A clear view of your church’s plan, allowances and payments."
+      actions={
+        <div className="flex flex-wrap gap-2 [&_button]:h-9 [&_button]:rounded-full [&_button]:text-xs">
+          <Button
+            variant="outline"
+            asChild
+            className="h-9 rounded-full border-line text-xs"
+          >
+            <Link href="/help/subscription-currencies-and-payments">
+              Billing guide
+            </Link>
+          </Button>
+          <SupportChatButton />
+        </div>
+      }
+    />
+  );
   if (isLoading)
     return (
-      <LoadingState label="Loading your account" variant="detail" className="mx-auto max-w-6xl" />
+      <div className="space-y-6">
+        {heading}
+        <LoadingState label="Loading your account" variant="detail" />
+      </div>
     );
   if (!isAuthenticated)
     return (
-      <div className="mx-auto max-w-lg space-y-4 p-8">
-        <h1 className="font-display text-2xl font-semibold">Plan & Billing</h1>
-        <p>
-          Sign in to your church administrator account to manage subscriptions.
-        </p>
-        <Button asChild>
-          <Link href="/login?returnTo=%2Fsubscription">Sign in</Link>
-        </Button>
+      <div className="mx-auto max-w-3xl space-y-6 px-5 py-8">
+        {heading}
+        <EmptyState
+          icon={<CreditCard />}
+          title="Sign in to manage your plan"
+          description="Use your church administrator account to manage subscriptions."
+          action={
+            <Button asChild className="rounded-full">
+              <Link href="/login?returnTo=%2Fsubscription">Sign in</Link>
+            </Button>
+          }
+        />
       </div>
     );
   if (!status.allowed && status.accessReady)
     return (
-      <div className="mx-auto max-w-lg space-y-5 p-8">
-        <h1 className="font-display text-2xl font-semibold">Contact your administrator</h1>
-        <p>
-          Your church administrator manages the ChurchOS subscription. Please
-          contact them to activate or renew your workspace.
-        </p>
-        <Button variant="outline" onClick={() => void logout()}>
-          Sign out
-        </Button>
+      <div className="space-y-6">
+        {heading}
+        <section className="paper-card flex flex-col items-center gap-4 rounded-2xl px-6 py-12 text-center">
+          <ShieldCheck className="size-8 text-brand" />
+          <h2 className="font-display text-xl font-semibold">
+            Contact your administrator
+          </h2>
+          <p className="max-w-lg text-sm leading-relaxed text-ink-soft">
+            Your church administrator manages the ChurchOS subscription. Contact
+            them to activate or renew your workspace.
+          </p>
+          <Button variant="outline" asChild className="rounded-full">
+            <Link href="/home">Back to workspace</Link>
+          </Button>
+        </section>
       </div>
     );
   if (!status.allowed)
     return (
-      <LoadingState label="Checking access" variant="detail" className="mx-auto max-w-6xl" />
+      <div className="space-y-6">
+        {heading}
+        <LoadingState label="Checking access" variant="detail" />
+      </div>
     );
+  const payments = data?.payments ?? [];
+  const pagedPayments = payments.slice(
+    (paymentPage - 1) * 10,
+    paymentPage * 10,
+  );
+  const currentPlanName =
+    launchPlans.find((item) => item.id === data?.subscription?.plan)?.name ??
+    "Choose your plan";
   return (
-    <ExistingBillingPresentation
-      enabled={Boolean(data?.subscription?.paid_until)}
-    >
-      <main className="mx-auto w-full max-w-6xl space-y-6 px-4 py-8 sm:px-8">
-        <header className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            {data?.active && (!trackedReference || outcome === "applied") && (
-              <Link
-                href="/home"
-                className="mb-4 inline-flex items-center gap-2 text-sm text-muted-foreground"
-              >
-                <ArrowLeft className="size-4" />
-                Back to workspace
-              </Link>
+    <div className="min-w-0 space-y-6">
+      {heading}
+      {status.isPending && (
+        <LoadingState label="Loading subscription" variant="cards" rows={3} />
+      )}
+      {status.isError && (
+        <EmptyState
+          icon={<AlertCircle />}
+          title="Billing could not be loaded"
+          description={status.error.message}
+          action={
+            <Button variant="outline" onClick={() => void status.refetch()}>
+              Try again
+            </Button>
+          }
+        />
+      )}
+      {trackedReference && (
+        <div
+          role={outcome === "review" ? "alert" : "status"}
+          className={cn(
+            "flex items-start gap-3 rounded-2xl border p-5",
+            outcome === "review"
+              ? "border-gold/30 bg-gold-soft/30"
+              : "border-brand/20 bg-brand-soft/25",
+          )}
+        >
+          <span className="mt-0.5 text-brand">
+            {outcome === "applied" ? (
+              <CheckCircle2 className="size-5" />
+            ) : (
+              <Clock3 className="size-5" />
             )}
-            <h1 className="text-3xl font-semibold tracking-tight">
-              Plan & Billing
-            </h1>
-            <p className="mt-2 text-muted-foreground">
-              Your church subscription, allowances and payments.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button variant="outline" asChild>
-              <Link href="/help/subscription-currencies-and-payments">
-                Billing guide
-              </Link>
-            </Button>
-            <SupportChatButton />
-            <Button variant="outline" onClick={() => void logout()}>
-              Sign out
-            </Button>
-          </div>
-        </header>
-        <SubscriptionCurrencySwitcher />
-        {status.isPending && <LoadingState label="Loading subscription" variant="cards" rows={3} />}
-        {status.isError && (
-          <div role="alert" className="rounded-xl border p-4">
-            <p>{status.error.message}</p>
-            <Button onClick={() => void status.refetch()}>Try again</Button>
-          </div>
-        )}
-        {trackedReference && (
-          <div
-            role={outcome === "review" ? "alert" : "status"}
-            className="space-y-2 rounded-xl border bg-muted/40 p-4"
-          >
-            <p className="font-medium">
+          </span>
+          <div className="min-w-0 space-y-2">
+            <p className="text-sm font-semibold">
               {outcome === "applied"
                 ? "Payment verified. Your subscription is active."
                 : outcome === "review"
@@ -440,7 +491,7 @@ export default function SubscriptionPage() {
                   : "Waiting for Flutterwave to confirm your payment."}
             </p>
             {waitingForPayment && (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs leading-relaxed text-ink-soft">
                 Complete payment in the separate Flutterwave window. Keep this
                 page open; we’ll update it automatically when payment is
                 verified.
@@ -450,255 +501,395 @@ export default function SubscriptionPage() {
                   " The latest attempt was unsuccessful. You can retry checkout; we’ll keep checking for a later confirmation."}
               </p>
             )}
-            <p className="break-all font-mono text-xs">{trackedReference}</p>
+            <p className="break-all font-mono text-[11px] text-ink-soft">
+              {trackedReference}
+            </p>
           </div>
-        )}
-        {message && (
-          <p role="status" className="rounded-xl border bg-muted/40 p-4">
-            {message}
-          </p>
-        )}
-        {data && (
-          <>
-            <Card>
-              <CardHeader>
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      CURRENT SUBSCRIPTION
-                    </p>
-                    <CardTitle className="mt-2 text-2xl capitalize">
-                      {data.subscription?.plan || "Choose your plan"}
-                    </CardTitle>
-                  </div>
-                  <span className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm">
-                    {data.active ? (
-                      <CheckCircle2 className="size-4 text-primary" />
-                    ) : (
-                      <AlertCircle className="size-4" />
-                    )}
-                    {data.active ? "Active" : "Renewal required"}
-                  </span>
+        </div>
+      )}
+      {message && (
+        <p
+          role="status"
+          className="rounded-xl border border-line bg-card px-5 py-4 text-sm text-ink-soft"
+        >
+          {message}
+        </p>
+      )}
+      {data && (
+        <>
+          <section
+            aria-label="Current subscription"
+            className="paper-card overflow-hidden rounded-2xl"
+          >
+            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line bg-muted/20 p-5 sm:p-6">
+              <div className="flex items-center gap-3">
+                <span className="grid size-12 place-items-center rounded-xl bg-brand-soft text-brand">
+                  <CreditCard className="size-5" />
+                </span>
+                <div>
+                  <p className="rule-label">Current subscription</p>
+                  <h2 className="mt-1 font-display text-2xl font-semibold">
+                    {currentPlanName}
+                  </h2>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                <p>
-                  Renew by{" "}
-                  <strong>{date(data.subscription?.paid_until)}</strong>.
+              </div>
+              <Tag tone={data.active ? "moss" : "gold"} dot>
+                {data.active
+                  ? "Active"
+                  : data.subscription?.paid_until
+                    ? "Renewal required"
+                    : "Not activated"}
+              </Tag>
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-5 sm:px-6">
+              <div>
+                <p className="text-sm text-ink-soft">
+                  {data.subscription?.paid_until ? (
+                    <>
+                      Renew by{" "}
+                      <strong className="text-ink">
+                        {date(data.subscription.paid_until)}
+                      </strong>
+                      .
+                    </>
+                  ) : (
+                    "Choose a plan to activate your church workspace."
+                  )}
+                </p>
+                <p className="mt-1 text-xs leading-relaxed text-ink-faint">
                   Renewals are manual; there are no automatic charges.
                 </p>
-                {data.subscription?.scheduled_plan && (
-                  <div className="rounded-lg border p-3">
-                    <p className="capitalize">
-                      Next renewal: {data.subscription.scheduled_plan} ·{" "}
-                      {data.subscription.scheduled_cycle}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Current access continues until expiry. Existing records
-                      will be kept; lower allowances block new additions. Renew
-                      at the selected plan to complete the change.
-                    </p>
-                    <Button
-                      variant="link"
-                      disabled={!status.canPay || schedule.isPending}
-                      onClick={() => schedule.mutate(true)}
-                    >
-                      Cancel scheduled change
-                    </Button>
-                  </div>
-                )}
-                <div className="grid gap-4 sm:grid-cols-3">
-                  {(["members", "staff", "locations"] as const).map(
-                    (resource) => {
-                      const used = data.usage?.[resource] ?? 0;
-                      const limit = data.limits?.[resource] ?? 0;
-                      const percent = limit
-                        ? Math.min(100, (used / limit) * 100)
-                        : 100;
-                      return (
-                        <div key={resource} className="rounded-xl border p-4">
-                          <div className="flex justify-between gap-2">
-                            <h2 className="font-medium capitalize">
-                              {resource === "staff"
-                                ? "Staff accounts"
-                                : resource}
-                            </h2>
-                            <strong>
-                              {used} / {limit}
-                            </strong>
-                          </div>
-                          <div
-                            role="progressbar"
-                            aria-label={`${resource} allowance`}
-                            aria-valuenow={used}
-                            aria-valuemin={0}
-                            aria-valuemax={Math.max(limit, used, 1)}
-                            className="my-3 h-2 overflow-hidden rounded-full bg-muted"
-                          >
-                            <div
-                              className={
-                                percent >= 90
-                                  ? "h-full bg-amber-500"
-                                  : "h-full bg-primary"
-                              }
-                              style={{ width: `${percent}%` }}
-                            />
-                          </div>
-                          <p className="text-xs text-muted-foreground">
-                            {resource === "members"
-                              ? "Non-archived directory records"
-                              : resource === "locations"
-                                ? "Includes your headquarters"
-                                : `${data.usage?.pendingInvitations ?? 0} pending invitations included`}
-                          </p>
-                          {used >= limit ? (
-                            <p className="mt-2 text-sm text-amber-700 dark:text-amber-300">
-                              Allowance reached. Review your plan to add more.
-                            </p>
-                          ) : percent >= 80 ? (
-                            <p className="mt-2 text-sm text-amber-700 dark:text-amber-300">
-                              Approaching your allowance.
-                            </p>
-                          ) : null}
-                        </div>
-                      );
-                    },
-                  )}
+              </div>
+              <Button
+                className="h-9 gap-2 rounded-full text-xs"
+                variant={manage ? "outline" : "default"}
+                onClick={() => setManage((value) => !value)}
+              >
+                <SlidersHorizontal className="size-3.5" />
+                {manage
+                  ? "Close plan comparison"
+                  : data.active
+                    ? "Manage plan"
+                    : "Choose a plan and renew"}
+              </Button>
+            </div>
+            {data.subscription?.scheduled_plan && (
+              <div className="mx-5 mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-gold-soft/30 p-4 sm:mx-6">
+                <div>
+                  <p className="text-sm font-semibold capitalize">
+                    Next renewal: {data.subscription.scheduled_plan} ·{" "}
+                    {data.subscription.scheduled_cycle}
+                  </p>
+                  <p className="mt-1 max-w-2xl text-xs leading-relaxed text-ink-soft">
+                    Current access continues until expiry. Existing records will
+                    be kept; lower allowances block new additions. Renew at the
+                    selected plan to complete the change.
+                  </p>
                 </div>
-                <Button onClick={() => setManage((v) => !v)}>
-                  {manage
-                    ? "Close plan comparison"
-                    : data.active
-                      ? "Manage plan"
-                      : "Choose a plan and renew"}
+                <Button
+                  variant="outline"
+                  className="h-8 rounded-full text-xs"
+                  disabled={!status.canPay || schedule.isPending}
+                  onClick={() => schedule.mutate(true)}
+                >
+                  Cancel scheduled change
                 </Button>
-              </CardContent>
-            </Card>
-            {(manage || !data.active || pending) && (
-              <section aria-label="Manage plan" className="space-y-5">
-                <h2 className="text-xl font-semibold">
-                  Choose the space your church needs
-                </h2>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                  {launchPlans.map((item) => {
-                    return (
-                      <Card
-                        key={item.id}
-                        className={plan === item.id ? "border-primary" : ""}
-                      >
-                        <CardHeader>
-                          <CardTitle>{item.name}</CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                          <p className="text-xl font-semibold">
-                            {item.id === "enterprise"
-                              ? "Negotiated"
-                              : <SubscriptionPrice pricing={pricing} plan={item.id} cycle={cycle} />}
-                          </p>
-                          <p className="text-sm">{item.capacity}</p>
-                          <ul className="space-y-1 text-xs text-muted-foreground">
-                            {item.features.map((f) => (
-                              <li key={f}>{f}</li>
+              </div>
+            )}
+          </section>
+          <div className="grid gap-3 md:grid-cols-3">
+            {(["members", "staff", "locations"] as const).map((resource) => {
+              const used = data.usage?.[resource] ?? 0,
+                limit = data.limits?.[resource] ?? 0;
+              const percent =
+                limit > 0 ? Math.min(100, (used / limit) * 100) : 0;
+              const Icon =
+                resource === "members"
+                  ? UsersRound
+                  : resource === "staff"
+                    ? UserRound
+                    : Building2;
+              return (
+                <section key={resource} className="paper-card rounded-2xl p-5">
+                  <div className="flex items-center justify-between gap-2">
+                    <h2 className="rule-label">
+                      {resource === "staff" ? "Staff accounts" : resource}
+                    </h2>
+                    <Icon className="size-4 text-brand" />
+                  </div>
+                  <p className="num mt-4 font-display text-2xl font-semibold">
+                    {used.toLocaleString()}{" "}
+                    <span className="ml-1.5 font-sans text-xs font-normal text-ink-faint">
+                      / {limit > 0 ? limit.toLocaleString() : "Unlimited"}
+                    </span>
+                  </p>
+                  <div
+                    role="progressbar"
+                    aria-label={`${resource} allowance`}
+                    aria-valuenow={used}
+                    aria-valuemin={0}
+                    aria-valuemax={Math.max(limit, used, 1)}
+                    aria-valuetext={`${used} used${limit > 0 ? ` of ${limit}` : ", no limit"}`}
+                    className="my-3 h-1.5 overflow-hidden rounded-full bg-muted"
+                  >
+                    <div
+                      className={cn(
+                        "h-full rounded-full",
+                        percent >= 90 ? "bg-gold" : "bg-brand",
+                      )}
+                      style={{ width: `${percent}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-ink-soft">
+                    {resource === "members"
+                      ? "Non-archived directory records"
+                      : resource === "locations"
+                        ? "Includes your headquarters"
+                        : `${data.usage?.pendingInvitations ?? 0} pending invitations included`}
+                  </p>
+                  {limit > 0 && (used >= limit || percent >= 80) && (
+                    <p className="mt-2 text-xs text-gold">
+                      {used >= limit
+                        ? "Allowance reached. Review your plan to add more."
+                        : "Approaching your allowance."}
+                    </p>
+                  )}
+                </section>
+              );
+            })}
+          </div>
+          {(manage || !data.active || pending) && (
+            <section aria-label="Manage plan" className="space-y-5">
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <p className="rule-label">Find your fit</p>
+                  <h2 className="mt-1 font-display text-xl font-semibold">
+                    Choose the space your church needs
+                  </h2>
+                  <p className="mt-1 text-sm text-ink-soft">
+                    Compare plans and review the exact payment before
+                    continuing.
+                  </p>
+                </div>
+                <label className="grid gap-1.5 text-xs text-ink-soft">
+                  Billing period
+                  <select
+                    aria-label="Billing period"
+                    className="h-9 rounded-full border border-line bg-card px-3 text-xs"
+                    value={cycle}
+                    disabled={!!pending}
+                    onChange={(event) =>
+                      setCycle(event.target.value as BillingCycle)
+                    }
+                  >
+                    <option value="monthly">Monthly</option>
+                    <option value="annual">Yearly · save 10%</option>
+                  </select>
+                </label>
+              </div>
+              <div className="paper-card rounded-2xl p-4 sm:p-5">
+                <SubscriptionCurrencySwitcher />
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {launchPlans.map((item) => {
+                  const selected = plan === item.id,
+                    current = data.subscription?.plan === item.id,
+                    catalog = data.catalog?.find(
+                      (entry) => entry.id === item.id,
+                    );
+                  return (
+                    <article
+                      key={item.id}
+                      className={cn(
+                        "paper-card flex min-w-0 flex-col rounded-2xl border p-5",
+                        selected
+                          ? "border-brand/40 bg-brand-soft/20"
+                          : "border-line",
+                      )}
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <h3 className="font-display text-lg font-semibold">
+                          {item.name}
+                        </h3>
+                        {selected ? (
+                          <Tag tone="brand">Selected</Tag>
+                        ) : current ? (
+                          <Tag tone="neutral">Current</Tag>
+                        ) : null}
+                      </div>
+                      <p className="mt-2 min-h-10 text-xs leading-relaxed text-ink-soft">
+                        {item.description}
+                      </p>
+                      <p className="mt-4 font-display text-3xl font-semibold tracking-tight">
+                        {item.id === "enterprise" ? (
+                          "Let’s talk"
+                        ) : (
+                          <SubscriptionPrice
+                            pricing={pricing}
+                            plan={item.id}
+                            cycle={cycle}
+                          />
+                        )}
+                      </p>
+                      {item.id !== "enterprise" && (
+                        <p className="mt-1 text-xs text-ink-faint">
+                          per {cycle === "annual" ? "year" : "month"}
+                        </p>
+                      )}
+                      <p className="mt-4 border-y border-line py-3 text-xs leading-relaxed text-ink-soft">
+                        {catalog?.limits
+                          ? `${catalog.limits.members.toLocaleString()} members · ${catalog.limits.locations} location${catalog.limits.locations === 1 ? "" : "s"} · ${catalog.limits.staff} staff accounts`
+                          : item.capacity}
+                      </p>
+                      <ul className="mt-4 space-y-2 text-xs leading-relaxed text-ink-soft">
+                        {item.features.slice(0, 4).map((feature) => (
+                          <li key={feature} className="flex items-start gap-2">
+                            <Check className="mt-0.5 size-3.5 shrink-0 text-brand" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                      {item.features.length > 4 && (
+                        <details className="mt-3 text-xs text-ink-soft">
+                          <summary className="cursor-pointer text-brand">
+                            All plan features
+                          </summary>
+                          <ul className="mt-2 space-y-2">
+                            {item.features.slice(4).map((feature) => (
+                              <li
+                                key={feature}
+                                className="flex items-start gap-2"
+                              >
+                                <Check className="mt-0.5 size-3.5 shrink-0 text-brand" />
+                                {feature}
+                              </li>
                             ))}
                           </ul>
-                          {item.id === "enterprise" ? (
-                            <p className="text-sm">
+                        </details>
+                      )}
+                      <div className="mt-auto pt-5">
+                        {item.id === "enterprise" ? (
+                          <>
+                            <p className="mb-3 text-xs text-ink-faint">
                               Contact ChurchOS sales for an agreed quote.
                             </p>
-                          ) : (
                             <Button
-                              className="w-full"
-                              variant={plan === item.id ? "default" : "outline"}
-                              disabled={!!pending}
-                              onClick={() => setPlan(item.id as typeof plan)}
+                              asChild
+                              variant="outline"
+                              className="h-9 w-full rounded-full text-xs"
                             >
-                              {data.subscription?.plan === item.id
-                                ? "Current plan"
-                                : `Choose ${item.name}`}
+                              <Link href="/help/contact-support">
+                                Talk to sales
+                              </Link>
                             </Button>
-                          )}
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-                <div className="grid gap-5 rounded-xl border bg-card p-5 md:grid-cols-2">
-                  <div className="space-y-3">
-                    <label className="block text-sm">
-                      Billing period
-                      <select
-                        aria-label="Billing period"
-                        className="mt-1 block w-full rounded-md border bg-background p-3"
-                        value={cycle}
-                        disabled={!!pending}
-                        onChange={(e) =>
-                          setCycle(e.target.value as BillingCycle)
-                        }
-                      >
-                        <option value="monthly">Monthly</option>
-                        <option value="annual">Yearly · save 10%</option>
-                      </select>
-                    </label>
-                    {!downgrade && (
-                      <label className="block text-sm">
-                        Payment provider
-                        <select
-                          aria-label="Payment provider"
-                          className="mt-1 block w-full rounded-md border bg-background p-3"
-                          value={gateway}
-                          disabled
-                        >
-                          <option value="flutterwave">Flutterwave</option>
-                        </select>
-                      </label>
-                    )}
-                    {!downgrade && (
-                      <label className="block text-sm">
-                        Payment currency
-                        <select
-                          aria-label="Payment currency"
-                          className="mt-1 block w-full rounded-md border bg-background p-3"
-                          value={paymentCurrency}
-                          disabled={!!pending}
-                          onChange={(event) =>
-                            setPaymentChoice({
-                              key: choiceKey,
-                              currency: event.target.value,
-                            })
-                          }
-                        >
-                          {(pending
-                            ? [pending.currency || "NGN"]
-                            : availableCurrencies
-                          ).map((currency) => (
-                            <option key={currency} value={currency}>
-                              {currency}
-                            </option>
-                          ))}
-                        </select>
-                        {paymentCurrency !== pricing.currency && (
-                          <span className="mt-2 block text-xs text-muted-foreground">
-                            Prices are displayed in {pricing.currency}. This
-                            provider will charge {paymentCurrency}; review the
-                            exact amount before continuing.
-                          </span>
+                          </>
+                        ) : (
+                          <Button
+                            className="h-9 w-full rounded-full text-xs"
+                            aria-pressed={selected}
+                            variant={selected ? "default" : "outline"}
+                            disabled={!!pending}
+                            onClick={() => setPlan(item.id as typeof plan)}
+                          >
+                            {current ? "Current plan" : `Choose ${item.name}`}
+                          </Button>
                         )}
-                      </label>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+              <section
+                aria-label="Payment review"
+                className="paper-card overflow-hidden rounded-2xl"
+              >
+                <div className="border-b border-line bg-muted/20 px-5 py-4 sm:px-6">
+                  <p className="rule-label">Before you continue</p>
+                  <h2 className="mt-1 font-display text-xl font-semibold">
+                    Review your plan
+                  </h2>
+                </div>
+                <div className="grid gap-6 p-5 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] sm:p-6">
+                  <div className="space-y-4">
+                    <div>
+                      <p className="rule-label">Selected plan</p>
+                      <p className="mt-2 font-display text-xl font-semibold capitalize">
+                        {pending?.plan || plan}
+                      </p>
+                      <p className="mt-1 text-xs text-ink-soft">
+                        {(pending?.cycle || cycle) === "annual"
+                          ? "Annual billing"
+                          : "Monthly billing"}
+                      </p>
+                    </div>
+                    {!downgrade && (
+                      <>
+                        <label className="grid gap-1.5 text-xs text-ink-soft">
+                          Payment provider
+                          <select
+                            aria-label="Payment provider"
+                            className="h-10 rounded-lg border border-line bg-background px-3 text-sm"
+                            value={gateway}
+                            disabled
+                          >
+                            <option value="flutterwave">Flutterwave</option>
+                          </select>
+                        </label>
+                        <label className="grid gap-1.5 text-xs text-ink-soft">
+                          Payment currency
+                          <select
+                            aria-label="Payment currency"
+                            className="h-10 rounded-lg border border-line bg-background px-3 text-sm"
+                            value={paymentCurrency}
+                            disabled={!!pending}
+                            onChange={(event) =>
+                              setPaymentChoice({
+                                key: choiceKey,
+                                currency: event.target.value,
+                              })
+                            }
+                          >
+                            {(pending
+                              ? [pending.currency || "NGN"]
+                              : availableCurrencies
+                            ).map((currency) => (
+                              <option key={currency} value={currency}>
+                                {currency}
+                              </option>
+                            ))}
+                          </select>
+                          {paymentCurrency !== pricing.currency && (
+                            <span className="text-xs leading-relaxed">
+                              Prices are displayed in {pricing.currency}. This
+                              provider will charge {paymentCurrency}; review the
+                              exact amount before continuing.
+                            </span>
+                          )}
+                        </label>
+                      </>
                     )}
+                    <div className="flex gap-2 rounded-xl bg-brand-soft/25 p-3 text-xs leading-relaxed text-ink-soft">
+                      <ShieldCheck className="mt-0.5 size-4 shrink-0 text-brand" />
+                      <p>
+                        Review the plan, currency and period here. Payment is
+                        completed securely in a separate Flutterwave window.
+                      </p>
+                    </div>
                   </div>
-                  <div className="space-y-3">
+                  <div className="min-w-0 space-y-4 rounded-xl bg-muted/25 p-4 sm:p-5">
                     {downgrade ? (
                       <>
-                        <h3 className="font-semibold">
+                        <h3 className="font-display text-lg font-semibold">
                           Schedule for your next renewal
                         </h3>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm leading-relaxed text-ink-soft">
                           Your current plan continues until{" "}
                           {date(data.subscription?.paid_until)}. Records will be
                           retained, and additions beyond the new allowance will
                           be blocked. No charge today.
                         </p>
                         <Button
+                          className="rounded-full"
                           disabled={!status.canPay || schedule.isPending}
                           onClick={() => schedule.mutate(false)}
                         >
@@ -707,8 +898,8 @@ export default function SubscriptionPage() {
                       </>
                     ) : (
                       <>
-                        <h3 className="flex items-center gap-2 font-semibold">
-                          <CreditCard className="size-4" />
+                        <h3 className="flex items-center gap-2 text-sm font-semibold">
+                          <CreditCard className="size-4 text-brand" />
                           {pending
                             ? "Pending payment"
                             : samePlan && data.active
@@ -718,9 +909,9 @@ export default function SubscriptionPage() {
                                 : "Activate subscription"}
                         </h3>
                         {pending ? (
-                          <p>
+                          <p className="text-sm text-ink-soft">
                             Amount due:{" "}
-                            <strong>
+                            <strong className="block pt-2 font-display text-3xl font-semibold text-ink">
                               {subscriptionMoney(
                                 pending.amount,
                                 pending.currency || "NGN",
@@ -729,24 +920,28 @@ export default function SubscriptionPage() {
                           </p>
                         ) : quote.data && !quote.isError ? (
                           <>
-                            <p className="font-display text-2xl font-semibold">
+                            <p className="font-display text-3xl font-semibold">
                               {subscriptionMoney(
                                 quote.data.amount,
                                 quote.data.currency || paymentCurrency,
                               )}{" "}
-                              due
+                              <span className="font-sans text-xs font-normal text-ink-soft">
+                                due
+                              </span>
                             </p>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm leading-relaxed text-ink-soft">
                               {quote.data.intent === "upgrade"
                                 ? "Prorated upgrade for the remaining paid period. Your renewal deadline stays the same."
                                 : "Full subscription period. No automatic renewal charges."}{" "}
                               Renew by {date(quote.data.renewBy)}.
                             </p>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs leading-relaxed text-ink-faint">
                               Price locked until{" "}
                               {new Date(
                                 quote.data.expiresAt,
-                              ).toLocaleTimeString()}
+                              ).toLocaleTimeString("en-NG", {
+                                timeZone: "Africa/Lagos",
+                              })}
                               .{" "}
                               {quote.data.currency !== "USD" && (
                                 <>
@@ -764,7 +959,7 @@ export default function SubscriptionPage() {
                             </p>
                           </>
                         ) : samePlan && data.active ? (
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-sm leading-relaxed text-ink-soft">
                             Your plan is active. Choose a larger plan to upgrade
                             now, or renew after{" "}
                             {date(data.subscription?.paid_until)}.
@@ -780,10 +975,19 @@ export default function SubscriptionPage() {
                               Refresh quote
                             </button>
                           </p>
+                        ) : !data.gateways.length ||
+                          !availableCurrencies.length ? (
+                          <p role="status" className="text-sm text-ink-soft">
+                            Checkout is being configured. Contact ChurchOS.
+                          </p>
                         ) : (
-                          <LoadingState label="Calculating your payment" variant="inline" className="h-9" />
+                          <LoadingState
+                            label="Calculating your payment"
+                            variant="inline"
+                            className="h-9"
+                          />
                         )}
-                        <div className="space-y-2 rounded-lg border p-3 text-xs leading-5 text-muted-foreground">
+                        <div className="space-y-2 rounded-xl border border-line bg-card/60 p-3 text-xs leading-relaxed text-ink-soft">
                           <p>
                             Before paying, review the exact amount, currency and
                             period. The Terms of Service include cancellation
@@ -794,6 +998,7 @@ export default function SubscriptionPage() {
                           <LegalNavigation label="Checkout legal information" />
                         </div>
                         <Button
+                          className="h-10 w-full gap-2 rounded-full text-sm"
                           disabled={
                             !status.canPay ||
                             checkout.isPending ||
@@ -806,24 +1011,27 @@ export default function SubscriptionPage() {
                           }
                           onClick={openCheckout}
                         >
+                          <CreditCard className="size-4" />
                           {pending
                             ? "Resume secure checkout"
                             : "Continue to payment"}
                         </Button>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs leading-relaxed text-ink-faint">
                           Flutterwave opens in a separate window. ChurchOS waits
                           here for verified payment.
                         </p>
-                        {!data.gateways.length && (
-                          <p className="text-sm">
-                            Checkout is being configured. Contact ChurchOS.
-                          </p>
-                        )}
                       </>
+                    )}
+                    {!status.canPay && (
+                      <p className="text-xs text-ink-soft">
+                        Your account can view billing. A billing administrator
+                        can make payments or change renewal preferences.
+                      </p>
                     )}
                     {(reference || pending) && (
                       <Button
                         variant="outline"
+                        className="w-full rounded-full text-xs"
                         disabled={!status.canPay || verification.isFetching}
                         onClick={() =>
                           checkPayment(reference || pending!.reference)
@@ -835,82 +1043,120 @@ export default function SubscriptionPage() {
                   </div>
                 </div>
               </section>
-            )}
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment history</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {!data.payments?.length ? (
-                  <p className="text-sm text-muted-foreground">
-                    No subscription payments yet.
-                  </p>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <Table className="w-full text-left text-sm" records={data.payments ?? []} recordKey="reference" recordType="subscriptionPayment">
-                      <TableHeader>
-                        <TableRow className="border-b">
-                          <TableHead className="p-2">Reference</TableHead>
-                          <TableHead className="p-2">Plan</TableHead>
-                          <TableHead className="p-2">Date</TableHead>
-                          <TableHead className="p-2">Amount</TableHead>
-                          <TableHead className="p-2">Status</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {data.payments.map((payment) => (
-                          <TableRow
-                            key={payment.reference}
-                            className="border-b"
-                          >
-                            <TableCell
-                              className="p-2 font-mono text-xs"
-                              title={payment.reference}
-                            >
-                              {payment.reference}
-                            </TableCell>
-                            <TableCell className="p-2 capitalize">
-                              {payment.plan}
-                            </TableCell>
-                            <TableCell className="p-2 whitespace-nowrap">
-                              {date(payment.created_at)}
-                            </TableCell>
-                            <TableCell className="p-2 whitespace-nowrap">
-                              {subscriptionMoney(
-                                payment.amount,
-                                payment.currency || "NGN",
-                              )}
-                            </TableCell>
-                            <TableCell className="p-2 capitalize">
-                              {payment.application_status === "review"
-                                ? "Received — contact support"
-                                : payment.status}
-                              {status.canPay &&
-                                ["pending", "failed"].includes(
-                                  payment.status,
-                                ) && (
-                                  <button
-                                    type="button"
-                                    className="ml-2 underline"
-                                    onClick={() =>
-                                      checkPayment(payment.reference)
-                                    }
-                                  >
-                                    Check payment
-                                  </button>
-                                )}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+            </section>
+          )}
+          <section
+            aria-label="Subscription payment history"
+            className="paper-card overflow-hidden rounded-2xl"
+          >
+            <div className="flex items-center gap-3 border-b border-line px-5 py-4">
+              <ReceiptText className="size-5 text-brand" />
+              <div>
+                <h2 className="font-display text-lg font-semibold">
+                  Payment history
+                </h2>
+                <p className="mt-1 text-xs text-ink-soft">
+                  Your church’s subscription payments, with their exact amounts
+                  and references.
+                </p>
+              </div>
+            </div>
+            {!payments.length ? (
+              <EmptyState
+                icon={<ReceiptText />}
+                title="No subscription payments yet"
+                description="Payments will appear here after checkout. Each record keeps its original currency and reference."
+              />
+            ) : (
+              <>
+                <ListTable
+                  tableId="subscription-payments"
+                  label="Subscription payments"
+                  records={pagedPayments}
+                  recordKey="reference"
+                  recordType="subscriptionPayment"
+                  className="min-w-[900px]"
+                >
+                  <div className="rule-label grid grid-cols-[minmax(0,1.6fr)_1fr_1.2fr_1fr_1.3fr_auto] items-center gap-3 border-b border-line px-5 py-3">
+                    <span>Reference</span>
+                    <span>Plan</span>
+                    <span>Date</span>
+                    <span>Amount</span>
+                    <span>Status</span>
+                    <ManageHeading />
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          </>
-        )}
-      </main>
-    </ExistingBillingPresentation>
+                  {pagedPayments.map((payment) => (
+                    <div
+                      key={payment.reference}
+                      className="group grid grid-cols-[minmax(0,1.6fr)_1fr_1.2fr_1fr_1.3fr_auto] items-center gap-3 border-b border-line/70 px-5 py-4 text-xs"
+                    >
+                      <span
+                        title={payment.reference}
+                        className="truncate font-mono text-[11px] text-ink-soft"
+                      >
+                        {payment.reference}
+                      </span>
+                      <span className="capitalize">{payment.plan}</span>
+                      <span className="text-ink-faint">
+                        {date(payment.created_at)}
+                      </span>
+                      <span className="num font-semibold">
+                        {subscriptionMoney(
+                          payment.amount,
+                          payment.currency || "NGN",
+                        )}
+                      </span>
+                      <span>
+                        <Tag
+                          tone={
+                            payment.application_status === "review"
+                              ? "gold"
+                              : payment.status === "success"
+                                ? "moss"
+                                : payment.status === "failed"
+                                  ? "rose"
+                                  : "neutral"
+                          }
+                        >
+                          {payment.application_status === "review"
+                            ? "Received — contact support"
+                            : payment.status}
+                        </Tag>
+                      </span>
+                      <RowActions
+                        actions={[
+                          status.canPay &&
+                            ["pending", "failed"].includes(payment.status) && {
+                              label: "Check payment",
+                              icon: <RefreshCcw />,
+                              onSelect: () => checkPayment(payment.reference),
+                            },
+                        ]}
+                      />
+                    </div>
+                  ))}
+                </ListTable>
+                <ListPaginationFooter
+                  page={paymentPage}
+                  perPage={10}
+                  total={payments.length}
+                  onPageChange={setPaymentPage}
+                  itemName="payments"
+                />
+              </>
+            )}
+          </section>
+          {data.active && (!trackedReference || outcome === "applied") && (
+            <Link
+              href="/home"
+              className="inline-flex items-center gap-2 text-xs text-brand hover:underline"
+            >
+              <ArrowLeft className="size-3.5" />
+              Back to workspace
+            </Link>
+          )}
+        </>
+      )}
+    </div>
   );
 }

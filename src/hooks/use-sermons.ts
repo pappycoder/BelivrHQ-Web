@@ -82,6 +82,7 @@ function buildQuery(params: Record<string, unknown>): string {
 }
 
 function invalidateSermonCaches(qc: ReturnType<typeof useQueryClient>) {
+  qc.invalidateQueries({ queryKey: ["sermon-form-options"] });
   qc.invalidateQueries({ queryKey: ["sermons-list"] });
   qc.invalidateQueries({ queryKey: ["sermons-series"] });
   qc.invalidateQueries({ queryKey: ["sermons-speakers"] });
@@ -105,6 +106,15 @@ export function useSermon(sermonId: string) {
     queryKey: ["sermons-detail", sermonId],
     queryFn: ({ signal }) => api.get<Sermon>(`/sermons/${sermonId}`, { signal }),
     enabled: !!sermonId,
+  });
+}
+
+/** Names for editing are authorized by the form grant, independently of aggregate reports. */
+export function useSermonFormOptions(editing: boolean) {
+  return useQuery({
+    queryKey: ["sermon-form-options", editing ? "edit" : "new"],
+    queryFn: ({ signal }) => api.get<{ speakers: string[]; series: string[] }>(`/sermons/${editing ? "edit" : "new"}/options`, { signal }),
+    staleTime: 30_000,
   });
 }
 

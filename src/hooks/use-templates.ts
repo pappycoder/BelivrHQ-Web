@@ -41,6 +41,8 @@ export interface TemplateListResponse {
 }
 
 export interface ListTemplatesParams {
+  sortBy?: 'name' | 'createdAt' | 'updatedAt' | 'channel' | 'status';
+  sortOrder?: 'asc' | 'desc';
   page?: number;
   limit?: number;
   channel?: TemplateChannel;

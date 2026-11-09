@@ -173,7 +173,7 @@ describe("read-only page access", () => {
 
 describe("explicit authenticated routes", () => {
   it("allows shared authenticated pages without a module grant", () => {
-    for (const href of ["/dashboard", "/profile", "/docs"]) {
+    for (const href of ["/home", "/profile", "/docs"]) {
       expect(checkRule(matchRoutePermission(href), () => false)).toBe(true);
     }
   });
@@ -192,6 +192,9 @@ describe("explicit authenticated routes", () => {
 
 
 describe("authorized login return destinations", () => {
+  it("maps the retired dashboard return URL to home and preserves query and fragment", () => {
+    expect(permissionReturnTo("/dashboard?from=login#activity", () => false)).toBe("/home?from=login#activity");
+  });
   it("retains authorized routes with their query and fragment", () => {
     expect(permissionReturnTo("/forms/form-a?tab=answers#top", (name) => name === "forms:list:read")).toBe("/forms/form-a?tab=answers#top");
   });

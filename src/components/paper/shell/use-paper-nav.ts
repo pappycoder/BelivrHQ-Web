@@ -9,7 +9,7 @@ import { usePermissions } from "@/hooks/use-permissions";
  * Permission-filtered Paper navigation. `usePermissions` already prunes the
  * plan-blocked permission codes (fail-closed), so path-level plan checks are
  * redundant for permission-bearing leaves; shared pages (home, notifications)
- * follow the same rule as the old sidebar's "/dashboard" entry.
+ * follow the same rule as the old sidebar's "/home" entry.
  */
 export function usePaperNav() {
   const { canAny, ready } = usePermissions();

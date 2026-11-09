@@ -32,6 +32,25 @@ test.beforeEach(async ({ page, context }) => {
   await context.route("https://embed.tawk.to/**", route => route.fulfill({ contentType: "application/javascript", body: mockTawkWidget }));
   await page.emulateMedia({ reducedMotion: "reduce" });
 });
+for (const entry of ["/login", "/register"]) {
+  test(`restored session at ${entry} opens the workspace home`, async ({ page, context }) => {
+    await context.route("**/api/session", route => route.fulfill({ json: { hasSession: true } }));
+    await context.route("**/api/backend/auth/session", route => route.fulfill({
+      json: { success: true, data: { userId: "restored-user", email: "restored@example.org" } },
+    }));
+    // Isolate entry routing from workspace data and permission loading.
+    await context.route("**/home", route => route.fulfill({
+      contentType: "text/html", body: "<html><body>Workspace home</body></html>",
+    }));
+    const dashboardRequests: string[] = [];
+    page.on("request", request => {
+      if (new URL(request.url()).pathname === "/dashboard") dashboardRequests.push(request.url());
+    });
+    await page.goto(entry);
+    await expect(page).toHaveURL(/\/home$/);
+    expect(dashboardRequests).toEqual([]);
+  });
+}
 test("registration preserves edits and redirects to sign-in when email confirmation is required", async ({
   page,
   context,
@@ -337,13 +356,13 @@ test("an interrupted pending checkout retries verification and recovers without 
   await page.bringToFront();
   await expect(page.getByText(/Connection interrupted/)).toBeVisible({ timeout: 12000 });
   await expect(page.getByRole("link", { name: "Back to workspace", exact: true })).toHaveCount(0);
-  await expect(page).toHaveURL(/\/dashboard$/, { timeout: 25000 });
+  await expect(page).toHaveURL(/\/home$/, { timeout: 25000 });
   const calls = await page.evaluate(() => (window as unknown as { billingCalls: { path: string }[] }).billingCalls);
   expect(calls.filter(c => c.path.endsWith("/billing/checkout"))).toHaveLength(1);
   expect(calls.filter(c => c.path.endsWith("/billing/verify")).length).toBeGreaterThanOrEqual(3);
 });
 
-test("the verified return closes the second tab and wakes the original tab into the dashboard", async ({ page, context }) => {
+test("the verified return closes the second tab and wakes the original tab into home", async ({ page, context }) => {
   const state = await billingSession(context, {
     checkoutUrl: "https://checkout.flutterwave.com/success-fixture", sharedPaymentState: true,
   });
@@ -356,7 +375,7 @@ test("the verified return closes the second tab and wakes the original tab into 
   await expect(page.getByText("Waiting for Flutterwave to confirm your payment.", { exact: true })).toBeVisible();
   state.completePayment();
   await popup.goto(`http://127.0.0.1:3107/subscription?tx_ref=${reference}&payment_window=1&status=successful`);
-  await expect(page).toHaveURL(/\/dashboard$/, { timeout: 4000 });
+  await expect(page).toHaveURL(/\/home$/, { timeout: 4000 });
   await expect.poll(() => popup.isClosed()).toBe(true);
 });
 
@@ -365,7 +384,7 @@ test("a pending return survives reload and keeps checking without another callba
   await page.goto(`/subscription?tx_ref=${reference}&status=pending`);
   await expect(page.getByText("Waiting for Flutterwave to confirm your payment.", { exact: true })).toBeVisible();
   await page.reload();
-  await expect(page).toHaveURL(/\/dashboard$/, { timeout: 15000 });
+  await expect(page).toHaveURL(/\/home$/, { timeout: 15000 });
   const calls = await page.evaluate(() => (window as unknown as { billingCalls: { path: string }[] }).billingCalls);
   expect(calls.filter(c => c.path.endsWith("/billing/checkout"))).toHaveLength(0);
 });
@@ -419,7 +438,7 @@ test("gateway return is verified server-side before entering the dashboard", asy
 }) => {
   await billingSession(context);
   await page.goto(`/subscription?reference=${reference}&status=success`);
-  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page).toHaveURL(/\/home$/);
   const calls = await page.evaluate(
     () =>
       (window as unknown as { billingCalls: { path: string; body: unknown }[] })
@@ -452,7 +471,7 @@ test("pending checkout is automatically checked after returning without a callba
 }) => {
   await billingSession(context, { pending: true });
   await page.goto("/subscription");
-  await expect(page).toHaveURL(/\/dashboard$/);
+  await expect(page).toHaveURL(/\/home$/);
 });
 test("unconfigured platform gateway never offers payment", async ({
   page,
@@ -643,4 +662,11 @@ test("cancelled checkout keeps the account available for another attempt", async
   await expect(
     page.getByRole("button", { name: "Continue to payment", exact: true }),
   ).toBeEnabled();
+});
+
+test("old dashboard bookmarks redirect to home with their query", async ({ request }) => {
+  const response = await request.get("/dashboard?from=bookmark", { maxRedirects: 0 });
+  expect(response.status()).toBe(307);
+  expect(new URL(response.headers().location).pathname).toBe("/home");
+  expect(new URL(response.headers().location).search).toBe("?from=bookmark");
 });

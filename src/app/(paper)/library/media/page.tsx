@@ -1,11 +1,15 @@
 "use client";
 
 import * as React from "react";
+import { ListTable } from "@/components/shared/list-table";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import {
   Archive,
+  ArrowUpRight,
+  LayoutGrid,
+  Rows3,
   FileText,
   Film,
   FolderOpen,
@@ -23,6 +27,9 @@ import {
   EmptyState,
   FilterChip,
   ListPaginationFooter,
+  ManageHeading,
+  RowActions,
+  ViewToggle,
   SearchField,
 } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
@@ -102,6 +109,7 @@ function MediaInner() {
   const [search, setSearch] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(PAGE_SIZE);
+  const [view, setView] = React.useState<"cards" | "table">("cards");
   const [preview, setPreview] = React.useState<MediaAsset | null>(null);
   const [deleteTarget, setDeleteTarget] = React.useState<MediaAsset | null>(null);
   const [permTarget, setPermTarget] = React.useState<MediaAsset | null>(null);
@@ -179,10 +187,13 @@ function MediaInner() {
           <option value="members">Members</option>
           <option value="leadership">Leadership</option>
         </select>
+        <ViewToggle value={view} onChange={setView} options={[{ value: "table", label: "List view", icon: <Rows3 /> }, { value: "cards", label: "Card view", icon: <LayoutGrid /> }]} />
         <span className="ml-auto flex items-center gap-1 text-[10px] text-ink-faint"><ShieldCheck className="size-3" /> signed-in members only, per badge</span>
       </div>
 
-      {list.isLoading ? (
+      {list.isError ? (
+        <EmptyState title="Media could not be loaded" description="Try opening the library again." action={<Button variant="outline" onClick={() => void list.refetch()}>Retry</Button>} />
+      ) : list.isLoading ? (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="aspect-[3/4] rounded-2xl" />)}
         </div>
@@ -194,7 +205,21 @@ function MediaInner() {
         />
       ) : (
         <>
-          <StaggerGroup className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {view === "table" ? (
+            <ListTable tableId="library-media-1" label="Media library" records={rows} recordKey="assetId" recordType="media" className="paper-card min-w-[900px] overflow-hidden rounded-2xl">
+              <div className="rule-label grid grid-cols-[minmax(0,2fr)_0.7fr_1fr_0.7fr_1fr_1fr_auto] items-center gap-3 border-b border-line px-5 py-3"><span>File</span><span>Type</span><span>Folder</span><span>Size</span><span>Visibility</span><span>Uploaded</span><ManageHeading /></div>
+              {rows.map(asset => {
+                const kindOf = classifyMime(asset.mimeType);
+                const Icon = KIND_ICON[kindOf];
+                return <div key={asset.assetId} className="group grid grid-cols-[minmax(0,2fr)_0.7fr_1fr_0.7fr_1fr_1fr_auto] items-center gap-3 border-b border-line/70 px-5 py-4 text-xs">
+                  <div className="flex min-w-0 items-center gap-3"><span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-lg bg-muted text-ink-soft"><Icon className="size-4" /></span><span className="truncate font-medium">{asset.filename}</span></div>
+                  <span className="capitalize text-ink-soft">{kindOf}</span><span className="truncate text-ink-soft">{asset.folder || "—"}</span><span className="num text-ink-soft">{formatBytes(asset.sizeBytes)}</span>
+                  <span><Tag tone={PERM_TONES[asset.permissions]}>{MEDIA_PERMISSION_LABELS[asset.permissions]}</Tag></span><span className="text-ink-faint">{formatDate(asset.createdAt)}</span>
+                  <RowActions actions={[{ label: `Open ${asset.filename}`, icon: <ArrowUpRight />, opensRecord: true, onSelect: () => setPreview(asset) }]} />
+                </div>;
+              })}
+            </ListTable>
+          ) : <StaggerGroup className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {rows.map((asset) => {
               const kindOf = classifyMime(asset.mimeType);
               const Icon = KIND_ICON[kindOf];
@@ -227,7 +252,7 @@ function MediaInner() {
                 </StaggerItem>
               );
             })}
-          </StaggerGroup>
+          </StaggerGroup>}
           <div className="paper-card rounded-2xl">
             <ListPaginationFooter
               page={page}

@@ -384,6 +384,7 @@ const navItems: { section: string; items: NavItem[] }[] = [
         icon: ClipboardList,
         permission: "forms:read",
         children: [
+          { title: "Form Builder", href: "/library/forms/new", permission: "forms:list:create" },
           { title: "All Forms", href: "/library/forms", permission: "forms:list:read" },
           {
             title: "Submissions",
@@ -541,6 +542,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   "All Assets": Package,
   Maintenance: Wrench,
   Loans: Handshake,
+  "Form Builder": ClipboardList,
   "All Forms": ClipboardList,
   Submissions: Eye,
   Financial: FileBarChart,

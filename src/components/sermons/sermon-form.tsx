@@ -31,6 +31,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { FreeTextCombobox } from "@/components/shared/free-text-combobox";
+import { useSermonFormOptions } from "@/hooks/use-sermons";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ActionTooltip } from "@/components/ui/tooltip";
@@ -95,6 +97,7 @@ export function SermonForm({
   const saveLock = useRef(false);
   const initializedSermon = useRef<string | undefined>(undefined);
   const upload = useUploadMediaFile();
+  const suggestions = useSermonFormOptions(!!sermon);
 
   const form = useForm<SermonFormValues>({
     resolver: zodResolver(sermonSchema),
@@ -315,7 +318,7 @@ export function SermonForm({
                         <FormItem>
                           <FormLabel>Speaker</FormLabel>
                           <FormControl>
-                            <Input placeholder="e.g. Pastor John" {...field} />
+                            <FreeTextCombobox {...field} value={field.value ?? ""} label="Speakers" options={suggestions.data?.speakers ?? []} loading={suggestions.isLoading} failed={suggestions.isError} placeholder="Choose or type a speaker" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -367,10 +370,7 @@ export function SermonForm({
                       <FormItem>
                         <FormLabel>Series</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="e.g. Faith Foundations"
-                            {...field}
-                          />
+                          <FreeTextCombobox {...field} value={field.value ?? ""} label="Series" options={suggestions.data?.series ?? []} loading={suggestions.isLoading} failed={suggestions.isError} placeholder="Choose or type a series" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

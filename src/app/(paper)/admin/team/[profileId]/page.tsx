@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
+import { UserDetailSidebar } from "@/components/users/user-detail-sidebar";
 import { UserDetailContent } from "@/components/users/user-detail-content";
 import { useUser } from "@/hooks/use-users";
 
@@ -34,7 +35,10 @@ export default function UserDetailPage({
           action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/admin/team">Back to the team</Link></Button>}
         />
       ) : (
-        <UserDetailContent user={user.data} />
+        <div className="grid items-start gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
+          <aside aria-label="Team member profile"><UserDetailSidebar user={user.data} /></aside>
+          <div className="min-w-0"><UserDetailContent user={user.data} /></div>
+        </div>
       )}
     </div>
   );

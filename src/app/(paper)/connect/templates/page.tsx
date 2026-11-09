@@ -1,6 +1,10 @@
 "use client";
 
 import * as React from "react";
+import { ListTable } from "@/components/shared/list-table";
+import { CommunicationRegisterControls, useCommunicationRegister } from "@/components/communication/register-controls";
+import { useCurrentProfile } from "@/hooks/use-profile";
+import { useBranchesList } from "@/hooks/use-branches";
 import {
   Archive,
   ArchiveRestore,
@@ -14,7 +18,7 @@ import {
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { EmptyState, FilterChip, RowActions, SearchField } from "@/components/paper/primitives";
+import { EmptyState, ListPaginationFooter, ManageHeading, RowActions } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +46,7 @@ import {
   TEMPLATE_STATUS_LABELS,
   type Template,
   type TemplateChannel,
-  type TemplateStatus,
+  type ListTemplatesParams,
 } from "@/hooks/use-templates";
 import { cn } from "@/lib/utils";
 
@@ -82,15 +86,23 @@ export default function TemplatesPage() {
   const canUpdate = ready && can("templates", "update");
   const canDelete = ready && can("templates", "delete");
 
-  const [channel, setChannel] = React.useState<TemplateChannel | "all">("all");
-  const [status, setStatus] = React.useState<TemplateStatus | "all">("all");
-  const [query, setQuery] = React.useState("");
+  const controls = useCommunicationRegister("name", true);
+  const { data: profile } = useCurrentProfile();
+  const branches = useBranchesList({ limit: 100 }, { enabled: !!profile?.isAdminHq });
   const [formOpen, setFormOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<Template | null>(null);
   const [draft, setDraft] = React.useState<Draft>(BLANK);
   const [deleteTarget, setDeleteTarget] = React.useState<Template | null>(null);
 
-  const templates = useTemplatesList({ limit: 100 });
+  const templates = useTemplatesList({
+    page: controls.page, limit: controls.perPage,
+    search: controls.search || undefined,
+    channel: controls.channel === "all" ? undefined : controls.channel as TemplateChannel,
+    status: controls.status === "draft" || controls.status === "published" ? controls.status : undefined,
+    archived: controls.status === "archived" || undefined,
+    branchId: controls.branch === "all" ? undefined : controls.branch,
+    sortBy: controls.sort as ListTemplatesParams["sortBy"], sortOrder: controls.ascending ? "asc" : "desc",
+  });
   const createTemplate = useCreateTemplate();
   const updateTemplate = useUpdateTemplate(editing?.templateId ?? "");
   const publish = usePublishTemplate();
@@ -98,14 +110,12 @@ export default function TemplatesPage() {
   const restore = useRestoreTemplate();
   const del = useDeleteTemplate();
 
-  const rows = React.useMemo(() => {
-    let all = templates.data?.data ?? [];
-    if (channel !== "all") all = all.filter((t) => t.channel === channel);
-    if (status !== "all") all = all.filter((t) => (status === "archived" ? !!t.archivedAt : !t.archivedAt && t.status === status));
-    const q = query.trim().toLowerCase();
-    if (q) all = all.filter((t) => t.name.toLowerCase().includes(q) || t.content.toLowerCase().includes(q));
-    return all;
-  }, [templates.data, channel, status, query]);
+  const rows = templates.data?.data ?? [];
+  const total = templates.data?.meta?.total ?? 0;
+  const { page, perPage, setPage } = controls;
+  React.useEffect(() => {
+    if (templates.data && page > Math.max(1, Math.ceil(total / perPage))) setPage(Math.max(1, Math.ceil(total / perPage)));
+  }, [templates.data, total, page, perPage, setPage]);
 
   const openForm = (t: Template | null) => {
     setEditing(t);
@@ -148,78 +158,9 @@ export default function TemplatesPage() {
 
   const published = (templates.data?.data ?? []).filter((t) => t.status === "published" && !t.archivedAt).length;
 
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        eyebrow="Connect · Templates"
-        title="Words worth reusing."
-        description="The team&apos;s best sentences — kind, consistent, and always personalised before sending."
-        actions={
-          canCreate ? (
-            <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => openForm(null)}>
-              <Plus className="size-3.5" /> New template
-            </Button>
-          ) : null
-        }
-      />
-
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatCard label="Templates" value={templates.data?.meta?.total ?? 0} tone="brand" icon={<FileText className="size-4" />} />
-        <StatCard label="Published" value={published} tone="moss" deltaLabel="ready to send" />
-        <StatCard label="WhatsApp" value={(templates.data?.data ?? []).filter((t) => t.channel === "whatsapp").length} tone="sky" />
-        <StatCard label="Email" value={(templates.data?.data ?? []).filter((t) => t.channel === "email").length} tone="gold" />
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={query} onChange={setQuery} placeholder="Search name or text…" className="w-full max-w-[220px]" />
-        <FilterChip active={channel === "all"} onClick={() => setChannel("all")}>All channels</FilterChip>
-        {TEMPLATE_CHANNELS.map((c) => (
-          <FilterChip key={c} active={channel === c} onClick={() => setChannel(c)}>{TEMPLATE_CHANNEL_LABELS[c]}</FilterChip>
-        ))}
-        <span className="mx-1 hidden h-4 w-px bg-line sm:block" />
-        {(["all", "draft", "published", "archived"] as const).map((s) => (
-          <FilterChip key={s} active={status === s} onClick={() => setStatus(s)}>
-            <span className="capitalize">{s === "all" ? "any state" : s}</span>
-          </FilterChip>
-        ))}
-      </div>
-
-      {templates.isLoading ? (
-        <div className="space-y-2">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-2xl" />)}</div>
-      ) : rows.length === 0 ? (
-        <EmptyState
-          icon={<Search />}
-          title="No templates match"
-          description="Templates keep a small team sounding like one voice."
-          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => openForm(null)}>Write the first</Button> : undefined}
-        />
-      ) : (
-        <StaggerGroup className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {rows.map((t) => (
-            <StaggerItem key={t.templateId}>
-              <div className={cn("paper-card flex h-full flex-col rounded-2xl p-4", t.archivedAt && "opacity-60")}>
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="truncate text-xs font-semibold">{t.name}</p>
-                    <p className="mt-0.5 flex items-center gap-1.5">
-                      <Tag tone={CHANNEL_TONES[t.channel]}>{TEMPLATE_CHANNEL_LABELS[t.channel]}</Tag>
-                      {t.archivedAt ? <Tag tone="neutral">Archived</Tag> : <Tag tone={t.status === "published" ? "moss" : "gold"}>{TEMPLATE_STATUS_LABELS[t.status]}</Tag>}
-                    </p>
-                  </div>
-                </div>
-                <p className="mt-3 line-clamp-3 flex-1 font-mono text-[10px] leading-relaxed text-ink-soft">{t.content}</p>
-                {t.variables?.length ? (
-                  <p className="mt-2 flex flex-wrap gap-1">
-                    {t.variables.slice(0, 4).map((v) => (
-                      <span key={v} className="rounded bg-brand-soft px-1.5 py-0.5 font-mono text-[9px] text-brand">{`{{${v}}}`}</span>
-                    ))}
-                  </p>
-                ) : null}
-                <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
-                  <span>{t.branchName ?? "All branches"}</span>
-                  <span className="flex items-center gap-0.5">
-                    <RowActions
-                      reveal={false}
+  const actionsFor = (t: Template, reveal = false) => (
+    <RowActions
+                      reveal={reveal}
                       actions={[
                         canUpdate && !t.archivedAt && {
                           label: "Edit template",
@@ -251,6 +192,89 @@ export default function TemplatesPage() {
                         },
                       ]}
                     />
+  );
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Connect · Templates"
+        title="Words worth reusing."
+        description="The team&apos;s best sentences — kind, consistent, and always personalised before sending."
+        actions={
+          canCreate ? (
+            <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => openForm(null)}>
+              <Plus className="size-3.5" /> New template
+            </Button>
+          ) : null
+        }
+      />
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <StatCard label="Templates" value={templates.data?.meta?.total ?? 0} tone="brand" icon={<FileText className="size-4" />} />
+        <StatCard label="Published on page" value={published} tone="moss" deltaLabel="ready to send" />
+        <StatCard label="WhatsApp on page" value={(templates.data?.data ?? []).filter((t) => t.channel === "whatsapp").length} tone="sky" />
+        <StatCard label="Email on page" value={(templates.data?.data ?? []).filter((t) => t.channel === "email").length} tone="gold" />
+      </div>
+
+      <CommunicationRegisterControls controls={controls} kind="Templates"
+        channels={TEMPLATE_CHANNELS.map(value => ({ value, label: TEMPLATE_CHANNEL_LABELS[value] }))}
+        statuses={[{ value: "draft", label: "Draft" }, { value: "published", label: "Published" }, { value: "archived", label: "Archived" }]}
+        sorts={[{ value: "name", label: "Name" }, { value: "createdAt", label: "Date added" }, { value: "updatedAt", label: "Last updated" }, { value: "channel", label: "Channel" }, { value: "status", label: "Status" }]}
+        branches={profile?.isAdminHq ? (branches.data?.data ?? []).map(b => ({ value: b.branchId, label: b.name })) : undefined}
+      />
+
+      {templates.isError ? (
+        <EmptyState title="Templates could not be loaded" description="Try loading the register again." action={<Button variant="outline" onClick={() => void templates.refetch()}>Retry</Button>} />
+      ) : templates.isLoading ? (
+        <div className="space-y-2">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-2xl" />)}</div>
+      ) : rows.length === 0 ? (
+        <EmptyState
+          icon={<Search />}
+          title="No templates match"
+          description="Templates keep a small team sounding like one voice."
+          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => openForm(null)}>Write the first</Button> : undefined}
+        />
+      ) : controls.view === "table" ? (
+        <ListTable tableId="connect-templates-1" label="Templates" records={rows} recordKey="templateId" recordType="template" className="paper-card min-w-[900px] overflow-hidden rounded-2xl">
+          <div className="rule-label grid grid-cols-[minmax(0,2fr)_1fr_1fr_1fr_1fr_1fr_auto] items-center gap-3 border-b border-line px-5 py-3">
+            <span>Template</span><span>Channel</span><span>Status</span><span>Category</span><span>Branch</span><span>Last updated</span><ManageHeading />
+          </div>
+          {rows.map(t => <div key={t.templateId} className="group grid grid-cols-[minmax(0,2fr)_1fr_1fr_1fr_1fr_1fr_auto] items-center gap-3 border-b border-line/70 px-5 py-4 text-xs">
+            <div className="min-w-0"><p className="truncate font-semibold">{t.name}</p><p className="mt-1 truncate text-ink-faint">{t.content}</p></div>
+            <span><Tag tone={CHANNEL_TONES[t.channel]}>{TEMPLATE_CHANNEL_LABELS[t.channel]}</Tag></span>
+            <span><Tag tone={t.archivedAt ? "neutral" : t.status === "published" ? "moss" : "gold"}>{t.archivedAt ? "Archived" : TEMPLATE_STATUS_LABELS[t.status]}</Tag></span>
+            <span className="truncate text-ink-soft">{t.category ?? "—"}</span>
+            <span className="truncate text-ink-soft">{t.branchName ?? "All branches"}</span>
+            <span className="text-ink-faint">{new Date(t.updatedAt).toLocaleDateString("en-GB")}</span>
+            {actionsFor(t, true)}
+          </div>)}
+        </ListTable>
+      ) : (
+        <StaggerGroup className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {rows.map((t) => (
+            <StaggerItem key={t.templateId}>
+              <div className={cn("paper-card flex h-full flex-col rounded-2xl p-4", t.archivedAt && "opacity-60")}>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="truncate text-xs font-semibold">{t.name}</p>
+                    <p className="mt-0.5 flex items-center gap-1.5">
+                      <Tag tone={CHANNEL_TONES[t.channel]}>{TEMPLATE_CHANNEL_LABELS[t.channel]}</Tag>
+                      {t.archivedAt ? <Tag tone="neutral">Archived</Tag> : <Tag tone={t.status === "published" ? "moss" : "gold"}>{TEMPLATE_STATUS_LABELS[t.status]}</Tag>}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-3 line-clamp-3 flex-1 font-mono text-[10px] leading-relaxed text-ink-soft">{t.content}</p>
+                {t.variables?.length ? (
+                  <p className="mt-2 flex flex-wrap gap-1">
+                    {t.variables.slice(0, 4).map((v) => (
+                      <span key={v} className="rounded bg-brand-soft px-1.5 py-0.5 font-mono text-[9px] text-brand">{`{{${v}}}`}</span>
+                    ))}
+                  </p>
+                ) : null}
+                <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
+                  <span>{t.branchName ?? "All branches"}</span>
+                  <span className="flex items-center gap-0.5">
+                    {actionsFor(t)}
                   </span>
                 </div>
               </div>
@@ -258,6 +282,8 @@ export default function TemplatesPage() {
           ))}
         </StaggerGroup>
       )}
+
+      {!templates.isError && <ListPaginationFooter page={controls.page} perPage={controls.perPage} total={total} onPageChange={controls.setPage} onPerPageChange={value => { controls.setPerPage(value); controls.setPage(1); }} perPageOptions={[12, 24, 48]} itemName="templates" />}
 
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
         <DialogContent className="rounded-2xl border-line bg-card sm:max-w-[520px]">

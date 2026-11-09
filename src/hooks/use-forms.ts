@@ -143,6 +143,8 @@ export interface ListFormsParams {
 }
 
 export interface ListSubmissionsParams {
+  sortBy?: "createdAt" | "status" | "id";
+  source?: "public" | "member";
   status?: SubmissionStatus;
   search?: string;
   page?: number;

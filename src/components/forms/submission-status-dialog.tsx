@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import {
   Dialog,
@@ -20,6 +20,8 @@ import {
 } from "@/hooks/use-forms";
 
 export interface SubmissionStatusDialogProps {
+  intent?: "review" | "reject";
+  respondentName?: string;
   formId: string;
   submission?: FormSubmission;
   open: boolean;
@@ -27,6 +29,8 @@ export interface SubmissionStatusDialogProps {
 }
 
 export function SubmissionStatusDialog({
+  intent = "review",
+  respondentName,
   formId,
   submission,
   open,
@@ -34,52 +38,80 @@ export function SubmissionStatusDialog({
 }: SubmissionStatusDialogProps) {
   const [rejectionReason, setRejectionReason] = useState("");
   const mutation = useUpdateSubmissionStatus(formId);
+  const saving = useRef(false);
+  const [error, setError] = useState("");
 
   const handleAction = async (status: SubmissionStatus) => {
-    if (!submission) return;
+    if (!submission || saving.current) return;
     if (status === "rejected" && !rejectionReason.trim()) {
       toast.error("A rejection reason is required");
       return;
     }
+    saving.current = true;
+    setError("");
     try {
       await mutation.mutateAsync({
         submissionId: submission.id,
         input: {
           status,
-          ...(status === "rejected" ? { rejectionReason: rejectionReason.trim() } : {}),
+          ...(status === "rejected"
+            ? { rejectionReason: rejectionReason.trim() }
+            : {}),
         },
       });
-      toast.success(status === "approved" ? "Submission approved" : "Submission rejected");
+      toast.success(
+        status === "approved" ? "Submission approved" : "Submission rejected",
+      );
       setRejectionReason("");
       onOpenChange(false);
     } catch (err) {
-      toast.error("Failed to update submission", {
-        description: getToastErrorMessage(err, "Please try again."),
-      });
+      setError(getToastErrorMessage(err, "Please try again."));
+    } finally {
+      saving.current = false;
     }
   };
 
   if (!submission) return null;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(value) => {
+        if (!mutation.isPending) onOpenChange(value);
+      }}
+    >
       <DialogContent className="sm:max-w-[440px]">
         <DialogHeader>
-          <DialogTitle>Review submission</DialogTitle>
-          <DialogDescription>Approve or reject this submission.</DialogDescription>
+          <DialogTitle>
+            {intent === "reject" ? "Reject answer?" : "Review submission"}
+          </DialogTitle>
+          <DialogDescription>
+            {intent === "reject"
+              ? `Confirm rejection of ${respondentName ?? submission.id}. A reason is required.`
+              : "Approve or reject this submission."}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-3">
-          <Label htmlFor="rejectionReason">Rejection reason (required when rejecting)</Label>
+          <Label htmlFor="rejectionReason">
+            Rejection reason (required when rejecting)
+          </Label>
           <Textarea
             id="rejectionReason"
             value={rejectionReason}
             onChange={(e) => setRejectionReason(e.target.value)}
             placeholder="Explain why this submission is being rejected"
             rows={3}
+            maxLength={1000}
+            disabled={mutation.isPending}
           />
         </div>
 
+        {error && (
+          <p role="alert" className="text-sm text-destructive">
+            {error}
+          </p>
+        )}
         <DialogFooter className="gap-2 sm:justify-between">
           <Button
             type="button"
@@ -93,18 +125,20 @@ export function SubmissionStatusDialog({
             <Button
               type="button"
               variant="destructive"
-              disabled={mutation.isPending}
+              disabled={mutation.isPending || !rejectionReason.trim()}
               onClick={() => handleAction("rejected")}
             >
-              Reject
+              {intent === "reject" ? "Confirm rejection" : "Reject"}
             </Button>
-            <Button
-              type="button"
-              disabled={mutation.isPending}
-              onClick={() => handleAction("approved")}
-            >
-              Approve
-            </Button>
+            {intent !== "reject" && (
+              <Button
+                type="button"
+                disabled={mutation.isPending}
+                onClick={() => handleAction("approved")}
+              >
+                Approve
+              </Button>
+            )}
           </div>
         </DialogFooter>
       </DialogContent>

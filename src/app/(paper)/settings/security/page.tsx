@@ -4,9 +4,9 @@ import { BotProtection } from "@/components/shared/bot-protection";
 import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
 import * as React from "react";
-import { Eye, EyeOff, KeyRound, RefreshCcw, ShieldCheck, Smartphone } from "lucide-react";
+import { Eye, EyeOff, RefreshCcw, ShieldCheck, Smartphone } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
-import { SectionCard } from "@/components/paper/section";
+import { PageHeader, SectionCard } from "@/components/paper/section";
 import { Tag } from "@/components/paper/stat";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,10 +26,17 @@ function PasswordCard() {
   const change = useChangePassword();
   const captchaReady = useBotProtectionReady("/auth/password", "PUT");
   const [show, setShow] = React.useState(false);
-  const [form, setForm] = React.useState({ currentPassword: "", newPassword: "", confirm: "" });
+  const [form, setForm] = React.useState({
+    currentPassword: "",
+    newPassword: "",
+    confirm: "",
+  });
   const tooShort = form.newPassword.length > 0 && form.newPassword.length < 8;
   const mismatch = form.confirm.length > 0 && form.newPassword !== form.confirm;
-  const canSubmit = form.currentPassword && form.newPassword.length >= 8 && form.confirm === form.newPassword;
+  const canSubmit =
+    form.currentPassword &&
+    form.newPassword.length >= 8 &&
+    form.confirm === form.newPassword;
 
   const submit = () => {
     if (!canSubmit) return;
@@ -38,15 +45,18 @@ function PasswordCard() {
       {
         onSuccess: () => {
           setForm({ currentPassword: "", newPassword: "", confirm: "" });
-          toast.success("Password updated — other devices will need the new one.");
+          toast.success(
+            "Password updated — other devices will need the new one.",
+          );
         },
-        onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't change the password.")),
+        onError: (e) =>
+          toast.error(getToastErrorMessage(e, "Couldn't change the password.")),
       },
     );
   };
 
   return (
-    <SectionCard eyebrow="Password" title="Something you&apos;d never type aloud">
+    <SectionCard eyebrow="Password" title="Something you'd never type aloud">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label className="text-xs">Current password</Label>
@@ -54,12 +64,23 @@ function PasswordCard() {
             <Input
               type={show ? "text" : "password"}
               value={form.currentPassword}
-              onChange={(e) => setForm((f) => ({ ...f, currentPassword: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, currentPassword: e.target.value }))
+              }
               placeholder="••••••••••"
               className="h-10 rounded-lg border-line bg-card pr-9 text-sm shadow-none"
             />
-            <button type="button" onClick={() => setShow((v) => !v)} aria-label={show ? "Hide passwords" : "Show passwords"} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-faint hover:text-ink">
-              {show ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
+            <button
+              type="button"
+              onClick={() => setShow((v) => !v)}
+              aria-label={show ? "Hide passwords" : "Show passwords"}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-faint hover:text-ink"
+            >
+              {show ? (
+                <EyeOff className="size-3.5" />
+              ) : (
+                <Eye className="size-3.5" />
+              )}
             </button>
           </div>
         </div>
@@ -69,27 +90,42 @@ function PasswordCard() {
           <Input
             type={show ? "text" : "password"}
             value={form.newPassword}
-            onChange={(e) => setForm((f) => ({ ...f, newPassword: e.target.value }))}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, newPassword: e.target.value }))
+            }
             placeholder="A phrase, not a word"
             className="h-10 rounded-lg border-line bg-card text-sm shadow-none"
           />
-          {tooShort ? <p className="text-[10px] text-rose">Eight characters at least.</p> : null}
+          {tooShort ? (
+            <p className="text-[10px] text-rose">Eight characters at least.</p>
+          ) : null}
         </div>
         <div className="space-y-1.5">
           <Label className="text-xs">Confirm</Label>
           <Input
             type={show ? "text" : "password"}
             value={form.confirm}
-            onChange={(e) => setForm((f) => ({ ...f, confirm: e.target.value }))}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, confirm: e.target.value }))
+            }
             className="h-10 rounded-lg border-line bg-card text-sm shadow-none"
           />
-          {mismatch ? <p className="text-[10px] text-rose">The two don&apos;t match yet.</p> : null}
+          {mismatch ? (
+            <p className="text-[10px] text-rose">
+              The two don&apos;t match yet.
+            </p>
+          ) : null}
         </div>
       </div>
       <BotProtection path="/auth/password" method="PUT" authenticated />
       <div className="mt-4 flex justify-end">
-        <Button className="h-9 gap-1.5 rounded-full text-xs" disabled={!canSubmit || change.isPending || !captchaReady} onClick={submit}>
-          <ShieldCheck className="size-3.5" /> {change.isPending ? "Updating…" : "Update password"}
+        <Button
+          className="h-9 gap-1.5 rounded-full text-xs"
+          disabled={!canSubmit || change.isPending || !captchaReady}
+          onClick={submit}
+        >
+          <ShieldCheck className="size-3.5" />{" "}
+          {change.isPending ? "Updating…" : "Update password"}
         </Button>
       </div>
     </SectionCard>
@@ -105,10 +141,14 @@ function TwoFactorCard() {
   const verified = list.find((f) => f.status === "verified");
   const enabled = !!verified || !!profile.data?.twoFactorEnabled;
 
-  const [setupData, setSetupData] = React.useState<AuthenticatorSetup | null>(null);
+  const [setupData, setSetupData] = React.useState<AuthenticatorSetup | null>(
+    null,
+  );
   const [code, setCode] = React.useState("");
   const [recovery, setRecovery] = React.useState<string[] | null>(null);
-  const [action, setAction] = React.useState<"idle" | "enroll" | "disable">("idle");
+  const [action, setAction] = React.useState<"idle" | "enroll" | "disable">(
+    "idle",
+  );
 
   const beginSetup = () => {
     setup.mutate(undefined, {
@@ -117,7 +157,10 @@ function TwoFactorCard() {
         setAction("enroll");
         setCode("");
       },
-      onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't start the authenticator setup.")),
+      onError: (e) =>
+        toast.error(
+          getToastErrorMessage(e, "Couldn't start the authenticator setup."),
+        ),
     });
   };
 
@@ -133,7 +176,13 @@ function TwoFactorCard() {
           if (res.recoveryCodes?.length) setRecovery(res.recoveryCodes);
           toast.success("Two-factor is on.");
         },
-        onError: (e) => toast.error(getToastErrorMessage(e, "That code didn't verify — try the next one.")),
+        onError: (e) =>
+          toast.error(
+            getToastErrorMessage(
+              e,
+              "That code didn't verify — try the next one.",
+            ),
+          ),
       },
     );
   };
@@ -148,24 +197,46 @@ function TwoFactorCard() {
           setCode("");
           toast("Two-factor paused — not recommended for admin seats.");
         },
-        onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't pause two-factor.")),
+        onError: (e) =>
+          toast.error(getToastErrorMessage(e, "Couldn't pause two-factor.")),
       },
     );
   };
 
   if (recovery) {
-    return <RecoveryCodesPanel codes={recovery} onDone={() => setRecovery(null)} />;
+    return (
+      <RecoveryCodesPanel codes={recovery} onDone={() => setRecovery(null)} />
+    );
   }
 
   return (
-    <SectionCard eyebrow="Second factor" title="Two-step verification" actions={enabled ? <Tag tone="moss" dot>On</Tag> : <Tag tone="gold" dot>Not set</Tag>}>
+    <SectionCard
+      eyebrow="Second factor"
+      title="Two-step verification"
+      actions={
+        enabled ? (
+          <Tag tone="moss" dot>
+            On
+          </Tag>
+        ) : (
+          <Tag tone="gold" dot>
+            Not set
+          </Tag>
+        )
+      }
+    >
       <p className="text-[11px] leading-relaxed text-ink-soft">
         Codes from an authenticator app on your phone — the calm way in.
       </p>
 
       {!enabled && action !== "enroll" ? (
-        <Button className="mt-3 h-9 gap-1.5 rounded-full text-xs" disabled={setup.isPending} onClick={beginSetup}>
-          <Smartphone className="size-3.5" /> {setup.isPending ? "Preparing…" : "Set up authenticator"}
+        <Button
+          className="mt-3 h-9 gap-1.5 rounded-full text-xs"
+          disabled={setup.isPending}
+          onClick={beginSetup}
+        >
+          <Smartphone className="size-3.5" />{" "}
+          {setup.isPending ? "Preparing…" : "Set up authenticator"}
         </Button>
       ) : null}
 
@@ -173,10 +244,18 @@ function TwoFactorCard() {
         <div className="mt-3 space-y-3 rounded-xl border border-line bg-muted/20 p-4">
           <div className="flex flex-wrap items-center gap-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={setupData.qrCode} alt="QR code for authenticator setup" className="size-36 rounded-lg border border-line bg-white p-1" />
+            <img
+              src={setupData.qrCode}
+              alt="QR code for authenticator setup"
+              className="size-36 rounded-lg border border-line bg-white p-1"
+            />
             <div className="min-w-0 flex-1 space-y-1.5">
-              <p className="text-[11px] text-ink-soft">Scan the QR in your authenticator app, or paste the key:</p>
-              <p className="break-all rounded-lg bg-card px-2.5 py-1.5 font-mono text-[10px] text-ink">{setupData.secret}</p>
+              <p className="text-[11px] text-ink-soft">
+                Scan the QR in your authenticator app, or paste the key:
+              </p>
+              <p className="break-all rounded-lg bg-card px-2.5 py-1.5 font-mono text-[10px] text-ink">
+                {setupData.secret}
+              </p>
             </div>
           </div>
           <div className="flex flex-wrap items-end gap-2">
@@ -191,10 +270,22 @@ function TwoFactorCard() {
                 className="num h-10 w-32 rounded-lg border-line bg-card text-center text-sm shadow-none"
               />
             </div>
-            <Button className="h-10 gap-1.5 rounded-lg text-xs" disabled={toggle.isPending || code.length < 6} onClick={confirmEnable}>
-              <ShieldCheck className="size-3.5" /> {toggle.isPending ? "Verifying…" : "Verify & enable"}
+            <Button
+              className="h-10 gap-1.5 rounded-lg text-xs"
+              disabled={toggle.isPending || code.length < 6}
+              onClick={confirmEnable}
+            >
+              <ShieldCheck className="size-3.5" />{" "}
+              {toggle.isPending ? "Verifying…" : "Verify & enable"}
             </Button>
-            <Button variant="ghost" className="h-10 rounded-lg text-xs text-ink-faint" onClick={() => { setAction("idle"); setSetupData(null); }}>
+            <Button
+              variant="ghost"
+              className="h-10 rounded-lg text-xs text-ink-faint"
+              onClick={() => {
+                setAction("idle");
+                setSetupData(null);
+              }}
+            >
               Cancel
             </Button>
           </div>
@@ -205,12 +296,19 @@ function TwoFactorCard() {
         <div className="mt-3 space-y-2.5">
           {verified?.recoveryCodesRemaining !== undefined ? (
             <div className="flex items-center justify-between rounded-lg border border-dashed border-line px-3 py-2.5">
-              <span className="text-[11px] text-ink-soft">Recovery codes left: <span className="num font-semibold text-ink">{verified.recoveryCodesRemaining}</span></span>
+              <span className="text-[11px] text-ink-soft">
+                Recovery codes left:{" "}
+                <span className="num font-semibold text-ink">
+                  {verified.recoveryCodesRemaining}
+                </span>
+              </span>
               <RegenerateInline factorId={verified.id} onCodes={setRecovery} />
             </div>
           ) : null}
           <div className="flex items-center justify-between rounded-lg border border-line px-3 py-2.5">
-            <span className="min-w-0 text-[11px] text-ink-soft">Pause two-step? You&apos;ll need a current code.</span>
+            <span className="min-w-0 text-[11px] text-ink-soft">
+              Pause two-step? You&apos;ll need a current code.
+            </span>
             {action === "disable" ? (
               <span className="flex items-center gap-1.5">
                 <Input
@@ -221,11 +319,37 @@ function TwoFactorCard() {
                   placeholder="000000"
                   className="num h-8 w-24 rounded-lg border-line bg-card text-center text-xs shadow-none"
                 />
-                <Button size="xs" variant="outline" className="h-8 rounded-full border-line text-[10px] text-rose" disabled={toggle.isPending} onClick={confirmDisable}>Confirm</Button>
-                <Button size="xs" variant="ghost" className="h-8 rounded-full text-[10px]" onClick={() => { setAction("idle"); setCode(""); }}>Cancel</Button>
+                <Button
+                  size="xs"
+                  variant="outline"
+                  className="h-8 rounded-full border-line text-[10px] text-rose"
+                  disabled={toggle.isPending}
+                  onClick={confirmDisable}
+                >
+                  Confirm
+                </Button>
+                <Button
+                  size="xs"
+                  variant="ghost"
+                  className="h-8 rounded-full text-[10px]"
+                  onClick={() => {
+                    setAction("idle");
+                    setCode("");
+                  }}
+                >
+                  Cancel
+                </Button>
               </span>
             ) : (
-              <Button size="xs" variant="outline" className="h-8 rounded-full border-line text-[10px]" onClick={() => { setAction("disable"); setCode(""); }}>
+              <Button
+                size="xs"
+                variant="outline"
+                className="h-8 rounded-full border-line text-[10px]"
+                onClick={() => {
+                  setAction("disable");
+                  setCode("");
+                }}
+              >
                 Pause two-step
               </Button>
             )}
@@ -235,14 +359,22 @@ function TwoFactorCard() {
 
       {!enabled && action !== "enroll" ? (
         <p className="mt-2 text-[10px] text-ink-faint">
-          {profile.data?.twoFactorEnabled ? "Your account shows two-factor on — refresh if the app list looks empty." : "One missed phone is all it takes; second factors exist for that Monday."}
+          {profile.data?.twoFactorEnabled
+            ? "Your account shows two-factor on — refresh if the app list looks empty."
+            : "One missed phone is all it takes; second factors exist for that Monday."}
         </p>
       ) : null}
     </SectionCard>
   );
 }
 
-function RegenerateInline({ factorId, onCodes }: { factorId: string; onCodes: (codes: string[]) => void }) {
+function RegenerateInline({
+  factorId,
+  onCodes,
+}: {
+  factorId: string;
+  onCodes: (codes: string[]) => void;
+}) {
   const regenerate = useRegenerateRecoveryCodes();
   const [open, setOpen] = React.useState(false);
   const [code, setCode] = React.useState("");
@@ -274,17 +406,32 @@ function RegenerateInline({ factorId, onCodes }: { factorId: string; onCodes: (c
                       toast("New recovery codes issued — old ones are void.");
                     }
                   },
-                  onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't regenerate codes.")),
+                  onError: (e) =>
+                    toast.error(
+                      getToastErrorMessage(e, "Couldn't regenerate codes."),
+                    ),
                 },
               )
             }
           >
             {regenerate.isPending ? "Working…" : "Issue"}
           </Button>
-          <Button size="xs" variant="ghost" className="h-8 rounded-full text-[10px]" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button
+            size="xs"
+            variant="ghost"
+            className="h-8 rounded-full text-[10px]"
+            onClick={() => setOpen(false)}
+          >
+            Cancel
+          </Button>
         </>
       ) : (
-        <Button size="xs" variant="outline" className="h-8 gap-1 rounded-full border-line text-[10px]" onClick={() => setOpen(true)}>
+        <Button
+          size="xs"
+          variant="outline"
+          className="h-8 gap-1 rounded-full border-line text-[10px]"
+          onClick={() => setOpen(true)}
+        >
           <RefreshCcw className="size-2.5" /> Regenerate
         </Button>
       )}
@@ -294,11 +441,12 @@ function RegenerateInline({ factorId, onCodes }: { factorId: string; onCodes: (c
 
 export default function SettingsSecurityPage() {
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-2 rounded-2xl border border-dashed border-line px-4 py-3 text-[11px] text-ink-soft">
-        <KeyRound className="size-3.5 text-brand" />
-        This page guards the door, not the furniture — the account details live under Profile.
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Settings · Security"
+        title="Security"
+        description="Protect your account with a strong password, two-factor authentication and recovery codes."
+      />
       <PasswordCard />
       <TwoFactorCard />
     </div>
