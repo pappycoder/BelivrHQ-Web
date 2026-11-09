@@ -733,3 +733,42 @@ for (const cell of [false, true])
       "rgba(0, 0, 0, 0)",
     );
   });
+
+for (const kind of ["native", "grid"]) {
+  test(`${kind} table cells follow header alignment and updates`, async ({ context, page }) => {
+    await fixture(context, kind === "native" ? "finance" : "staff");
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    if (kind === "native") {
+      await page.route("**/api/backend/giving/cell-groups/west-home**", route => route.fulfill({ json: { success: true, data: { data: [{ transactionId: "gift-a", cellGroupMeetingDate: "2026-11-08", categoryName: "Offering", receiptNumber: "REC-1", type: "cash", amount: 5000 }], total: 1, categories: [{ categoryId: "fund", name: "Offering" }], summary: { allTimeTotal: 5000, count: 1 } } } }));
+    }
+    await page.goto(kind === "native" ? "/gatherings/groups/cell/west-home?tab=giving" : "/gatherings/groups/cell");
+    const table = kind === "native" ? page.locator('table[data-slot="table"]') : page.getByRole("table", { name: "Records", exact: true });
+    await expect(table.getByRole("row").nth(1)).toBeVisible();
+    const columnGeometry = await table.evaluate(el => {
+      const head = Array.from(el.querySelectorAll('thead tr th, [role="columnheader"]')).filter(cell => !(cell as HTMLElement).hidden);
+      const rows = Array.from(el.querySelectorAll('tbody tr, [role="row"]')).filter(row => !row.querySelector('[role="columnheader"]'));
+      return rows.flatMap(row => Array.from(row.querySelectorAll(':scope > td, :scope > [role="cell"]')).filter(cell => !(cell as HTMLElement).hidden).map((cell, index) => {
+        const a = cell.getBoundingClientRect(), b = head[index]?.getBoundingClientRect();
+        return b ? Math.max(Math.abs(a.left - b.left), Math.abs(a.right - b.right)) : 0;
+      }));
+    });
+    expect(columnGeometry.every(offset => offset < 1)).toBe(true);
+    const header = table.getByRole("columnheader").filter({ hasText: kind === "native" ? "Group total" : "Branch" });
+    const index = await header.evaluate(el => Array.from(el.parentElement!.children).indexOf(el));
+    const cell = table.getByRole("row").nth(1).getByRole("cell").nth(index);
+    for (const alignment of ["right", "center", "left"]) {
+      await header.evaluate((el, value) => { (el as HTMLElement).style.textAlign = value; }, alignment);
+      await expect(cell).toHaveCSS("text-align", alignment);
+    }
+    if (kind === "grid") {
+      const manage = table.getByRole("columnheader", { name: "Manage", exact: true });
+      await expect(manage).toHaveCSS("text-align", "right");
+      const actions = table.getByRole("row").nth(1).locator(".row-actions");
+      await expect(actions).toHaveCSS("justify-content", "flex-end");
+    }
+    const checkbox = table.getByRole("row").nth(1).getByRole("checkbox");
+    await checkbox.check();
+    await expect(checkbox).toBeChecked();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1440);
+  });
+}

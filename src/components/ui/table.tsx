@@ -28,6 +28,7 @@ import {
   type RecordFieldColumn,
 } from "@/lib/record-fields";
 import { cn } from "@/lib/utils";
+import { useColumnAlignment } from "@/hooks/use-column-alignment";
 import { useTableLayout } from "@/hooks/use-table-layout";
 
 const RowSelection = React.createContext<{
@@ -130,6 +131,7 @@ function Table({
   const records = providedRecords ?? [];
   const exportRoot = React.useRef<HTMLDivElement>(null);
   useTableLayout(exportRoot);
+  useColumnAlignment(exportRoot);
   const [compactRows, setCompactRows] = React.useState(false);
   const [compactColumns, setCompactColumns] = React.useState(false);
   const [widths, setWidths] = React.useState<

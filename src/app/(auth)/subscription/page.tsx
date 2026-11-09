@@ -83,6 +83,19 @@ export default function SubscriptionPage() {
   const [message, setMessage] = React.useState("");
   const [reference, setReference] = React.useState("");
   const [manage, setManage] = React.useState(false);
+  const [manageRequest, setManageRequest] = React.useState(0);
+  const comparison = React.useRef<HTMLElement>(null);
+  const manageTrigger = React.useRef<HTMLButtonElement>(null);
+  React.useEffect(() => {
+    if (!manageRequest || !comparison.current) return;
+    comparison.current.focus({ preventScroll: true });
+    comparison.current.scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
+      block: "start",
+    });
+  }, [manageRequest]);
   const [paymentPage, setPaymentPage] = React.useState(1);
   const initialized = React.useRef(false);
   const checkoutWindow = React.useRef<Window | null>(null);
@@ -166,7 +179,7 @@ export default function SubscriptionPage() {
     enabled: status.canPay && !!trackedReference,
     retry: false,
     refetchInterval: (query) =>
-      ["applied", "review"].includes(
+      ["applied", "review", "closed", "revoked"].includes(
         paymentOutcome(query.state.data, trackedReference),
       )
         ? false
@@ -191,7 +204,11 @@ export default function SubscriptionPage() {
     });
   }, [status.canPay, status.churchId, trackedReference, refetchVerification]);
   const waitingForPayment =
-    !!trackedReference && outcome !== "applied" && outcome !== "review";
+    !!trackedReference &&
+    outcome !== "applied" &&
+    outcome !== "review" &&
+    outcome !== "closed" &&
+    outcome !== "revoked";
   React.useEffect(() => {
     if (!verification.data) return;
     client.setQueryData(
@@ -242,6 +259,7 @@ export default function SubscriptionPage() {
           ? "USD"
           : availableCurrencies[0] || "USD");
   const downgrade = !!(
+    !pending &&
     data?.active &&
     data.subscription &&
     order.indexOf(plan) < order.indexOf(data.subscription.plan)
@@ -322,6 +340,34 @@ export default function SubscriptionPage() {
       preparingWindow.current = false;
       setMessage(e.message);
     },
+  });
+  const closeCheckout = useMutation({
+    onMutate: async () => {
+      await client.cancelQueries({
+        queryKey: ["billing-verification", status.churchId],
+      });
+    },
+    mutationFn: (paymentReference: string) =>
+      api.post<BillingStatus>("/billing/checkout/close", {
+        reference: paymentReference,
+      }),
+    onSuccess: (result) => {
+      client.setQueryData(["platform-subscription", status.churchId], result);
+      checkoutWindow.current?.close();
+      setReference("");
+      if (storageKey) {
+        try {
+          sessionStorage.removeItem(storageKey);
+        } catch {
+          /* Optional recovery storage. */
+        }
+      }
+      setMessage(
+        "Checkout closed. Choose your plan and billing period. Any payment already sent will be checked and reviewed.",
+      );
+      void client.invalidateQueries({ queryKey: ["platform-subscription"] });
+    },
+    onError: (error) => setMessage(error.message),
   });
   function openCheckout() {
     if (!checkoutWindow.current || checkoutWindow.current.closed || !pending) {
@@ -465,6 +511,16 @@ export default function SubscriptionPage() {
           }
         />
       )}
+      {data?.accessReview && (
+        <div
+          role="alert"
+          className="rounded-2xl border border-gold/30 bg-gold/5 p-5 text-sm text-ink"
+        >
+          A payment has a partial refund or an open dispute. Access funded by
+          that payment is held for ChurchOS review. Other paid periods remain
+          available. Contact support with the payment reference shown below.
+        </div>
+      )}
       {trackedReference && (
         <div
           role={outcome === "review" ? "alert" : "status"}
@@ -487,8 +543,12 @@ export default function SubscriptionPage() {
               {outcome === "applied"
                 ? "Payment verified. Your subscription is active."
                 : outcome === "review"
-                  ? "Your payment was received and requires a ChurchOS review. Contact support with your payment reference."
-                  : "Waiting for Flutterwave to confirm your payment."}
+                  ? "Your payment requires a ChurchOS review. Contact support with your payment reference."
+                  : outcome === "revoked"
+                    ? "Access funded by this payment has been removed. Other paid periods remain available. Contact support with your reference."
+                    : outcome === "closed"
+                      ? "This checkout is closed. A payment already sent will still be checked and reviewed."
+                      : "Waiting for Flutterwave to confirm your payment."}
             </p>
             {waitingForPayment && (
               <p className="text-xs leading-relaxed text-ink-soft">
@@ -562,15 +622,16 @@ export default function SubscriptionPage() {
               </div>
               <Button
                 className="h-9 gap-2 rounded-full text-xs"
-                variant={manage ? "outline" : "default"}
-                onClick={() => setManage((value) => !value)}
+                ref={manageTrigger}
+                aria-controls="plan-comparison"
+                aria-expanded={manage || !data.active || !!pending}
+                onClick={() => {
+                  setManage(true);
+                  setManageRequest((value) => value + 1);
+                }}
               >
                 <SlidersHorizontal className="size-3.5" />
-                {manage
-                  ? "Close plan comparison"
-                  : data.active
-                    ? "Manage plan"
-                    : "Choose a plan and renew"}
+                {data.active ? "Manage plan" : "Choose a plan and renew"}
               </Button>
             </div>
             {data.subscription?.scheduled_plan && (
@@ -659,7 +720,13 @@ export default function SubscriptionPage() {
             })}
           </div>
           {(manage || !data.active || pending) && (
-            <section aria-label="Manage plan" className="space-y-5">
+            <section
+              id="plan-comparison"
+              ref={comparison}
+              tabIndex={-1}
+              aria-label="Manage plan"
+              className="scroll-mt-24 space-y-5 outline-none"
+            >
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <p className="rule-label">Find your fit</p>
@@ -671,13 +738,25 @@ export default function SubscriptionPage() {
                     continuing.
                   </p>
                 </div>
+                {data.active && !pending && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="rounded-full"
+                    onClick={() => {
+                      setManage(false);
+                      manageTrigger.current?.focus();
+                    }}
+                  >
+                    Close comparison
+                  </Button>
+                )}
                 <label className="grid gap-1.5 text-xs text-ink-soft">
                   Billing period
                   <select
                     aria-label="Billing period"
                     className="h-9 rounded-full border border-line bg-card px-3 text-xs"
                     value={cycle}
-                    disabled={!!pending}
                     onChange={(event) =>
                       setCycle(event.target.value as BillingCycle)
                     }
@@ -687,6 +766,26 @@ export default function SubscriptionPage() {
                   </select>
                 </label>
               </div>
+              {pending && (
+                <p
+                  role="status"
+                  className="rounded-xl border border-brand/20 bg-brand-soft/20 p-4 text-sm leading-relaxed text-ink-soft"
+                >
+                  You can compare plans and billing periods while a payment is
+                  pending. Your saved checkout is for{" "}
+                  <strong className="capitalize text-ink">
+                    {pending.plan}
+                  </strong>
+                  , {pending.cycle === "annual" ? "yearly" : "monthly"}, at{" "}
+                  <strong className="text-ink">
+                    {subscriptionMoney(
+                      pending.amount,
+                      pending.currency || "NGN",
+                    )}
+                  </strong>
+                  . Check its status or resume that checkout below.
+                </p>
+              )}
               <div className="paper-card rounded-2xl p-4 sm:p-5">
                 <SubscriptionCurrencySwitcher />
               </div>
@@ -788,7 +887,6 @@ export default function SubscriptionPage() {
                             className="h-9 w-full rounded-full text-xs"
                             aria-pressed={selected}
                             variant={selected ? "default" : "outline"}
-                            disabled={!!pending}
                             onClick={() => setPlan(item.id as typeof plan)}
                           >
                             {current ? "Current plan" : `Choose ${item.name}`}
@@ -806,13 +904,15 @@ export default function SubscriptionPage() {
                 <div className="border-b border-line bg-muted/20 px-5 py-4 sm:px-6">
                   <p className="rule-label">Before you continue</p>
                   <h2 className="mt-1 font-display text-xl font-semibold">
-                    Review your plan
+                    {pending ? "Your pending payment" : "Review your plan"}
                   </h2>
                 </div>
                 <div className="grid gap-6 p-5 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] sm:p-6">
                   <div className="space-y-4">
                     <div>
-                      <p className="rule-label">Selected plan</p>
+                      <p className="rule-label">
+                        {pending ? "Pending checkout plan" : "Selected plan"}
+                      </p>
                       <p className="mt-2 font-display text-xl font-semibold capitalize">
                         {pending?.plan || plan}
                       </p>
@@ -821,6 +921,16 @@ export default function SubscriptionPage() {
                           ? "Annual billing"
                           : "Monthly billing"}
                       </p>
+                      {pending &&
+                        (plan !== pending.plan || cycle !== pending.cycle) && (
+                          <p className="mt-3 text-xs leading-relaxed text-ink-soft">
+                            The comparison above shows{" "}
+                            <span className="capitalize">{plan}</span>,{" "}
+                            {cycle === "annual" ? "yearly" : "monthly"}. This
+                            pending payment keeps its original plan, period and
+                            amount.
+                          </p>
+                        )}
                     </div>
                     {!downgrade && (
                       <>
@@ -1028,6 +1138,26 @@ export default function SubscriptionPage() {
                         can make payments or change renewal preferences.
                       </p>
                     )}
+                    {pending && status.canPay && (
+                      <div className="space-y-2">
+                        <Button
+                          variant="outline"
+                          className="w-full rounded-full text-xs"
+                          disabled={
+                            closeCheckout.isPending || checkout.isPending
+                          }
+                          onClick={() =>
+                            closeCheckout.mutate(pending.reference)
+                          }
+                        >
+                          Close checkout and change plan
+                        </Button>
+                        <p className="text-xs text-ink-faint">
+                          Closing checkout does not refund a payment already
+                          sent. A late payment will go to ChurchOS for review.
+                        </p>
+                      </div>
+                    )}
                     {(reference || pending) && (
                       <Button
                         variant="outline"
@@ -1109,7 +1239,8 @@ export default function SubscriptionPage() {
                       <span>
                         <Tag
                           tone={
-                            payment.application_status === "review"
+                            payment.application_status === "review" ||
+                            payment.lifecycle?.access === "review"
                               ? "gold"
                               : payment.status === "success"
                                 ? "moss"
@@ -1118,9 +1249,14 @@ export default function SubscriptionPage() {
                                   : "neutral"
                           }
                         >
-                          {payment.application_status === "review"
-                            ? "Payment received. Contact support"
-                            : payment.status}
+                          {payment.application_status === "review" ||
+                          payment.lifecycle?.access === "review"
+                            ? "Held for review. Contact support"
+                            : payment.lifecycle?.access === "revoked"
+                              ? "Access removed"
+                              : payment.checkout_closed_at
+                                ? `Checkout ${payment.checkout_close_reason || "closed"}`
+                                : payment.status}
                         </Tag>
                       </span>
                       <RowActions

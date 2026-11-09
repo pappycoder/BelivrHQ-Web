@@ -10,11 +10,13 @@ async function fixture(
     pending?: boolean;
     noGateway?: boolean;
     denied?: boolean;
+    review?: boolean;
   } = {},
 ) {
   await workspaceFixture(context);
   await mockBotChallenges(context);
   let applied = false;
+  let closed = false;
   const calls: { path: string; body?: Record<string, unknown> }[] = [];
   const catalog = [
     {
@@ -43,6 +45,7 @@ async function fixture(
     baseCurrency: "USD",
     gatewayCurrencies: { flutterwave: ["USD", "NGN"] },
     catalog,
+    accessReview: options.review ?? false,
     active: applied || (options.active ?? true),
     subscription: {
       plan: "community",
@@ -55,7 +58,7 @@ async function fixture(
     usage: { members: 87, staff: 3, locations: 1, pendingInvitations: 1 },
     gateways: options.noGateway ? [] : ["flutterwave"],
     latestPayment:
-      options.pending && !applied
+      options.pending && !applied && !closed
         ? {
             reference,
             gateway: "flutterwave",
@@ -133,7 +136,10 @@ async function fixture(
       Record<string, unknown> | undefined;
     calls.push({ path, body });
     let data: unknown = status();
-    if (path.endsWith("/quote"))
+    if (path.endsWith("/checkout/close")) {
+      closed = true;
+      data = status();
+    } else if (path.endsWith("/quote"))
       data = {
         quoteId: "COSQ_" + "b".repeat(32),
         currency: body?.currency || "USD",
@@ -275,7 +281,7 @@ test("pending payment remains recoverable and only server application returns to
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Choose Essentials", exact: true }),
-  ).toBeDisabled();
+  ).toBeEnabled();
   state.apply();
   await page
     .getByRole("button", { name: "Check my payment", exact: true })
@@ -321,4 +327,216 @@ test("non-billing members get a useful contact state without billing requests or
     page.getByRole("button", { name: "Sign out", exact: true }),
   ).toHaveCount(0);
   expect(state.calls).toEqual([]);
+});
+
+for (const width of [320, 1440]) {
+  test(`Manage plan reveals and focuses the comparison at ${width}px`, async ({
+    context,
+    page,
+  }) => {
+    const { calls } = await fixture(context);
+    await page.setViewportSize({ width, height: 1000 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/subscription");
+    const trigger = page.getByRole("button", {
+      name: "Manage plan",
+      exact: true,
+    });
+    await expect(trigger).toHaveAttribute("aria-expanded", "false");
+    await trigger.click();
+    const comparison = page.getByRole("region", {
+      name: "Manage plan",
+      exact: true,
+    });
+    await expect(comparison).toBeInViewport();
+    await expect(comparison).toBeFocused();
+    await expect(trigger).toHaveAttribute("aria-expanded", "true");
+    await page
+      .getByRole("button", { name: "Choose Network", exact: true })
+      .click();
+    await expect(
+      page.getByRole("button", { name: "Choose Network", exact: true }),
+    ).toHaveAttribute("aria-pressed", "true");
+    await page
+      .getByRole("button", { name: "Close comparison", exact: true })
+      .click();
+    await expect(comparison).toHaveCount(0);
+    await expect(trigger).toBeFocused();
+    await trigger.click();
+    await expect(comparison).toBeFocused();
+    expect(
+      calls.some(
+        (call) =>
+          call.path.endsWith("/checkout") || call.path.endsWith("/schedule"),
+      ),
+    ).toBe(false);
+  });
+}
+
+test("Manage plan navigates to an already-visible pending comparison without pretending to close it", async ({
+  context,
+  page,
+}) => {
+  await fixture(context, { pending: true });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/subscription");
+  const trigger = page.getByRole("button", {
+    name: "Manage plan",
+    exact: true,
+  });
+  await expect(trigger).toHaveAttribute("aria-expanded", "true");
+  await trigger.click();
+  const comparison = page.getByRole("region", {
+    name: "Manage plan",
+    exact: true,
+  });
+  await expect(comparison).toBeInViewport();
+  await expect(comparison).toBeFocused();
+  await expect(
+    page.getByRole("button", { name: "Close comparison", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Choose Network", exact: true }),
+  ).toBeEnabled();
+});
+
+for (const width of [320, 1440]) {
+  test(`pending checkout does not lock plan or billing-period comparisons at ${width}px`, async ({
+    context,
+    page,
+  }) => {
+    const { calls } = await fixture(context, { pending: true });
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/subscription");
+    const period = page.getByRole("combobox", {
+      name: "Billing period",
+      exact: true,
+    });
+    await expect(period).toBeEnabled();
+    await expect(period).toHaveValue("annual");
+    const network = page.getByRole("article").filter({
+      has: page.getByRole("heading", { name: "Network", exact: true }),
+    });
+    const annualPrice = await network.locator("p.font-display").innerText();
+    await period.selectOption("monthly");
+    await expect(period).toHaveValue("monthly");
+    await expect(network).toContainText("per month");
+    expect(await network.locator("p.font-display").innerText()).not.toBe(
+      annualPrice,
+    );
+    await page
+      .getByRole("button", { name: "Choose Essentials", exact: true })
+      .click();
+    await expect(
+      page.getByRole("button", { name: "Choose Essentials", exact: true }),
+    ).toHaveAttribute("aria-pressed", "true");
+    await expect(
+      page.getByRole("button", { name: "Schedule downgrade", exact: true }),
+    ).toHaveCount(0);
+    const review = page.getByRole("region", {
+      name: "Payment review",
+      exact: true,
+    });
+    await expect(review).toContainText(/network/i);
+    await expect(review).toContainText("Annual billing");
+    await expect(review).toContainText("USD 432");
+    await expect(review).toContainText(
+      "keeps its original plan, period and amount",
+    );
+    expect(
+      calls.some(
+        (call) =>
+          call.path.endsWith("/checkout") ||
+          call.path.endsWith("/schedule") ||
+          call.path.endsWith("/quote"),
+      ),
+    ).toBe(false);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth),
+    ).toBeLessThanOrEqual(width);
+  });
+}
+
+test("resuming a pending checkout uses its saved terms after browsing a different billing period", async ({
+  context,
+  page,
+}) => {
+  await fixture(context, { pending: true });
+  const bodies: unknown[] = [];
+  await page.route("**/api/backend/billing/checkout", (route) => {
+    bodies.push(route.request().postDataJSON());
+    return route.fulfill({
+      json: {
+        success: true,
+        data: {
+          authorizationUrl: "https://checkout.flutterwave.com/secure",
+          reference,
+        },
+      },
+    });
+  });
+  await context.route("https://checkout.flutterwave.com/**", (route) =>
+    route.fulfill({ contentType: "text/html", body: "<p>Mock checkout</p>" }),
+  );
+  await page.goto("/subscription");
+  await page
+    .getByRole("combobox", { name: "Billing period", exact: true })
+    .selectOption("monthly");
+  await page
+    .getByRole("button", { name: "Choose Essentials", exact: true })
+    .click();
+  const popup = page.waitForEvent("popup");
+  await page
+    .getByRole("button", { name: "Resume secure checkout", exact: true })
+    .click();
+  const checkout = await popup;
+  await expect.poll(() => bodies.length).toBe(1);
+  expect(bodies[0]).toEqual({
+    plan: "network",
+    cycle: "annual",
+    gateway: "flutterwave",
+    currency: "USD",
+  });
+  await checkout.close();
+});
+
+for (const width of [390, 1440]) {
+  test(`closes pending checkout before changing paid terms at ${width}px`, async ({
+    context,
+    page,
+  }) => {
+    const { calls } = await fixture(context, { pending: true });
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/subscription");
+    await page
+      .getByRole("button", {
+        name: "Close checkout and change plan",
+        exact: true,
+      })
+      .click();
+    await expect(
+      page.getByRole("button", { name: "Resume secure checkout", exact: true }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByText("Checkout closed. Choose your plan and billing period.", {
+        exact: false,
+      }),
+    ).toBeVisible();
+    expect(
+      calls.find((call) => call.path.endsWith("/checkout/close"))?.body,
+    ).toEqual({ reference });
+    expect(calls.some((call) => call.path.endsWith("/checkout"))).toBe(false);
+  });
+}
+test("explains a payment access hold in the billing design", async ({
+  context,
+  page,
+}) => {
+  await fixture(context, { active: false, review: true });
+  await page.goto("/subscription");
+  await expect(
+    page
+      .getByRole("alert")
+      .filter({ hasText: "partial refund or an open dispute" }),
+  ).toContainText("Other paid periods remain available");
 });

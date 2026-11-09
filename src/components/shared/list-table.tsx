@@ -20,6 +20,7 @@ import {
   recordLookup,
 } from "@/lib/record-fields";
 import { cn } from "@/lib/utils";
+import { useColumnAlignment } from "@/hooks/use-column-alignment";
 import { ManageHeading } from "@/components/paper/primitives";
 
 interface NodeProps {
@@ -91,6 +92,7 @@ export function ListTable({
   fields?: readonly { key: string; label: string }[];
 }) {
   const root = React.useRef<HTMLDivElement>(null);
+  useColumnAlignment(root);
   function findHeader(
     tree: React.ReactNode,
   ): React.ReactElement<NodeProps> | undefined {
@@ -226,7 +228,30 @@ export function ListTable({
               key={column.id}
               role={isHeader ? "columnheader" : "cell"}
               hidden={state.hidden.includes(column.id)}
-              className="list-table-cell min-w-0"
+              className={cn(
+                "list-table-cell min-w-0",
+                isHeader &&
+                  index >= 0 &&
+                  React.isValidElement<NodeProps>(headings[index])
+                  ? headings[index].type === ManageHeading
+                    ? "text-right"
+                    : headings[index].props.className
+                        ?.split(/\s+/)
+                        .filter((token) =>
+                          /^(?:[\w-]+:)*text-(?:left|right|center|start|end|justify)$/.test(
+                            token,
+                          ),
+                        )
+                        .join(" ")
+                  : undefined,
+              )}
+              style={
+                isHeader &&
+                index >= 0 &&
+                React.isValidElement<NodeProps>(headings[index])
+                  ? { textAlign: headings[index].props.style?.textAlign }
+                  : undefined
+              }
               data-list-column={column.id}
             >
               {index >= 0 ? (
@@ -246,7 +271,12 @@ export function ListTable({
           role: "row",
           "data-row-handled":
             !isHeader && node.props.onClick ? "true" : undefined,
-          style: { ...node.props.style, display: "grid", gridTemplateColumns },
+          style: {
+            ...node.props.style,
+            display: "grid",
+            gridTemplateColumns: "subgrid",
+            gridColumn: "1 / -1",
+          },
           ...(!isHeader
             ? { "data-row-selected": String(selected.includes(id)) }
             : {}),
@@ -298,7 +328,24 @@ export function ListTable({
           </BulkRowContext.Provider>
         );
       }
+      const containsRows = (tree: React.ReactNode): boolean =>
+        nodes(tree).some(
+          (child) =>
+            React.isValidElement<NodeProps>(child) &&
+            (template(child.props.className) === source ||
+              containsRows(child.props.children)),
+        );
       return React.cloneElement(node, {
+        ...(source && containsRows(node.props.children)
+          ? {
+              style: {
+                ...node.props.style,
+                display: "grid",
+                gridTemplateColumns: "subgrid",
+                gridColumn: "1 / -1",
+              },
+            }
+          : {}),
         children: enhance(node.props.children, key),
       });
     });
@@ -372,14 +419,21 @@ export function ListTable({
         <div
           role="table"
           aria-label={label}
-          style={
-            extraCount
+          style={{
+            display: "grid",
+            rowGap: 0,
+            gridTemplateColumns,
+            ...(extraCount
               ? { minWidth: originalWidth + extraCount * 160 }
-              : undefined
-          }
-          className={className
-            ?.match(/min-w-\[[^\]]+\]|\bdivide-\S+/g)
-            ?.join(" ")}
+              : {}),
+          }}
+          className={cn(
+            header.props.className
+              ?.split(/\s+/)
+              .filter((token) => /^(?:[\w-]+:)*gap(?:-x)?-/.test(token))
+              .join(" "),
+            className?.match(/min-w-\[[^\]]+\]|\bdivide-\S+/g)?.join(" "),
+          )}
         >
           {enhanced}
         </div>

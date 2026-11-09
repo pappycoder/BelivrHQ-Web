@@ -4,7 +4,11 @@ export type SubscriptionPlan =
 export type BillingCycle = "monthly" | "annual";
 export type SubscriptionGateway = "paystack" | "flutterwave";
 export interface BillingStatus {
-  verification?: { reference: string; status: string; application_status: string } | null;
+  verification?: {
+    reference: string;
+    status: string;
+    application_status: string;
+  } | null;
   baseCurrency: "USD";
   gatewayCurrencies: Partial<Record<SubscriptionGateway, string[]>>;
   catalog: PlanCatalogEntry[];
@@ -20,6 +24,12 @@ export interface BillingStatus {
     status: string;
     intent: string;
     application_status: string;
+    lifecycle?: {
+      access: "clear" | "review" | "revoked";
+      refundedAmount: number;
+    };
+    checkout_closed_at?: string | null;
+    checkout_close_reason?: string | null;
     created_at: string;
   }[];
   subscription: {
@@ -29,6 +39,7 @@ export interface BillingStatus {
     scheduled_plan?: SubscriptionPlan | null;
     scheduled_cycle?: BillingCycle | null;
   } | null;
+  accessReview?: boolean;
   active: boolean;
   gateways: SubscriptionGateway[];
   latestPayment: {

@@ -470,7 +470,8 @@ test("Forms-module builder previews use church branding", async ({
 }) => {
   await fixture(context, { private: true });
   await page.goto("/library/forms/new");
-  await page.getByText("Preview questions", { exact: true }).click();
+  const previewSwitch = page.getByRole("button", { name: "Preview form", exact: true });
+  if (await previewSwitch.isVisible()) await previewSwitch.click();
   await expect(
     page.getByTestId("church-form-branding").getByText(identity.churchName),
   ).toBeVisible();

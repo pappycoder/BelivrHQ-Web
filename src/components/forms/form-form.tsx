@@ -1,8 +1,11 @@
 "use client";
 
-import { BranchAssignmentField, useBranchAssignment } from "@/components/shared/branch-assignment";
+import {
+  BranchAssignmentField,
+  useBranchAssignment,
+} from "@/components/shared/branch-assignment";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -17,16 +20,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { ChurchFormBranding } from "./church-form-branding";
+import { Eye, ListChecks, Settings2, SlidersHorizontal } from "lucide-react";
+import { SectionCard } from "@/components/paper/section";
+import { getToastErrorMessage } from "@/lib/toast";
+import { cn } from "@/lib/utils";
+import { FormBuilderPreview } from "./form-builder-preview";
 import { useCurrentProfile } from "@/hooks/use-profile";
-import { FormFieldsRenderer } from "./form-fields-renderer";
 import { FormFieldsEditor } from "./form-fields-editor";
 import { FormSettingsCard } from "./form-settings-card";
 import {
@@ -68,7 +67,10 @@ const formSchema = z
       keys.add(f.key);
     }
     for (const f of data.fields) {
-      if ((f.type === "dropdown" || f.type === "checkbox") && (!f.options || f.options.length === 0)) {
+      if (
+        (f.type === "dropdown" || f.type === "checkbox") &&
+        (!f.options || f.options.length === 0)
+      ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["fields"],
@@ -100,6 +102,9 @@ const EMPTY_VALUES: FormValues = {
 export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
   const branchAssignment = useBranchAssignment(form);
   const { data: profile } = useCurrentProfile();
+  const builderId = useId();
+  const [mode, setMode] = useState<"edit" | "preview">("edit");
+  const [saveError, setSaveError] = useState("");
   const [saving, setSaving] = useState(false);
   const [builderFields, setBuilderFields] = useState<FormFieldType[]>([]);
 
@@ -136,17 +141,28 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
     uniqueField?: string;
     submissionLimit?: number;
   }) => {
-    formControl.setValue("status", values.status ?? "draft", { shouldDirty: true });
-    formControl.setValue("isTemplate", values.isTemplate ?? false, { shouldDirty: true });
-    formControl.setValue("isPublic", values.isPublic ?? false, { shouldDirty: true });
-    formControl.setValue("uniqueField", values.uniqueField, { shouldDirty: true });
-    formControl.setValue("submissionLimit", values.submissionLimit ?? 0, { shouldDirty: true });
+    formControl.setValue("status", values.status ?? "draft", {
+      shouldDirty: true,
+    });
+    formControl.setValue("isTemplate", values.isTemplate ?? false, {
+      shouldDirty: true,
+    });
+    formControl.setValue("isPublic", values.isPublic ?? false, {
+      shouldDirty: true,
+    });
+    formControl.setValue("uniqueField", values.uniqueField, {
+      shouldDirty: true,
+    });
+    formControl.setValue("submissionLimit", values.submissionLimit ?? 0, {
+      shouldDirty: true,
+    });
   };
 
   const handleSubmit = async (values: FormValues) => {
     const branchPayload = branchAssignment.payload();
     if (!branchPayload) return;
     setSaving(true);
+    setSaveError("");
     try {
       await onSubmit({
         ...branchPayload,
@@ -159,6 +175,13 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
         uniqueField: values.uniqueField || undefined,
         submissionLimit: values.submissionLimit ?? 0,
       });
+    } catch (error) {
+      setSaveError(
+        getToastErrorMessage(
+          error,
+          "Could not save the form. Please try again.",
+        ),
+      );
     } finally {
       setSaving(false);
     }
@@ -174,103 +197,191 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
 
   return (
     <Form {...formControl}>
-      <form onSubmit={formControl.handleSubmit(handleSubmit)} className="space-y-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold">Form Details</CardTitle>
-            <CardDescription>Name and describe this form.</CardDescription>
-          </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-2">
-            <BranchAssignmentField assignment={branchAssignment} />
-            <FormField
-              control={formControl.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Membership Application" {...field} disabled={saving} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={formControl.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="What is this form for?"
-                      {...field}
-                      disabled={saving}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold">Fields</CardTitle>
-            <CardDescription>Define what you want to collect.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <FormField
-              control={formControl.control}
-              name="fields"
-              render={() => (
-                <FormItem>
-                  <FormControl>
-                    <FormFieldsEditor
-                      fields={builderFields}
-                      showErrors={!!formControl.formState.errors.fields}
-                      onChange={handleFormFieldsChange}
-                      disabled={saving}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold">Settings</CardTitle>
-            <CardDescription>
-              Control publishing, public sharing, and duplicate-submission protection.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Controller
-              control={formControl.control}
-              name="status"
-              render={() => (
-                <FormSettingsCard
-                  values={settingsValues}
-                  onChange={handleSettingsChange}
-                  fields={builderFields}
-                  disabled={saving}
-                />
-              )}
-            />
-          </CardContent>
-        </Card>
-
-        <details className="rounded-lg border p-4"><summary className="cursor-pointer font-medium">Preview questions</summary><div className="mt-4 max-w-2xl"><ChurchFormBranding churchName={profile?.church?.name} churchLogoUrl={profile?.church?.logoUrl} /><FormFieldsRenderer fields={builderFields} onChange={() => {}} /></div></details>
-        <div className="flex items-center justify-end gap-2">
-          <Button type="submit" disabled={saving} loading={saving}>
+      <div data-form-builder className="space-y-5">
+        <div className="paper-card flex flex-wrap items-center justify-between gap-4 rounded-2xl px-5 py-4">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-soft">
+            <span className="flex items-center gap-2">
+              <ListChecks className="size-4 text-brand" />
+              <strong className="font-semibold text-ink">
+                {builderFields.length}
+              </strong>{" "}
+              questions
+            </span>
+            <span>
+              <strong className="font-semibold text-ink">
+                {builderFields.filter((field) => field.required).length}
+              </strong>{" "}
+              required
+            </span>
+            <span className="rounded-full bg-brand-soft px-3 py-1 text-xs font-medium text-brand">
+              {settingsValues.status === "published"
+                ? "Published"
+                : settingsValues.status === "closed"
+                  ? "Closed"
+                  : "Draft"}{" "}
+              · {settingsValues.isPublic ? "Public link" : "Members only"}
+            </span>
+          </div>
+          <Button
+            type="submit"
+            form={builderId}
+            className="rounded-full"
+            disabled={saving}
+            loading={saving}
+          >
             {saving ? "Saving..." : submitLabel}
           </Button>
         </div>
-      </form>
+        <div
+          className="flex rounded-full border border-line bg-card p-1 xl:hidden"
+          aria-label="Builder view"
+        >
+          <Button
+            type="button"
+            variant={mode === "edit" ? "secondary" : "ghost"}
+            className="flex-1 rounded-full"
+            aria-pressed={mode === "edit"}
+            onClick={() => setMode("edit")}
+          >
+            <SlidersHorizontal className="size-4" /> Edit form
+          </Button>
+          <Button
+            type="button"
+            variant={mode === "preview" ? "secondary" : "ghost"}
+            className="flex-1 rounded-full"
+            aria-pressed={mode === "preview"}
+            onClick={() => setMode("preview")}
+          >
+            <Eye className="size-4" /> Preview form
+          </Button>
+        </div>
+        {saveError && (
+          <p
+            role="alert"
+            className="rounded-xl border border-destructive/25 bg-destructive/5 p-4 text-sm text-destructive"
+          >
+            {saveError}
+          </p>
+        )}
+        <div className="grid min-w-0 items-start gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+          <form
+            id={builderId}
+            onSubmit={formControl.handleSubmit(handleSubmit, () =>
+              setMode("edit"),
+            )}
+            className={cn(
+              "min-w-0 space-y-5 xl:block",
+              mode === "preview" && "hidden",
+            )}
+          >
+            <SectionCard
+              eyebrow="01 · The introduction"
+              title="Form details"
+              description="Let people know what this form is for."
+              bodyClassName="space-y-4"
+            >
+              <BranchAssignmentField
+                assignment={branchAssignment}
+                disabled={saving}
+              />
+              <FormField
+                control={formControl.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Membership Application"
+                        {...field}
+                        disabled={saving}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={formControl.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="What is this form for?"
+                        {...field}
+                        disabled={saving}
+                        className="min-h-24"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </SectionCard>
+            <SectionCard
+              eyebrow="02 · What you need to know"
+              title="Questions"
+              description="Choose the answer types and order that work for your form."
+            >
+              <FormField
+                control={formControl.control}
+                name="fields"
+                render={() => (
+                  <FormItem>
+                    <FormControl>
+                      <FormFieldsEditor
+                        fields={builderFields}
+                        showErrors={!!formControl.formState.errors.fields}
+                        onChange={handleFormFieldsChange}
+                        disabled={saving}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </SectionCard>
+            <SectionCard
+              eyebrow="03 · Sharing & responses"
+              title={
+                <span className="flex items-center gap-2">
+                  <Settings2 className="size-4 text-brand" /> Form settings
+                </span>
+              }
+              description="Choose who can respond and when the form is open."
+            >
+              <Controller
+                control={formControl.control}
+                name="status"
+                render={() => (
+                  <FormSettingsCard
+                    values={settingsValues}
+                    onChange={handleSettingsChange}
+                    fields={builderFields}
+                    disabled={saving}
+                  />
+                )}
+              />
+            </SectionCard>
+          </form>
+          <aside
+            className={cn(
+              "min-w-0 xl:sticky xl:top-6 xl:block",
+              mode === "edit" && "hidden",
+            )}
+          >
+            <FormBuilderPreview
+              title={formControl.watch("title")}
+              description={formControl.watch("description")}
+              fields={builderFields}
+              churchName={profile?.church?.name}
+              churchLogoUrl={profile?.church?.logoUrl}
+            />
+          </aside>
+        </div>
+      </div>
     </Form>
   );
 }

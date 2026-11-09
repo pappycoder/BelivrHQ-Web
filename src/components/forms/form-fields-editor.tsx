@@ -1,7 +1,15 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { useId, useState } from "react";
-import { ArrowDown, ArrowUp, ChevronDown, Plus, Trash2 } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  ChevronDown,
+  ClipboardList,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -52,9 +60,17 @@ export function FormFieldsEditor({
         Choose a question to edit. Use Move up or Move down to change the order.
       </p>
       {!fields.length && (
-        <p className="text-sm">
-          Add your first question to start collecting responses.
-        </p>
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-line bg-background px-4 py-8 text-center">
+          <span className="rounded-2xl bg-brand-soft p-3 text-brand">
+            <ClipboardList className="size-6" />
+          </span>
+          <h3 className="font-display text-lg font-semibold">
+            Start with a question
+          </h3>
+          <p className="max-w-64 text-sm text-ink-soft">
+            Add your first question to start collecting responses.
+          </p>
+        </div>
       )}
       {fields.map((field, index) => {
         const prefix = `${id}-${index}`;
@@ -75,7 +91,12 @@ export function FormFieldsEditor({
         return (
           <section
             key={index}
-            className="rounded-lg border"
+            className={cn(
+              "overflow-hidden rounded-2xl border transition-colors",
+              expanded
+                ? "border-brand/40 bg-brand-soft/15"
+                : "border-line bg-card",
+            )}
             aria-label={`Question ${index + 1}`}
           >
             <div className="flex flex-wrap items-center gap-2 p-3">
@@ -86,13 +107,15 @@ export function FormFieldsEditor({
                 aria-controls={`${prefix}-editor`}
                 onClick={() => setActive(active === index ? -1 : index)}
               >
-                <span className="text-muted-foreground">{index + 1}.</span>
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-xs font-semibold text-brand">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
                 <span className="min-w-0 flex-1 break-words font-medium">
                   {field.label || "New question"}
                 </span>
                 <ChevronDown className="size-4 shrink-0" />
               </button>
-              <span className="text-xs text-muted-foreground">
+              <span className="rounded-full bg-background px-2.5 py-1 text-xs text-ink-soft">
                 {FIELD_TYPE_LABELS[field.type]}
                 {field.required ? " · Required" : ""}
               </span>
@@ -134,7 +157,10 @@ export function FormFieldsEditor({
               </div>
             </div>
             {expanded && (
-              <div id={`${prefix}-editor`} className="space-y-4 border-t p-4">
+              <div
+                id={`${prefix}-editor`}
+                className="space-y-4 border-t border-line bg-card p-4"
+              >
                 <div className="space-y-2">
                   <Label htmlFor={`${prefix}-label`}>Question label</Label>
                   <Input
@@ -248,6 +274,7 @@ export function FormFieldsEditor({
       <Button
         type="button"
         variant="outline"
+        className="w-full rounded-xl border-dashed border-brand/40 py-6 text-brand hover:bg-brand-soft"
         disabled={disabled}
         onClick={() => {
           onChange([

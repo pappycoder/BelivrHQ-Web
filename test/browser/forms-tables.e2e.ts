@@ -602,3 +602,15 @@ test("selected-row export excludes other records in an export-enabled collection
   expect(bytes.toString()).toContain("Keyboard");
   expect(bytes.toString()).not.toContain("Microphone");
 });
+
+test("native dropdown arrows have an inset and retain forced-colour accessibility", async ({ context, page }) => {
+  await session(context, false);
+  await page.goto("/operations/assets");
+  const select = page.getByRole("combobox", { name: "Category filter", exact: true });
+  await expect(select).toHaveCSS("appearance", "none");
+  expect(await select.evaluate(el => parseFloat(getComputedStyle(el).paddingRight))).toBeGreaterThanOrEqual(40);
+  expect(await select.evaluate(el => getComputedStyle(el).backgroundPosition)).toContain("21.25px");
+  await page.emulateMedia({ forcedColors: "active" });
+  await expect(select).toHaveCSS("appearance", "auto");
+  await expect(select).toHaveCSS("background-image", "none");
+});

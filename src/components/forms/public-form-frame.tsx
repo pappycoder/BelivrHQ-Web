@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { cn } from "@/lib/utils";
 import { ClipboardList, LockKeyhole } from "lucide-react";
 import {
   ChurchFormBranding,
@@ -13,6 +14,9 @@ interface PublicFormFrameProps extends ChurchFormIdentity {
   eyebrow?: string;
   aside?: ReactNode;
   loading?: boolean;
+  /** Embed the respondent layout in the builder without nested page landmarks. */
+  embedded?: boolean;
+  stacked?: boolean;
   children: ReactNode;
 }
 /** The same Paper introduction/response layout used by church-created public forms. */
@@ -24,16 +28,25 @@ export function PublicFormFrame({
   eyebrow = "A place to connect",
   aside,
   loading,
+  embedded = false,
+  stacked = false,
   children,
 }: PublicFormFrameProps) {
+  const Content = embedded ? "div" : "main";
+  const Heading = embedded ? "h3" : "h1";
   return (
     <div
       data-public-form-frame
       data-paper-root
       aria-busy={loading || undefined}
-      className="min-h-svh bg-background text-foreground"
+      className={cn("bg-background text-foreground", !embedded && "min-h-svh")}
     >
-      <header className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-6 sm:px-8">
+      <header
+        className={cn(
+          "mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4",
+          embedded ? "px-4 py-5" : "px-5 py-6 sm:px-8",
+        )}
+      >
         {loading ? (
           <div className="flex min-w-0 items-center gap-3">
             <Skeleton className="size-12 shrink-0" />
@@ -52,8 +65,20 @@ export function PublicFormFrame({
           Community forms
         </span>
       </header>
-      <main className="mx-auto grid w-full max-w-6xl min-w-0 gap-0 px-4 pb-10 sm:px-8 lg:grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)]">
-        <aside className="relative overflow-hidden rounded-t-3xl bg-[var(--brand)] px-6 py-8 text-white sm:p-10 lg:rounded-l-3xl lg:rounded-tr-none">
+      <Content
+        className={cn(
+          "mx-auto grid w-full max-w-6xl min-w-0 gap-0",
+          embedded ? "px-3 pb-3" : "px-4 pb-10 sm:px-8",
+          !stacked && "lg:grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)]",
+        )}
+      >
+        <aside
+          className={cn(
+            "relative overflow-hidden rounded-t-3xl bg-[var(--brand)] text-white",
+            embedded ? "p-5" : "px-6 py-8 sm:p-10",
+            !stacked && "lg:rounded-l-3xl lg:rounded-tr-none",
+          )}
+        >
           <div
             aria-hidden="true"
             className="pointer-events-none absolute -right-28 -top-28 size-80 rounded-full border-[40px] border-white/5"
@@ -77,9 +102,14 @@ export function PublicFormFrame({
               </div>
             ) : (
               <>
-                <h1 className="mt-5 break-words text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
+                <Heading
+                  className={cn(
+                    "mt-4 break-words font-semibold leading-tight tracking-tight",
+                    embedded ? "text-2xl" : "text-3xl sm:text-4xl",
+                  )}
+                >
                   {title}
-                </h1>
+                </Heading>
                 <p className="mt-5 whitespace-pre-line break-words text-sm leading-7 text-white/75">
                   {description}
                 </p>
@@ -94,11 +124,16 @@ export function PublicFormFrame({
         </aside>
         <section
           aria-label="Your response"
-          className="min-w-0 rounded-b-3xl border border-t-0 bg-white p-6 shadow-sm dark:bg-card sm:p-10 lg:rounded-r-3xl lg:rounded-bl-none lg:border-t lg:border-l-0"
+          className={cn(
+            "min-w-0 rounded-b-3xl border border-t-0 bg-card shadow-sm",
+            embedded ? "p-5" : "p-6 sm:p-10",
+            !stacked &&
+              "lg:rounded-r-3xl lg:rounded-bl-none lg:border-t lg:border-l-0",
+          )}
         >
           {children}
         </section>
-      </main>
+      </Content>
     </div>
   );
 }
