@@ -152,12 +152,12 @@ const navItems: { section: string; items: NavItem[] }[] = [
         children: [
           { title: "Dashboard", href: "/giving/overview", permission: "giving:dashboard:read" },
           {
-            title: "Categories",
+            title: "Giving categories",
             href: "/giving/funds",
             permission: "giving:categories:read",
           },
           {
-            title: "Records",
+            title: "Giving records",
             href: "/giving/donations",
             permission: "giving:records:read",
           },

@@ -458,7 +458,7 @@ function ServiceRow({
 }) {
   const toggleActive = useUpdateService(service.serviceId);
   return (
-    <div className="group flex items-center gap-4 px-5 py-3.5">
+    <div data-record-row className="group flex items-center gap-4 px-5 py-3.5">
       <div className="min-w-0 flex-1">
         <Link
           href={`/gatherings/attendance/services/${service.serviceId}`}

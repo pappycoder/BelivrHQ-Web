@@ -3,6 +3,7 @@ import { test, expect, type BrowserContext, type Page } from "@playwright/test";
 async function fixture(
   context: BrowserContext,
   mode: "staff" | "finance" | "read" = "staff",
+  options: { emptyAttendance?: boolean } = {},
 ) {
   const requests: string[] = [];
   const writes: string[] = [];
@@ -160,17 +161,37 @@ async function fixture(
     } else if (path.endsWith("/attendance/summary"))
       data = { memberCount: 1, totalMeetings: 4, averageAttendance: 1 };
     else if (path.endsWith("/attendance"))
-      data = [
-        {
-          id: "arrival",
-          memberId: "ada",
-          firstName: "Ada",
-          lastName: "Rice",
-          status: "present",
-          meetingDate: "2026-11-08",
-          notes: "On time",
-        },
-      ];
+      data = options.emptyAttendance
+        ? []
+        : [
+            {
+              id: "arrival",
+              memberId: "ada",
+              firstName: "Ada",
+              lastName: "Rice",
+              status: "present",
+              meetingDate: "2026-11-08",
+              notes: "On time",
+            },
+            {
+              id: "guest-arrival",
+              visitorId: "guest",
+              firstName: "Zoe",
+              lastName: "Guest",
+              status: "late",
+              meetingDate: "2026-11-09",
+              notes: "Bus delay",
+            },
+            {
+              id: "old-arrival",
+              memberId: "bob",
+              firstName: "Bob",
+              lastName: "Rice",
+              status: "absent",
+              meetingDate: "2026-11-07",
+              notes: "Away",
+            },
+          ];
     else if (path === "/admin/cell-groups/nearest") data = [];
     else if (path === "/giving/cell-groups/west-home")
       data = {
@@ -359,7 +380,9 @@ for (const width of [1280, 320])
         expect(
           requests.some((path) => path.startsWith("/giving/cell-groups/")),
         ).toBe(false);
-        await page.getByRole("tab", { name: "Giving", exact: true }).click();
+        await page
+          .getByRole("tab", { name: "Meeting giving", exact: true })
+          .click();
         await expect(
           page.getByText("Total group giving", { exact: true }),
         ).toBeVisible();
@@ -368,6 +391,24 @@ for (const width of [1280, 320])
           .click();
         await expect(page.getByRole("dialog")).toBeVisible();
         await page.getByRole("button", { name: "Cancel", exact: true }).click();
+        await page
+          .getByRole("tab", { name: "Attendance", exact: true })
+          .click();
+        await expect(
+          page.getByText("Total group giving", { exact: true }),
+        ).toHaveCount(0);
+        await expect(
+          page.getByRole("button", {
+            name: "Record Meeting Giving",
+            exact: true,
+          }),
+        ).toHaveCount(0);
+        await page
+          .getByRole("tab", { name: "Reported totals", exact: true })
+          .click();
+        await expect(
+          page.getByText("Total group giving", { exact: true }),
+        ).toHaveCount(0);
       }
       await page.getByRole("tab", { name: "Overview", exact: true }).click();
       if (cell)
@@ -394,9 +435,14 @@ test("finance access has Giving without requesting member or attendance data", a
   await expect(
     page.getByText("Total group giving", { exact: true }),
   ).toBeVisible();
+  await page.getByRole("tab", { name: "Members", exact: true }).click();
   await expect(
-    page.getByRole("tab", { name: "Members", exact: true }),
-  ).toHaveCount(0);
+    page.getByText("Member roster access required", { exact: true }),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "Meeting giving", exact: true }).click();
+  await expect(
+    page.getByText("Total group giving", { exact: true }),
+  ).toBeVisible();
   await expect(
     page.getByRole("tab", { name: "Attendance", exact: true }),
   ).toHaveCount(0);
@@ -408,22 +454,29 @@ test("finance access has Giving without requesting member or attendance data", a
   ).toBe(false);
 });
 
-test("read-only members see no management or giving tab", async ({
+test("read-only members cannot manage rosters or read giving", async ({
   page,
   context,
 }) => {
-  await fixture(context, "read");
+  const { requests } = await fixture(context, "read");
   await page.goto("/gatherings/groups/cell/west-home?tab=members");
   await expect(page.locator("[data-list-table]")).toContainText("Ada Rice");
   await expect(
     page.getByRole("button", { name: "Remove Ada Rice", exact: true }),
   ).toHaveCount(0);
+  await page.getByRole("tab", { name: "Meeting giving", exact: true }).click();
   await expect(
-    page.getByRole("tab", { name: "Giving", exact: true }),
+    page.getByText("Meeting giving access required", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Total group giving", { exact: true }),
   ).toHaveCount(0);
   await expect(
     page.getByRole("button", { name: "Edit group", exact: true }),
   ).toHaveCount(0);
+  expect(requests.some((path) => path.startsWith("/giving/cell-groups/"))).toBe(
+    false,
+  );
 });
 
 test("cell roster removal saves only after confirmation", async ({
@@ -480,3 +533,203 @@ test("roster bulk removal confirms the named selection once", async ({
     .poll(() => writes)
     .toEqual(["/admin/cell-groups/west-home/members/ada"]);
 });
+
+for (const cell of [false, true])
+  test(`${cell ? "cell group" : "department"} attendance filters, search and sorting share the register layout`, async ({
+    page,
+    context,
+  }) => {
+    const { requests } = await fixture(context);
+    await page.setViewportSize({ width: 320, height: 900 });
+    await page.goto(
+      cell
+        ? "/gatherings/groups/cell/west-home?tab=attendance"
+        : "/gatherings/groups/worship?tab=attendance",
+    );
+    const title = cell
+      ? "Cell group attendance"
+      : "Department meeting attendance";
+    const table = page.getByRole("table", { name: title, exact: true });
+    await expect(table).toContainText("Zoe Guest");
+    await expect(page.locator("[data-list-table]")).not.toHaveCSS(
+      "background-color",
+      "rgba(0, 0, 0, 0)",
+    );
+    await option(page, `Sort ${title.toLowerCase()}`, "Attendee name");
+    await page
+      .getByRole("button", { name: "Sort ascending", exact: true })
+      .click();
+    await expect(table.getByRole("row").nth(1)).toContainText("Ada Rice");
+    await option(page, `${title} attendee type`, "Visitors");
+    await expect(table).not.toContainText("Ada Rice");
+    await expect(table).toContainText("Zoe Guest");
+    await option(page, `${title} status`, "late");
+    await page
+      .getByRole("textbox", { name: "Search attendee or notes…", exact: true })
+      .fill("zoe bus");
+    await expect(table).toContainText("Zoe Guest");
+    await page
+      .getByRole("button", { name: "Clear filters", exact: true })
+      .click();
+    await expect(table).toContainText("Bob Rice");
+    await page.locator('input[type="date"]').fill("2026-11-08");
+    await expect
+      .poll(() =>
+        requests.some((path) => path.includes("meetingDate=2026-11-08")),
+      )
+      .toBe(true);
+    await expect(page.getByRole("spinbutton")).toHaveCount(0);
+    await page.getByRole("heading", { level: 1 }).click();
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.screenshot({
+      path: `/tmp/churchos-${cell ? "cell" : "department"}-attendance-320.png`,
+      fullPage: true,
+      animations: "disabled",
+    });
+  });
+
+for (const cell of [false, true])
+  test(`${cell ? "cell group" : "department"} whole rows open details while checkboxes and Manage stay independent`, async ({
+    page,
+    context,
+  }) => {
+    const { writes } = await fixture(context);
+    const path = cell ? "/gatherings/groups/cell" : "/gatherings/groups";
+    await page.goto(path);
+    const table = page.getByRole("table", { name: "Records", exact: true });
+    const row = table
+      .getByRole("row")
+      .filter({ hasText: cell ? "West home" : "Worship team" });
+    await expect(row).toHaveAttribute("data-row-clickable", "true");
+    await row.getByRole("checkbox").click();
+    await expect(page).toHaveURL(new RegExp(`${path}$`));
+    await row
+      .getByRole("button", {
+        name: cell ? "Archive group — records kept" : "Archive Worship team",
+        exact: true,
+      })
+      .click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    expect(writes).toHaveLength(0);
+    await page.getByRole("button", { name: "Cancel", exact: true }).click();
+    await row
+      .locator('[data-list-column="column-1"]')
+      .getByText("West Branch", { exact: true })
+      .click();
+    await expect(page).toHaveURL(
+      new RegExp(`${path}/${cell ? "west-home" : "worship"}$`),
+    );
+    await page.goto(path);
+    const keyboardRow = page
+      .getByRole("row")
+      .filter({ hasText: cell ? "West home" : "Worship team" });
+    await expect(keyboardRow).toHaveAttribute("tabindex", "0");
+    await keyboardRow.focus();
+    await keyboardRow.press("Enter");
+    await expect(page).toHaveURL(
+      new RegExp(`${path}/${cell ? "west-home" : "worship"}$`),
+    );
+  });
+
+test("native table rows handle keyboard, nested controls, disabled views and text selection", async ({
+  page,
+  context,
+}) => {
+  await fixture(context);
+  await page.goto("/gatherings/groups");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await page.evaluate(() => {
+    const table = document.createElement("table");
+    table.id = "row-navigation-fixture";
+    table.dataset.slot = "table";
+    table.innerHTML =
+      '<tbody><tr><td>Native record</td><td><input type="checkbox" aria-label="Fixture checkbox" /></td><td><button aria-label="View fixture">View</button><button aria-label="Fixture action">Action</button></td></tr><tr><td>No detail</td><td><button aria-label="Delete fixture">Delete</button></td></tr></tbody>';
+    table.dataset.opens = "0";
+    table.dataset.actions = "0";
+    table
+      .querySelector('[aria-label="View fixture"]')!
+      .addEventListener("click", () => {
+        table.dataset.opens = String(Number(table.dataset.opens) + 1);
+      });
+    table
+      .querySelector('[aria-label="Fixture action"]')!
+      .addEventListener("click", () => {
+        table.dataset.actions = String(Number(table.dataset.actions) + 1);
+      });
+    document.querySelector("main")!.prepend(table);
+  });
+  const table = page.locator("#row-navigation-fixture");
+  const row = table.getByRole("row").first();
+  await expect(row).toHaveAttribute("data-row-clickable", "true");
+  await row.focus();
+  await row.press("Enter");
+  await expect(table).toHaveAttribute("data-opens", "1");
+  await table.getByRole("checkbox").click();
+  await table
+    .getByRole("button", { name: "Fixture action", exact: true })
+    .click();
+  await expect(table).toHaveAttribute("data-actions", "1");
+  await expect(table).toHaveAttribute("data-opens", "1");
+  await row.getByRole("cell").first().selectText();
+  await row.dispatchEvent("click");
+  await expect(table).toHaveAttribute("data-opens", "1");
+  await page.evaluate(() => window.getSelection()?.removeAllRanges());
+  await table
+    .getByRole("button", { name: "View fixture", exact: true })
+    .evaluate((button: HTMLButtonElement) => {
+      button.disabled = true;
+    });
+  await expect(row).not.toHaveAttribute("data-row-clickable", "true");
+  await expect(table.getByRole("row").nth(1)).not.toHaveAttribute(
+    "data-row-clickable",
+    "true",
+  );
+});
+
+for (const cell of [false, true])
+  test(`${cell ? "cell group" : "department"} attendance empty states use opaque list cards and recovery actions`, async ({
+    page,
+    context,
+  }) => {
+    await fixture(context, "staff", { emptyAttendance: true });
+    await page.setViewportSize({ width: 320, height: 900 });
+    await page.goto(
+      cell
+        ? "/gatherings/groups/cell/west-home?tab=attendance"
+        : "/gatherings/groups/worship?tab=attendance",
+    );
+    await expect(
+      page.getByText(
+        cell ? "No attendance for this meeting" : "No meeting attendance yet",
+        { exact: true },
+      ),
+    ).toBeVisible();
+    await expect(page.locator("[data-list-table]")).toHaveCount(0);
+    if (cell) {
+      await page
+        .getByRole("button", { name: "Clear attendance filters", exact: true })
+        .click();
+      await expect(
+        page.getByText("No meeting attendance yet", { exact: true }),
+      ).toBeVisible();
+    }
+    const empty = page
+      .getByText("No meeting attendance yet", { exact: true })
+      .locator('xpath=ancestor::div[contains(@class,"border-dashed")][1]');
+    await expect(empty).not.toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    await page.screenshot({
+      path: `/tmp/churchos-${cell ? "cell" : "department"}-attendance-empty-320.png`,
+      fullPage: true,
+      animations: "disabled",
+    });
+    await page
+      .getByRole("tab", { name: "Reported totals", exact: true })
+      .click();
+    await expect(
+      page.getByText("No reported attendance yet", { exact: true }),
+    ).toBeVisible();
+    await expect(page.locator('[data-slot="card"]')).not.toHaveCSS(
+      "background-color",
+      "rgba(0, 0, 0, 0)",
+    );
+  });

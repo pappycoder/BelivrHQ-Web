@@ -172,8 +172,8 @@ export const PAPER_AREAS: PaperArea[] = [
         planPath: "/giving",
         children: [
           { title: "Overview", href: "/giving/overview", description: "This season's generosity", permission: "giving:dashboard:read", live: true, planPath: "/giving" },
-          { title: "Donations", href: "/giving/donations", description: "Every gift, one feed", permission: "giving:records:read", live: true, planPath: "/giving/records" },
-          { title: "Funds", href: "/giving/funds", description: "Designated giving", permission: "giving:categories:read", live: true, planPath: "/giving/categories" },
+          { title: "Giving records", href: "/giving/donations", description: "All individual and general giving", permission: "giving:records:read", live: true, planPath: "/giving/records" },
+          { title: "Giving categories", href: "/giving/funds", description: "Tithes, offerings and giving purposes", permission: "giving:categories:read", live: true, planPath: "/giving/categories" },
           { title: "Recurring", href: "/giving/schedules", description: "Scheduled gifts", permission: "giving:recurring:read", live: true, planPath: "/giving/recurring" },
           { title: "Statements", href: "/giving/statements", description: "Year-end receipts", permission: "giving:reports:read", live: true, planPath: "/giving/reports" },
         ],

@@ -28,6 +28,7 @@ interface NodeProps {
   style?: React.CSSProperties;
   hidden?: boolean;
   role?: string;
+  onClick?: React.MouseEventHandler<HTMLElement>;
 }
 function nodes(children: React.ReactNode): React.ReactNode[] {
   return React.Children.toArray(children).flatMap((child) =>
@@ -243,6 +244,8 @@ export function ListTable({
         });
         const row = React.cloneElement(node, {
           role: "row",
+          "data-row-handled":
+            !isHeader && node.props.onClick ? "true" : undefined,
           style: { ...node.props.style, display: "grid", gridTemplateColumns },
           ...(!isHeader
             ? { "data-row-selected": String(selected.includes(id)) }

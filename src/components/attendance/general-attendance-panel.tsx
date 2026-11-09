@@ -4,10 +4,15 @@ import { ListTable } from "@/components/shared/list-table";
 import { LoadingState } from "@/components/shared/loading-state";
 
 import * as React from "react";
-import { PencilLine } from "lucide-react";
+import { PencilLine, CalendarDays, TriangleAlert } from "lucide-react";
 import styles from "./general-attendance-panel.module.css";
 import { format } from "date-fns";
-import { ListPaginationFooter, ManageHeading, RowActions } from "@/components/paper/primitives";
+import {
+  ListPaginationFooter,
+  ManageHeading,
+  RowActions,
+  EmptyState,
+} from "@/components/paper/primitives";
 import { cn } from "@/lib/utils";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useCurrentProfile } from "@/hooks/use-profile";
@@ -44,10 +49,7 @@ import { ExportDropdown } from "@/components/shared/export-dropdown";
 import { toast, getToastErrorMessage } from "@/lib/toast";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { fetchAllPages } from "@/lib/export-all";
-import {
-  defaultServiceDate,
-  serviceOccursOn,
-} from "@/lib/schedule-occurrence";
+import { defaultServiceDate, serviceOccursOn } from "@/lib/schedule-occurrence";
 
 const countFields = [
   ["total", "Total attendance"],
@@ -356,9 +358,7 @@ export function GeneralAttendancePanel({
     try {
       await save.mutateAsync({ ...payload, id: recordId });
       toast.success(
-        recordId
-          ? "General attendance updated"
-          : "General attendance recorded",
+        recordId ? "General attendance updated" : "General attendance recorded",
       );
       setOpen(false);
       if (inline && !editing) setValues({ ...emptyCounts });
@@ -390,9 +390,7 @@ export function GeneralAttendancePanel({
           return;
         }
       }
-      setError(
-        getToastErrorMessage(err, "Could not save general attendance."),
-      );
+      setError(getToastErrorMessage(err, "Could not save general attendance."));
     }
   }
   if (
@@ -450,7 +448,8 @@ export function GeneralAttendancePanel({
                 {format(new Date(`${date}T00:00:00`), "EEE d MMM yyyy")}
               </p>
             ) : (
-              <Input picker="wheel"
+              <Input
+                picker="wheel"
                 id={id("date")}
                 type="date"
                 required
@@ -474,8 +473,8 @@ export function GeneralAttendancePanel({
         )}
         {matched && !editing ? (
           <p role="status" className="text-xs text-muted-foreground">
-            {date} already has a recorded headcount — saving updates that
-            record instead of adding a second one.
+            {date} already has a recorded headcount — saving updates that record
+            instead of adding a second one.
           </p>
         ) : null}
         <div
@@ -508,7 +507,10 @@ export function GeneralAttendancePanel({
     );
   }
   return (
-    <Card className={`${styles.panel} py-4`}>
+    <Card
+      className={`${styles.panel} paper-card rounded-2xl bg-card py-4`}
+      style={{ backgroundColor: "var(--card)" }}
+    >
       <CardHeader className="px-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <CardTitle className="text-sm">
@@ -563,7 +565,8 @@ export function GeneralAttendancePanel({
               <Label htmlFor={`general-start-${target?.id ?? "all"}`}>
                 From
               </Label>
-              <Input picker="native"
+              <Input
+                picker="native"
                 id={`general-start-${target?.id ?? "all"}`}
                 type="date"
                 value={params.startDate ?? ""}
@@ -576,7 +579,8 @@ export function GeneralAttendancePanel({
             </div>
             <div>
               <Label htmlFor={`general-end-${target?.id ?? "all"}`}>To</Label>
-              <Input picker="native"
+              <Input
+                picker="native"
                 id={`general-end-${target?.id ?? "all"}`}
                 type="date"
                 value={params.endDate ?? ""}
@@ -600,18 +604,72 @@ export function GeneralAttendancePanel({
             )}
           </div>
           {query.isError ? (
-            <div role="alert">
-              Could not load general attendance.{" "}
-              <Button variant="outline" onClick={() => query.refetch()}>
-                Retry
-              </Button>
-            </div>
+            <EmptyState
+              icon={<TriangleAlert />}
+              className="bg-card"
+              title="Reported attendance could not be loaded"
+              description="Try loading the meeting totals again."
+              action={
+                <Button
+                  variant="outline"
+                  className="h-8 rounded-full text-xs"
+                  onClick={() => query.refetch()}
+                >
+                  Retry
+                </Button>
+              }
+            />
           ) : query.isLoading ? (
             <LoadingState label="Loading general attendance" variant="table" />
+          ) : !rows.length ? (
+            <EmptyState
+              icon={<CalendarDays />}
+              className="bg-card"
+              title={
+                params.startDate || params.endDate || params.branchId
+                  ? "No reported totals match"
+                  : "No reported attendance yet"
+              }
+              description={
+                params.startDate || params.endDate || params.branchId
+                  ? "Widen the date range or clear the filters to find meeting totals."
+                  : "Reported meeting headcounts will appear here after they are recorded."
+              }
+              action={
+                startDate || endDate || branchId ? (
+                  <Button
+                    variant="outline"
+                    className="h-8 rounded-full text-xs"
+                    onClick={() => {
+                      setStartDate("");
+                      setEndDate("");
+                      setBranchId("");
+                      setPage(1);
+                    }}
+                  >
+                    Clear attendance filters
+                  </Button>
+                ) : canCreate && entryMode !== "hidden" ? (
+                  <Button
+                    variant="outline"
+                    className="h-8 rounded-full text-xs"
+                    onClick={() => begin()}
+                  >
+                    Record first headcount
+                  </Button>
+                ) : undefined
+              }
+            />
           ) : (
             <>
-              <div className="overflow-x-auto">
-                <ListTable className="min-w-[760px]" tableId="attendance-general-attendance-panel-1" recordType="generalAttendance" records={rows ?? []} recordKey="id">
+              <div className="paper-card overflow-x-auto rounded-2xl bg-card">
+                <ListTable
+                  className="min-w-[760px]"
+                  tableId="attendance-general-attendance-panel-1"
+                  recordType="generalAttendance"
+                  records={rows ?? []}
+                  recordKey="id"
+                >
                   <div
                     className={cn(
                       "rule-label grid items-center gap-3 border-b border-line px-2 py-2.5",
@@ -641,7 +699,9 @@ export function GeneralAttendancePanel({
                             : "grid-cols-[minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1fr)_repeat(5,minmax(0,0.7fr))]",
                         )}
                       >
-                        <span className="num text-[11px]">{row.attendanceDate}</span>
+                        <span className="num text-[11px]">
+                          {row.attendanceDate}
+                        </span>
                         <span className="min-w-0 truncate font-medium">
                           {row.contextName ?? "—"}
                         </span>
@@ -673,11 +733,6 @@ export function GeneralAttendancePanel({
                         ) : null}
                       </div>
                     ))}
-                    {!rows.length ? (
-                      <p className="px-2 py-6 text-center text-xs text-ink-faint">
-                        No general attendance recorded for this period.
-                      </p>
-                    ) : null}
                   </div>
                 </ListTable>
               </div>

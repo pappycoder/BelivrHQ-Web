@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { Providers } from "@/components/providers/providers";
+import { RecordRowNavigation } from "@/components/shared/record-row-navigation";
 import { FieldFeedback } from "@/components/shared/field-feedback";
 import { SonnerProvider } from "@/components/providers/sonner-provider";
 import { BRAND_COLOR, SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, absoluteUrl } from "@/lib/site";
@@ -122,6 +123,7 @@ export default function RootLayout({
         >
           <QueryProvider>
             <FieldFeedback />
+            <RecordRowNavigation />
             <Providers>{children}</Providers>
             <SonnerProvider />
           </QueryProvider>

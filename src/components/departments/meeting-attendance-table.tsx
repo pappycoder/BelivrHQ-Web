@@ -1,5 +1,12 @@
 "use client";
 
+import Link from "next/link";
+import { ArrowUpDown, CalendarDays, TriangleAlert } from "lucide-react";
+import { usePermissions } from "@/hooks/use-permissions";
+import {
+  meetingAttendanceRows,
+  type AttendanceSort,
+} from "@/lib/meeting-attendance-register";
 import { useMemo, useState, type ReactNode } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,6 +25,7 @@ import {
   ListPaginationFooter,
   PersonAvatar,
   SearchField,
+  SortDirectionToggle,
 } from "@/components/paper/primitives";
 import { ListTable } from "@/components/shared/list-table";
 import { ExportDropdown } from "@/components/shared/export-dropdown";
@@ -46,27 +54,14 @@ export function MeetingAttendanceTable({
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(15);
+  const { canAny } = usePermissions();
+  const [type, setType] = useState("all");
+  const [sort, setSort] = useState<AttendanceSort>("date");
+  const [ascending, setAscending] = useState(false);
   const rows = useMemo(
     () =>
-      records
-        .map((record) => ({
-          ...record,
-          attendee: record.memberId
-            ? `${record.firstName} ${record.lastName}`.trim()
-            : record.visitorName || "Visitor",
-          type: record.memberId ? "Member" : "Visitor",
-          date: record.meetingDate.slice(0, 10),
-          notes: record.notes ?? "",
-        }))
-        .filter(
-          (row) =>
-            (status === "all" || row.status === status) &&
-            (!search ||
-              `${row.attendee} ${row.notes}`
-                .toLowerCase()
-                .includes(search.trim().toLowerCase())),
-        ),
-    [records, search, status],
+      meetingAttendanceRows(records, { search, status, type, sort, ascending }),
+    [records, search, status, type, sort, ascending],
   );
   const effectivePage = Math.min(
     page,
@@ -79,6 +74,7 @@ export function MeetingAttendanceTable({
   const tableId = title.toLowerCase().replaceAll(/\W+/g, "-");
   return (
     <SectionCard
+      className="bg-card!"
       eyebrow="Meeting records"
       title={title}
       bodyClassName="p-0"
@@ -115,6 +111,26 @@ export function MeetingAttendanceTable({
           />
           <div className="ml-auto flex flex-wrap items-center gap-2">
             <Select
+              value={type}
+              onValueChange={(value) => {
+                setType(value);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger
+                aria-label={`${title} attendee type`}
+                className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All attendees</SelectItem>
+                <SelectItem value="Member">Members</SelectItem>
+                <SelectItem value="Visitor">Visitors</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
               value={status}
               onValueChange={(value) => {
                 setStatus(value);
@@ -136,6 +152,35 @@ export function MeetingAttendanceTable({
                 ))}
               </SelectContent>
             </Select>
+            <Select
+              value={sort}
+              onValueChange={(value) => {
+                setSort(value as AttendanceSort);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger
+                aria-label={`Sort ${title.toLowerCase()}`}
+                data-prefix-icon="none"
+                className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none"
+              >
+                <ArrowUpDown className="size-3" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="date">Meeting date</SelectItem>
+                <SelectItem value="attendee">Attendee name</SelectItem>
+                <SelectItem value="type">Attendee type</SelectItem>
+                <SelectItem value="status">Status</SelectItem>
+              </SelectContent>
+            </Select>
+            <SortDirectionToggle
+              ascending={ascending}
+              onToggle={() => {
+                setAscending((value) => !value);
+                setPage(1);
+              }}
+            />
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -153,7 +198,7 @@ export function MeetingAttendanceTable({
               className="h-8 w-[155px] rounded-full border-line bg-card px-3 text-[11px] shadow-none"
             />
           </label>
-          {(date || search || status !== "all") && (
+          {(date || search || status !== "all" || type !== "all") && (
             <Button
               variant="link"
               className="h-8 text-xs text-ink-soft"
@@ -161,6 +206,7 @@ export function MeetingAttendanceTable({
                 onDateChange("");
                 setSearch("");
                 setStatus("all");
+                setType("all");
                 setPage(1);
               }}
             >
@@ -171,6 +217,8 @@ export function MeetingAttendanceTable({
       </div>
       {error ? (
         <EmptyState
+          icon={<TriangleAlert />}
+          className="m-4 bg-card"
           title="Attendance records could not be loaded"
           description="Try loading the attendance records again."
           action={
@@ -189,8 +237,37 @@ export function MeetingAttendanceTable({
         </div>
       ) : !rows.length ? (
         <EmptyState
-          title="No attendance records match"
-          description="Choose another meeting date or clear the filters."
+          icon={<CalendarDays />}
+          className="m-4 bg-card"
+          title={
+            records.length
+              ? "No attendance records match"
+              : date
+                ? "No attendance for this meeting"
+                : "No meeting attendance yet"
+          }
+          description={
+            records.length || date
+              ? "Choose another meeting date or clear the filters to see more records."
+              : "Recorded member and visitor attendance will appear here after your first meeting."
+          }
+          action={
+            date || search || status !== "all" || type !== "all" ? (
+              <Button
+                variant="outline"
+                className="h-8 rounded-full text-xs"
+                onClick={() => {
+                  onDateChange("");
+                  setSearch("");
+                  setStatus("all");
+                  setType("all");
+                  setPage(1);
+                }}
+              >
+                Clear attendance filters
+              </Button>
+            ) : undefined
+          }
         />
       ) : (
         <>
@@ -200,7 +277,7 @@ export function MeetingAttendanceTable({
             records={paged}
             recordKey="id"
             recordType="meetingAttendance"
-            className="min-w-[680px]"
+            className="paper-card rounded-2xl bg-card! min-w-[680px]"
           >
             <div className="rule-label grid grid-cols-[1.5fr_0.7fr_1fr_0.8fr_1.2fr] items-center gap-3 border-y border-line px-5 py-3">
               <span>Attendee</span>
@@ -216,7 +293,26 @@ export function MeetingAttendanceTable({
               >
                 <div className="flex min-w-0 items-center gap-2">
                   <PersonAvatar name={row.attendee} size="xs" />
-                  <span className="truncate font-medium">{row.attendee}</span>
+                  {row.memberId &&
+                  canAny("members:all:read", "members:own:read") ? (
+                    <Link
+                      data-row-open="true"
+                      href={`/people/members/${row.memberId}`}
+                      className="truncate font-medium hover:text-brand"
+                    >
+                      {row.attendee}
+                    </Link>
+                  ) : row.visitorId && canAny("visitors:details:read") ? (
+                    <Link
+                      data-row-open="true"
+                      href={`/people/visitors/${row.visitorId}`}
+                      className="truncate font-medium hover:text-brand"
+                    >
+                      {row.attendee}
+                    </Link>
+                  ) : (
+                    <span className="truncate font-medium">{row.attendee}</span>
+                  )}
                 </div>
                 <span>
                   <Tag tone={row.memberId ? "moss" : "gold"}>{row.type}</Tag>

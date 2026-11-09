@@ -1,8 +1,15 @@
 "use client";
 
-import { useBulkRowActions, type BulkManageAction } from "@/contexts/list-bulk-context";
-import { useManageConfirmation, type ManageConfirmationOptions } from "@/components/shared/manage-confirmation";
+import {
+  useBulkRowActions,
+  type BulkManageAction,
+} from "@/contexts/list-bulk-context";
+import {
+  useManageConfirmation,
+  type ManageConfirmationOptions,
+} from "@/components/shared/manage-confirmation";
 import * as React from "react";
+import { isRecordOpenLabel } from "@/lib/record-row-navigation";
 import Link from "next/link";
 import { ChevronDown, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -186,6 +193,7 @@ export function IconAction({
   tone = "default",
   disabled,
   className,
+  rowOpen,
 }: {
   label: string;
   icon: React.ReactNode;
@@ -193,6 +201,7 @@ export function IconAction({
   tone?: IconActionTone;
   disabled?: boolean;
   className?: string;
+  rowOpen?: boolean;
 }) {
   return (
     <ActionTooltip label={label}>
@@ -200,6 +209,7 @@ export function IconAction({
         type="button"
         onClick={onSelect}
         disabled={disabled}
+        data-row-open={rowOpen ? "true" : undefined}
         aria-label={label}
         className={iconActionClass(tone, disabled, className)}
       >
@@ -216,6 +226,7 @@ export function IconActionLink({
   href,
   tone = "default",
   className,
+  rowOpen,
   onClick,
 }: {
   label: string;
@@ -223,12 +234,14 @@ export function IconActionLink({
   href: string;
   tone?: IconActionTone;
   className?: string;
+  rowOpen?: boolean;
   onClick?: () => void;
 }) {
   return (
     <ActionTooltip label={label}>
       <Link
         href={href}
+        data-row-open={rowOpen ? "true" : undefined}
         aria-label={label}
         onClick={onClick}
         className={iconActionClass(tone, undefined, className)}
@@ -241,6 +254,7 @@ export function IconActionLink({
 
 /** One row action: either navigates (href) or fires a handler (onSelect). */
 export interface RowAction {
+  opensRecord?: boolean;
   label: string;
   icon: React.ReactNode;
   href?: string;
@@ -268,48 +282,64 @@ export function RowActions({
   reveal?: boolean;
   className?: string;
 }) {
-  const visible = actions.filter((action): action is RowAction => Boolean(action));
+  const visible = actions.filter((action): action is RowAction =>
+    Boolean(action),
+  );
   const { confirm, dialog } = useManageConfirmation();
   useBulkRowActions(visible);
+  const primary = visible.find(
+    (action) =>
+      !action.confirmation &&
+      !action.disabled &&
+      (action.opensRecord || isRecordOpenLabel(action.label)),
+  );
   if (visible.length === 0) return null;
   return (
-    <><div
-      className={cn(
-        "row-actions flex items-center justify-end gap-1",
-        reveal && "row-actions--reveal",
-        className,
-      )}
-    >
-      {visible.map((action) =>
-        action.href ? (
-          <IconActionLink
-            key={action.label}
-            label={action.label}
-            icon={action.icon}
-            href={action.href}
-            tone={action.tone}
-          />
-        ) : (
-          <IconAction
-            key={action.label}
-            label={action.label}
-            icon={action.icon}
-            onSelect={() => {
-              if (!action.onSelect || action.disabled) return;
-              if (action.confirmation) confirm({
-                ...action.confirmation,
-                title: action.confirmation.title ?? `${action.label}?`,
-                destructive: action.confirmation.destructive ?? action.tone === "danger",
-                onConfirm: action.onSelect,
-              });
-              else void action.onSelect();
-            }}
-            tone={action.tone}
-            disabled={action.disabled}
-          />
-        ),
-      )}
-    </div>{dialog}</>
+    <>
+      <div
+        className={cn(
+          "row-actions flex items-center justify-end gap-1",
+          reveal && "row-actions--reveal",
+          className,
+        )}
+      >
+        {visible.map((action) =>
+          action.href ? (
+            <IconActionLink
+              key={action.label}
+              rowOpen={action === primary}
+              label={action.label}
+              icon={action.icon}
+              href={action.href}
+              tone={action.tone}
+            />
+          ) : (
+            <IconAction
+              key={action.label}
+              rowOpen={action === primary}
+              label={action.label}
+              icon={action.icon}
+              onSelect={() => {
+                if (!action.onSelect || action.disabled) return;
+                if (action.confirmation)
+                  confirm({
+                    ...action.confirmation,
+                    title: action.confirmation.title ?? `${action.label}?`,
+                    destructive:
+                      action.confirmation.destructive ??
+                      action.tone === "danger",
+                    onConfirm: action.onSelect,
+                  });
+                else void action.onSelect();
+              }}
+              tone={action.tone}
+              disabled={action.disabled}
+            />
+          ),
+        )}
+      </div>
+      {dialog}
+    </>
   );
 }
 
@@ -331,9 +361,16 @@ export function SortDirectionToggle({
   return (
     <IconAction
       label={ascending ? "Sort descending" : "Sort ascending"}
-      icon={<ChevronDown className={cn("transition-transform", ascending && "rotate-180")} />}
+      icon={
+        <ChevronDown
+          className={cn("transition-transform", ascending && "rotate-180")}
+        />
+      }
       onSelect={onToggle}
-      className={cn("size-8 rounded-full border border-line bg-card", className)}
+      className={cn(
+        "size-8 rounded-full border border-line bg-card",
+        className,
+      )}
     />
   );
 }
@@ -357,7 +394,8 @@ export function FilterChip({
       onClick={onClick}
       className={cn(
         "h-8 gap-1.5 rounded-full border-line bg-card px-3 text-xs font-medium shadow-none",
-        active && "border-ink/20 bg-ink text-paper hover:bg-ink/90 hover:text-paper",
+        active &&
+          "border-ink/20 bg-ink text-paper hover:bg-ink/90 hover:text-paper",
       )}
     >
       {children}
@@ -456,9 +494,13 @@ export function FieldRow({
   className?: string;
 }) {
   return (
-    <div className={cn("flex items-start justify-between gap-4 py-2.5", className)}>
+    <div
+      className={cn("flex items-start justify-between gap-4 py-2.5", className)}
+    >
       <span className="text-xs text-ink-faint">{label}</span>
-      <span className="text-right text-xs font-medium text-ink">{children}</span>
+      <span className="text-right text-xs font-medium text-ink">
+        {children}
+      </span>
     </div>
   );
 }
@@ -470,7 +512,9 @@ export function DataList({
   children: React.ReactNode;
   className?: string;
 }) {
-  return <div className={cn("divide-y divide-line/70", className)}>{children}</div>;
+  return (
+    <div className={cn("divide-y divide-line/70", className)}>{children}</div>
+  );
 }
 
 /**
@@ -509,8 +553,14 @@ export function ListPaginationFooter({
       aria-label="Pagination"
     >
       <span>
-        Showing <span className="num font-medium text-ink">{from}–{to}</span> of{" "}
-        <span className="num font-medium text-ink">{total.toLocaleString()}</span>{" "}
+        Showing{" "}
+        <span className="num font-medium text-ink">
+          {from}–{to}
+        </span>{" "}
+        of{" "}
+        <span className="num font-medium text-ink">
+          {total.toLocaleString()}
+        </span>{" "}
         {itemName}
       </span>
       <div className="flex flex-wrap items-center gap-3">
