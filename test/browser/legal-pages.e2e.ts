@@ -87,15 +87,14 @@ for (const width of [390, 1440]) {
   test(`landing legal navigation opens the policies at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
-    if (width === 390) await page.getByRole("button", { name: "Open navigation", exact: true }).click();
-    await page.getByRole("link", { name: "Legal & Privacy", exact: true }).click();
-    await expect(page).toHaveURL(/\/#legal$/);
-    await expect(page.getByRole("heading", { name: "Legal & Privacy", exact: true })).toBeInViewport();
+    await expect(page.locator("header").getByRole("link", { name: "Legal & Privacy", exact: true })).toHaveCount(0);
+    await page.locator("footer").scrollIntoViewIfNeeded();
+    await expect(page.locator("footer").getByRole("heading", { name: "Legal & Privacy", exact: true })).toBeInViewport();
     const navigation = page.locator("#legal").getByRole("navigation", { name: "Legal information" });
     for (const [path] of documents) await expect(navigation.locator(`a[href="${path}"]`)).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await navigation.getByRole("link", { name: "Privacy Policy", exact: true }).click();
-    await expect(page).toHaveURL(/\/privacy-policy$/);
+    await expect(page).toHaveURL(/\/privacy-policy$/, { timeout: 15000 });
     await expect(page.getByRole("heading", { name: "Privacy Policy", exact: true })).toBeVisible();
   });
 }

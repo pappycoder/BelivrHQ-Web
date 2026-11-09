@@ -12,7 +12,6 @@ import {
   CircleCheck,
   Fingerprint,
   Heart,
-  Layers3,
   LockKeyhole,
   MessageCircle,
   Network,
@@ -22,6 +21,7 @@ import {
   Wallet,
 } from "lucide-react";
 import {
+  LandingMotion,
   MarketingNavigation,
   PricingSection,
   ProductPreview,
@@ -57,7 +57,7 @@ const questions = [
 
 export function LandingPage() {
   return (
-    <div className={styles.landing}>
+    <LandingMotion>
       <a href="#landing-content" className={styles.skipLink}>
         Skip to content
       </a>
@@ -104,6 +104,7 @@ export function LandingPage() {
             </span>
             <svg viewBox="0 0 95 52" fill="none">
               <path
+                pathLength="1"
                 d="M5 5c44-1 64 5 59 21-3 11-23 7-18-3 7-14 28-7 41 19m0 0-15-4m15 4-1-15"
                 stroke="currentColor"
                 strokeWidth="1.5"
@@ -269,24 +270,6 @@ export function LandingPage() {
                 </div>
               </div>
             </article>
-          </div>
-          <div className={styles.extraFeatures}>
-            <div>
-              <Layers3 size={20} />
-              <span>Departments & cell groups</span>
-            </div>
-            <div>
-              <CalendarCheck size={20} />
-              <span>Events & ticketing</span>
-            </div>
-            <div>
-              <MessageCircle size={20} />
-              <span>Messages & follow-up</span>
-            </div>
-            <div>
-              <Building2 size={20} />
-              <span>Assets & operations</span>
-            </div>
           </div>
         </section>
 
@@ -505,36 +488,40 @@ export function LandingPage() {
       </main>
       <footer className={styles.footer}>
         <div className={styles.footerTop}>
-          <Link href="/" className={styles.brand} aria-label="ChurchOS home">
-            <Image
-              src="/brand/churchos-emblem.png"
-              alt=""
-              width={32}
-              height={32}
-            />
-            church<span>os</span>
-            <span className={styles.brandDot} />
-          </Link>
-          <p>
-            A thoughtful home for the work
-            <br />
-            behind your church.
-          </p>
-          <nav aria-label="Footer navigation">
-            <a href="#product">The platform</a>
-            <a href="#pricing">Pricing</a>
-            <a href="#questions">FAQs</a>
-            <Link href="/help">Help Centre</Link>
-            <Link href="/login">
-              Sign in <ArrowUpRight size={13} />
+          <div className={styles.footerIdentity}>
+            <Link href="/" className={styles.brand} aria-label="ChurchOS home">
+              <Image
+                src="/brand/churchos-emblem.png"
+                alt=""
+                width={32}
+                height={32}
+              />
+              church<span>os</span>
+              <span className={styles.brandDot} />
             </Link>
-          </nav>
+            <p>
+              A thoughtful home for the work
+              <br />
+              behind your church.
+            </p>
+          </div>
+          <div className={styles.footerGroup}>
+            <h2>Explore</h2>
+            <nav aria-label="Footer navigation">
+              <a href="#product">The platform</a>
+              <a href="#pricing">Pricing</a>
+              <a href="#questions">FAQs</a>
+              <Link href="/help">Help Centre</Link>
+              <Link href="/login">
+                Sign in <ArrowUpRight size={13} />
+              </Link>
+            </nav>
+          </div>
+          <div id="legal" className={styles.footerGroup}>
+            <h2>Legal &amp; Privacy</h2>
+            <LegalNavigation />
+          </div>
         </div>
-        <section id="legal" aria-labelledby="landing-legal-title" className={styles.legalSection}>
-          <h2 id="landing-legal-title">Legal &amp; Privacy</h2>
-          <p>Read how we handle your information and the terms for using ChurchOS.</p>
-          <LegalNavigation className={styles.legalLinks} />
-        </section>
         <div className={styles.footerBottom}>
           <span>
             © {new Date().getFullYear()} {LEGAL_COMPANY.name}. ChurchOS, built for the people behind
@@ -545,6 +532,6 @@ export function LandingPage() {
           </a>
         </div>
       </footer>
-    </div>
+    </LandingMotion>
   );
 }

@@ -9,8 +9,8 @@
   color-scheme: light;
   overflow: clip;
   font-family: var(--font-inter), Inter, Arial, sans-serif;
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 17px;
+  line-height: 1.5;
 }
 .landing *,
 .planDialog * {
@@ -43,6 +43,8 @@
 .landing :is(h1, h2) em {
   font-family: Georgia, "Times New Roman", serif;
   font-weight: 400;
+  display: inline-block;
+  transform-origin: left bottom;
 }
 .skipLink {
   position: fixed;
@@ -1030,19 +1032,8 @@
 .givingLegend > span:nth-child(3) i {
   background: #d3dfbb;
 }
-.extraFeatures {
-  display: flex;
-  justify-content: space-between;
-  gap: 22px;
-  padding: 36px 6px 0;
-  color: #6b7c69;
-  font-size: 11px;
-}
-.extraFeatures > div {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-}
+
+
 .enterpriseSection {
   background: #163d3f;
   color: #f5f6ed;
@@ -1617,89 +1608,52 @@
   padding: 0 27px 22px 0;
 }
 .finalCta {
-  padding: 62px 24px 74px;
+  padding: 42px 24px 44px;
   background: #edf2e1;
   text-align: center;
   position: relative;
 }
 .ctaMark {
-  width: 65px;
-  height: 65px;
+  width: 52px;
+  height: 52px;
   border: 1px solid #d5dfc6;
   background: #f8faef;
   display: grid;
   place-items: center;
   color: #6c8a49;
   border-radius: 18px;
-  margin: 0 auto 25px;
+  margin: 0 auto 14px;
   transform: rotate(-7deg);
+}
+.finalCta > .eyebrow {
+  margin-bottom: 10px;
 }
 .finalCta h2 {
   font-size: clamp(48px, 6vw, 80px);
   letter-spacing: -3.8px;
-  line-height: 1.06;
+  line-height: 1;
 }
 .finalCta > p {
   color: #718164;
   font-size: 12px;
-  margin-top: 24px;
+  max-width: 34rem;
+  margin: 12px auto 0;
 }
 .finalCta .primaryButton {
-  margin-top: 26px;
+  margin-top: 16px;
 }
 .ctaFootnote {
   display: block;
   font-size: 9px;
   color: #859275;
-  margin-top: 13px;
+  margin-top: 8px;
 }
 .footer {
   max-width: 1240px;
   margin: auto;
   padding: 47px 32px 22px;
 }
-.footerTop {
-  display: flex;
-  gap: 42px;
-  align-items: flex-start;
-}
-.footerTop .brand {
-  font-size: 26px;
-}
-.footerTop > p {
-  color: #7a8972;
-  font-size: 10px;
-  line-height: 1.8;
-}
-.footerTop nav {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  font-size: 10px;
-  color: #63765e;
-}
-.footerTop nav > a:last-child {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.footerBottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 22px;
-  margin-top: 38px;
-  padding-top: 20px;
-  border-top: 1px solid var(--line);
-  font-size: 8px;
-  color: #929c87;
-}
-.footerBottom > a {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
+
 @media (min-width: 1500px) {
   .heroScribble {
     right: calc((100% - 1260px) / 2);
@@ -1890,17 +1844,8 @@
   .integrationsSection h2 {
     font-size: 41px;
   }
-  .footerTop {
-    gap: 24px;
-  }
-  .footerTop nav {
-    gap: 18px;
-  }
-  .extraFeatures {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
+
+
   .productSection,
   .pricingSection,
   .faqSection {
@@ -2260,17 +2205,9 @@
   .givingLegend {
     font-size: 9px;
   }
-  .extraFeatures {
-    padding-top: 27px;
-    font-size: 9px;
-    gap: 17px 10px;
-  }
-  .extraFeatures svg {
-    width: 17px;
-  }
-  .extraFeatures > div {
-    gap: 8px;
-  }
+
+
+
   .enterpriseSection {
     padding: 51px 20px 0;
   }
@@ -2431,7 +2368,7 @@
     font-size: 11px;
   }
   .finalCta {
-    padding: 48px 20px 56px;
+    padding: 34px 20px 36px;
   }
   .finalCta h2 {
     font-size: 57px;
@@ -2446,29 +2383,7 @@
   .footer {
     padding: 34px 20px 20px;
   }
-  .footerTop {
-    flex-wrap: wrap;
-    gap: 20px;
-    align-items: center;
-  }
-  .footerTop > p {
-    margin-left: auto;
-    font-size: 8px;
-  }
-  .footerTop nav {
-    width: 100%;
-    justify-content: space-between;
-    gap: 12px;
-    font-size: 10px;
-  }
-  .footerBottom {
-    margin-top: 24px;
-    gap: 15px;
-    font-size: 7px;
-  }
-  .footerBottom > a {
-    white-space: nowrap;
-  }
+
   .planDialog {
     padding: 25px !important;
     max-width: calc(100vw - 30px) !important;
@@ -2487,74 +2402,231 @@
   }
 }
 
-/* Readable marketing copy; only the illustrative product UI uses miniature type. */
-.desktopLinks { font-size:13px; }
-.featureBento p { font-size:13px; }
-.featureTags span { font-size:9px; }
-.extraFeatures { font-size:12px; }
-.enterpriseCopy > p { font-size:14px; }
-.enterpriseCopy ul { font-size:12px; }
-.securityStrip { font-size:11px; }
-.integrationsSection > div > p, .sectionIntro > p { font-size:14px; }
-.providerGrid small { font-size:11px; color:#65755e; }
-.planDescription { font-size:12px; min-height:66px; color:#68795f; }
-.planCard ul { font-size:11px; color:#5f7258; }
-.planCapacity { font-size:10px; color:#5f7258; }
-.planButton { font-size:12px!important; }
-.billingNote { font-size:9px; color:#69795f; }
-.pricingFootnote { font-size:10px; color:#627458; }
-.pricingFootnote span { font-size:9px; color:#6d7c62; }
-.faqList summary { font-size:13px; }
-.faqList details > p { font-size:12px; color:#63745d; }
-.faqSection > div > p, .finalCta > p { font-size:13px; }
-@media(max-width:640px) {
-  .featureBento p { font-size:13px; }
-  .extraFeatures { font-size:10px; }
-  .securityStrip span { font-size:9px; }
-  .planDescription { min-height:0; font-size:13px; }
-  .planCard ul { font-size:12px; }
-  .planCapacity { font-size:11px; }
-  .billingNote { font-size:10px; }
-  .faqList summary { font-size:13px; }
-  .faqList details > p { font-size:12px; }
+/* Reading text stays comfortably sized at every breakpoint. */
+.desktopLinks, .navActions { font-size: 14px; }
+.heroCopy > p { font-size: 18px; line-height: 1.5; }
+.heroPromise { font-size: 12px; }
+.heroLabel, .eyebrow, .darkEyebrow { font-size: 11px; line-height: 1.4; }
+.primaryButton, .secondaryButton, .limeButton, .smallButton { font-size: 14px; min-height: 46px; }
+.sectionIntro > p, .enterpriseCopy > p, .integrationsSection > div > p,
+.sectionHeading > p, .faqSection > div > p, .finalCta > p {
+  font-size: 16px;
+  line-height: 1.5;
 }
+.featureBento p { font-size: 15px; line-height: 1.5; max-width: 100%; }
+.featureTags span { font-size: 11px; }
+.enterpriseCopy ul { font-size: 14px; gap: 12px; }
+.enterpriseCopy li > svg { flex-shrink: 0; }
+.securityStrip span { font-size: 12px; }
+.providerGrid article > span, .providerGrid small { font-size: 13px; }
+.providerGrid small { color: #65755e; }
+.planDescription { font-size: 14px; min-height: 84px; line-height: 1.5; color: #68795f; }
+.planCard ul { font-size: 13px; line-height: 1.45; color: #5f7258; }
+.planCard li > svg { flex-shrink: 0; }
+.planCapacity { font-size: 12px; line-height: 1.5; color: #5f7258; }
+.planPrice > span, .billingNote, .planIndex { font-size: 11px; }
+.billingNote { color: #69795f; }
+.planButton { font-size: 14px !important; min-height: 46px; }
+.popularBadge { font-size: 10px; }
+.billingToggle button { font-size: 13px; }
+.pricingFootnote { font-size: 12px; color: #627458; line-height: 1.5; }
+.pricingFootnote span { font-size: 11px; color: #6d7c62; }
+.faqList summary { font-size: 15px; line-height: 1.45; }
+.faqList details > p { font-size: 14px; line-height: 1.55; color: #63745d; }
+.ctaFootnote { font-size: 12px; }
+.dialogDescription { font-size: 14px !important; line-height: 1.5 !important; }
+.dialogFeatures { font-size: 14px; }
+.dialogFinePrint, .dialogPrice > span { font-size: 12px; }
 
-
-.legalSection {
-  scroll-margin-top: 110px;
-  margin-top: 30px;
-  padding: 24px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: #f0f3e9;
+/* Brand, product navigation and policies share one compact footer. */
+.footerTop {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
 }
-.legalSection h2 {
-  margin: 0;
-  color: #183b40;
-  font-size: 18px;
-  font-weight: 600;
-}
-.legalSection > p {
-  margin: 10px 0 14px;
-  color: #4b6155;
+.footerIdentity .brand { font-size: 29px; width: fit-content; }
+.footerIdentity p {
+  margin-top: 14px;
+  color: #63765e;
   font-size: 14px;
-  line-height: 1.7;
+  line-height: 1.45;
 }
-.legalLinks {
+.footerGroup h2 {
+  margin-bottom: 10px;
+  font-family: var(--font-inter), Inter, Arial, sans-serif;
   font-size: 14px;
-  color: #183b40;
+  font-weight: 650;
+  letter-spacing: 0;
+  line-height: 1.4;
 }
-.legalLinks a {
+.footerGroup nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  color: #63765e;
+  font-size: 14px;
+}
+.footerGroup nav a {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   min-height: 44px;
-  text-decoration: underline;
-  text-underline-offset: 4px;
+  line-height: 1.4;
 }
-.legalLinks a:hover {
-  color: #355d34;
+.footerGroup nav a:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 4px; }
+.footerBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 22px;
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  line-height: 1.5;
+  color: #63765e;
 }
-.legalLinks a:focus-visible {
-  outline: 2px solid #183b40;
-  outline-offset: 4px;
+.footerBottom > a { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; min-height: 44px; }
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .featureBento > article, .providerGrid > article, .planCard {
+    transition: transform 220ms ease, box-shadow 220ms ease;
+  }
+  .featureBento > article:hover, .providerGrid > article:hover, .planCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgb(24 59 64 / 7%);
+  }
+}
+@media (max-width: 1100px) {
+  .desktopLinks { gap: 16px; }
+  .navigation { gap: 20px; }
+  .navActions { gap: 16px; }
+  .pricingGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 18px; }
+  .planDescription { min-height: 63px; }
+}
+@media (max-width: 760px) {
+  .desktopLinks, .navActions { display: none; }
+  .menuButton { display: flex; margin-left: auto; }
+  .mobileLinks { display: flex; flex-direction: column; padding: 8px 20px 20px; border-top: 1px solid var(--line); background: var(--paper); }
+  .mobileLinks > a { display: flex; justify-content: space-between; align-items: center; padding: 12px 4px; min-height: 46px; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .mobileActions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+  .mobileActions a { padding: 12px; font-size: 14px; gap: 8px; }
+  .footerTop { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 16px; }
+  .footerIdentity { grid-column: 1 / -1; }
+  .footerIdentity p { margin-top: 12px; }
+  .footerBottom { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+@media (max-width: 640px) {
+  .heroCopy > p { font-size: 16px; margin-top: 20px; }
+  .heroPromise { font-size: 11px; gap: 8px 14px; }
+  .heroLabel, .eyebrow, .darkEyebrow { font-size: 10px; letter-spacing: 1.2px; }
+  .landing h2 { font-size: 39px; }
+  .hero h1 { font-size: clamp(39px, 10vw, 63px); }
+  .finalCta h2 { font-size: clamp(46px, 12vw, 59px); }
+  .primaryButton, .secondaryButton { padding: 13px 16px; font-size: 13px; }
+  .heroActions { gap: 10px; }
+  .sectionIntro > p, .enterpriseCopy > p, .integrationsSection > div > p,
+  .sectionHeading > p, .faqSection > div > p, .finalCta > p { font-size: 15px; line-height: 1.5; }
+  .featureBento article { padding: 24px; }
+  .featureBento h3 { font-size: 30px; }
+  .featureTags span { font-size: 10px; }
+  .securityStrip span { font-size: 11px; }
+  .pricingGrid { grid-template-columns: minmax(0, 1fr); }
+  .planDescription { min-height: 0; }
+  .planCard ul { font-size: 14px; }
+  .planCapacity { font-size: 13px; min-height: 0; }
+  .footerGroup h2 { font-size: 14px; }
+  .footerGroup nav { font-size: 13px; }
+}
+
+/* Larger preview controls and a workspace strip that reads as content. */
+.previewTabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  max-width: 640px;
+  margin: 0 auto 22px;
+}
+.previewTabs button {
+  justify-content: center;
+  min-width: 0;
+  min-height: 50px;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 550;
+  line-height: 1.35;
+  text-align: center;
+}
+.tabDot { width: 6px; height: 6px; flex-shrink: 0; }
+.platformStrip { gap: 22px 32px; padding-block: 38px; }
+.platformStrip > span {
+  width: 100%;
+  margin-right: 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 1.6px;
+}
+.platformStrip > div { font-size: 16px; font-weight: 600; gap: 10px; }
+.platformStrip svg { width: 21px; height: 21px; flex-shrink: 0; }
+
+/* Long quiet intervals between small pulses keep reading and controls steady.
+   Individual transforms compose with the entrance and hover transforms. */
+@media (prefers-reduced-motion: no-preference) {
+  .featureBento > article, .providerGrid > article, .planCard {
+    animation: cardBreathe 8s ease-in-out infinite;
+    animation-play-state: paused;
+    transform-origin: center;
+  }
+  .featureBento > article:nth-child(2), .providerGrid > article:nth-child(2), .planCard:nth-child(2) { animation-delay: 1.2s; }
+  .featureBento > article:nth-child(3), .providerGrid > article:nth-child(3), .planCard:nth-child(3) { animation-delay: 2.4s; }
+  .planCard:nth-child(4) { animation-delay: 3.6s; }
+  .heroScribble {
+    animation: scribbleFloat 6s ease-in-out infinite;
+    animation-play-state: paused;
+  }
+  .heroScribble > svg:first-child {
+    animation: sparkleBeat 4s ease-in-out infinite;
+    animation-play-state: paused;
+  }
+  .heroScribble > svg:last-child path {
+    stroke-dasharray: 1;
+    animation: arrowSketch 6s ease-in-out infinite;
+    animation-play-state: paused;
+  }
+  .landing [data-motion-visible="true"],
+  .heroScribble[data-motion-visible="true"] > svg:first-child,
+  .heroScribble[data-motion-visible="true"] > svg:last-child path { animation-play-state: running; }
+  .landing[data-motion-paused="true"] *,
+  .featureBento > article:focus-within, .providerGrid > article:focus-within, .planCard:focus-within { animation-play-state: paused; }
+}
+@keyframes cardBreathe {
+  0%, 12%, 38%, 100% { scale: 1; translate: 0 0; }
+  23% { scale: 1.008; translate: 0 -2px; }
+  29% { scale: 1.003; translate: 0 -1px; }
+}
+@keyframes scribbleFloat {
+  0%, 100% { translate: 0 0; rotate: -1deg; }
+  50% { translate: 0 -7px; rotate: 1.5deg; }
+}
+@keyframes sparkleBeat {
+  0%, 60%, 100% { scale: 1; rotate: 0deg; }
+  25% { scale: 1.14; rotate: 10deg; }
+  40% { scale: 1.04; rotate: -4deg; }
+}
+@keyframes arrowSketch {
+  0% { stroke-dashoffset: 1; opacity: 0; }
+  8% { opacity: 1; }
+  32%, 85% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@media (max-width: 640px) {
+  .previewTabs { gap: 6px; margin: 0 auto 18px; }
+  .previewTabs button { font-size: 13px; padding: 10px 6px; gap: 5px; min-height: 54px; }
+  .platformStrip { gap: 18px 24px; padding-block: 30px; }
+  .platformStrip > span { font-size: 11px; letter-spacing: 1.3px; }
+  .platformStrip > div { font-size: 15px; gap: 8px; }
+  .platformStrip svg { width: 20px; height: 20px; }
 }

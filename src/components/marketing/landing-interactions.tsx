@@ -31,6 +31,72 @@ import { useSubscriptionPricing } from "@/hooks/use-subscription-pricing";
 import { launchPlans, type LaunchPlan } from "./plans";
 import styles from "./landing.module.css";
 
+/** Animate on entry without hiding content before hydration or when JS is unavailable. */
+export function LandingMotion({ children }: { children: React.ReactNode }) {
+  const root = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    const element = root.current;
+    if (!element || !("IntersectionObserver" in window)) return;
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const animations = new Set<Animation>();
+    const selectors = [
+      `.${styles.heroCopy} > *`, `.${styles.heroScribble}`, `.${styles.productStage}`,
+      `.${styles.platformStrip}`, `.${styles.sectionIntro}`, `.${styles.featureBento} > article`,
+      `.${styles.enterpriseCopy}`, `.${styles.networkIllustration}`, `.${styles.securityStrip}`,
+      `.${styles.integrationsSection} > div:first-child`, `.${styles.providerGrid} > article`,
+      `.${styles.sectionHeading}`, `.${styles.planCard}`, `.${styles.faqSection} > div:first-child`,
+      `.${styles.faqList} > details`, `.${styles.finalCta} > *`, "h1 em", "h2 em",
+    ];
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        observer.unobserve(entry.target);
+        if (preference.matches) continue;
+        const cursive = entry.target.tagName === "EM";
+        const siblings = Array.from(entry.target.parentElement?.children ?? []);
+        const delay = cursive ? 160 : Math.min(siblings.indexOf(entry.target), 3) * 65;
+        const animation = entry.target.animate(
+          cursive
+            ? [{ opacity: 0, transform: "translateY(12px) rotate(-3deg)", clipPath: "inset(0 100% 0 0)" },
+               { opacity: 1, transform: "translateY(0) rotate(0)", clipPath: "inset(0 -3% -12% -3%)" }]
+            : [{ opacity: 0, transform: "translateY(22px)" }, { opacity: 1, transform: "translateY(0)" }],
+          { duration: cursive ? 850 : 650, delay, easing: "cubic-bezier(.22,1,.36,1)", fill: "backwards" },
+        );
+        animations.add(animation);
+        animation.onfinish = () => animations.delete(animation);
+      }
+    }, { threshold: 0.08 });
+    element.querySelectorAll(selectors.join(",")).forEach((target) => observer.observe(target));
+    // Keep recurring motion local to the section currently on screen.
+    const ambientObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        (entry.target as HTMLElement).dataset.motionVisible = String(entry.isIntersecting);
+      }
+    }, { threshold: 0.12 });
+    const ambientTargets = element.querySelectorAll([
+      `.${styles.featureBento} > article`, `.${styles.providerGrid} > article`,
+      `.${styles.planCard}`, `.${styles.heroScribble}`,
+    ].join(","));
+    ambientTargets.forEach((target) => ambientObserver.observe(target));
+    const pauseWhenHidden = () => { element.dataset.motionPaused = String(document.hidden); };
+    pauseWhenHidden();
+    document.addEventListener("visibilitychange", pauseWhenHidden);
+    const stopMotion = () => {
+      if (preference.matches) animations.forEach((animation) => animation.cancel());
+    };
+    preference.addEventListener("change", stopMotion);
+    return () => {
+      observer.disconnect();
+      ambientObserver.disconnect();
+      ambientTargets.forEach((target) => target.removeAttribute("data-motion-visible"));
+      document.removeEventListener("visibilitychange", pauseWhenHidden);
+      animations.forEach((animation) => animation.cancel());
+      preference.removeEventListener("change", stopMotion);
+    };
+  }, []);
+  return <div ref={root} className={styles.landing}>{children}</div>;
+}
+
 export function MarketingNavigation() {
   const [open, setOpen] = React.useState(false);
   const trigger = React.useRef<HTMLButtonElement>(null);
@@ -63,7 +129,6 @@ export function MarketingNavigation() {
           <a href="#enterprise">For your network</a>
           <a href="#pricing">Pricing</a>
           <a href="#questions">FAQs</a>
-          <a href="#legal">Legal &amp; Privacy</a>
         </div>
         <div className={styles.navActions}>
           <Link href="/login" className={styles.signIn}>
@@ -92,15 +157,20 @@ export function MarketingNavigation() {
             ["#enterprise", "For your network"],
             ["#pricing", "Pricing"],
             ["#questions", "FAQs"],
-            ["#legal", "Legal & Privacy"],
-            ["/login", "Sign in"],
-            ["/register", "Get started"],
           ].map(([href, label]) => (
             <Link key={href} href={href} onClick={() => setOpen(false)}>
               {label}
               <ArrowRight size={16} />
             </Link>
           ))}
+          <div className={styles.mobileActions}>
+            <Link href="/login" className={styles.secondaryButton} onClick={() => setOpen(false)}>
+              Sign in <ArrowRight size={16} />
+            </Link>
+            <Link href="/register" className={styles.primaryButton} onClick={() => setOpen(false)}>
+              Get started <ArrowRight size={16} />
+            </Link>
+          </div>
         </div>
       )}
     </header>

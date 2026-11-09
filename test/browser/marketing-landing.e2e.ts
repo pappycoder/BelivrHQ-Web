@@ -96,7 +96,7 @@ test("pricing switches billing periods and reviews a plan without buying anythin
   await page.getByRole("button", { name: /Yearly Save 10%/ }).click();
   for (const plan of plans) {
     await expect(
-      card(plan.name).getByText(plan.effective, { exact: true }),
+      card(plan.name).locator("strong").getByText(plan.effective, { exact: true }),
     ).toBeVisible();
     await expect(card(plan.name)).toContainText(`${plan.yearly} billed yearly`);
   }
@@ -216,7 +216,91 @@ for (const width of [320, 390, 768, 1440])
 test("protected workspace routes still require sign-in", async ({
   request,
 }) => {
-  const response = await request.get("/analytics", { maxRedirects: 0 });
+  const response = await request.get("/insights/analytics", { maxRedirects: 0 });
   expect([307, 308]).toContain(response.status());
   expect(response.headers().location).toContain("/login");
 });
+
+test("mobile account actions are distinct buttons and policies stay in the footer", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Open navigation", exact: true }).click();
+  const menu = page.locator("#marketing-mobile-navigation");
+  const signIn = menu.getByRole("link", { name: "Sign in", exact: true });
+  const register = menu.getByRole("link", { name: "Get started", exact: true });
+  await expect(signIn).toHaveAttribute("href", "/login");
+  await expect(register).toHaveAttribute("href", "/register");
+  for (const action of [signIn, register]) {
+    expect((await action.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    expect(await action.evaluate(el => getComputedStyle(el).borderRadius)).not.toBe("0px");
+  }
+  expect(await signIn.evaluate(el => getComputedStyle(el).backgroundColor)).not.toBe(
+    await register.evaluate(el => getComputedStyle(el).backgroundColor),
+  );
+  await expect(menu.getByRole("link", { name: /Legal/ })).toHaveCount(0);
+  await page.screenshot({ path: "/tmp/churchos-landing-mobile-menu.png" });
+  await page.keyboard.press("Escape");
+  await expect(menu).toHaveCount(0);
+  await expect(page.getByText("Departments & cell groups", { exact: true })).toHaveCount(0);
+  const footer = page.locator("footer");
+  await footer.screenshot({ path: "/tmp/churchos-landing-mobile-footer.png" });
+  const brand = await footer.getByRole("link", { name: "ChurchOS home", exact: true }).boundingBox();
+  const description = await footer.getByText(/A thoughtful home for the work/).boundingBox();
+  expect(description!.y).toBeGreaterThan(brand!.y + brand!.height);
+  expect(Math.abs(description!.x - brand!.x)).toBeLessThan(2);
+  await expect(footer.getByRole("navigation", { name: "Legal information" }).getByRole("link")).toHaveCount(3);
+});
+
+test("section entrances animate cursive headings and respect reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  const heading = page.locator("#integrations-title em");
+  await heading.scrollIntoViewIfNeeded();
+  await expect.poll(() => heading.evaluate(el => el.getAnimations().length)).toBeGreaterThan(0);
+  await expect.poll(() => heading.evaluate(el => el.getAnimations().length)).toBe(0);
+  await expect(heading).toBeVisible();
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.locator("#faq-title em").scrollIntoViewIfNeeded();
+  await expect(page.locator("#faq-title em")).toBeVisible();
+  expect(await page.locator("#faq-title em").evaluate(el => el.getAnimations().length)).toBe(0);
+});
+
+test("recurring landing motion follows the visible section and reduced-motion preference", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  const scribble = page.getByText(/More human\./).locator("..");
+  await expect(scribble).toHaveCSS("animation-play-state", "running");
+  for (const target of [scribble, scribble.locator("svg").first(), scribble.locator("path").last()]) {
+    expect(await target.evaluate(el => el.getAnimations().some(animation => animation.effect?.getTiming().iterations === Infinity))).toBe(true);
+  }
+  const card = page.locator("#product article").first();
+  await card.scrollIntoViewIfNeeded();
+  await expect(card).toHaveCSS("animation-play-state", "running");
+  await expect(scribble).toHaveCSS("animation-play-state", "paused");
+  await page.locator("footer").scrollIntoViewIfNeeded();
+  await expect(card).toHaveCSS("animation-play-state", "paused");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await card.scrollIntoViewIfNeeded();
+  await expect(card).toHaveCSS("animation-name", "none");
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(scribble).toHaveCSS("animation-name", "none");
+});
+
+for (const width of [320, 390, 1440]) {
+  test(`preview tabs and workspace labels remain readable at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/");
+    const tabs = page.getByRole("tab");
+    for (const tab of await tabs.all()) {
+      expect(await tab.evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(13);
+      expect((await tab.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    }
+    const strip = page.getByText("ONE CONNECTED WORKSPACE", { exact: true }).locator("..");
+    await strip.scrollIntoViewIfNeeded();
+    expect(await strip.getByText("People", { exact: true }).evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(15);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await page.getByRole("tablist").screenshot({ path: `/tmp/churchos-larger-preview-tabs-${width}.png` });
+    await strip.screenshot({ path: `/tmp/churchos-larger-workspace-strip-${width}.png` });
+  });
+}
