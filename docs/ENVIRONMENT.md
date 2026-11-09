@@ -1,6 +1,6 @@
 # Environment configuration
 
-Copy `.env.example` to `.env.local`. The example lists the public Supabase connection, hosted API origin, shared proxy-secret slot, monitoring credentials and optional verification settings. Keep deployment-specific overrides and enabled integration credentials; leave defaults and disabled options out.
+Copy `.env.example` to `.env.local`. The example lists the hosted API origin, shared proxy-secret slot, monitoring credentials and optional verification settings. The web app uses backend authentication through its HttpOnly proxy; it does not need Supabase environment variables. Keep deployment-specific overrides and enabled integration credentials; leave defaults and disabled options out.
 
 | Setting | Behavior when omitted |
 | --- | --- |
@@ -19,10 +19,12 @@ Set one public Sentry DSN for browser/server/edge use. Add `SENTRY_DSN` only whe
 
 `NEXT_PUBLIC_VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` were removed because no application or build code implements Web Push using them. In-app notifications are independent. Blank verification tokens, redundant DSN/API-origin entries and disabled flags were also removed.
 
-The optional `INTERNAL_PROXY_SECRET` must match the backend when used. Public Supabase credentials remain configured in each project's own environment because the projects run in separate processes; they are not duplicate settings within one application.
+The optional `INTERNAL_PROXY_SECRET` must match the backend when used. Supabase URL, anon key and service-role credentials remain backend configuration. The unused direct-Supabase web helpers and their environment entries were removed after checking that no application code imported them.
 
 Retained active values were verified unchanged after dotenv parsing. Private originals were saved in the backend `.ops/env-cleanup-*` directory before editing. Hosted deployment settings were not changed by this cleanup.
 
 ## Production key slots
 
-The active web file now explicitly includes `API_URL` and `INTERNAL_PROXY_SECRET` slots. Existing Supabase, canonical-origin and Sentry values are retained. Fill the API origin on production hosting and use the same private proxy secret as the backend when enabled. Blank local API configuration continues to use the existing localhost default. No shared secret was generated or rotated. The example also shows optional verification tokens and default disabled monitoring flags; those flags do not need active-file entries.
+The active web file now explicitly includes `API_URL` and `INTERNAL_PROXY_SECRET` slots. Existing canonical-origin and Sentry values are retained. Fill the API origin on production hosting and use the same private proxy secret as the backend when enabled. Blank local API configuration continues to use the existing localhost default. No shared secret was generated or rotated. The example also shows optional verification tokens and default disabled monitoring flags; those flags do not need active-file entries.
+
+If a direct browser Supabase integration is added later, its project URL and anon/publishable key can use `NEXT_PUBLIC_` names. Service-role and secret keys must remain server-only. No backend Supabase values were changed.
