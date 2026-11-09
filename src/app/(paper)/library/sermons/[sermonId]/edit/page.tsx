@@ -74,7 +74,7 @@ export default function EditSermonPage({
           </Link>
         }
         title="Amend the record."
-        description="Details, audio and video each save on their own — a failed upload never loses the sermon."
+        description="Details, audio and video each save on their own. A failed upload never loses the sermon."
         actions={
           <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-xs">
             <Link href={`/library/sermons/${sermonId}`}>Back to the message</Link>

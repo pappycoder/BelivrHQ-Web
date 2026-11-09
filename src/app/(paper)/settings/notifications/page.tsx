@@ -42,7 +42,7 @@ export default function SettingsNotificationsPage() {
       <PageHeader
         eyebrow="Settings · Notifications"
         title="What reaches you, and when."
-        description="The feed is the source of truth — this is the quiet look over it before the week begins."
+        description="Review system updates and recent notifications in your feed."
         actions={
           <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
             <Link href="/notifications">
@@ -56,7 +56,7 @@ export default function SettingsNotificationsPage() {
         <StatCard label="Waiting unread" value={unreadCount} tone="brand" icon={<Inbox className="size-4" />} deltaLabel="across the feed" />
         <StatCard label="Recent events" value={rows.length} tone="moss" deltaLabel="this snapshot" />
         <StatCard label="Event kinds seen" value={types.length} tone="sky" />
-        <StatCard label="All caught up?" value={unreadCount === 0 ? 1 : 0} tone="gold" deltaLabel={unreadCount === 0 ? "yes — rare and lovely" : "not yet"} />
+        <StatCard label="All caught up?" value={unreadCount === 0 ? 1 : 0} tone="gold" deltaLabel={unreadCount === 0 ? "Yes" : "not yet"} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
@@ -108,12 +108,12 @@ export default function SettingsNotificationsPage() {
         <aside className="space-y-4">
           <SectionCard eyebrow="Delivery" title="Where these come from">
             <ul className="space-y-2 text-[11px] leading-relaxed text-ink-soft">
-              <li className="rounded-lg border border-line px-3 py-2">In-app feed — everything the system records for you, by role.</li>
-              <li className="rounded-lg border border-line px-3 py-2">Email — transactional and receipt mail follows your church&apos;s provider settings.</li>
-              <li className="rounded-lg border border-line px-3 py-2">SMS / WhatsApp — sent only where a broadcast or appointment uses that channel.</li>
+              <li className="rounded-lg border border-line px-3 py-2">In-app feed: everything the system records for you, by role.</li>
+              <li className="rounded-lg border border-line px-3 py-2">Email: transactional and receipt mail follows your church&apos;s provider settings.</li>
+              <li className="rounded-lg border border-line px-3 py-2">SMS / WhatsApp: sent only where a broadcast or appointment uses that channel.</li>
             </ul>
             <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
-              Per-event preferences aren&apos;t wired to a personal channel yet — the honest controls today are your
+              Per-event preferences aren&apos;t wired to a personal channel yet. The honest controls today are your
               role and the church integration settings.
             </p>
           </SectionCard>

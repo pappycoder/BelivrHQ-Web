@@ -84,7 +84,7 @@ export default function AttendanceReportsPage() {
           </Link>
         }
         title="The room, reported."
-        description="Named check-ins and reported headcounts, side by side — the two honest ways to count a congregation."
+        description="View named check-ins and reported headcounts side by side."
         actions={canTrends ? (
           <ExportDropdown
             tableId="attendance-trends"
@@ -138,7 +138,7 @@ export default function AttendanceReportsPage() {
               <p className="py-14 text-center text-[11px] text-ink-faint">No counted days in this window.</p>
             )
           ) : (
-            <p className="py-14 text-center text-[11px] text-ink-faint">The trend series needs the reports grant — the totals above still read.</p>
+            <p className="py-14 text-center text-[11px] text-ink-faint">The trend series needs the reports grant. The totals above still read.</p>
           )}
           {s?.bySource && Object.keys(s.bySource).length ? (
             <div className="mt-4 flex flex-wrap gap-1.5 border-t border-line/70 pt-3 text-[10px] text-ink-faint">
@@ -165,7 +165,7 @@ export default function AttendanceReportsPage() {
               ))}
             </div>
           ) : (
-            <EmptyState icon={<BarChart3 />} title="No services listed" description="Create a service first — reports need something to count." action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/gatherings/attendance/services">Add services</Link></Button>} />
+            <EmptyState icon={<BarChart3 />} title="No services listed" description="Create a service first. Reports need something to count." action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/gatherings/attendance/services">Add services</Link></Button>} />
           )}
         </SectionCard>
       </div>

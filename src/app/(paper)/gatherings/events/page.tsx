@@ -213,7 +213,7 @@ export default function EventsCalendarPage() {
       <PageHeader
         eyebrow="Gatherings · Events"
         title="The season, laid out gently."
-        description="Every service, conference and dinner — one calendar the whole team can trust."
+        description="Plan services, conferences and dinners in one shared calendar."
         actions={
           <div className="flex flex-wrap items-center gap-2">
             {ready && can("events:all", "read") && can("events:list", "read") && <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-xs"><Link href="/gatherings/events/list">View events</Link></Button>}
@@ -449,7 +449,7 @@ export default function EventsCalendarPage() {
                   ))
                 ) : (
                   <p className="px-4 py-8 text-center text-[11px] text-ink-faint">
-                    Nothing on this day — rest is permitted.
+                    Nothing scheduled for this day.
                   </p>
                 )}
               </div>

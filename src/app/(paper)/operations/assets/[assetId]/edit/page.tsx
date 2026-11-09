@@ -62,7 +62,7 @@ export default function EditAssetPage({
           </Link>
         }
         title={`Amend ${asset.data.name}.`}
-        description="Value, custodian, condition and care schedule — the audit trail keeps every change."
+        description="Value, custodian, condition and care schedule. The audit trail keeps every change."
       />
       <AssetFormDialog
         presentation="page"

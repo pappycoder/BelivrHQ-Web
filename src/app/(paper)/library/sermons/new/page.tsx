@@ -31,7 +31,7 @@ export default function NewSermonPage() {
   const onSubmit = async (input: CreateSermonInput): Promise<Sermon> => {
     try {
       const sermon = await create.mutateAsync(input);
-      toast.success(`${sermon.title} saved — attach the recordings next.`);
+      toast.success(`${sermon.title} saved. Attach the recordings next.`);
       router.replace(`/library/sermons/${sermon.sermonId}/edit`);
       return sermon;
     } catch (error) {
@@ -49,7 +49,7 @@ export default function NewSermonPage() {
           </Link>
         }
         title="Publish this week&apos;s message."
-        description="Creation saves the details first, then opens the editor where audio and video each save independently — a failed upload never loses the sermon."
+        description="Creation saves the details first, then opens the editor where audio and video each save independently. A failed upload never loses the sermon."
         actions={
           <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-xs">
             <Link href="/library/sermons">Cancel</Link>

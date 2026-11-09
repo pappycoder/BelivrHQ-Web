@@ -110,7 +110,7 @@ export function SermonAggregateBrowser({
   const exportData = filtered.map((item) => ({
     name: item.name,
     count: item.count,
-    lastDate: item.lastDate ? formatDate(item.lastDate) : "—",
+    lastDate: item.lastDate ? formatDate(item.lastDate) : "Not available",
   }));
 
   const manageActions = (item: AggregatedItem) => [
@@ -225,7 +225,7 @@ export function SermonAggregateBrowser({
                       <span className="block truncate text-xs font-semibold hover:text-brand">{item.name}</span>
                     </button>
                     <span className="num text-right text-[11px] tabular-nums">{item.count}</span>
-                    <span className="num text-[11px] text-ink-faint">{item.lastDate ? formatDate(item.lastDate) : "—"}</span>
+                    <span className="num text-[11px] text-ink-faint">{item.lastDate ? formatDate(item.lastDate) : "Not available"}</span>
                     <div className="flex justify-end">
                       <RowActions actions={manageActions(item)} />
                     </div>

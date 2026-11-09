@@ -34,7 +34,7 @@ import { mediaPlaybackUrl, videoEmbedUrl } from "@/lib/media-playback";
 import { number } from "@/lib/paper/format";
 
 function fmtDate(value?: string) {
-  if (!value) return "—";
+  if (!value) return "Not available";
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value;
   return d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
@@ -191,21 +191,21 @@ export default function SermonDetailPage({
           {s.description ? (
             <p className="whitespace-pre-line text-sm leading-relaxed text-ink-soft">{s.description}</p>
           ) : (
-            <p className="text-xs text-ink-faint">No summary recorded — a sentence is a gift to next year&apos;s searchers.</p>
+            <p className="text-xs text-ink-faint">No summary recorded. Add one to help people find this sermon.</p>
           )}
           {audio || video ? null : (
             <div className="mt-4 flex items-center gap-2 rounded-xl border border-dashed border-line px-4 py-3 text-[11px] text-ink-faint">
-              <Film className="size-3.5" /> No recording attached yet — audio and video save independently from the editor.
+              <Film className="size-3.5" /> No recording attached yet. Audio and video save independently from the editor.
             </div>
           )}
         </SectionCard>
         <SectionCard eyebrow="Record" title="Details">
           <DataList>
             <FieldRow label="Preached">{fmtDate(s.sermonDate)}</FieldRow>
-            <FieldRow label="Speaker">{s.speaker ?? "—"}</FieldRow>
-            <FieldRow label="Scripture">{s.scriptureReference ?? "—"}</FieldRow>
-            <FieldRow label="Series">{s.seriesName ?? "—"}</FieldRow>
-            <FieldRow label="Length">{s.durationSeconds ? `${number(Math.round(s.durationSeconds / 60))} min` : "—"}</FieldRow>
+            <FieldRow label="Speaker">{s.speaker ?? "Not available"}</FieldRow>
+            <FieldRow label="Scripture">{s.scriptureReference ?? "Not available"}</FieldRow>
+            <FieldRow label="Series">{s.seriesName ?? "Not available"}</FieldRow>
+            <FieldRow label="Length">{s.durationSeconds ? `${number(Math.round(s.durationSeconds / 60))} min` : "Not available"}</FieldRow>
             <FieldRow label="In the archive since">{formatDate(s.createdAt)}</FieldRow>
           </DataList>
         </SectionCard>

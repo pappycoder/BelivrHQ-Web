@@ -77,7 +77,7 @@ export default function SegmentsPage() {
       <PageHeader
         eyebrow="People · Segments"
         title="Lists that keep themselves fresh."
-        description="Saved groups built from simple rules — for messaging, care, and reports."
+        description="Saved groups built from simple rules for messaging, care, and reports."
         actions={
           <>
             <Tag tone="gold" dot>Preview</Tag>
@@ -91,7 +91,7 @@ export default function SegmentsPage() {
       <div className="flex items-start gap-2.5 rounded-2xl border border-dashed border-gold/50 bg-gold-soft/30 px-4 py-3 text-[11px] leading-relaxed text-ink-soft">
         <Sparkles className="mt-0.5 size-3.5 shrink-0 text-gold" />
         <span>
-          Every card below runs a live query the moment you open this page — nothing is stored. Saving a segment as a
+          Every card below runs a live query the moment you open this page. Nothing is stored. Saving a segment as a
           reusable list needs a backend contract (name + rules over these fields); until it exists, treat these as
           the six questions the register can already answer today.
         </span>
@@ -101,7 +101,7 @@ export default function SegmentsPage() {
         <EmptyState
           icon={<Users />}
           title="Segments read the surfaces you can reach"
-          description="Your role holds none of the member, visitor, care or giving reads — the directory stays closed to lists too."
+          description="Your role holds none of the member, visitor, care or giving reads. The directory stays closed to lists too."
         />
       ) : (
         <>
@@ -118,7 +118,7 @@ export default function SegmentsPage() {
                 <SegmentCard
                   tone="brand"
                   title="New this month"
-                  blurb="Everyone who joined recently — still learning the rhythms. A hello list, not a report."
+                  blurb="Everyone who joined recently and is still settling in. A hello list, not a report."
                   rules={["Joined", "after", "1st of this month"]}
                   count={freshFaces.length}
                   faces={freshFaces.slice(0, 5).map((m) => ({ name: `${m.firstName} ${m.lastName}`, photoUrl: m.photoUrl }))}
@@ -132,7 +132,7 @@ export default function SegmentsPage() {
                 <SegmentCard
                   tone="moss"
                   title="The active roll"
-                  blurb="Members in good standing — the census every board pack starts with."
+                  blurb="Members in good standing for your membership reports."
                   rules={["Status", "is", "active"]}
                   count={active.data?.meta?.total ?? 0}
                   href="/people/members"
@@ -146,7 +146,7 @@ export default function SegmentsPage() {
                 <SegmentCard
                   tone="sky"
                   title="Quiet six-plus"
-                  blurb="Marked inactive — a gentle nudge list before they become a stranger."
+                  blurb="Inactive members who may need a follow-up."
                   rules={["Status", "is", "inactive"]}
                   count={quiet.data?.meta?.total ?? 0}
                   href="/people/pastoral"
@@ -160,7 +160,7 @@ export default function SegmentsPage() {
                 <SegmentCard
                   tone="gold"
                   title="Guests to welcome"
-                  blurb="Current visitors mid-follow-up — every name still has a first-visit date."
+                  blurb="Current visitors with follow-up in progress and a recorded first-visit date."
                   rules={["Follow-up", "is open"]}
                   count={visitors.data?.inFollowUp ?? 0}
                   href="/people/visitors/follow-up"
@@ -173,7 +173,7 @@ export default function SegmentsPage() {
                 <SegmentCard
                   tone="rose"
                   title="On the radar"
-                  blurb="Scoring past the lapsed threshold — the care team&apos;s Monday list."
+                  blurb="People whose engagement scores fall below the active threshold."
                   rules={["Engagement", "falls", "weekly"]}
                   count={risk.data?.meta?.total ?? 0}
                   href="/people/pastoral/risk"
@@ -187,7 +187,7 @@ export default function SegmentsPage() {
                 <SegmentCard
                   tone="brand"
                   title="Giving this year"
-                  blurb={`Households that gave since January — ${giving.data ? `${number(giving.data.count)} gifts counted` : "the ledger is waiting"}.`}
+                  blurb={`Households that gave since January: ${giving.data ? `${number(giving.data.count)} gifts counted` : "the ledger is waiting"}.`}
                   rules={["Gift date", "after", "Jan 1"]}
                   count={giving.data?.count ?? 0}
                   href="/insights/analytics/giving"
@@ -206,7 +206,7 @@ export default function SegmentsPage() {
               <Link href="/connect/broadcasts" className="rounded-full border border-line bg-card px-3 py-1.5 hover:border-brand/40">Broadcast audience builder</Link>
             </div>
             <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
-              The audience builder on a broadcast already does rule-based targeting ad hoc — saved segments make
+              The audience builder on a broadcast already does rule-based targeting ad hoc. Saved segments make
               those rules reusable. <Flower2 className="mr-1 inline size-3" />Until then, nothing here can go stale.
             </p>
           </div>
@@ -283,7 +283,7 @@ function NewSegmentDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
         <DialogHeader>
           <DialogTitle className="font-display">Describe a segment</DialogTitle>
           <DialogDescription className="text-xs">
-            Rules read like sentences — this preview runs them live and hands you the working filters today; saved
+            Rules read like sentences. This preview runs them live and hands you the working filters today; saved
             lists arrive with the segments endpoint.
           </DialogDescription>
         </DialogHeader>
@@ -313,8 +313,8 @@ function NewSegmentDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
               onOpenChange(false);
               toast(
                 name.trim()
-                  ? `“${name.trim()}” is described, not stored — saved segments land with the lists API. Run it today from the People filters.`
-                  : "Saved segments need the lists contract — the same rules run today on each surface.",
+                  ? `“${name.trim()}” is described, not stored. Saved segments land with the lists API. Run it today from the People filters.`
+                  : "Saved segments need the lists contract. The same rules run today on each surface.",
               );
             }}
           >

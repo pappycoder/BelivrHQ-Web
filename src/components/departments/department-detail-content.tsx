@@ -47,7 +47,7 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { useCurrentProfile } from "@/hooks/use-profile";
 
 function formatDate(value: string | undefined): string {
-  if (!value) return "—";
+  if (!value) return "Not available";
   try {
     return format(parseISO(value), "dd MMM yyyy");
   } catch {
@@ -231,7 +231,7 @@ export function DepartmentDetailContent({
           <SectionCard eyebrow="Department details" title="About this team">
             <DataList>
               <FieldRow label="Description">
-                {department.description || "—"}
+                {department.description || "Not available"}
               </FieldRow>
               <FieldRow label="Head">{head || "Not assigned"}</FieldRow>
               <FieldRow label="Branch">

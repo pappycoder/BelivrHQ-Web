@@ -99,7 +99,7 @@ export default function AttendanceAnalyticsPage() {
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <StatCard label="Total counted" value={a.total} tone="brand" icon={<CalendarCheck className="size-4" />} deltaLabel={`${number(a.members)} members`} />
             <StatCard label="Guest visits" value={a.visitors} tone="gold" deltaLabel={`${number(a.firstTimeVisitors)} first-timers`} />
-            <StatCard label="Returning guests" value={a.returningVisitors} tone="sky" deltaLabel={guestTotal ? `${percent(a.returningVisitors, guestTotal)}% of guest visits` : "—"} />
+            <StatCard label="Returning guests" value={a.returningVisitors} tone="sky" deltaLabel={guestTotal ? `${percent(a.returningVisitors, guestTotal)}% of guest visits` : "Not available"} />
             <StatCard label="Services logged" value={a.byService?.length ?? 0} tone="moss" />
           </div>
 

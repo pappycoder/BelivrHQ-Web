@@ -99,7 +99,7 @@ export default function CellGroupsPage() {
     },
     canManageGroup(group) &&
       !group.archivedAt && {
-        label: "Archive group — records kept",
+        label: "Archive group",
         bulk: {
           key: "archive",
           label: "Archive selected cell groups",
@@ -225,7 +225,7 @@ export default function CellGroupsPage() {
             ← Gatherings · Groups
           </Link>
         }
-        title="Cell groups — small circles, wide belonging."
+        title="Cell groups"
         description="The weeknight rooms where Sundays turn into friendship. Each circle, its host and rhythm."
         actions={
           canCreate && !isCellLeader ? (

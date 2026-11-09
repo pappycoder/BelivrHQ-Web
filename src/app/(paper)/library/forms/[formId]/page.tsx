@@ -114,13 +114,13 @@ export default function FormDetailPage({
             ) : null}
             {canUpdate && !f.archivedAt && <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" onClick={() => setStatusOpen(true)}><SlidersHorizontal className="size-3.5" /> Change form status</Button>}
             {canUpdate && f.isPublic ? (
-              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" disabled={regenerate.isPending} onClick={() => confirm({ title: "Replace public link?", subject: f.title, description: "The current public link will stop working. Share the replacement link with respondents.", destructive: true, onConfirm: () => regenerate.mutateAsync(f.id, { onSuccess: () => toast("New link issued — the old one is dead."), onError: () => toast.error("Couldn't regenerate.") }) })}>
+              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" disabled={regenerate.isPending} onClick={() => confirm({ title: "Replace public link?", subject: f.title, description: "The current public link will stop working. Share the replacement link with respondents.", destructive: true, onConfirm: () => regenerate.mutateAsync(f.id, { onSuccess: () => toast("New link issued. The old link no longer works."), onError: () => toast.error("Couldn't regenerate.") }) })}>
                 <RefreshCcw className="size-3.5" /> New link
               </Button>
             ) : null}
             {f.status === "published" && ready && can("forms:list", "read") ? (
               <Button asChild variant="outline" size="sm" className="h-8 rounded-full border-line bg-card text-xs">
-                <Link href={`/library/forms/${f.id}/fill`}>Open — fill as member</Link>
+                <Link href={`/library/forms/${f.id}/fill`}>Open and fill as a member</Link>
               </Button>
             ) : null}
             {canUpdate ? (
@@ -166,7 +166,7 @@ export default function FormDetailPage({
             </div>
           </SectionCard>
           <DataList className="rounded-2xl border border-line bg-card px-4">
-            <FieldRow label="Unique field">{f.uniqueField ?? "—"}</FieldRow>
+            <FieldRow label="Unique field">{f.uniqueField ?? "Not available"}</FieldRow>
             <FieldRow label="Submission limit">{f.submissionLimit ?? "none"}</FieldRow>
             <FieldRow label="Template">{f.isTemplate ? "Yes" : "No"}</FieldRow>
             <FieldRow label="Created">{formatDate(f.createdAt)}</FieldRow>

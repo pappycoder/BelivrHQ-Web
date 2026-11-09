@@ -1,7 +1,7 @@
 export const SITE_NAME = "ChurchOS";
 export const SITE_DESCRIPTION =
   "Bring your church’s people, attendance, giving and branches together. ChurchOS makes room for more ministry, with plans from $10 USD per month.";
-export const SITE_TITLE = "ChurchOS — A little less admin. A lot more ministry.";
+export const SITE_TITLE = "ChurchOS: A little less admin. A lot more ministry.";
 export const BRAND_COLOR = "#183b40";
 
 export function getSiteUrl(): string {

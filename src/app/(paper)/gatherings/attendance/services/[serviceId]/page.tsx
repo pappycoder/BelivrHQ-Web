@@ -121,7 +121,7 @@ export default function ServiceDetailPage({
             </div>
             {canGiving ? (
               <div className="rounded-xl bg-muted/40 px-4 py-3">
-                <p className="num font-display text-xl font-semibold">{giftRows.length ? formatNaira(giftTotal) : "—"}</p>
+                <p className="num font-display text-xl font-semibold">{giftRows.length ? formatNaira(giftTotal) : "Not available"}</p>
                 <p className="text-[9px] uppercase tracking-wider text-ink-faint">gifts tagged</p>
               </div>
             ) : null}
@@ -151,7 +151,7 @@ export default function ServiceDetailPage({
           {named.isLoading ? (
             <div className="space-y-2 p-5">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-10 rounded-xl" />)}</div>
           ) : namedRows.length === 0 ? (
-            <p className="px-5 py-10 text-center text-[11px] text-ink-faint">No named check-ins yet — the Reported totals tab may still tell the true count.</p>
+            <p className="px-5 py-10 text-center text-[11px] text-ink-faint">No named check-ins yet. The Reported totals tab may still tell the true count.</p>
           ) : (
             <div className="divide-y divide-line/70">
               {namedRows.slice(0, 12).map((record) => (
@@ -162,7 +162,7 @@ export default function ServiceDetailPage({
                     <span className="block text-[10px] text-ink-faint">{formatDate(record.checkInAt)} · {record.source}</span>
                   </span>
                   {record.visitorId ? <Tag tone="gold">guest</Tag> : <Tag tone="moss">member</Tag>}
-                  <span className="num hidden text-[10px] text-ink-faint sm:block">{(attendanceCategoryLabel(record.category) ?? "—").toLowerCase()}</span>
+                  <span className="num hidden text-[10px] text-ink-faint sm:block">{(attendanceCategoryLabel(record.category) ?? "Not available").toLowerCase()}</span>
                 </div>
               ))}
               {namedRows.length > 12 ? (
@@ -185,12 +185,12 @@ export default function ServiceDetailPage({
             <DataList>
               <FieldRow label="Category">{SERVICE_CATEGORIES.find((c) => c.value === s.category)?.label ?? "Uncategorised"}</FieldRow>
               <FieldRow label="Repeats">{SCHEDULE_RECURRENCE_LABELS[s.recurrence ?? "weekly"]}</FieldRow>
-              <FieldRow label="Day">{s.recurrence === "weekly" || !s.recurrence ? (s.dayOfWeek != null ? DAY_NAMES[s.dayOfWeek] : "—") : "—"}</FieldRow>
+              <FieldRow label="Day">{s.recurrence === "weekly" || !s.recurrence ? (s.dayOfWeek != null ? DAY_NAMES[s.dayOfWeek] : "Not available") : "Not available"}</FieldRow>
               {s.startsOn || s.endsOn ? (
                 <FieldRow label="Window">{s.startsOn ? formatDay(s.startsOn) : "Always"} → {s.endsOn ? formatDay(s.endsOn) : "Ongoing"}</FieldRow>
               ) : null}
-              <FieldRow label="Start">{s.startTime ? timeLabel(s.startTime) : "—"}</FieldRow>
-              <FieldRow label="End">{s.endTime ? timeLabel(s.endTime) : "—"}</FieldRow>
+              <FieldRow label="Start">{s.startTime ? timeLabel(s.startTime) : "Not available"}</FieldRow>
+              <FieldRow label="End">{s.endTime ? timeLabel(s.endTime) : "Not available"}</FieldRow>
               <FieldRow label="Branch">{s.branchId ? "Branch-tied" : "Church-wide"}</FieldRow>
               <FieldRow label="Added">{formatDate(s.createdAt)}</FieldRow>
             </DataList>
@@ -226,8 +226,7 @@ export default function ServiceDetailPage({
 
           <div className="rounded-2xl border border-dashed border-line p-5 text-[10px] leading-relaxed text-ink-faint">
             <Users className="mb-1 size-3.5" />
-            Reported totals and named check-ins keep their own tabs on purpose —
-            one counts the room, the other remembers the names. Both are honest;
+            Reported totals and named check-ins keep their own tabs on purpose. One counts the room, the other remembers the names. Both are honest;
             neither replaces the other.
           </div>
         </aside>

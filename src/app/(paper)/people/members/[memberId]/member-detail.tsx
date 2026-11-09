@@ -144,7 +144,7 @@ export default function MemberDetail({
                 {data.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
               </div>
               <p className="text-xs text-ink-soft">
-                Member since {data.memberSince ?? "—"}
+                Member since {data.memberSince ?? "Not available"}
                 {data.city ? ` · ${data.city}` : ""}
               </p>
               <div className="flex flex-wrap gap-1.5">
@@ -182,7 +182,7 @@ export default function MemberDetail({
                 disabled={archive.isPending || restoreArchive.isPending}
                 onClick={() => confirm({ title: data.archivedAt ? "Restore member?" : "Archive member?", subject: fullName, onConfirm: () => data.archivedAt
                     ? restoreArchive.mutateAsync(data.memberId, { onSuccess: () => toast(`${data.firstName} is back in the active register.`) })
-                    : archive.mutateAsync(data.memberId, { onSuccess: () => toast(`${data.firstName} archived — their records are kept.`) }) })}
+                    : archive.mutateAsync(data.memberId, { onSuccess: () => toast(`${data.firstName} archived. Their records are kept.`) }) })}
               >
                 {data.archivedAt ? <ArchiveRestore className="size-3.5" /> : <Archive className="size-3.5" />}
                 {data.archivedAt ? "Restore" : "Archive"}
@@ -226,7 +226,7 @@ export default function MemberDetail({
           <span className="rule-label">In the family since</span>
           <div>
             <p className="font-display text-[1.6rem] font-semibold leading-none tracking-tight">
-              {data.memberSince ? data.memberSince.slice(0, 4) : "—"}
+              {data.memberSince ? data.memberSince.slice(0, 4) : "Not available"}
             </p>
             <p className="mt-1.5 text-[11px] text-ink-soft">added {formatDate(data.createdAt)}</p>
           </div>
@@ -251,25 +251,25 @@ export default function MemberDetail({
         <TabsContent value="overview" className="mt-4 grid gap-4 lg:grid-cols-2">
           <SectionCard eyebrow="Contact" title="How to reach them">
             <DataList>
-              <FieldRow label="Email">{data.email ?? "—"}</FieldRow>
-              <FieldRow label="Phone">{data.phone ?? "—"}</FieldRow>
-              <FieldRow label="WhatsApp">{data.whatsappNumber ?? "—"}</FieldRow>
-              <FieldRow label="Birthday">{data.dateOfBirth ?? "—"}</FieldRow>
+              <FieldRow label="Email">{data.email ?? "Not available"}</FieldRow>
+              <FieldRow label="Phone">{data.phone ?? "Not available"}</FieldRow>
+              <FieldRow label="WhatsApp">{data.whatsappNumber ?? "Not available"}</FieldRow>
+              <FieldRow label="Birthday">{data.dateOfBirth ?? "Not available"}</FieldRow>
             </DataList>
           </SectionCard>
           <SectionCard eyebrow="Where they are" title="Location & membership">
             <DataList>
-              <FieldRow label="Address">{data.address ?? "—"}</FieldRow>
-              <FieldRow label="City / State">{[data.city, data.state].filter(Boolean).join(", ") || "—"}</FieldRow>
+              <FieldRow label="Address">{data.address ?? "Not available"}</FieldRow>
+              <FieldRow label="City / State">{[data.city, data.state].filter(Boolean).join(", ") || "Not available"}</FieldRow>
               <FieldRow label="Status">{data.status}</FieldRow>
-              <FieldRow label="Member since">{data.memberSince ?? "—"}</FieldRow>
+              <FieldRow label="Member since">{data.memberSince ?? "Not available"}</FieldRow>
             </DataList>
           </SectionCard>
           {customEntries.length ? (
             <SectionCard eyebrow="Their story" title="Custom fields">
               <DataList>
                 {customEntries.map(([key, value]) => (
-                  <FieldRow key={key} label={key}>{String(value) || "—"}</FieldRow>
+                  <FieldRow key={key} label={key}>{String(value) || "Not available"}</FieldRow>
                 ))}
               </DataList>
             </SectionCard>
@@ -285,7 +285,7 @@ export default function MemberDetail({
               </p>
             ) : (
               <p className="flex items-center gap-2 rounded-lg border border-dashed border-line p-3 text-[11px] text-ink-faint">
-                <StickyNote className="size-3.5" /> Nothing written yet — the first note is often the beginning of care.
+                <StickyNote className="size-3.5" /> No notes yet. Add a note to record a conversation or care need.
               </p>
             )}
             {canUpdate ? (
@@ -367,7 +367,7 @@ export default function MemberDetail({
               {!attendanceRows.length ? (
                 <p className="flex flex-col items-center gap-1.5 px-5 py-10 text-center text-xs text-ink-faint">
                   <Home className="size-4" />
-                  No check-ins yet — the first one starts a story.
+                  No check-ins yet. The first one starts a story.
                 </p>
               ) : null}
             </div>
@@ -382,7 +382,7 @@ export default function MemberDetail({
 }
 
 function formatDate(value?: string) {
-  if (!value) return "—";
+  if (!value) return "Not available";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
   return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });

@@ -39,7 +39,7 @@ import {
 import { cn } from "@/lib/utils";
 
 function fullDate(value?: string) {
-  if (!value) return "—";
+  if (!value) return "Not available";
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value;
   return d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
@@ -265,7 +265,7 @@ export default function EventDetailPage({
                         {record.memberName ?? record.visitorName ?? "Guest"}
                         {!record.memberId && record.visitorName ? <span className="ml-1.5 text-[9px] text-gold">walk-in</span> : null}
                       </span>
-                      <Tag tone="neutral">{attendanceCategoryLabel(record.category) ?? "—"}</Tag>
+                      <Tag tone="neutral">{attendanceCategoryLabel(record.category) ?? "Not available"}</Tag>
                       <span className="num w-40 shrink-0 text-right text-[10px] text-ink-faint">
                         {new Date(record.checkInAt).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                       </span>
@@ -310,7 +310,7 @@ export default function EventDetailPage({
               ))
             ) : (
               <p className="col-span-full rounded-xl border border-dashed border-line py-8 text-center text-xs text-ink-faint">
-                No tiers yet — manage them on the legacy tiers board.
+                No tiers yet. Manage them on the legacy tiers board.
               </p>
             )}
           </TabsContent>

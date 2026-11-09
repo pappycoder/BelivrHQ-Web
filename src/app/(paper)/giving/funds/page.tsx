@@ -135,7 +135,7 @@ export default function GivingFundsPage() {
           Archived
         </FilterChip>
         <span className="ml-auto text-[10px] text-ink-faint">
-          Names stay unique per church — duplicates merge into the existing
+          Names stay unique per church; duplicates merge into the existing
           category.
         </span>
       </div>
@@ -284,7 +284,7 @@ export default function GivingFundsPage() {
         title="Delete this category?"
         description={
           deleteTarget
-            ? `${deleteTarget.name} has been archived — deleting removes it from future recording. Gifts already given toward it keep their history.`
+            ? `${deleteTarget.name} has been archived. Deleting removes it from future recording. Gifts already given toward it keep their history.`
             : ""
         }
         confirmLabel="Delete forever"

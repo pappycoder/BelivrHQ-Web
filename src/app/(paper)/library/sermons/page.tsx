@@ -156,7 +156,7 @@ function SermonsInner() {
       <PageHeader
         eyebrow="Library · Sermons"
         title="Words worth returning to."
-        description="Every message, searchable by title, speaker and scripture — one click from the church and the world."
+        description="Find sermons by title, speaker and scripture, and share them with your church."
         actions={
           <>
             <ExportDropdown
@@ -271,7 +271,7 @@ function SermonsInner() {
                   </button>
                   {sermon.scriptureReference ? <span className="mt-1 font-mono text-[10px] text-brand">{sermon.scriptureReference}</span> : null}
                   <span className="num mt-auto pt-3 text-[10px] text-ink-faint">
-                    {formatDate(sermon.sermonDate)} · {duration(sermon.durationSeconds) ?? "—"}
+                    {formatDate(sermon.sermonDate)} · {duration(sermon.durationSeconds) ?? "Not available"}
                     {sermon.audioUrl ? " · audio" : ""}{sermon.videoUrl ? " · video" : ""}
                   </span>
                 </div>
@@ -311,16 +311,16 @@ function SermonsInner() {
                   </span>
                   <span className="block truncate font-mono text-[10px] text-brand">{sermon.scriptureReference ?? ""}</span>
                 </button>
-                <span className="truncate text-[11px] text-ink-soft">{sermon.speaker ?? "—"}</span>
+                <span className="truncate text-[11px] text-ink-soft">{sermon.speaker ?? "Not available"}</span>
                 <span className="truncate">
                   {sermon.seriesName ? (
                     <Tag tone="gold">{sermon.seriesName}</Tag>
                   ) : (
-                    <span className="text-[11px] text-ink-faint">—</span>
+                    <span className="text-[11px] text-ink-faint">: </span>
                   )}
                 </span>
                 <span className="num text-[11px] text-ink-soft">{formatDate(sermon.sermonDate)}</span>
-                <span className="num text-[11px] text-ink-faint">{duration(sermon.durationSeconds) ?? "—"}</span>
+                <span className="num text-[11px] text-ink-faint">{duration(sermon.durationSeconds) ?? "Not available"}</span>
                 <span className="flex items-center gap-1.5 text-ink-faint">
                   {sermon.audioUrl ? <Headphones className="size-3.5 text-moss" aria-label="Has audio" /> : null}
                   {sermon.videoUrl ? <Video className="size-3.5 text-sky" aria-label="Has video" /> : null}

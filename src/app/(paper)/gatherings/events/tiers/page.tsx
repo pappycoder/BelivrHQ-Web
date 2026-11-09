@@ -66,7 +66,7 @@ function TiersInner() {
       <PageHeader
         eyebrow="Gatherings · Events"
         title="Pricing and capacity, decided kindly."
-        description="Ticket tiers per paid event — the rules of the door, written before the queue forms."
+        description="Set ticket tiers and prices for each paid event before registration opens."
         actions={
           canManage && paidEvent ? (
             <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setFormTarget({ open: true, tier: null })}>
@@ -92,7 +92,7 @@ function TiersInner() {
         </select>
         {selected && !selected.isFree ? <Tag tone="gold">paid event</Tag> : null}
         {selected?.isFree ? (
-          <span className="text-[11px] text-ink-faint">Free events use registration check-in — no tiers needed.</span>
+          <span className="text-[11px] text-ink-faint">Free events use registration check-in; no tiers needed.</span>
         ) : null}
       </div>
 
@@ -116,7 +116,7 @@ function TiersInner() {
               <div className="space-y-2 p-5">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-12 rounded-xl" />)}</div>
             ) : rows.length === 0 ? (
               <div className="px-5 py-10 text-center">
-                <p className="text-xs text-ink-faint">{paidEvent ? "No tiers yet — the first one sets the price of entry." : "Free event: registrations stand in for tickets."}</p>
+                <p className="text-xs text-ink-faint">{paidEvent ? "No tiers yet. The first one sets the price of entry." : "Free event: registrations stand in for tickets."}</p>
                 {canManage && paidEvent ? (
                   <Button size="sm" variant="outline" className="mt-3 rounded-full border-line text-xs" onClick={() => setFormTarget({ open: true, tier: null })}>Create the first tier</Button>
                 ) : null}
@@ -181,7 +181,7 @@ function TiersInner() {
                     <div key={t.ticketId ?? t.code} className="flex items-center gap-3 px-5 py-2.5 text-[11px]">
                       <span className="font-mono text-[10px] text-ink-faint">{t.code}</span>
                       <span className="min-w-0 flex-1 truncate">{t.memberName ?? t.visitorName ?? "Unassigned"}</span>
-                      <span className="hidden truncate text-[10px] text-ink-faint sm:block">{t.tierName ?? "—"} · {formatDate(t.createdAt)}</span>
+                      <span className="hidden truncate text-[10px] text-ink-faint sm:block">{t.tierName ?? "Not available"} · {formatDate(t.createdAt)}</span>
                       <Tag tone={t.usedAt ? "moss" : "neutral"} dot>{t.usedAt ? "used" : "open"}</Tag>
                     </div>
                   ))}
@@ -222,7 +222,7 @@ function TiersInner() {
           if (!deleteTarget) return;
           del.mutate(deleteTarget.id, {
             onSuccess: () => { toast("Tier deleted."); setDeleteTarget(null); },
-            onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't delete it — tickets may already be sold.")),
+            onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't delete it. Tickets may already be sold.")),
           });
         }}
       />

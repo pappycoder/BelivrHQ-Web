@@ -268,7 +268,7 @@ export default function EventsListPage() {
         ) : list.isError ? (
           <div className="paper-card flex flex-col justify-between gap-4 rounded-2xl p-5">
             <span className="rule-label">Matching events</span>
-            <span className="font-display text-2xl">—</span>
+            <span className="font-display text-2xl">: </span>
           </div>
         ) : (
           <StatCard
@@ -283,7 +283,7 @@ export default function EventsListPage() {
             <Skeleton className="h-8 w-12" />
           ) : (
             <span className="num font-display text-[1.9rem] font-semibold leading-none">
-              {list.isError ? "—" : rows.length}
+              {list.isError ? "Not available" : rows.length}
             </span>
           )}
         </div>
@@ -530,7 +530,7 @@ export default function EventsListPage() {
                     </span>
                   </span>
                   <span className="truncate text-[11px] text-ink-soft">
-                    {event.branchName ?? profile?.branch?.name ?? "—"}
+                    {event.branchName ?? profile?.branch?.name ?? "Not available"}
                   </span>
                   <span className="num text-[11px]">
                     {event.registrationCount}

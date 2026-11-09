@@ -46,7 +46,7 @@ const FOLLOW_UP_OPTIONS: { value: FollowUpStatus; label: string }[] = [
 ];
 
 function formatDate(value?: string) {
-  if (!value) return "—";
+  if (!value) return "Not available";
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value.slice(0, 10);
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
@@ -176,10 +176,10 @@ export default function VisitorDetailPage({
       <div className="grid gap-4 lg:grid-cols-3">
         <SectionCard eyebrow="Contact" title="How to reach them">
           <DataList>
-            <FieldRow label="Email">{v.email ?? "—"}</FieldRow>
-            <FieldRow label="Phone">{v.phone ?? "—"}</FieldRow>
-            <FieldRow label="WhatsApp">{v.whatsappNumber ?? "—"}</FieldRow>
-            <FieldRow label="Gender">{v.gender ?? "—"}</FieldRow>
+            <FieldRow label="Email">{v.email ?? "Not available"}</FieldRow>
+            <FieldRow label="Phone">{v.phone ?? "Not available"}</FieldRow>
+            <FieldRow label="WhatsApp">{v.whatsappNumber ?? "Not available"}</FieldRow>
+            <FieldRow label="Gender">{v.gender ?? "Not available"}</FieldRow>
           </DataList>
         </SectionCard>
 
@@ -223,7 +223,7 @@ export default function VisitorDetailPage({
             <DataList>
               {Object.entries(v.customFields).map(([key, value]) => (
                 <FieldRow key={key} label={key.replace(/[_-]/g, " ")}>
-                  {String(value ?? "—")}
+                  {String(value ?? "Not available")}
                 </FieldRow>
               ))}
             </DataList>
@@ -252,7 +252,7 @@ export default function VisitorDetailPage({
                   <span className="min-w-0 flex-1 truncate font-medium">
                     {record.serviceName ?? record.eventName ?? "A gathering"}
                   </span>
-                  <Tag tone="neutral">{record.category ?? "—"}</Tag>
+                  <Tag tone="neutral">{record.category ?? "Not available"}</Tag>
                   <span className="num w-36 shrink-0 text-right text-[11px] text-ink-faint">
                     {formatDate(record.checkInAt)}
                   </span>
@@ -263,7 +263,7 @@ export default function VisitorDetailPage({
             <div className="px-5 py-8">
               <p className="flex flex-col items-center gap-1.5 text-center text-xs text-ink-faint">
                 <Home className="size-4" />
-                No recorded visits yet — the next one is worth greeting by name.
+                No visits recorded yet.
               </p>
             </div>
           )}

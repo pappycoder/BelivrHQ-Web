@@ -76,7 +76,7 @@ export function NavRail({
         >
           <Link
             href="/home"
-            aria-label="ChurchOS — home"
+            aria-label="ChurchOS home"
             title="ChurchOS"
             className="mb-1 grid size-9 place-items-center rounded-[14px] bg-ink text-paper"
           >

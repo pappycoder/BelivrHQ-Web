@@ -169,7 +169,7 @@ export default function AttendanceServicesPage() {
       <PageHeader
         eyebrow="Gatherings · Attendance"
         title="The weekly rhythm."
-        description="Services, classes and meetings — each with its own window for counting heads."
+        description="Services, classes and meetings, each with its own window for counting heads."
         actions={
           canCreate ? (
             <Button
@@ -376,7 +376,7 @@ export default function AttendanceServicesPage() {
                 archive.mutateAsync(service.serviceId, {
                   onSuccess: () =>
                     toast(
-                      `${service.name} archived — attendance history kept.`,
+                      `${service.name} archived. Attendance history is kept.`,
                     ),
                   onError: (e) =>
                     toast.error(getToastErrorMessage(e, "Couldn't archive.")),
@@ -510,7 +510,7 @@ function ServiceRow({
           },
           canManage &&
             !service.archivedAt && {
-              label: "Archive service — keeps attendance history",
+              label: "Archive service and keep attendance history",
               confirmation: { subject: service.name },
               icon: <Archive />,
               onSelect: onArchive,

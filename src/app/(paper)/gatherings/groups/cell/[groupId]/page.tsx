@@ -239,20 +239,20 @@ export default function CellGroupDetailPage({
                       <FieldRow label="Leader">
                         {g.leaderFirstName
                           ? `${g.leaderFirstName} ${g.leaderLastName ?? ""}`
-                          : "—"}
+                          : "Not available"}
                       </FieldRow>
                       <FieldRow label="Branch">
                         {g.branchName ?? "Unassigned"}
                       </FieldRow>
                       <FieldRow label="Meeting day">{dayLabel}</FieldRow>
-                      <FieldRow label="Time">{g.meetingTime ?? "—"}</FieldRow>
+                      <FieldRow label="Time">{g.meetingTime ?? "Not available"}</FieldRow>
                       <FieldRow label="Coordinates">
                         {g.latitude != null && g.longitude != null ? (
                           <span className="num">
                             {String(g.latitude)}, {String(g.longitude)}
                           </span>
                         ) : (
-                          "—"
+                          "Not available"
                         )}
                       </FieldRow>
                       <FieldRow label="Added">

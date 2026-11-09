@@ -145,7 +145,7 @@ function MediaInner() {
       <PageHeader
         eyebrow="Library · Media"
         title="The church&apos;s visual memory."
-        description="Pictures, recordings and documents — organised by what the team actually reaches for."
+        description="Pictures, recordings and documents, organised by what the team actually reaches for."
         actions={
           <>
             <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
@@ -213,7 +213,7 @@ function MediaInner() {
                 const Icon = KIND_ICON[kindOf];
                 return <div key={asset.assetId} className="group grid grid-cols-[minmax(0,2fr)_0.7fr_1fr_0.7fr_1fr_1fr_auto] items-center gap-3 border-b border-line/70 px-5 py-4 text-xs">
                   <div className="flex min-w-0 items-center gap-3"><span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-lg bg-muted text-ink-soft"><Icon className="size-4" /></span><span className="truncate font-medium">{asset.filename}</span></div>
-                  <span className="capitalize text-ink-soft">{kindOf}</span><span className="truncate text-ink-soft">{asset.folder || "—"}</span><span className="num text-ink-soft">{formatBytes(asset.sizeBytes)}</span>
+                  <span className="capitalize text-ink-soft">{kindOf}</span><span className="truncate text-ink-soft">{asset.folder || "Not available"}</span><span className="num text-ink-soft">{formatBytes(asset.sizeBytes)}</span>
                   <span><Tag tone={PERM_TONES[asset.permissions]}>{MEDIA_PERMISSION_LABELS[asset.permissions]}</Tag></span><span className="text-ink-faint">{formatDate(asset.createdAt)}</span>
                   <RowActions actions={[{ label: `Open ${asset.filename}`, icon: <ArrowUpRight />, opensRecord: true, onSelect: () => setPreview(asset) }]} />
                 </div>;
@@ -339,7 +339,7 @@ function MediaInner() {
         open={!!deleteTarget}
         onOpenChange={(v) => !v && setDeleteTarget(null)}
         title="Delete this file?"
-        description={deleteTarget ? `${deleteTarget.filename} will be removed from the library — anything already embedded in a sermon keeps its stored copy until re-saved.` : ""}
+        description={deleteTarget ? `${deleteTarget.filename} will be removed from the library. Anything already embedded in a sermon keeps its stored copy until re-saved.` : ""}
         confirmLabel="Delete"
         pending={del.isPending}
         pendingLabel="Deleting…"
@@ -409,7 +409,7 @@ function UploadDialog({ open, onOpenChange, folders }: { open: boolean; onOpenCh
       toast.success(`Uploaded ${files.length} file${files.length === 1 ? "" : "s"} to ${target}.`);
       onOpenChange(false);
     } else {
-      toast(`${files.length - failed} uploaded, ${failed} failed — retry the rest.`);
+      toast(`${files.length - failed} uploaded, ${failed} failed. Retry the rest.`);
     }
   };
 

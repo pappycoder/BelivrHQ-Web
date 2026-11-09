@@ -17,7 +17,7 @@ import {
 } from "@/lib/paper-brand";
 
 const MODES = [
-  { value: "light", title: "Light", note: "Warm paper — the Sunday-morning default.", icon: Sun },
+  { value: "light", title: "Light", note: "Warm paper, the default light theme.", icon: Sun },
   { value: "dark", title: "Dark", note: "Charcoal ink for late ledgers and bright rooms.", icon: Moon },
   { value: "system", title: "System", note: "Follows the device. The quiet, sensible choice.", icon: Monitor },
 ] as const;
@@ -46,7 +46,7 @@ export default function SettingsAppearancePage() {
       <PageHeader
         eyebrow="Settings · Appearance"
         title="The light you work in, the colour you lead with."
-        description="One honest choice of brightness, one honest choice of accent — both saved to this device."
+        description="Choose a theme and accent colour. Both are saved to this device."
       />
 
       <SectionCard
@@ -57,7 +57,7 @@ export default function SettingsAppearancePage() {
             <Button size="sm" variant="ghost" className="h-7 gap-1.5 rounded-full text-[11px] text-ink-faint" onClick={() => { resetPaperBrand(); setBrand(currentPaperBrand()); }}>
               <RotateCcw className="size-3" /> Reset to teal
             </Button>
-          ) : <Tag tone="moss">Teal — the ChurchOS default</Tag>
+          ) : <Tag tone="moss">Teal (ChurchOS default)</Tag>
         }
       >
         <div className="flex flex-wrap gap-3">
@@ -161,7 +161,7 @@ export default function SettingsAppearancePage() {
           ))}
         </div>
         <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
-          The semantic colours keep their meaning in both lights — a chart read at 6am says the same thing at 11pm,
+          The semantic colours keep their meaning in both themes. A chart read at 6am says the same thing at 11pm,
           whatever accent you choose to wear.
         </p>
       </div>

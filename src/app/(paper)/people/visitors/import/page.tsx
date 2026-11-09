@@ -15,7 +15,7 @@ export default function VisitorsImportPage() {
           </Link>
         }
         title="Bring last season&apos;s guests across."
-        description="Upload a visitor list, map the columns, and import in reviewable batches — duplicates surface before anything is saved."
+        description="Upload a visitor list, map the columns, and import in reviewable batches. Duplicates surface before anything is saved."
       />
       <div className="paper-card flex flex-wrap items-center justify-between gap-4 rounded-2xl p-5"><p>Collect registrations directly using your branch’s public link.</p><PublicRegistrationLink kind="visitors" /></div>
       <PeopleImportPage kind="visitors" />

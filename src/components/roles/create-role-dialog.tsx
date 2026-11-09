@@ -98,8 +98,7 @@ export function CreateRoleDialog({ open, onOpenChange, onCreated }: CreateRoleDi
             Add Custom Role
           </DialogTitle>
           <DialogDescription>
-            Create a role owned by your church. It starts without permissions —
-            you&apos;ll configure them right after.
+            Create a role owned by your church. It starts without permissions. You&apos;ll configure them right after.
           </DialogDescription>
         </DialogHeader>
 
@@ -116,7 +115,7 @@ export function CreateRoleDialog({ open, onOpenChange, onCreated }: CreateRoleDi
                   </FormControl>
                   <FormDescription>
                     {showPreview
-                      ? `Will be created as "${slugPreview}" — shown as-is across the app.`
+                      ? `Will be created as "${slugPreview}", shown as-is across the app.`
                       : "Letters and numbers only; stored in lowercase."}
                   </FormDescription>
                   <FormMessage />

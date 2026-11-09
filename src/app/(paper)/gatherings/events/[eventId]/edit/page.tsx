@@ -129,7 +129,7 @@ export default function EditEventPage({
     const startDay = form.start.slice(0, 10);
     const endDay = form.end ? form.end.slice(0, 10) : "";
     if (form.recurrence === "one_time" && endDay && endDay !== startDay) {
-      toast.error("A one-time event happens on a single day — pick Date range to run across several.");
+      toast.error("A one-time event happens on a single day. Pick Date range to run across several.");
       return;
     }
     if (form.recurrence === "multi_day") {
@@ -169,7 +169,7 @@ export default function EditEventPage({
           </Link>
         }
         title="Amend the plan."
-        description="Change what needs changing — the calendar, the roster and the tickets all follow."
+        description="Change what needs changing. The calendar, the roster and the tickets all follow."
       />
 
       <form onSubmit={submit} className="grid gap-4 lg:grid-cols-[1fr_320px]">
@@ -230,8 +230,8 @@ export default function EditEventPage({
                       ? `Repeats every ${new Date(form.start).toLocaleDateString("en-GB", { weekday: "long" })} from the start date until the end date (or indefinitely).`
                       : "Repeats every week on the start date's weekday, until the end date or indefinitely."
                     : form.recurrence === "multi_day"
-                      ? "Runs every day from the start date through the end date, inclusive — the check-in desk steps through the whole window."
-                      : "Happens on the start day alone — the end time just closes that day. Check-in rejects any other date."}
+                      ? "Runs every day from the start date through the end date, inclusive. The check-in desk steps through the whole window."
+                      : "Happens on the start day alone. The end time just closes that day. Check-in rejects any other date."}
                 </p>
               </div>
               <div className="space-y-1.5">

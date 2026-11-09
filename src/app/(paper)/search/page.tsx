@@ -262,7 +262,7 @@ function SearchInner() {
         <div className="mx-auto max-w-3xl">
           <div className="paper-card rounded-2xl px-5 py-10 text-center">
             <p className="font-display text-sm font-semibold">Nothing answers to &ldquo;{search}&rdquo;</p>
-            <p className="mt-1 text-[11px] text-ink-faint">Searches only reach what your role can read — a person may exist in a branch you don&apos;t see, or sit behind a grant you don&apos;t hold.</p>
+            <p className="mt-1 text-[11px] text-ink-faint">Searches only reach what your role can read. A person may exist in a branch you don&apos;t see, or sit behind a grant you don&apos;t hold.</p>
           </div>
         </div>
       ) : active ? (

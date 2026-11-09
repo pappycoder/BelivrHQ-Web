@@ -230,7 +230,7 @@ export default function EventCheckInPage() {
         <StatCard label="Selected" value={selected.size} tone="gold" deltaLabel={selected.size ? "ready to check in" : "tap to select"} />
         <div className="paper-card flex flex-col justify-between gap-4 rounded-2xl p-5">
           <span className="rule-label">Event</span>
-          <span className="font-display text-sm font-semibold leading-tight">{activeEvent?.title ?? "—"}</span>
+          <span className="font-display text-sm font-semibold leading-tight">{activeEvent?.title ?? "Not available"}</span>
         </div>
       </div>
 
@@ -307,7 +307,7 @@ export default function EventCheckInPage() {
                 ))
               ) : (
                 <p className="px-5 py-12 text-center text-xs text-ink-soft">
-                  {registrations.isError ? "Couldn't load the roster — retry shortly." : "Nobody registered for this one yet."}
+                  {registrations.isError ? "Couldn't load the roster. Please retry shortly." : "Nobody registered for this one yet."}
                 </p>
               )}
             </div>
@@ -345,7 +345,7 @@ export default function EventCheckInPage() {
                 <UserPlus className="size-4" /> {walkInCheckIn.isPending ? "Checking in…" : "Check in as guest"}
               </Button>
               <p className="text-center text-[10px] text-ink-faint">
-                Walk-ins become visitor records — the follow-up desk will pick them up tomorrow.
+                Walk-ins become visitor records. The follow-up desk will pick them up tomorrow.
               </p>
             </form>
           </SectionCard>

@@ -158,7 +158,7 @@ export default function VisitorsPage() {
       });
     } else {
       return archive.mutateAsync(visitor.id, {
-        onSuccess: () => toast(`${visitor.firstName} archived — records are kept.`),
+        onSuccess: () => toast(`${visitor.firstName} archived. Records are kept.`),
       });
     }
   };
@@ -357,7 +357,7 @@ export default function VisitorsPage() {
                     </button>
                     <span><Tag tone={STATUS_TONES[visitor.followUpStatus]} dot>{label(visitor.followUpStatus)}</Tag></span>
                     <span className="num text-[11px] text-ink-soft">{visitor.firstVisitDate.slice(0, 10)}</span>
-                    <span className="truncate text-[11px] text-ink-faint">{visitor.assignedToName ?? "—"}</span>
+                    <span className="truncate text-[11px] text-ink-faint">{visitor.assignedToName ?? "Not available"}</span>
                     <RowActions actions={manageActions(visitor)} />
                   </div>
                 ))}

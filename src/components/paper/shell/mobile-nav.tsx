@@ -122,7 +122,7 @@ export function MobileNav({ areas }: { areas: PaperArea[] }) {
               key={area.id}
               type="button"
               onClick={() => handleArea(area)}
-              aria-label={`${area.label} — show sections`}
+              aria-label={`${area.label}: show sections`}
               aria-expanded={expanded}
               className={cn(
                 "relative flex min-w-0 flex-1 flex-col items-center gap-1 py-2.5 text-[10px] transition-colors",

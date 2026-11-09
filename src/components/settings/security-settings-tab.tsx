@@ -104,7 +104,7 @@ export function SecuritySettingsTab() {
               <>
                 The email address associated with the account:{" "}
                 <span className="font-medium break-all text-foreground">
-                  {profile?.email || "—"}
+                  {profile?.email || "Not available"}
                 </span>
                 . Changes are managed by your church admin under General Settings → Email.
               </>

@@ -10,7 +10,7 @@ export default function ChurchSettingsPage() {
       <PageHeader
         eyebrow="Admin · Church"
         title="The church&apos;s own details."
-        description="Name, contact, location and preferences — the identity every export and receipt wears."
+        description="Manage the church name, contact details, location and preferences used on exports and receipts."
       />
       <GeneralSettingsTab />
     </div>

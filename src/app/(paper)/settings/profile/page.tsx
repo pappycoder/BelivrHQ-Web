@@ -96,7 +96,7 @@ export default function SettingsProfilePage() {
     uploadAvatar.mutate(file, {
       onSuccess: (res) => {
         setPhotoPreview(null);
-        toast.success("Photo updated — the whole workspace sees it.");
+        toast.success("Photo updated. The whole workspace sees it.");
         void res;
       },
       onError: (e) => {
@@ -104,7 +104,7 @@ export default function SettingsProfilePage() {
         toast.error(
           getToastErrorMessage(
             e,
-            "Couldn't upload the photo — your profile is unchanged.",
+            "Couldn't upload the photo. Your profile is unchanged.",
           ),
         );
       },
@@ -299,7 +299,7 @@ export default function SettingsProfilePage() {
             </div>
           </div>
           <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
-            Email is a sign-in credential managed by your church admin — changes
+            Email is a sign-in credential managed by your church admin. Changes
             ripple through the shared directory.
           </p>
         </SectionCard>
@@ -307,7 +307,7 @@ export default function SettingsProfilePage() {
         <aside className="space-y-4">
           <SectionCard eyebrow="Your place" title="Account">
             <DataList>
-              <FieldRow label="Church">{p.church?.name ?? "—"}</FieldRow>
+              <FieldRow label="Church">{p.church?.name ?? "Not available"}</FieldRow>
               <FieldRow label="Branch">
                 {p.branch?.name ?? "Church-wide"}
                 {p.branch?.isHeadquarters ? " · HQ" : ""}

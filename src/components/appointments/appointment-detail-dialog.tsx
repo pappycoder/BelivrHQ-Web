@@ -66,7 +66,7 @@ function PersonRow({
         </AvatarFallback>
       </Avatar>
       <div className="min-w-0">
-        <p className="truncate text-sm font-medium">{name || "—"}</p>
+        <p className="truncate text-sm font-medium">{name || "Not available"}</p>
         <p className="truncate text-xs text-muted-foreground">
           {role && !isVisitor && (ROLE_LABEL[role] ?? role)}
           {isPastor ? " · Pastor" : ""}

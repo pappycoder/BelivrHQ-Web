@@ -58,7 +58,7 @@ export default function GivingAnalyticsPage() {
           </Link>
         }
         title="Giving, in depth."
-        description="Season totals, fund health, and the pattern beneath — no names on a podium."
+        description="Review giving totals, fund balances and trends without displaying donor names."
         actions={
           <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
             <Link href="/insights/reports">
@@ -145,11 +145,11 @@ export default function GivingAnalyticsPage() {
                     ))}
                   </div>
                   <div className="border-t border-line px-5 py-2.5 text-[10px] text-ink-faint">
-                    Totals stay inside finance leadership — this view is for the people who count, not the noticeboard.
+                    Totals stay inside finance leadership. This view is for the people who count, not the noticeboard.
                   </div>
                 </>
               ) : (
-                <div className="px-5 py-10 text-center text-[11px] text-ink-faint">No donors in this window — the roll starts with the first recorded gift.</div>
+                <div className="px-5 py-10 text-center text-[11px] text-ink-faint">No donors recorded in this period.</div>
               )}
             </SectionCard>
           </div>

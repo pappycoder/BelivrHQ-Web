@@ -208,7 +208,7 @@ export default function DepartmentsPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Gatherings · Groups"
-        title="Departments — the teams that run Sundays."
+        title="Manage the departments and teams that serve your church."
         description="Every serving team, who heads it, and who's carrying the work inside it."
         actions={
           canCreate && !isDepartmentHead ? (

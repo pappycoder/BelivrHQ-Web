@@ -53,7 +53,7 @@ export default function SettingsBillingPage() {
       <EmptyState
         icon={<CreditCard />}
         title="Billing stays with the church admins"
-        description="Plan, payments and usage are visible to those who hold the billing grant. Your role keeps the register running — this ledger isn't yours to carry."
+        description="Plan, payments and usage are visible to those who hold the billing grant. Your role keeps the register running. This ledger isn't yours to carry."
         action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/settings/profile">Back to your profile</Link></Button>}
       />
     );
@@ -92,7 +92,7 @@ export default function SettingsBillingPage() {
       <PageHeader
         eyebrow="Settings · Billing"
         title="The plainest receipt the church ever kept."
-        description="Current plan, real usage and every payment — no small print, no surprises at renewal."
+        description="View your current plan, usage, payments and renewal details."
       />
 
       {/* ── Current plan band ─────────────────────────────────────────── */}
@@ -149,7 +149,7 @@ export default function SettingsBillingPage() {
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <div className="space-y-4">
           <div className="paper-card rounded-2xl p-5">
-            <p className="rule-label mb-3">Change plan — grow when it&apos;s time, not before</p>
+            <p className="rule-label mb-3">Change your plan when your church needs more room</p>
             <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
               {d.catalog.map((entry) => {
                 const current = sub?.plan === entry.id;
@@ -197,7 +197,7 @@ export default function SettingsBillingPage() {
               </div>
             </div>
             <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
-              Switching runs through the secure checkout — quotes are priced in your display currency and verified
+              Switching runs through the secure checkout. Quotes are priced in your display currency and verified
               before anything changes. Renewals are manual by design; nothing charges silently.
             </p>
           </div>
@@ -210,7 +210,7 @@ export default function SettingsBillingPage() {
             </div>
             {d.payments.length === 0 ? (
               <div className="px-5 py-10 text-center text-[11px] text-ink-faint">
-                No payments recorded yet — the register stays honest either way.
+                No payments recorded yet.
               </div>
             ) : (
               <ListTable className="divide-y divide-line/70" tableId="settings-billing-1" records={d.payments.slice(0, 12) ?? []} recordKey="reference"><StaggerGroup className="divide-y divide-line/70">
@@ -238,7 +238,7 @@ export default function SettingsBillingPage() {
                 ))}
                 <div className="bg-muted/20 px-5 py-2.5 text-[10px] text-ink-faint">
                   <Link href="/help" className="flex items-center gap-1 text-brand hover:underline">
-                    <Download className="size-3" /> How billing &amp; renewals work — the guide
+                    <Download className="size-3" /> Guide to billing &amp; renewals
                   </Link>
                 </div>
               </StaggerGroup></ListTable>
@@ -272,11 +272,11 @@ export default function SettingsBillingPage() {
             </div>
           ) : (
             <div className="rounded-2xl border border-dashed border-line p-5 text-[10px] leading-relaxed text-ink-faint">
-              No gateway charge yet — the plan card above is where the first one begins.
+              No payment charges yet. Choose a plan above to get started.
             </div>
           )}
           <div className="rounded-2xl border border-dashed border-line p-5 text-[10px] leading-relaxed text-ink-faint">
-            Board packs default to withholding donor names — the numbers invite trust, the names invite gossip.
+            Board packs hide donor names by default to protect their privacy.
           </div>
         </aside>
       </div>

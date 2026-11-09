@@ -102,7 +102,7 @@ export default function AppointmentsPage() {
       <PageHeader
         eyebrow="Connect · Appointments"
         title="Time set aside for people."
-        description="Pastoral meetings, baptism chats, and wedding planning — with room to breathe between them."
+        description="Pastoral meetings, baptism chats, and wedding planning, with room to breathe between them."
         actions={
           canCreate ? (
             <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => { setTarget(null); setFormOpen(true); }}>
@@ -135,7 +135,7 @@ export default function AppointmentsPage() {
         <EmptyState
           icon={<CalendarClock />}
           title="Nothing booked"
-          description="A quiet book means people are being met elsewhere — or the invitations need sending."
+          description="A quiet book means people are being met elsewhere, or the invitations need sending."
         />
       ) : (
         <div className="space-y-5">
@@ -194,7 +194,7 @@ export default function AppointmentsPage() {
       <AppointmentDetailDialog open={detailOpen} onOpenChange={setDetailOpen} appointment={target} />
 
       <p className="text-center text-[10px] text-ink-faint">
-        Fifteen quiet minutes after each hard conversation is not inefficiency — it&apos;s how you carry the next one well.
+        Fifteen quiet minutes after each hard conversation is not inefficiency; it&apos;s how you carry the next one well.
       </p>
     </div>
   );

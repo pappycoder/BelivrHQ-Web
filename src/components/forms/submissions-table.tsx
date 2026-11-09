@@ -38,9 +38,9 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function submissionValue(value: unknown): string {
-  if (value === undefined || value === null || value === "") return "—";
+  if (value === undefined || value === null || value === "") return "Not available";
   if (typeof value === "boolean") return value ? "Yes" : "No";
-  if (Array.isArray(value)) return value.map(submissionValue).join(", ") || "—";
+  if (Array.isArray(value)) return value.map(submissionValue).join(", ") || "Not available";
   return typeof value === "object" ? JSON.stringify(value) : String(value);
 }
 

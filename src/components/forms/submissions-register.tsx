@@ -235,7 +235,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
         <ExportDropdown
           columns={EXPORT_COLUMNS}
           data={rows.map(exportRow)}
-          title={`Answers — ${form.title}`}
+          title={`Answers: ${form.title}`}
           filename="form-submissions"
           disabled={!total}
           fetchAllRows={async () =>

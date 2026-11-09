@@ -396,7 +396,7 @@ test("service pause, archive and restore are gated", async ({
   await page.goto("/gatherings/attendance/services");
   for (const label of [
     "Pause counting",
-    "Archive service — keeps attendance history",
+    "Archive service and keep attendance history",
     "Restore service",
   ]) {
     const previous = writes.length;
@@ -445,7 +445,7 @@ test("publishing a template requires confirmation", async ({
   await page.goto("/connect/templates");
   await page
     .getByRole("button", {
-      name: "Publish — usable in broadcasts now",
+      name: "Publish for use in broadcasts",
       exact: true,
     })
     .click();

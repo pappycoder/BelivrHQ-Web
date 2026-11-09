@@ -81,7 +81,7 @@ export default function AnalyticsOverviewPage() {
       <PageHeader
         eyebrow="Insights · Analytics"
         title="The story the numbers tell."
-        description="One page for the whole church&apos;s rhythm — give it five quiet minutes on a Monday."
+        description="Review your church&apos;s activity and trends in one place."
         actions={
           <Button variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs" asChild>
             <Link href="/insights/reports">
@@ -140,7 +140,7 @@ export default function AnalyticsOverviewPage() {
               </div>
             </SectionCard>
 
-            <SectionCard className="lg:col-span-7" eyebrow="Gathering" title="In the room — members and guests">
+            <SectionCard className="lg:col-span-7" eyebrow="Gathering" title="In the room: members and guests">
               {attendanceRows.length ? (
                 <TrendChart
                   data={attendanceRows}
@@ -168,7 +168,7 @@ export default function AnalyticsOverviewPage() {
           <StaggerGroup className="grid gap-3 md:grid-cols-3">
             {[
               { title: "Giving", line: `${formatNaira(giving.data?.total ?? 0)} in this period, across ${number(giving.data?.count ?? 0)} gifts.`, tone: "brand" as const, href: "/insights/analytics/giving", cta: "Open giving analysis" },
-              { title: "Attendance", line: `${number(attendance.data?.visitors ?? 0)} guest visits — ${number(attendance.data?.firstTimeVisitors ?? 0)} of them first-timers.`, tone: "sky" as const, href: "/insights/analytics/attendance", cta: "Open attendance analysis" },
+              { title: "Attendance", line: `${number(attendance.data?.visitors ?? 0)} guest visits, ${number(attendance.data?.firstTimeVisitors ?? 0)} of them first-timers.`, tone: "sky" as const, href: "/insights/analytics/attendance", cta: "Open attendance analysis" },
               { title: "Members", line: `${number(d.totalMembers)} on the roll, ${percent(d.activeMembers, d.totalMembers)}% active.`, tone: "moss" as const, href: "/insights/analytics/members", cta: "Open membership analysis" },
             ].map((insight) => (
               <StaggerItem key={insight.title}>
@@ -196,7 +196,7 @@ export default function AnalyticsOverviewPage() {
             </div>
             <Link href="/people/pastoral/risk" className="paper-card lift flex items-center gap-3 rounded-2xl px-4 py-3 hover:border-rose/40">
               <span className="text-rose">•</span>
-              <span><span className="num font-display text-sm font-semibold">{number(d.atRiskCount)}</span><span className="block text-ink-faint">on the radar — open care</span></span>
+              <span><span className="num font-display text-sm font-semibold">{number(d.atRiskCount)}</span><span className="block text-ink-faint">with open care needs</span></span>
             </Link>
           </div>
 

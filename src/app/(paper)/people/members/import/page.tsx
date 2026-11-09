@@ -15,7 +15,7 @@ export default function MembersImportPage() {
           </Link>
         }
         title="Bring your people across."
-        description="Upload your current list, map the columns, and import in reviewable batches — nothing is saved until you confirm."
+        description="Upload your current list, map the columns, and import in reviewable batches. Nothing is saved until you confirm."
       />
       <div className="paper-card flex flex-wrap items-center justify-between gap-4 rounded-2xl p-5"><p>Collect registrations directly using your branch’s public link.</p><PublicRegistrationLink kind="members" /></div>
       <PeopleImportPage kind="members" compactProgress />

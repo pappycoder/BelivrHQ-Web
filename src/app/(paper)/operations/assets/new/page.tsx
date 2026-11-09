@@ -35,7 +35,7 @@ export default function NewAssetPage() {
           </Link>
         }
         title="Register a new asset."
-        description="Tag, value, custodian and care schedule in one sitting — the stock-take next year will thank you."
+        description="Record the asset tag, value, custodian and maintenance schedule for future stock checks."
         actions={
           <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-xs">
             <Link href="/operations/assets">Cancel</Link>

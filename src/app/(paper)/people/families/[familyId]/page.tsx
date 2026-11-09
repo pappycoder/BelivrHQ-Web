@@ -29,7 +29,7 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { useFamily, type FamilyMemberInfo } from "@/hooks/use-families";
 
 function formatDate(value?: string) {
-  if (!value) return "—";
+  if (!value) return "Not available";
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value.slice(0, 10);
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
@@ -174,7 +174,7 @@ export default function FamilyDetailPage({
           ) : (
             <StaggerItem>
               <p className="px-5 py-10 text-center text-xs text-ink-soft">
-                No one linked yet — a household starts with two names and a shared address.
+                No members linked to this household yet.
               </p>
             </StaggerItem>
           )}
@@ -184,7 +184,7 @@ export default function FamilyDetailPage({
           <div className="paper-card rounded-2xl p-4">
             <p className="rule-label mb-2">Household notes</p>
             <DataList>
-              <FieldRow label="Head">{head ? `${head.firstName} ${head.lastName}` : "—"}</FieldRow>
+              <FieldRow label="Head">{head ? `${head.firstName} ${head.lastName}` : "Not available"}</FieldRow>
               <FieldRow label="Members">{f.members.length}</FieldRow>
               <FieldRow label="Status">{f.archivedAt ? "Archived" : "Active"}</FieldRow>
             </DataList>

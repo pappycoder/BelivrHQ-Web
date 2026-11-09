@@ -1037,7 +1037,7 @@ export default function SubscriptionPage() {
                           checkPayment(reference || pending!.reference)
                         }
                       >
-                        I’ve paid — check payment
+                        Check my payment
                       </Button>
                     )}
                   </div>
@@ -1119,7 +1119,7 @@ export default function SubscriptionPage() {
                           }
                         >
                           {payment.application_status === "review"
-                            ? "Received — contact support"
+                            ? "Payment received. Contact support"
                             : payment.status}
                         </Tag>
                       </span>

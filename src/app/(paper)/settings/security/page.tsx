@@ -46,7 +46,7 @@ function PasswordCard() {
         onSuccess: () => {
           setForm({ currentPassword: "", newPassword: "", confirm: "" });
           toast.success(
-            "Password updated — other devices will need the new one.",
+            "Password updated. Other devices will need the new one.",
           );
         },
         onError: (e) =>
@@ -180,7 +180,7 @@ function TwoFactorCard() {
           toast.error(
             getToastErrorMessage(
               e,
-              "That code didn't verify — try the next one.",
+              "That code didn't verify. Try the next one.",
             ),
           ),
       },
@@ -195,7 +195,7 @@ function TwoFactorCard() {
         onSuccess: () => {
           setAction("idle");
           setCode("");
-          toast("Two-factor paused — not recommended for admin seats.");
+          toast("Two-factor authentication paused. Keeping it enabled is recommended for administrators.");
         },
         onError: (e) =>
           toast.error(getToastErrorMessage(e, "Couldn't pause two-factor.")),
@@ -226,7 +226,7 @@ function TwoFactorCard() {
       }
     >
       <p className="text-[11px] leading-relaxed text-ink-soft">
-        Codes from an authenticator app on your phone — the calm way in.
+        Sign in using codes from an authenticator app on your phone.
       </p>
 
       {!enabled && action !== "enroll" ? (
@@ -360,7 +360,7 @@ function TwoFactorCard() {
       {!enabled && action !== "enroll" ? (
         <p className="mt-2 text-[10px] text-ink-faint">
           {profile.data?.twoFactorEnabled
-            ? "Your account shows two-factor on — refresh if the app list looks empty."
+            ? "Your account shows two-factor on. Refresh if the app list looks empty."
             : "One missed phone is all it takes; second factors exist for that Monday."}
         </p>
       ) : null}
@@ -403,7 +403,7 @@ function RegenerateInline({
                     setCode("");
                     if (res.recoveryCodes?.length) {
                       onCodes(res.recoveryCodes);
-                      toast("New recovery codes issued — old ones are void.");
+                      toast("New recovery codes issued. Old ones are void.");
                     }
                   },
                   onError: (e) =>

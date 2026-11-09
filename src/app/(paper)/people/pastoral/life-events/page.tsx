@@ -99,8 +99,7 @@ export default function LifeEventsPage() {
             Milestones the church should not miss.
           </h1>
           <p className="mt-1 max-w-2xl text-sm text-ink-soft">
-            Birthdays, healings, homecomings, and losses — the dates that ask
-            for a card, a call, or a meal.
+            Remember birthdays, healings, homecomings and losses with a card, call or meal.
           </p>
         </div>
         {canCreate ? (
@@ -208,7 +207,7 @@ export default function LifeEventsPage() {
               setDeleteTarget(null);
               toast("Milestone removed from the calendar.");
             },
-            onError: () => toast.error("Couldn't remove it — please try again."),
+            onError: () => toast.error("Couldn't remove it. Please try again."),
           });
         }}
       />

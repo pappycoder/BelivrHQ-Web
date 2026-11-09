@@ -69,7 +69,7 @@ export default function EngagementPage() {
           </Link>
         }
         title="Engagement."
-        description="Not activity scoring — a map of who the church is currently reaching. Low numbers are invitations, not reports."
+        description="See who the church is currently reaching. Low numbers are invitations, not reports."
         actions={
           canRecalculate ? (
             <Button
@@ -125,7 +125,7 @@ export default function EngagementPage() {
                   <PersonAvatar name={name} size="sm" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-semibold">{name}</p>
-                    <p className="truncate text-[10px] text-ink-faint">{row.memberEmail ?? "—"}</p>
+                    <p className="truncate text-[10px] text-ink-faint">{row.memberEmail ?? "Not available"}</p>
                   </div>
                   <div className="w-40 shrink-0">
                     <div className="flex justify-between text-[10px] text-ink-soft">

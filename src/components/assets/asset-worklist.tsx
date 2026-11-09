@@ -36,7 +36,7 @@ import { MaintenanceFormDialog } from "./maintenance-form-dialog";
 import { ReturnLoanDialog } from "./return-loan-dialog";
 
 function date(value?: string) {
-  return value ? new Date(value).toLocaleDateString() : "—";
+  return value ? new Date(value).toLocaleDateString() : "Not available";
 }
 
 function AssetPicker({ onSelect }: { onSelect: (asset: Asset) => void }) {
@@ -260,7 +260,7 @@ export function AssetWorklist({ kind }: { kind: "loans" | "maintenance" }) {
                       </p>
                     </TableCell>
                     <TableCell>
-                      {loan?.borrowerName ?? job?.type ?? "—"}
+                      {loan?.borrowerName ?? job?.type ?? "Not available"}
                       {job?.performedBy && (
                         <p className="text-xs text-muted-foreground">
                           {job.performedBy}

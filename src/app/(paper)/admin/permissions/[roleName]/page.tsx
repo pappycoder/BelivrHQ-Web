@@ -82,11 +82,11 @@ export default function RoleMatrixPage({
     }
     // Templates are additive-only: global defaults cannot be revoked here.
     if (!next && !isOwned && grantedIds.has(permission.id)) {
-      toast(`${permission.name} comes from the global role defaults — custom roles can change it.`);
+      toast(`${permission.name} comes from the global role defaults; custom roles can change it.`);
       return;
     }
     if (!next && blockedFromRemovalIds?.has(permission.id)) {
-      toast("A church admin must always keep this — the console would lock itself.");
+      toast("A church admin must keep this permission to retain access to the console.");
       return;
     }
     setSelectedIds((prev) => {
@@ -160,8 +160,8 @@ export default function RoleMatrixPage({
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Permissions granted" value={role.data.permissions.length} tone="brand" icon={<ShieldCheck className="size-4" />} />
         <StatCard label="Available surfaces" value={all.data?.length ?? 0} tone="moss" />
-        <StatCard label="Added this session" value={addedCount} tone="gold" deltaLabel={isDirty ? "not yet saved" : "—"} />
-        <StatCard label="Removed this session" value={removedCount} tone="rose" deltaLabel={isDirty ? "not yet saved" : "—"} />
+        <StatCard label="Added this session" value={addedCount} tone="gold" deltaLabel={isDirty ? "not yet saved" : "Not available"} />
+        <StatCard label="Removed this session" value={removedCount} tone="rose" deltaLabel={isDirty ? "not yet saved" : "Not available"} />
       </div>
 
       <div className="paper-card rounded-2xl p-5">
@@ -169,11 +169,11 @@ export default function RoleMatrixPage({
           <p className="rule-label">Permission matrix</p>
           <p className="text-[10px] text-ink-faint">
             {locked
-              ? "The platform admin holds everything — this view is read-only."
+              ? "The platform admin holds everything. This view is read-only."
               : !canManage
-                ? "Your role can read the matrix — changing it needs the roles update grant."
+                ? "Your role can read the matrix. Changing it needs the roles update grant."
               : isOwned
-                ? "This role owns its own set — unticks revoke immediately on save."
+                ? "This role owns its own set. Unticks revoke immediately on save."
                 : "Additions save for this church; global defaults cannot be revoked."}
           </p>
         </div>
@@ -191,7 +191,7 @@ export default function RoleMatrixPage({
         <div className="paper-card flex flex-wrap items-center justify-between gap-3 rounded-2xl p-5">
           <div>
             <p className="text-xs font-semibold">Reset to the global defaults?</p>
-            <p className="text-[10px] text-ink-faint">Deletes this church&apos;s overrides — the role returns to the template.</p>
+            <p className="text-[10px] text-ink-faint">Deletes this church&apos;s overrides and returns the role returns to the template.</p>
           </div>
           <ResetInline onConfirmed={() => undefined} reset={reset} roleName={roleName} />
         </div>

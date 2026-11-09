@@ -10,7 +10,7 @@ export default function IntegrationsPage() {
       <PageHeader
         eyebrow="Admin · Integrations"
         title="Your tools, working together."
-        description="Manage the accounts and services that keep your church connected — from messages to payments."
+        description="Manage the accounts and services that keep your church connected, from messages to payments."
       />
       <IntegrationSettingsTab />
     </div>

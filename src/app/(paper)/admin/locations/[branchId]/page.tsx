@@ -143,24 +143,24 @@ export default function BranchDetailPage({
       <div className="grid gap-4 lg:grid-cols-2">
         <SectionCard eyebrow="Contact" title="How the branch answers">
           <DataList>
-            <FieldRow label="Email">{branch.email || "—"}</FieldRow>
-            <FieldRow label="Phone">{branch.phone || "—"}</FieldRow>
-            <FieldRow label="City">{branch.city || "—"}</FieldRow>
-            <FieldRow label="State">{branch.state || "—"}</FieldRow>
-            <FieldRow label="Country">{branch.country || "—"}</FieldRow>
+            <FieldRow label="Email">{branch.email || "Not available"}</FieldRow>
+            <FieldRow label="Phone">{branch.phone || "Not available"}</FieldRow>
+            <FieldRow label="City">{branch.city || "Not available"}</FieldRow>
+            <FieldRow label="State">{branch.state || "Not available"}</FieldRow>
+            <FieldRow label="Country">{branch.country || "Not available"}</FieldRow>
           </DataList>
         </SectionCard>
 
         <SectionCard eyebrow="Record" title="On the register">
           <DataList>
             <FieldRow label="Members"><span className="flex items-center gap-1.5"><Users className="size-3" />{number(branch.memberCount ?? 0)} assigned</span></FieldRow>
-            <FieldRow label="Role">{branch.isHeadquarters ? "Headquarters — church-wide reads" : "Gathering place"}</FieldRow>
+            <FieldRow label="Role">{branch.isHeadquarters ? "Headquarters (church-wide access)" : "Gathering place"}</FieldRow>
             <FieldRow label="Opened">{formatDate(branch.createdAt)}</FieldRow>
             <FieldRow label="Last changed">{formatDate(branch.updatedAt)}</FieldRow>
           </DataList>
           <p className="mt-3 flex items-start gap-1.5 text-[10px] leading-relaxed text-ink-faint">
             <Phone className="mt-0.5 size-3 shrink-0" />
-            Branch scope is enforced everywhere — staff see their branch&apos;s people, Admin HQ reads across all of them.
+            Branch scope is enforced everywhere. Staff see their branch&apos;s people, Admin HQ reads across all of them.
           </p>
         </SectionCard>
       </div>

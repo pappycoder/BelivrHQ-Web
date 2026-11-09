@@ -105,7 +105,7 @@ export default function FillFormPage({
         <h1 className="mt-4 font-display text-2xl font-semibold tracking-tight">{already ? "Already submitted" : "Thank you!"}</h1>
         <p className="mt-2 text-xs leading-relaxed text-ink-soft">
           {already
-            ? "This form only welcomes one answer per person — yours is already with the team."
+            ? "This form only welcomes one answer per person. Yours is already with the team."
             : "Your answers are with the team that owns this form."}
         </p>
         <div className="mt-5 flex justify-center gap-2">
@@ -126,13 +126,13 @@ export default function FillFormPage({
           </Link>
         }
         title={f.title}
-        description={f.description || "Answer honestly — someone reads every response."}
+        description={f.description || "Answer honestly. Someone reads every response."}
         actions={<Tag tone="neutral">{f.fields?.length ?? 0} questions</Tag>}
       />
 
       <div className="mx-auto max-w-2xl space-y-4">
         <div className="rounded-2xl border border-dashed border-line px-4 py-2.5 text-[11px] text-ink-faint">
-          Submitting as a member of your church — your name travels with the answer.
+          Submitting as a member of your church. Your name travels with the answer.
         </div>
         <SectionCard eyebrow="Your answers" title="Take your time">
           <FormFieldsRenderer validateRequired={missing !== null} fields={f.fields ?? []} disabled={submit.isPending} onChange={setAnswers} />

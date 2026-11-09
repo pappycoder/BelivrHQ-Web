@@ -74,7 +74,7 @@ export default function CareCalendarPage() {
           </Link>
         }
         title="Care, kept on purpose."
-        description="The dates the church should not miss — a meal, a call, a card, a prayer by name."
+        description="Keep track of important dates and plan a meal, call, card or prayer for someone."
       />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">

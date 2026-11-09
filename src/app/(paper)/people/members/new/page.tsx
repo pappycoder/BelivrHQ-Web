@@ -134,7 +134,7 @@ export default function NewMemberPage() {
           const uploaded = await api.post<{ url: string }>("/media/upload/image", fd);
           await api.patch(`/members/${member.memberId}`, { photoUrl: uploaded.url });
         } catch {
-          toast.warning("The member was saved, but the photo upload failed — you can add it later.", { duration: 6000 });
+          toast.warning("The member was saved, but the photo upload failed. You can add it later.", { duration: 6000 });
         }
       }
 
@@ -235,7 +235,7 @@ export default function NewMemberPage() {
             <SectionCard
               eyebrow="Their story"
               title="Custom fields"
-              description="Anything future-you should know — a nickname, a shift pattern, a dietary need."
+              description="Useful details such as a nickname, shift pattern or dietary requirement."
               actions={
                 <Button
                   type="button"
@@ -251,7 +251,7 @@ export default function NewMemberPage() {
               {customRows.length ? (
                 <CustomFieldsEditor rows={customRows} onChange={setCustomRows} />
               ) : (
-                <p className="text-[11px] text-ink-faint">Nothing yet — add one if it matters.</p>
+                <p className="text-[11px] text-ink-faint">Nothing yet. Add one if it matters.</p>
               )}
             </SectionCard>
 

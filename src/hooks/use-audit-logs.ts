@@ -62,7 +62,7 @@ export function humanizeAuditEntity(entity: string): string {
 export function auditEntryLabel(item: AuditLogItem): string {
   const action = AUDIT_ACTION_LABELS[item.action] ?? item.action;
   const noun = humanizeAuditEntity(item.entity);
-  return item.entityLabel ? `${action} ${noun} — ${item.entityLabel}` : `${action} ${noun}`;
+  return item.entityLabel ? `${action} ${noun}: ${item.entityLabel}` : `${action} ${noun}`;
 }
 
 // ─── Query ───────────────────────────────────────────────

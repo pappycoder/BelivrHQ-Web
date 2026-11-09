@@ -70,14 +70,14 @@ const TIMEZONES = [
 ];
 
 const CURRENCIES = [
-  { value: "NGN", label: "NGN — Nigerian Naira (₦)" },
-  { value: "USD", label: "USD — US Dollar ($)" },
-  { value: "GBP", label: "GBP — British Pound (£)" },
-  { value: "EUR", label: "EUR — Euro (€)" },
-  { value: "GHS", label: "GHS — Ghanaian Cedi (₵)" },
-  { value: "ZAR", label: "ZAR — South African Rand (R)" },
-  { value: "KES", label: "KES — Kenyan Shilling (KSh)" },
-  { value: "CAD", label: "CAD — Canadian Dollar (C$)" },
+  { value: "NGN", label: "NGN: Nigerian Naira (₦)" },
+  { value: "USD", label: "USD: US Dollar ($)" },
+  { value: "GBP", label: "GBP: British Pound (£)" },
+  { value: "EUR", label: "EUR: Euro (€)" },
+  { value: "GHS", label: "GHS: Ghanaian Cedi (₵)" },
+  { value: "ZAR", label: "ZAR: South African Rand (R)" },
+  { value: "KES", label: "KES: Kenyan Shilling (KSh)" },
+  { value: "CAD", label: "CAD: Canadian Dollar (C$)" },
 ];
 
 const MAX_LOGO_BYTES = 5 * 1024 * 1024;
@@ -373,7 +373,7 @@ function EmailSection({ church }: { church: ChurchProfile }) {
               {church.email || "No email set yet"}
             </h4>
             <p className="text-xs text-muted-foreground">
-              One email everywhere — your sign-in, your profile and the church
+              One email for your sign-in, your profile and the church
               contact.
             </p>
           </div>

@@ -168,10 +168,10 @@ export default function TemplatesPage() {
                           onSelect: () => openForm(t),
                         },
                         canUpdate && !t.archivedAt && t.status === "draft" && {
-                          label: "Publish — usable in broadcasts now", confirmation: { subject: t.name },
+                          label: "Publish for use in broadcasts", confirmation: { subject: t.name },
                           icon: <Rocket />,
                           tone: "success",
-                          onSelect: () => publish.mutateAsync(t.templateId, { onSuccess: () => toast("Published — usable in broadcasts now.") }),
+                          onSelect: () => publish.mutateAsync(t.templateId, { onSuccess: () => toast("Published and ready for use in broadcasts.") }),
                         },
                         canUpdate && !t.archivedAt && {
                           label: "Archive template", confirmation: { subject: t.name },
@@ -199,7 +199,7 @@ export default function TemplatesPage() {
       <PageHeader
         eyebrow="Connect · Templates"
         title="Words worth reusing."
-        description="The team&apos;s best sentences — kind, consistent, and always personalised before sending."
+        description="The team&apos;s best sentences: kind, consistent, and always personalised before sending."
         actions={
           canCreate ? (
             <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => openForm(null)}>
@@ -243,7 +243,7 @@ export default function TemplatesPage() {
             <div className="min-w-0"><p className="truncate font-semibold">{t.name}</p><p className="mt-1 truncate text-ink-faint">{t.content}</p></div>
             <span><Tag tone={CHANNEL_TONES[t.channel]}>{TEMPLATE_CHANNEL_LABELS[t.channel]}</Tag></span>
             <span><Tag tone={t.archivedAt ? "neutral" : t.status === "published" ? "moss" : "gold"}>{t.archivedAt ? "Archived" : TEMPLATE_STATUS_LABELS[t.status]}</Tag></span>
-            <span className="truncate text-ink-soft">{t.category ?? "—"}</span>
+            <span className="truncate text-ink-soft">{t.category ?? "Not available"}</span>
             <span className="truncate text-ink-soft">{t.branchName ?? "All branches"}</span>
             <span className="text-ink-faint">{new Date(t.updatedAt).toLocaleDateString("en-GB")}</span>
             {actionsFor(t, true)}

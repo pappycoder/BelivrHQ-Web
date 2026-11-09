@@ -31,7 +31,7 @@ export default function NewFormPage() {
   const onSubmit = async (input: CreateFormInput) => {
     try {
       const form = await create.mutateAsync(input);
-      toast.success(`${form.title} is ready — share the link or build on it.`);
+      toast.success(`${form.title} is ready. Share the link or build on it.`);
       router.push(`/library/forms/${form.id}`);
     } catch (e) {
       toast.error(getToastErrorMessage(e, "Couldn't create the form."));
@@ -48,7 +48,7 @@ export default function NewFormPage() {
           </Link>
         }
         title="Build a form."
-        description="Questions on the left, the answers inbox on the right — keep it to five and someone will actually finish it."
+        description="Build your form and review responses in one place. Keep questions brief and focused."
         actions={
           <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-xs">
             <Link href="/library/forms">Cancel</Link>

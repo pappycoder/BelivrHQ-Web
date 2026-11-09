@@ -29,7 +29,7 @@ The Nigeria Data Protection Act 2023 and applicable implementing instruments inf
 
 ## 2. Who is responsible for your information
 
-For information processed to run our business—such as account contact details, subscription payments, enquiries, platform security and our own legal compliance—PappyCoder Technologies Limited generally acts as a data controller, determining the relevant purposes and means of processing.
+For information processed to run our business (such as account contact details, subscription payments, enquiries, platform security and our own legal compliance), PappyCoder Technologies Limited generally acts as a data controller, determining the relevant purposes and means of processing.
 
 For information a church submits or generates in its workspace, the church generally acts as controller and ChurchOS acts as processor on the church’s documented instructions. An authorised administrator’s use of the platform and agreed settings form part of those instructions. The precise legal role depends on the actual activity, not only the label used in this Policy.
 

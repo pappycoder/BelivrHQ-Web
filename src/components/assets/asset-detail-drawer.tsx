@@ -45,7 +45,7 @@ import {
 } from "@/hooks/use-assets";
 
 function formatDate(value: string | undefined): string {
-  if (!value) return "—";
+  if (!value) return "Not available";
   try {
     return format(parseISO(value), "dd MMM yyyy");
   } catch {
@@ -57,7 +57,7 @@ function InfoRow({ label, value }: { label: string; value?: React.ReactNode }) {
   return (
     <div className="flex items-start justify-between gap-4 py-1.5 text-sm">
       <span className="text-muted-foreground shrink-0">{label}</span>
-      <span className="text-right font-medium">{value ?? "—"}</span>
+      <span className="text-right font-medium">{value ?? "Not available"}</span>
     </div>
   );
 }

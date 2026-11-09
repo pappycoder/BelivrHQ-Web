@@ -124,7 +124,7 @@ export default function VisitorFollowUpBoardPage() {
       { visitorId: visitor.id, input: { followUpStatus: next } },
       {
         onSuccess: () => toast(`${visitor.firstName} moved to ${COLUMNS.find((c) => c.statuses.includes(next))?.label ?? next}.`),
-        onError: () => toast.error("Couldn't move that card — it snapped back."),
+        onError: () => toast.error("Couldn't move that card. It snapped back."),
       },
     ) });
   };
@@ -152,7 +152,7 @@ export default function VisitorFollowUpBoardPage() {
           </Link>
         }
         title="This week's hellos."
-        description="Drag a card, or use its dropdown — the conversation should move as fast as the care behind it."
+        description="Drag a card or use its dropdown to update the follow-up stage."
         actions={
           canCreate ? (
             <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setFormOpen(true)}>
@@ -216,7 +216,7 @@ export default function VisitorFollowUpBoardPage() {
             </div>
           ))}
           <div className="bg-muted/20 px-5 py-2.5 text-[10px] text-ink-faint">
-            Same live mutations as the board — switch back whenever the picture helps more than the list.
+            Changes are shared with the board. Switch views whenever it helps.
           </div>
         </ListTable>
       ) : list.isLoading ? (

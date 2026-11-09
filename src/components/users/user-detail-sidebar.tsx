@@ -67,7 +67,7 @@ export function UserDetailSidebar({ user }: UserDetailSidebarProps) {
           {user.isAdminHq && (
             <Badge
               variant="secondary"
-              title="Admin HQ — cross-branch access enabled"
+              title="Admin HQ (cross-branch access enabled)"
             >
               Admin HQ
             </Badge>

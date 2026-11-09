@@ -75,7 +75,7 @@ export default function EditFormPage({
           </Link>
         }
         title="Amend the form."
-        description="Questions, settings, and access — answers already collected stay intact through edits."
+        description="Edit questions, settings and access while keeping existing responses intact."
         actions={
           <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-xs">
             <Link href={`/library/forms/${formId}`}>Back to the form</Link>

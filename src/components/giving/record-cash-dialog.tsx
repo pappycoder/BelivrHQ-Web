@@ -373,7 +373,7 @@ export function RecordCashDialog({
                 />
               )}
               <p className="text-xs text-muted-foreground">
-                Not listed? Pick “+ Add new category…” and type it — it&apos;s
+                Not listed? Pick “+ Add new category…” and type it. It&apos;s
                 created automatically.
               </p>
             </div>

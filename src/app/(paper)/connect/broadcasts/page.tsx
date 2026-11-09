@@ -58,7 +58,7 @@ const STATUS_TONES: Record<string, "moss" | "gold" | "rose" | "sky" | "neutral">
 };
 
 function stamp(value?: string) {
-  if (!value) return "—";
+  if (!value) return "Not available";
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value;
   return d.toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
@@ -164,7 +164,7 @@ export default function BroadcastsPage() {
       <PageHeader
         eyebrow="Connect · Broadcasts"
         title="Say it once, well."
-        description="Whole-group sends with receipts — and a rule of thumb: two broadcasts a week, no more."
+        description="Send to groups and review delivery receipts. Aim for no more than two broadcasts a week."
         actions={
           canCreate ? (
             <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={openForm}>
@@ -239,7 +239,7 @@ export default function BroadcastsPage() {
             </ListTable>
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-5 py-2.5 text-[10px] text-ink-faint">
-            <span>Recipients are computed when a scheduled send runs — branch and audience rules honoured at the server.</span>
+            <span>Recipients are computed when a scheduled send runs, with branch and audience rules honoured at the server.</span>
             <Button asChild variant="ghost" size="xs" className="rounded-full text-[10px] text-brand">
               <Link href="/connect/templates">Manage templates</Link>
             </Button>
@@ -254,7 +254,7 @@ export default function BroadcastsPage() {
           <DialogHeader>
             <DialogTitle className="font-display">Compose a broadcast</DialogTitle>
             <DialogDescription className="text-xs">
-              A name, a published template, an audience — sent once, remembered kindly.
+              A name, a published template, an audience, sent once, remembered kindly.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={submit} className="space-y-4">
@@ -279,7 +279,7 @@ export default function BroadcastsPage() {
                 </select>
               ) : (
                 <p className="rounded-lg border border-dashed border-line px-3 py-2.5 text-[11px] text-ink-faint">
-                  No published {draft.channel} templates yet —{" "}
+                  No published {draft.channel} templates yet.{" "}
                   <Link href="/connect/templates" className="text-brand underline">publish one first</Link>.
                 </p>
               )}

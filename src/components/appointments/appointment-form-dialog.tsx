@@ -504,7 +504,7 @@ export function AppointmentFormDialog({
                     <FormLabel>Location</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="e.g. Main Campus — Office 2"
+                        placeholder="e.g. Main Campus, Office 2"
                         {...field}
                       />
                     </FormControl>

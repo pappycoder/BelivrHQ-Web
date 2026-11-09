@@ -382,7 +382,7 @@ export function IntakeRegister({
           )}
           <div className="paper-card flex h-full flex-col justify-between gap-4 rounded-2xl p-5">
             <span className="rule-label">On this page</span>
-            {list.isLoading ? <Skeleton className="h-8 w-12" /> : <span className="num font-display text-[1.9rem] font-semibold leading-none tracking-tight">{list.isError ? "—" : list.data?.data.length ?? 0}</span>}
+            {list.isLoading ? <Skeleton className="h-8 w-12" /> : <span className="num font-display text-[1.9rem] font-semibold leading-none tracking-tight">{list.isError ? "Not available" : list.data?.data.length ?? 0}</span>}
           </div>
           <div className="paper-card col-span-2 flex h-full flex-col justify-between gap-4 rounded-2xl p-5 lg:col-span-1">
             <span className="rule-label">Scope</span>
@@ -442,7 +442,7 @@ export function IntakeRegister({
                       <button type="button" className="flex min-w-0 items-center gap-3 text-left" onClick={() => inspect.mutate({ id: row.id })}>
                         <PersonAvatar name={person} size="sm" /><span className="min-w-0"><span className="block truncate text-xs font-semibold">{person}</span><span className="block truncate text-[11px] text-ink-faint">{String(row.data.email ?? row.data.phone ?? "No contact on file")}</span></span>
                       </button>
-                      <span className="text-[11px] text-ink-soft"><span className="block truncate">{String(row.data.phone ?? row.data.whatsappNumber ?? "—")}</span><span className="block truncate text-ink-faint">{String(row.data.email ?? "")}</span></span>
+                      <span className="text-[11px] text-ink-soft"><span className="block truncate">{String(row.data.phone ?? row.data.whatsappNumber ?? "Not available")}</span><span className="block truncate text-ink-faint">{String(row.data.email ?? "")}</span></span>
                       <span className="truncate text-[11px] text-ink-soft">{row.branchName}</span>
                       <span className="num text-[11px] text-ink-soft">{new Date(row.createdAt).toLocaleDateString()}</span>
                       <RowActions reveal={false} actions={manageActions(row)} />

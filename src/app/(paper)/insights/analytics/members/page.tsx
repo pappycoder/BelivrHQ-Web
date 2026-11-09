@@ -49,7 +49,7 @@ export default function MembersAnalyticsPage() {
           </Link>
         }
         title="The growing family."
-        description="How people arrive, belong, and stay — measured gently, at the pace of a congregation."
+        description="Track member growth, group participation and retention over time."
         actions={
           <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
             <Link href="/people/members">
@@ -77,7 +77,7 @@ export default function MembersAnalyticsPage() {
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <StatCard label="Members" value={m.total} tone="brand" icon={<Users className="size-4" />} />
-            <StatCard label="Active" value={activeCount} tone="moss" deltaLabel={m.total ? `${percent(activeCount, m.total)}% of the roll` : "—"} />
+            <StatCard label="Active" value={activeCount} tone="moss" deltaLabel={m.total ? `${percent(activeCount, m.total)}% of the roll` : "Not available"} />
             <StatCard label="Age bands" value={ageData.length} tone="sky" deltaLabel="generation spread" />
             <StatCard label="Recorded growth" value={growthRows.length} tone="gold" deltaLabel="periods tracked" />
           </div>
@@ -87,7 +87,7 @@ export default function MembersAnalyticsPage() {
               {growthRows.length ? (
                 <TrendChart data={growthRows} series={[{ key: "members", label: "Members", color: "var(--chart-2)" }]} height={220} formatter={(v) => number(Number(v))} />
               ) : (
-                <p className="py-12 text-center text-[11px] text-ink-faint">Growth needs a little history first — it starts appearing with the records.</p>
+                <p className="py-12 text-center text-[11px] text-ink-faint">Growth trends will appear once there are enough records.</p>
               )}
             </SectionCard>
 
@@ -138,7 +138,7 @@ export default function MembersAnalyticsPage() {
                 <p className="py-12 text-center text-[11px] text-ink-faint">Gender data appears with filled member profiles.</p>
               )}
               <p className="mt-4 text-[10px] leading-relaxed text-ink-faint">
-                Members in at least one group attend far more often — belonging precedes behaving.
+                Members in at least one group attend far more often; belonging precedes behaving.
                 The group roster lives at <Link href="/gatherings/groups" className="text-brand hover:underline">Gatherings · Groups</Link>.
               </p>
             </SectionCard>

@@ -69,7 +69,7 @@ export default function GivingSchedulesPage() {
       <PageHeader
         eyebrow="Giving · Recurring"
         title="The floor under the year."
-        description="Standing gifts, scheduled and steady — pause with care, never let a failure go unnoticed."
+        description="Manage scheduled gifts, pause them when needed and follow up on failed payments."
         actions={
           canCreate ? (
             <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setDialogOpen(true)}>
@@ -99,7 +99,7 @@ export default function GivingSchedulesPage() {
         <EmptyState
           icon={<Repeat />}
           title={activeFilter ? "Nothing in this state" : "No standing gifts yet"}
-          description="Recurring giving is the calmest money in the church — one household at a time."
+          description="Recurring gifts help your church plan ahead."
         />
       ) : (
         <ListTable className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="giving-schedules-1" records={rows ?? []} recordKey="id"><StaggerGroup className="divide-y divide-line/70">
@@ -130,20 +130,20 @@ export default function GivingSchedulesPage() {
                 <span className="truncate text-[11px] text-ink-soft">{schedule.categoryName}</span>
                 <span className="num text-right text-xs font-semibold">{formatNaira(schedule.amount)}</span>
                 <span className="text-[11px] text-ink-soft">{FREQUENCY_LABELS[schedule.frequency] ?? schedule.frequency}</span>
-                <span className="num text-[11px] text-ink-soft">{schedule.nextChargeDate ? formatDate(schedule.nextChargeDate) : "—"}</span>
+                <span className="num text-[11px] text-ink-soft">{schedule.nextChargeDate ? formatDate(schedule.nextChargeDate) : "Not available"}</span>
                 <RowActions
                   actions={[
                     canManage && schedule.isActive && {
                       label: "Pause schedule", confirmation: { subject: `${schedule.memberName ?? "Giver"} · ${schedule.categoryName ?? "Giving schedule"}` },
                       icon: <Pause />,
-                      onSelect: () => act(pause, schedule.id, "Schedule paused — the giver can breathe."),
+                      onSelect: () => act(pause, schedule.id, "Schedule paused."),
                       bulk: { key: "pause", label: "Pause selected schedules", run: () => pause.mutateAsync(schedule.id) },
                     },
                     canManage && !schedule.isActive && {
                       label: "Resume schedule", confirmation: { subject: `${schedule.memberName ?? "Giver"} · ${schedule.categoryName ?? "Giving schedule"}` },
                       icon: <PlayCircle />,
                       tone: "success",
-                      onSelect: () => act(resume, schedule.id, "Schedule resumed — the floor rebuilds quietly."),
+                      onSelect: () => act(resume, schedule.id, "Schedule resumed."),
                       bulk: { key: "resume", label: "Resume selected schedules", run: () => resume.mutateAsync(schedule.id) },
                     },
                     canManage && schedule.isActive && {

@@ -153,7 +153,7 @@ export default function FamiliesPage() {
       });
     } else {
       return archive.mutateAsync(family.familyId, {
-        onSuccess: () => toast(`${family.name} archived — records are kept.`),
+        onSuccess: () => toast(`${family.name} archived. Records are kept.`),
       });
     }
   };
@@ -218,7 +218,7 @@ export default function FamiliesPage() {
             </div>
           </div>
           <DataList>
-            <FieldRow label="Created">{family.createdAt?.slice(0, 10) ?? "—"}</FieldRow>
+            <FieldRow label="Created">{family.createdAt?.slice(0, 10) ?? "Not available"}</FieldRow>
             {family.archivedAt ? <FieldRow label="Archived">{family.archivedAt.slice(0, 10)}</FieldRow> : null}
           </DataList>
           <div className="grid grid-cols-2 gap-2">
@@ -292,7 +292,7 @@ export default function FamiliesPage() {
       <PageHeader
         eyebrow="People · Families"
         title="Households, not just individuals."
-        description="Care follows families — the whole story of who lives where and how they're doing."
+        description="View household members, addresses and family care information together."
         actions={
           <>
             <ExportDropdown
@@ -377,7 +377,7 @@ export default function FamiliesPage() {
         <EmptyState
           icon={<Home />}
           title="No households yet"
-          description="Families link people who share a home — care and giving read better together."
+          description="Families link people who share a home, so care and giving read better together."
           action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => { setEditTarget(null); setFormOpen(true); }}>Start one</Button> : undefined}
         />
       ) : view === "table" ? (
@@ -409,7 +409,7 @@ export default function FamiliesPage() {
                         <span className="num text-[11px] text-ink-soft">{family.members.length}</span>
                         {family.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
                       </span>
-                      <span className="num text-[11px] text-ink-soft">{family.createdAt?.slice(0, 10) ?? "—"}</span>
+                      <span className="num text-[11px] text-ink-soft">{family.createdAt?.slice(0, 10) ?? "Not available"}</span>
                       <RowActions actions={manageActions(family)} />
                     </div>
                   );

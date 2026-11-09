@@ -195,7 +195,7 @@ export default function PeopleMembersPage() {
             {member.city || member.state ? (
               <FieldRow label="Location">{[member.city, member.state].filter(Boolean).join(", ")}</FieldRow>
             ) : null}
-            <FieldRow label="Member since">{member.memberSince ?? "—"}</FieldRow>
+            <FieldRow label="Member since">{member.memberSince ?? "Not available"}</FieldRow>
             {member.dateOfBirth ? <FieldRow label="Birthday">{member.dateOfBirth}</FieldRow> : null}
           </DataList>
           {member.notes ? (
@@ -247,7 +247,7 @@ export default function PeopleMembersPage() {
       });
     } else {
       return archive.mutateAsync(member.memberId, {
-        onSuccess: () => toast(`${member.firstName} archived — records are kept.`),
+        onSuccess: () => toast(`${member.firstName} archived. Records are kept.`),
       });
     }
   };
@@ -289,7 +289,7 @@ export default function PeopleMembersPage() {
       <PageHeader
         eyebrow="People · Members"
         title="Everyone, held in one place."
-        description="One directory for the whole church — people, households, and the story of how they're doing."
+        description="Find people, households and member details in one church directory."
         actions={
           <>
             <PublicRegistrationLink kind="members" />
@@ -436,9 +436,9 @@ export default function PeopleMembersPage() {
                       <Tag tone={STATUS_TONES[member.status]} dot>{member.status}</Tag>
                     </span>
                     <span className="truncate text-[11px] text-ink-soft">
-                      {(member.branchId && branchNames.get(member.branchId)) ?? (isHq ? "—" : profile?.branch?.name ?? "—")}
+                      {(member.branchId && branchNames.get(member.branchId)) ?? (isHq ? "Not available" : profile?.branch?.name ?? "Not available")}
                     </span>
-                    <span className="num text-[11px] text-ink-soft">{member.memberSince ?? "—"}</span>
+                    <span className="num text-[11px] text-ink-soft">{member.memberSince ?? "Not available"}</span>
                     <div className="flex items-center justify-end">
                       <RowActions actions={manageActions(member)} />
                     </div>
@@ -468,7 +468,7 @@ export default function PeopleMembersPage() {
                       <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.photoUrl} size="md" />
                       <div className="min-w-0">
                         <p className="truncate text-xs font-semibold">{member.firstName} {member.lastName}</p>
-                        <p className="truncate text-[11px] text-ink-faint">{member.email ?? member.phone ?? "—"}</p>
+                        <p className="truncate text-[11px] text-ink-faint">{member.email ?? member.phone ?? "Not available"}</p>
                       </div>
                     </button>
                     <RowActions reveal={false} actions={manageActions(member)} />

@@ -259,7 +259,7 @@ export default function GivingDonationsPage() {
       <PageHeader
         eyebrow="Giving · Records"
         title="Every gift, one feed."
-        description="Individual gifts, general collections and group giving — each with its source and receipt."
+        description="Individual gifts, general collections and group giving, each with its source and receipt."
         actions={
           <>
             <ExportDropdown
@@ -483,7 +483,7 @@ export default function GivingDonationsPage() {
                       <ReceiptActions transaction={tx} />
                     ) : (
                       <span className="num text-[9px] text-ink-faint">
-                        {tx.receiptNumber ?? "—"}
+                        {tx.receiptNumber ?? "Not available"}
                       </span>
                     )}
                   </span>

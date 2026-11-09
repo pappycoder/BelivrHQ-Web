@@ -75,7 +75,7 @@ export function DeleteDepartmentDialog({
             <span className="font-medium text-foreground">
               {department?.name}
             </span>
-            ? Members assigned to it are not removed — only the department
+            ? Members assigned to it are not removed; only the department
             record itself is deleted.
           </DialogDescription>
         </DialogHeader>

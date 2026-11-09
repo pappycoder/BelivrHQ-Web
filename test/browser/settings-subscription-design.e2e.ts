@@ -278,7 +278,7 @@ test("pending payment remains recoverable and only server application returns to
   ).toBeDisabled();
   state.apply();
   await page
-    .getByRole("button", { name: "I’ve paid — check payment", exact: true })
+    .getByRole("button", { name: "Check my payment", exact: true })
     .click();
   await expect(page).toHaveURL(/\/home$/, { timeout: 15000 });
   expect(state.calls.filter((call) => call.path.endsWith("/checkout"))).toEqual(

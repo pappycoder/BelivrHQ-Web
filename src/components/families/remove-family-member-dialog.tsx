@@ -70,7 +70,7 @@ export function RemoveFamilyMemberDialog({
                 </span>{" "}
                 from{" "}
                 <span className="font-medium text-foreground">{familyName}</span>?
-                Their member record is kept — they are only unlinked from this
+                Their member record is kept; they are only unlinked from this
                 family.
               </>
             ) : (

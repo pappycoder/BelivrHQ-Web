@@ -69,7 +69,7 @@ export default function PaperHomePage() {
             {today?.greeting ?? "Welcome back"}, <span className="text-brand">{firstName}</span>.
           </>
         }
-        description="One quiet page for the whole church's rhythm — generosity, gathering, and the people waiting on a hello."
+        description="See giving, gatherings and people who need a follow-up in one place."
         actions={
           <Button variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs" asChild>
             <Link href="/notifications">
@@ -317,7 +317,7 @@ function UpcomingEvents({ className }: { className?: string }) {
         ))}
         {!upcoming.length ? (
           <p className="px-5 py-8 text-center text-xs text-ink-soft">
-            Nothing scheduled yet — the calendar is waiting for its first plan.
+            Nothing scheduled yet. Add a gathering to get started.
           </p>
         ) : null}
       </div>

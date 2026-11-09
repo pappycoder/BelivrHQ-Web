@@ -76,7 +76,7 @@ function TicketsInner() {
           setAssignMember(null);
           setAssignTier("");
         },
-        onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't assign the ticket — capacity or duplicate rules may apply.")),
+        onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't assign the ticket. Capacity or duplicate rules may apply.")),
       },
     );
   };
@@ -86,7 +86,7 @@ function TicketsInner() {
       <PageHeader
         eyebrow="Gatherings · Events"
         title="Passes in hand."
-        description="Assign, print and track every ticket — the door should recognise a face, not fuss over a code."
+        description="Assign, print and track tickets to keep event entry running smoothly."
         actions={
           canAssign && eventId ? (
             <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setAssignOpen(true)}>
@@ -113,7 +113,7 @@ function TicketsInner() {
         {selected ? (
           <span className="flex items-center gap-1.5 text-[10px] text-ink-faint">
             {paidEvent ? <Tag tone="gold">paid</Tag> : <Tag tone="moss">free</Tag>}
-            {(tiers.data ?? []).length ? <span>{(tiers.data ?? []).length} tiers</span> : paidEvent ? <span>no tiers — flat price</span> : null}
+            {(tiers.data ?? []).length ? <span>{(tiers.data ?? []).length} tiers</span> : paidEvent ? <span>no tiers (flat price)</span> : null}
           </span>
         ) : null}
         {eventId ? (
@@ -127,7 +127,7 @@ function TicketsInner() {
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <StatCard label="Passes issued" value={total} tone="brand" icon={<Ticket className="size-4" />} />
-            <StatCard label="Used this page" value={usedCount} tone="moss" deltaLabel={rows.length ? `${Math.round((usedCount / rows.length) * 100)}%` : "—"} />
+            <StatCard label="Used this page" value={usedCount} tone="moss" deltaLabel={rows.length ? `${Math.round((usedCount / rows.length) * 100)}%` : "Not available"} />
             <StatCard label="Open this page" value={rows.length - usedCount} tone="gold" />
             <StatCard label="Capacity" value={selected?.capacity ?? 0} tone="sky" deltaLabel="event seats" />
           </div>
@@ -138,7 +138,7 @@ function TicketsInner() {
             <EmptyState
               icon={<Users />}
               title="No passes yet"
-              description={paidEvent ? "Sales appear here automatically; you can also seat someone by hand." : "Free events still track attendance at the desk — claim happens member-side."}
+              description={paidEvent ? "Sales appear here automatically; you can also seat someone by hand." : "Free events still track attendance at the desk. Claim happens member-side."}
               action={canAssign ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => setAssignOpen(true)}>Assign the first</Button> : undefined}
             />
           ) : (
@@ -196,7 +196,7 @@ function TicketsInner() {
         <EmptyState
           icon={<Ticket />}
           title="Choose an event to work its passes"
-          description="Issue counts, seats and printable A5 event passes — one honest list."
+          description="Review issued tickets, seat counts and printable A5 event passes."
         />
       )}
 
@@ -204,7 +204,7 @@ function TicketsInner() {
         <DialogContent className="rounded-2xl border-line bg-card">
           <DialogHeader>
             <DialogTitle className="font-display">Seat someone by hand</DialogTitle>
-            <DialogDescription className="text-xs">A pass with their name on it — sometimes the right thing beats a queue.</DialogDescription>
+            <DialogDescription className="text-xs">Create a named pass to help attendees get through the queue.</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1.5">

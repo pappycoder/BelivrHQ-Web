@@ -80,7 +80,7 @@ export default function AdminBranchesPage() {
   const manageActions = (branch: Branch): (RowAction | false | "" | undefined)[] => [
     { label: `Open ${branch.name}`, icon: <ArrowUpRight />, href: `/admin/locations/${branch.branchId}` },
     canUpdate && !branch.archivedAt && { label: "Edit branch", icon: <PencilLine />, onSelect: () => setFormTarget({ open: true, branch }) },
-    canDelete && !branch.archivedAt && { label: "Archive branch — keeps history", icon: <Archive />, onSelect: () => setArchiveState({ kind: "archive", branch }), bulk: { key: "archive", label: "Archive selected", run: () => archive.mutateAsync(branch.branchId) } },
+    canDelete && !branch.archivedAt && { label: "Archive branch and keep history", icon: <Archive />, onSelect: () => setArchiveState({ kind: "archive", branch }), bulk: { key: "archive", label: "Archive selected", run: () => archive.mutateAsync(branch.branchId) } },
     canUpdate && branch.archivedAt && { label: "Restore branch", icon: <ArchiveRestore />, tone: "success", onSelect: () => setArchiveState({ kind: "restore", branch }), bulk: { key: "restore", label: "Restore selected", run: () => restore.mutateAsync(branch.branchId) } },
     canDelete && branch.archivedAt && { label: "Delete forever", icon: <Trash2 />, tone: "danger", onSelect: () => setArchiveState({ kind: "purge", branch }), bulk: { key: "delete", label: "Delete selected permanently", destructive: true, run: () => del.mutateAsync(branch.branchId) } },
   ];
@@ -94,7 +94,7 @@ export default function AdminBranchesPage() {
           </Link>
         }
         title="Many rooms, one register."
-        description="Every campus and meeting place — members, services and reports follow the branch they belong to."
+        description="Manage each campus and meeting place, with members, services and reports linked to their branch."
         actions={
           canCreate ? (
             <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setFormTarget({ open: true, branch: null })}>
@@ -132,7 +132,7 @@ export default function AdminBranchesPage() {
         <EmptyState
           icon={<Building2 />}
           title={archivedView ? "No archived branches" : "One church, no branches yet"}
-          description="A branch is a room people gather in — add one when the second Sunday service starts."
+          description="A branch is a room people gather in. Add one when the second Sunday service starts."
           action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => setFormTarget({ open: true, branch: null })}>Add the first branch</Button> : undefined}
         />
       ) : view === "table" ? (
@@ -221,7 +221,7 @@ export default function AdminBranchesPage() {
       <div className="rounded-2xl border border-dashed border-line p-5 text-[11px] leading-relaxed text-ink-soft">
         <p className="mb-1 font-display text-xs font-semibold text-ink">Branch scope is real</p>
         Staff see their branch&apos;s people and numbers; Admin HQ reads across all of them. Archiving keeps the
-        history intact — deleting forever only works once no members are still assigned.
+        history intact. Deleting forever only works once no members are still assigned.
       </div>
 
       <BranchFormDialog

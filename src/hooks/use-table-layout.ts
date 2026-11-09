@@ -27,7 +27,7 @@ export function useTableLayout(root: RefObject<HTMLDivElement | null>) {
           return false;
         const values = Array.from(table.tBodies[0]?.rows ?? [])
           .map((row) => row.cells[index]?.textContent?.trim() || "")
-          .filter((value) => value && value !== "—" && value !== "–" && value !== "-");
+          .filter((value) => value && value !== "Not available" && value !== "–" && value !== "-");
         return (
           values.length > 0 &&
           values.every((value) =>

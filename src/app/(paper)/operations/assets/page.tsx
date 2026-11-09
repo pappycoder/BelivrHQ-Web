@@ -115,7 +115,7 @@ export default function AssetsPage() {
       <PageHeader
         eyebrow="Operations · Assets"
         title="Everything we hold in trust."
-        description="The register of what the church owns — where it is, who&apos;s carrying it, and how it&apos;s faring."
+        description="Track church assets, their locations, custodians and condition."
         actions={
           <>
             <ExportDropdown
@@ -162,7 +162,7 @@ export default function AssetsPage() {
         <EmptyState
           icon={<Boxes />}
           title={archivedView ? "Nothing archived" : "The register is empty"}
-          description="Every sound system, bus and chair can be tracked — start with the things that walk out the door."
+          description="Every sound system, bus and chair can be tracked. Start with the things that walk out the door."
           action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => router.push("/operations/assets/new")}>Register the first asset</Button> : undefined}
         />
       ) : (
@@ -194,7 +194,7 @@ export default function AssetsPage() {
                           <span className="block font-mono text-[9px] text-ink-faint">{asset.assetTag}{asset.serialNumber ? ` · ${asset.serialNumber}` : ""}</span>
                         </span>
                       </button>
-                      <span className="truncate text-[11px] text-ink-soft">{asset.categoryName ?? "—"}</span>
+                      <span className="truncate text-[11px] text-ink-soft">{asset.categoryName ?? "Not available"}</span>
                       <span>
                         <Tag tone={asset.archivedAt ? "neutral" : STATUS_TONES[asset.status]} dot>
                           {asset.archivedAt ? "Archived" : ASSET_STATUS_LABELS[asset.status]}
@@ -202,7 +202,7 @@ export default function AssetsPage() {
                       </span>
                       <span className="truncate text-[11px] text-ink-soft">{asset.custodianName ?? asset.location ?? "Unassigned"}</span>
                       <span className="text-right text-[11px] text-ink-faint">{ASSET_CONDITION_LABELS[asset.condition]}</span>
-                      <span className="num text-right text-xs font-semibold">{asset.currentValue ? formatNaira(asset.currentValue) : "—"}</span>
+                      <span className="num text-right text-xs font-semibold">{asset.currentValue ? formatNaira(asset.currentValue) : "Not available"}</span>
                     <RowActions actions={[
  { label: "View asset", icon: <ArrowUpRight />, onSelect: () => setDrawerAssetId(asset.id) },
  canUpdate && { label: asset.archivedAt ? "Restore asset" : "Archive asset", confirmation: { subject: asset.name }, icon: asset.archivedAt ? <ArchiveRestore /> : <Archive />,

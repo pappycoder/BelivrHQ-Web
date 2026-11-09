@@ -57,7 +57,7 @@ export default function AttendanceDashboardPage() {
       <PageHeader
         eyebrow="Gatherings · Attendance"
         title="Who gathers, week by week."
-        description="Headcounts with a heartbeat — enough to notice drift, never enough to reduce a person to a number."
+        description="Track attendance over time and notice when someone may need a check-in."
         actions={
           <>
             <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
@@ -89,7 +89,7 @@ export default function AttendanceDashboardPage() {
         />
       ) : (
         <div className="grid gap-4 lg:grid-cols-12">
-          <SectionCard className="lg:col-span-7" eyebrow="Trend" title="Thirty days of doors opening" description="Separate reads for members and visitors — total in the room stays honest.">
+          <SectionCard className="lg:col-span-7" eyebrow="Trend" title="Thirty days of doors opening" description="View member and visitor attendance separately, alongside the total headcount.">
             {trends.isLoading || summary.isLoading ? (
               <Skeleton className="h-[220px]" />
             ) : trends.data?.length ? (
@@ -169,7 +169,7 @@ export default function AttendanceDashboardPage() {
                       {!record.memberId && record.visitorName ? <span className="ml-1.5 text-[9px] text-gold">visitor</span> : null}
                     </span>
                     <span className="hidden min-w-0 max-w-[180px] truncate text-[10px] text-ink-faint sm:block">
-                      {record.serviceName ?? record.eventName ?? "—"}
+                      {record.serviceName ?? record.eventName ?? "Not available"}
                     </span>
                     <span className="num w-28 shrink-0 text-right text-[10px] text-ink-faint">{stamp(record.checkInAt)}</span>
                   </div>

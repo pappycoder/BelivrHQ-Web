@@ -473,7 +473,7 @@ export function GeneralAttendancePanel({
         )}
         {matched && !editing ? (
           <p role="status" className="text-xs text-muted-foreground">
-            {date} already has a recorded headcount — saving updates that record
+            {date} already has a recorded headcount. Saving updates that record
             instead of adding a second one.
           </p>
         ) : null}
@@ -703,10 +703,10 @@ export function GeneralAttendancePanel({
                           {row.attendanceDate}
                         </span>
                         <span className="min-w-0 truncate font-medium">
-                          {row.contextName ?? "—"}
+                          {row.contextName ?? "Not available"}
                         </span>
                         <span className="min-w-0 truncate text-[11px] text-ink-soft">
-                          {row.branchName ?? "—"}
+                          {row.branchName ?? "Not available"}
                         </span>
                         {countFields.map(([key]) => (
                           <span
@@ -714,7 +714,7 @@ export function GeneralAttendancePanel({
                             className="num text-right tabular-nums text-[11px]"
                           >
                             {String(
-                              row[key as keyof GeneralAttendanceRecord] ?? "—",
+                              row[key as keyof GeneralAttendanceRecord] ?? "Not available",
                             )}
                           </span>
                         ))}

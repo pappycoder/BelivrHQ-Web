@@ -89,7 +89,7 @@ export function PermissionMatrixEditor({
           <p className="font-medium">{perm.name}</p>
           <p className="text-muted-foreground">
             {grantedIds.has(perm.id) ? "Granted" : "Not granted"}
-            {isBlocked ? " — inherited default or protected grant" : ""}
+            {isBlocked ? " (inherited default or protected grant)" : ""}
           </p>
         </TooltipContent>
       </Tooltip>

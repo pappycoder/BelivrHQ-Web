@@ -371,7 +371,7 @@ export default function PaperNotificationsPage() {
         open={!!deleteTarget}
         onOpenChange={(value) => !value && setDeleteTarget(null)}
         title={deleteTarget && deleteTarget.ids.length > 1 ? "Delete these notifications?" : "Delete this notification?"}
-        description="Notifications are removed for good — this cannot be undone."
+        description="Notifications are removed for good. This cannot be undone."
         confirmLabel="Delete"
         pending={bulkDelete.isPending || deleteOne.isPending}
         pendingLabel="Deleting…"

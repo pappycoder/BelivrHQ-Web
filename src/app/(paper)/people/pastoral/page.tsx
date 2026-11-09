@@ -38,7 +38,7 @@ const CONF_TONES: Record<ConfidentialityLevel, "neutral" | "gold" | "rose"> = {
 };
 
 function formatDate(value?: string) {
-  if (!value) return "—";
+  if (!value) return "Not available";
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value.slice(0, 10);
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
@@ -73,7 +73,7 @@ export default function PastoralNotesPage() {
           <PageHeader
             eyebrow="People · Pastoral care"
             title="The quiet record of caring."
-            description="Every conversation that matters — kept private, shared only with those carrying the person."
+            description="Keep pastoral conversations private and share them only with the people providing care."
             actions={
               canCreate ? (
                 <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => { setEditTarget(null); setFormOpen(true); }}>
@@ -190,13 +190,12 @@ export default function PastoralNotesPage() {
             </div>
             <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
               {CONFIDENTIALITY_LABELS.confidential} and {CONFIDENTIALITY_LABELS.restricted} notes stay with the
-              people carrying them — presence beats paperwork.
+              people carrying them; presence beats paperwork.
             </p>
           </SectionCard>
           <div className="rounded-2xl border border-dashed border-line p-4 text-[11px] leading-relaxed text-ink-soft">
             <p className="mb-1 font-display text-xs font-semibold text-ink">A note on notes</p>
-            Record what was said, not what you concluded. Pastoral notes outlive
-            the moment — write the way you&apos;d want your own story written.
+            Record what was said, not what you concluded. Pastoral notes outlive the moment. Write the way you&apos;d want your own story written.
           </div>
           <SectionCard eyebrow="Coming in this wave" title="More of People" bodyClassName="p-3">
             <ul className="space-y-1.5 text-[11px] text-ink-soft">
@@ -204,7 +203,7 @@ export default function PastoralNotesPage() {
               <li>· Life events &amp; engagement</li>
               <li>· Visitor follow-up board</li>
             </ul>
-            <p className="mt-2 text-[10px] text-ink-faint">Each lands with its own wave — the legacy pages stay live meanwhile.</p>
+            <p className="mt-2 text-[10px] text-ink-faint">The existing pages remain available as these features are updated.</p>
           </SectionCard>
         </aside>
       </div>

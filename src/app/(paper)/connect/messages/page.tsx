@@ -88,7 +88,7 @@ export default function MessagesPage() {
       <PageHeader
         eyebrow="Connect · Messages"
         title="SMS and WhatsApp, in one stream."
-        description="Every conversation the church has had by text — inbound questions answered within a day, outbound with purpose."
+        description="Every conversation the church has had by text, with inbound questions answered within a day, outbound with purpose."
         actions={
           canSend ? (
             <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setSendOpen(true)}>
@@ -175,7 +175,7 @@ export default function MessagesPage() {
           <DialogHeader>
             <DialogTitle className="font-display">Send a text</DialogTitle>
             <DialogDescription className="text-xs">
-              WhatsApp is tried first, then SMS falls back — one number, one message.
+              WhatsApp is tried first, then SMS falls back, using one number, one message.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={submit} className="space-y-4">

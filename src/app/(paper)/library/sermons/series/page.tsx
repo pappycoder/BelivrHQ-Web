@@ -14,7 +14,7 @@ export default function SermonSeriesPage() {
   return (
     <SermonAggregateBrowser
       eyebrow="Library · Sermons"
-      title="Series — messages that keep talking."
+      title="Organise related sermons into series."
       description="Collections people can binge, and preachers can plan a whole season around."
       nounSingular="Series"
       nounPlural="Series"
@@ -22,7 +22,7 @@ export default function SermonSeriesPage() {
       isLoading={series.isLoading}
       emptyIcon={<Layers />}
       emptyTitle="No series yet"
-      emptyDescription="Series form as sermons share a name — a book-by-book plan starts here."
+      emptyDescription="Series form as sermons share a name. A book-by-book plan starts here."
       filterParam="series"
       nameColumnLabel="Series"
       lastColumnLabel="Last preached"
@@ -36,7 +36,7 @@ export default function SermonSeriesPage() {
             <span className="grid size-10 place-items-center rounded-xl bg-brand-soft text-brand">
               <Radio className="size-4" />
             </span>
-            <Tag tone="neutral">{new Date(item.lastDate).getFullYear() || "—"}</Tag>
+            <Tag tone="neutral">{new Date(item.lastDate).getFullYear() || "Not available"}</Tag>
           </div>
           <p className="mt-3 flex-1 font-display text-base font-semibold leading-snug tracking-tight">{item.name}</p>
           <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[11px] text-ink-faint">

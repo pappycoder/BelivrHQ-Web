@@ -605,7 +605,7 @@ for (const cell of [false, true])
     await expect(page).toHaveURL(new RegExp(`${path}$`));
     await row
       .getByRole("button", {
-        name: cell ? "Archive group — records kept" : "Archive Worship team",
+        name: cell ? "Archive group" : "Archive Worship team",
         exact: true,
       })
       .click();

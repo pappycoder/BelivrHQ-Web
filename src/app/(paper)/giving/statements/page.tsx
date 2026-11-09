@@ -165,7 +165,7 @@ export default function GivingStatementsPage() {
       <PageHeader
         eyebrow="Giving · Statements"
         title="Receipts-ready, year after year."
-        description="The season rolled up by month, fund and method — the same figures the ledger keeps, dressed for the board."
+        description="Summarise giving by month, fund and payment method using the same figures as the ledger."
         actions={
           <ExportDropdown
             tableId="statements"
@@ -224,7 +224,7 @@ export default function GivingStatementsPage() {
         <EmptyState
           icon={<HeartHandshake />}
           title="No gifts in this window"
-          description="Try a wider range — or the season simply hasn't landed yet."
+          description="Try a wider date range to find giving records."
         />
       ) : (
         <>
@@ -382,8 +382,7 @@ export default function GivingStatementsPage() {
             <p className="mb-1 font-display text-xs font-semibold text-ink">
               Statement discipline
             </p>
-            Every figure here walks the full successful ledger for the window —
-            the same source the receipts print from, so a board pack and a
+            Every figure here walks the full successful ledger for the window, using the same source the receipts print from, so a board pack and a
             giver&apos;s receipt can never disagree.
           </div>
         </>

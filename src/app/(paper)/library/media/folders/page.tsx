@@ -264,7 +264,7 @@ export default function MediaFoldersPage() {
           ))}
         </div>
         <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
-          Folders are namespacing, not permissions — each file keeps its own public/members/leadership badge.
+          Folders are namespacing, not permissions. Each file keeps its own public/members/leadership badge.
         </p>
       </div>
     </div>

@@ -332,7 +332,7 @@ export function MeetingAttendanceTable({
                   </Tag>
                 </span>
                 <span className="truncate text-ink-faint">
-                  {row.notes || "—"}
+                  {row.notes || "Not available"}
                 </span>
               </div>
             ))}

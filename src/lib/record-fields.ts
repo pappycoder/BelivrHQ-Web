@@ -130,9 +130,9 @@ export function recordFieldValue(
   );
 }
 export function recordFieldText(value: unknown): string {
-  if (value === undefined || value === null || value === "") return "—";
+  if (value === undefined || value === null || value === "") return "Not available";
   if (typeof value === "boolean") return value ? "Yes" : "No";
-  if (Array.isArray(value)) return value.map(recordFieldText).join(", ") || "—";
+  if (Array.isArray(value)) return value.map(recordFieldText).join(", ") || "Not available";
   if (typeof value === "object") {
     const row = value as Record<string, unknown>;
     if (row.name || row.firstName)

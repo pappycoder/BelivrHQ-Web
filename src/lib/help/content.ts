@@ -475,7 +475,7 @@ export const helpContent: Record<HelpSlug, HelpSection[]> = {
       title: "If you paid but activation is still pending",
       steps: [
         "Return to Plan & Billing using the same church administrator account.",
-        "Review the pending payment and choose I’ve paid — check payment if that option is shown.",
+        "Review the pending payment and choose Check my payment if that option is shown.",
         "Allow time for the provider’s confirmation. Check the payment history and any message returned by verification.",
         "If the payment remains unresolved, contact ChurchOS support with the payment reference, time and provider. Do not send card details, passwords or tokens.",
       ],

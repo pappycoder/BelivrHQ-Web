@@ -186,7 +186,7 @@ export default function AdminRolesPage() {
         <EmptyState
           icon={<KeyRound />}
           title="No roles to show"
-          description="Every workspace starts with the built-in set — custom ones appear here once created."
+          description="Every workspace starts with the built-in set. Custom ones appear here once created."
         />
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
@@ -358,7 +358,7 @@ export default function AdminRolesPage() {
         <p className="mb-1 font-display text-xs font-semibold text-ink">
           How editing works
         </p>
-        Template roles are additive — ticks grant extras for this church; global
+        Template roles are additive. Ticks grant extras for this church; global
         defaults can&apos;t be revoked from here. Church-owned roles edit their
         own full set, revocations included. The matrix editor opens in the
         classic surface while the Paper version matures.

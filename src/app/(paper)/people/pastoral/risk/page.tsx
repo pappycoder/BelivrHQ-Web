@@ -50,7 +50,7 @@ const LEVELS: { value: RiskLevel | "all"; label: string }[] = [
 ];
 
 function formatDate(value?: string) {
-  if (!value) return "—";
+  if (!value) return "Not available";
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return value.slice(0, 10);
   return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
@@ -95,7 +95,7 @@ export default function RiskRadarPage() {
           </Link>
         }
         title="Risk radar."
-        description="A soft signal, not a verdict. These are people a quiet season could lose — worth one conversation."
+        description="A soft signal, not a verdict. These are people a quiet season could lose. A conversation may help."
         actions={
           canRecalculate ? (
             <Button
@@ -214,8 +214,7 @@ export default function RiskRadarPage() {
 
       <p className="mx-auto flex max-w-2xl items-start gap-2 rounded-xl border border-dashed border-line p-4 text-[11px] leading-relaxed text-ink-soft">
         <Sparkles className="mt-0.5 size-3.5 shrink-0 text-brand" />
-        This radar is a prompt for presence, not prediction. Scores are heuristic
-        signals — the real discernment is yours. Nobody should ever be
+        This radar is a prompt for presence, not prediction. Scores are heuristic signals; the real discernment is yours. Nobody should ever be
         contacted because a number said so, only because a person cared.
       </p>
 

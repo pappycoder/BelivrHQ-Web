@@ -280,7 +280,7 @@ function buildQuery(params: Record<string, string | number | undefined>): string
 }
 
 export function formatCurrency(value: number | undefined | null): string {
-  if (value === undefined || value === null) return "—";
+  if (value === undefined || value === null) return "Not available";
   const formatted = value.toLocaleString("en-NG", { maximumFractionDigits: 0 });
   const prefix = formatted.startsWith("-") ? "-₦" : "₦";
   return `${prefix}${formatted.replace(/^-/, "")}`;

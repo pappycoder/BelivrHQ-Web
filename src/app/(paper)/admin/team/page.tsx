@@ -139,7 +139,7 @@ export default function AdminTeamPage() {
       <PageHeader
         eyebrow="Admin · Team"
         title="The people behind the desk."
-        description="Everyone who can sign in to this workspace — staff, leads, and trusted volunteers."
+        description="Everyone who can sign in to this workspace, including staff, leads, and trusted volunteers."
         actions={
           <>
             <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
@@ -195,7 +195,7 @@ export default function AdminTeamPage() {
         <EmptyState
           icon={<Users />}
           title="Nobody has a seat yet"
-          description="Invite the first desk-keeper — roles decide what they can reach."
+          description="Invite the first team member. Roles decide what they can reach."
           action={canInvite ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => setInviteOpen(true)}>Send the first invite</Button> : undefined}
         />
       ) : (
@@ -225,7 +225,7 @@ export default function AdminTeamPage() {
                         <span className="truncate text-[11px] text-ink-soft">
                           {member.role.map((r) => resolveRoleLabel(r, labelMap)).join(" · ") || "No role assigned"}
                         </span>
-                        <span className="truncate text-[11px] text-ink-soft">{member.branch?.name ?? "—"}</span>
+                        <span className="truncate text-[11px] text-ink-soft">{member.branch?.name ?? "Not available"}</span>
                         <span>
                           <Tag tone={member.status === "active" ? "moss" : "rose"} dot>{member.status === "active" ? "Active" : "Paused"}</Tag>
                           {member.isAdminHq ? <Tag tone="sky" className="ml-1">HQ</Tag> : null}

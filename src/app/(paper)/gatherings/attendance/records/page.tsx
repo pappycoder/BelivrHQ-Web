@@ -174,7 +174,7 @@ export default function AttendanceRecordsPage() {
       <PageHeader
         eyebrow="Gatherings · Attendance"
         title="The record book."
-        description="Every counted head, filterable and exportable — the paper trail of a church that shows up."
+        description="Search, filter and export your church attendance records."
         actions={
           <ExportDropdown
             tableId="attendance-records"
@@ -462,10 +462,10 @@ export default function AttendanceRecordsPage() {
                       </Tag>
                     </span>
                     <span className="min-w-0 truncate text-[11px] text-ink-soft">
-                      {record.serviceName ?? record.eventName ?? "—"}
+                      {record.serviceName ?? record.eventName ?? "Not available"}
                     </span>
                     <span className="text-[11px] capitalize text-ink-faint">
-                      {attendanceCategoryLabel(record.category) ?? "—"}
+                      {attendanceCategoryLabel(record.category) ?? "Not available"}
                     </span>
                     <span className="num text-[10px] text-ink-faint">
                       {stamp(record.checkInAt)}
@@ -493,7 +493,7 @@ export default function AttendanceRecordsPage() {
                           <LogIn className="size-2.5" />{" "}
                           {record.source === "walk_in"
                             ? "walk-in"
-                            : record.source || "—"}
+                            : record.source || "Not available"}
                         </span>
                       )}
                     </div>

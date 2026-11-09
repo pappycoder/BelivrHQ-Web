@@ -253,7 +253,7 @@ export default function SharedInboxPage() {
               </div>
               <div className="flex-1 overflow-y-auto px-5 py-5">
                 {detail.isError ? (
-                  <p className="text-xs text-ink-soft">This message couldn&apos;t be opened — try again.</p>
+                  <p className="text-xs text-ink-soft">This message couldn&apos;t be opened. Please try again.</p>
                 ) : (
                   <p className="whitespace-pre-line text-sm leading-relaxed text-ink-soft">{active.body}</p>
                 )}

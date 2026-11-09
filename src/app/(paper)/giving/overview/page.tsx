@@ -57,7 +57,7 @@ export default function GivingOverviewPage() {
       <PageHeader
         eyebrow="Giving · Overview"
         title="Generosity, seen clearly."
-        description="The season's giving without the ledger anxiety — enough detail to steward, enough calm to trust."
+        description="Review giving totals, recent contributions and trends for the selected period."
         actions={
           <>
             <Button
@@ -92,8 +92,7 @@ export default function GivingOverviewPage() {
         </div>
       ) : summary.isError || !s ? (
         <div className="paper-card rounded-2xl p-8 text-center text-xs text-ink-faint">
-          The giving ledger is quiet for your role — totals live with those who
-          hold the dashboard grant.
+          Viewing giving totals requires access to the giving dashboard.
         </div>
       ) : (
         <>
@@ -155,8 +154,7 @@ export default function GivingOverviewPage() {
                 />
               ) : (
                 <p className="py-14 text-center text-[11px] text-ink-faint">
-                  No gifts recorded in the window — the season starts with the
-                  next one.
+                  No gifts recorded in this period.
                 </p>
               )}
             </SectionCard>
@@ -241,7 +239,7 @@ function RecentGifts() {
   if (!rows.length) {
     return (
       <p className="px-5 py-10 text-center text-[11px] text-ink-faint">
-        Nothing has landed yet — every ledger starts with one envelope.
+        No giving records yet.
       </p>
     );
   }
@@ -375,8 +373,7 @@ function RecurringRail() {
         </div>
       </div>
       <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
-        Protect the floor first — one recovered pause is worth ten new one-off
-        gifts.
+        Follow up on paused recurring gifts to help keep giving consistent.
       </p>
     </SectionCard>
   );

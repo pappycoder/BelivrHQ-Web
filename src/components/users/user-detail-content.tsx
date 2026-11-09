@@ -383,8 +383,8 @@ function RolePermissionsTab({ user }: RolePermissionsTabProps) {
         onSuccess: () => {
           toast.success(
             next
-              ? "Admin HQ access enabled — user can now view all branches"
-              : "Admin HQ access disabled — user scoped to their own branch",
+              ? "Admin HQ access enabled. User can now view all branches"
+              : "Admin HQ access disabled. User scoped to their own branch",
           );
         },
         onError: (error) => {

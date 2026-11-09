@@ -169,10 +169,10 @@ export default function AttendanceCheckInPage() {
         source: "walk_in",
         attendanceDate,
       });
-      toast.success(`${first} is counted — and now lives in the visitor register.`);
+      toast.success(`${first} is counted and now lives in the visitor register.`);
       setWalkIn({ firstName: "", lastName: "", phone: "", email: "" });
     } catch (e) {
-      toast.error(getToastErrorMessage(e, "The visitor was created but the check-in failed — add them from Records."));
+      toast.error(getToastErrorMessage(e, "The visitor was created but the check-in failed. Add them from Records."));
     }
   };
 
@@ -222,7 +222,7 @@ export default function AttendanceCheckInPage() {
         <StatCard label="Active members" value={roster.data?.meta?.total ?? 0} tone="brand" deltaLabel="roster loaded" />
         <div className="paper-card flex flex-col justify-between gap-4 rounded-2xl p-5">
           <span className="rule-label">Service</span>
-          <span className="font-display text-sm font-semibold leading-tight">{activeService?.name ?? "—"}</span>
+          <span className="font-display text-sm font-semibold leading-tight">{activeService?.name ?? "Not available"}</span>
         </div>
       </div>
 
@@ -346,7 +346,7 @@ export default function AttendanceCheckInPage() {
                 <div key={record.attendanceId} className="flex items-center gap-2.5 px-4 py-2.5">
                   <PersonAvatar name={record.memberName ?? record.visitorName ?? "Guest"} size="xs" />
                   <span className="min-w-0 flex-1 truncate text-[11px] font-medium">{record.memberName ?? record.visitorName ?? "Guest"}</span>
-                  <span className="text-[9px] uppercase text-ink-faint">{attendanceCategoryLabel(record.category) ?? "—"}</span>
+                  <span className="text-[9px] uppercase text-ink-faint">{attendanceCategoryLabel(record.category) ?? "Not available"}</span>
                 </div>
               ))}
               {!recent.data?.data?.length ? <p className="px-4 py-8 text-center text-[11px] text-ink-faint">The first one through the door starts the list.</p> : null}
@@ -380,7 +380,7 @@ export default function AttendanceCheckInPage() {
               />
             ) : (
               <p className="px-4 py-8 text-center text-xs text-ink-faint">
-                Create a service first — headcount is reported per service.
+                Create a service first. Headcount is reported per service.
               </p>
             )}
           </TabsContent>

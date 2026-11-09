@@ -202,7 +202,7 @@ export default function FormsListPage() {
       <PageHeader
         eyebrow="Library · Forms"
         title="Ask once, read everything."
-        description="Guest cards, RSVPs, requests — every answer lands on someone&apos;s desk, not in someone&apos;s inbox folder."
+        description="Collect guest cards, RSVPs and requests, then review responses with your team."
         actions={
           <>
             <ExportDropdown
@@ -214,8 +214,8 @@ export default function FormsListPage() {
                 questions: form.fields?.length ?? 0,
                 submissionCount: form.submissionCount ?? 0,
                 isPublic: form.isPublic && form.publicToken ? "Yes" : "No",
-                updatedAt: form.updatedAt ? formatDate(form.updatedAt) : "—",
-                createdAt: form.createdAt ? formatDate(form.createdAt) : "—",
+                updatedAt: form.updatedAt ? formatDate(form.updatedAt) : "Not available",
+                createdAt: form.createdAt ? formatDate(form.createdAt) : "Not available",
               }))}
               title="Forms"
               filename="forms"
@@ -233,8 +233,8 @@ export default function FormsListPage() {
                   questions: form.fields?.length ?? 0,
                   submissionCount: form.submissionCount ?? 0,
                   isPublic: form.isPublic && form.publicToken ? "Yes" : "No",
-                  updatedAt: form.updatedAt ? formatDate(form.updatedAt) : "—",
-                  createdAt: form.createdAt ? formatDate(form.createdAt) : "—",
+                  updatedAt: form.updatedAt ? formatDate(form.updatedAt) : "Not available",
+                  createdAt: form.createdAt ? formatDate(form.createdAt) : "Not available",
                 }));
               }}
             />
@@ -363,7 +363,7 @@ export default function FormsListPage() {
                     <span className="truncate text-[11px] text-ink-soft">{form.branchName ?? "All branches"}</span>
                     <span className="num text-right text-[11px] tabular-nums">{form.fields?.length ?? 0}</span>
                     <span className="num text-right text-[11px] tabular-nums">{number(form.submissionCount ?? 0)}</span>
-                    <span className="text-[11px] text-ink-faint">{form.updatedAt ? formatDate(form.updatedAt) : "—"}</span>
+                    <span className="text-[11px] text-ink-faint">{form.updatedAt ? formatDate(form.updatedAt) : "Not available"}</span>
                     <div className="flex justify-end">
                       <RowActions actions={manageActions(form)} />
                     </div>

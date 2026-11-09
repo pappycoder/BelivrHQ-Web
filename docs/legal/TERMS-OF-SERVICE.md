@@ -227,7 +227,7 @@ Either party may end the arrangement as allowed by the Order or these Terms. The
 
 If we end an otherwise compliant prepaid service for our own convenience, we will ordinarily provide at least 30 days’ notice where feasible, appropriate information about transition and the unused-fee remedy described in section 9. A security or legal necessity may require a shorter period, but will not eliminate an applicable mandatory remedy.
 
-On termination, the access licence ends, legitimate amounts already due remain payable, and data return, deletion or lawful retention must be handled as described in sections 16 and 20. You must stop representing that you have active authorised access and must not use retained credentials to bypass closure. Clauses that by their nature should survive—such as accrued payment, ownership, confidentiality, applicable data handling, liability, indemnity and dispute provisions—continue to the extent necessary and lawful.
+On termination, the access licence ends, legitimate amounts already due remain payable, and data return, deletion or lawful retention must be handled as described in sections 16 and 20. You must stop representing that you have active authorised access and must not use retained credentials to bypass closure. Clauses that by their nature should survive (such as accrued payment, ownership, confidentiality, applicable data handling, liability, indemnity and dispute provisions) continue to the extent necessary and lawful.
 
 ## 23. Service standards and warranty qualifications
 

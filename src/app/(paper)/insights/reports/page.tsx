@@ -203,7 +203,7 @@ export default function ReportsStudioPage() {
           }
         }
       }
-      toast.success(`${format} generated — check your downloads.`);
+      toast.success(`${format} generated. Check your downloads.`);
     } catch (error) {
       toast.error("Report export failed", { description: getToastErrorMessage(error, "Please try again.") });
     } finally {
@@ -234,7 +234,7 @@ export default function ReportsStudioPage() {
             <ArrowLeft className="size-3" /> Insights
           </Link>
           <h1 className="mt-1 font-display text-[clamp(1.65rem,2.4vw,2.15rem)] font-semibold tracking-tight">Report studio</h1>
-          <p className="text-sm text-ink-soft">Assemble a board-ready summary — real numbers, three honest columns.</p>
+          <p className="text-sm text-ink-soft">Prepare a report using your church&apos;s recorded figures.</p>
         </div>
         <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={handleGenerate} disabled={exporting || loadingBlocks}>
           {exporting ? <Loader2 className="size-3.5 animate-spin" /> : <Download className="size-3.5" />} Export {format}
@@ -306,7 +306,7 @@ export default function ReportsStudioPage() {
             </div>
 
             {anyError && !loadingBlocks ? (
-              <EmptyState icon={<FileText />} title="One block couldn&apos;t load" description="The other figures are still safe — retry the failing block or adjust the range." />
+              <EmptyState icon={<FileText />} title="One block couldn&apos;t load" description="The other figures are still available. Retry the failing block or adjust the range." />
             ) : null}
 
             <div className="mt-6 space-y-6">
@@ -422,7 +422,7 @@ export default function ReportsStudioPage() {
                 </div>
               </div>
               <p className="text-[10px] leading-relaxed text-ink-faint">
-                Board packs default to withholding names — the numbers invite trust, the names invite gossip.
+                Board packs hide names by default to protect donor privacy.
               </p>
             </div>
           </div>

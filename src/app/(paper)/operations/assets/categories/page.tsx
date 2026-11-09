@@ -56,8 +56,8 @@ export default function AssetCategoriesPage() {
         eyebrow={
           <Link href="/operations/assets" className="flex items-center gap-1.5 hover:text-ink">← Operations · Assets</Link>
         }
-        title="Categories — the register&apos;s filing system."
-        description="Sound, transport, furniture — group assets the way the team already thinks about them."
+        title="Organise your asset register with categories."
+        description="Sound, transport and furniture: group assets the way the team already thinks about them."
         actions={
           canCreate ? (
             <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setFormTarget({ open: true, category: null })}>
@@ -84,7 +84,7 @@ export default function AssetCategoriesPage() {
         <EmptyState
           icon={<Plus />}
           title={archivedView ? "No archived categories" : "No categories yet"}
-          description="Categories keep the register readable — make the first one now."
+          description="Categories keep the register readable. Make the first one now."
           action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => setFormTarget({ open: true, category: null })}>Add a category</Button> : undefined}
         />
       ) : (

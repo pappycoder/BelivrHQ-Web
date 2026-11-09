@@ -73,7 +73,7 @@ describe("complete record columns", () => {
     expect(recordFieldText([{ firstName: "Grace", lastName: "Adeyemi" }])).toBe(
       "Grace Adeyemi",
     );
-    expect(recordFieldText(null)).toBe("—");
+    expect(recordFieldText(null)).toBe("Not available");
   });
   it.each([
     [".$a", "a"],

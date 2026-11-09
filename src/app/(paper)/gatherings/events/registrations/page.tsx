@@ -79,7 +79,7 @@ const EXPORT_COLUMNS = [
 ];
 
 const displayName = (r: EventRegistration) =>
-  r.memberName ?? `Member ${r.memberId?.slice(0, 6) ?? "—"}`;
+  r.memberName ?? `Member ${r.memberId?.slice(0, 6) ?? "Not available"}`;
 
 const exportRow = (r: EventRegistration) => ({
   attendee: displayName(r),
@@ -87,8 +87,8 @@ const exportRow = (r: EventRegistration) => ({
   quantity: r.quantity ?? 1,
   payment: r.paymentStatus ?? "pending",
   checkedIn: r.checkedIn ? "yes" : "no",
-  ticketCode: r.ticketCode ?? "—",
-  registered: r.createdAt ? formatDate(r.createdAt) : "—",
+  ticketCode: r.ticketCode ?? "Not available",
+  registered: r.createdAt ? formatDate(r.createdAt) : "Not available",
 });
 
 function RegistrationsInner() {
@@ -171,14 +171,14 @@ function RegistrationsInner() {
       <PageHeader
         eyebrow="Gatherings · Events"
         title="Who&apos;s coming."
-        description="Registrations at a glance — who paid, who walked in, and who still needs a first hello."
+        description="Review registrations, payments and walk-ins in one place."
         actions={
           <>
             {eventId && total ? (
               <ExportDropdown
                 columns={EXPORT_COLUMNS}
                 data={filtered.map(exportRow)}
-                title={`Registrations — ${selected?.title ?? "Event"}`}
+                title={`Registrations: ${selected?.title ?? "Event"}`}
                 filename="event-registrations"
                 disabled={!total}
               />
@@ -237,7 +237,7 @@ function RegistrationsInner() {
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <StatCard label="Registrations" value={all.length} tone="brand" icon={<ClipboardList className="size-4" />} deltaLabel={total !== all.length ? `${number(total)} matching` : "all shown"} />
             <StatCard label="Paid" value={paid} tone="moss" />
-            <StatCard label="Checked in" value={checkedIn} tone="sky" deltaLabel={all.length ? `${Math.round((checkedIn / all.length) * 100)}% of list` : "—"} />
+            <StatCard label="Checked in" value={checkedIn} tone="sky" deltaLabel={all.length ? `${Math.round((checkedIn / all.length) * 100)}% of list` : "Not available"} />
             <StatCard label="Awaiting payment" value={all.filter((r) => r.paymentStatus === "pending").length} tone="gold" />
           </div>
 
@@ -311,7 +311,7 @@ function RegistrationsInner() {
                         <span className="text-[10px] text-ink-faint">
                           {registration.checkedIn ? <Tag tone="moss" dot>In</Tag> : "not yet"}
                         </span>
-                        <span className="truncate text-right font-mono text-[9px] text-ink-faint">{registration.ticketCode ?? "—"}</span>
+                        <span className="truncate text-right font-mono text-[9px] text-ink-faint">{registration.ticketCode ?? "Not available"}</span>
                         <div className="flex justify-end">
                           <RowActions actions={manageActions(registration)} />
                         </div>
@@ -359,7 +359,7 @@ function RegistrationsInner() {
                           </Tag>
                           {registration.checkedIn ? <Tag tone="sky" dot>Checked in</Tag> : null}
                         </span>
-                        <span className="truncate font-mono text-[9px] text-ink-faint">{registration.ticketCode ?? "—"}</span>
+                        <span className="truncate font-mono text-[9px] text-ink-faint">{registration.ticketCode ?? "Not available"}</span>
                       </div>
                     </div>
                   </StaggerItem>

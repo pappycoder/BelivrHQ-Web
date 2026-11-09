@@ -611,7 +611,7 @@ export function PeopleImportPage({
               <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
                 Only spreadsheet files (.csv, .xlsx; up to 5 MB and 10,000 rows)
-                are accepted — other formats are rejected automatically.
+                are accepted. Other formats are rejected automatically.
               </p>
             </CardContent>
           </Card>
@@ -750,7 +750,7 @@ export function PeopleImportPage({
           <CardHeader>
             <CardTitle>Preview</CardTitle>
             <CardDescription>
-              {fileName} — {rows.length} data row(s) parsed.
+              {fileName} : {rows.length} data row(s) parsed.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

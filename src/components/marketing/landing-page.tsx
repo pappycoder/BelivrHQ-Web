@@ -151,7 +151,7 @@ export function LandingPage() {
             </div>
             <p>
               Ministry happens between Sundays, too. Give your team a shared
-              place to remember, organise and care — without the spreadsheet
+              place to remember, organise and care without the spreadsheet
               shuffle.
             </p>
           </div>

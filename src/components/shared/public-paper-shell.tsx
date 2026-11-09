@@ -21,7 +21,7 @@ export function PublicPaperShell({ children }: { children: React.ReactNode }) {
           <span className="flex items-center gap-2.5">
             <BrandLogo variant="mark" emblemClassName="size-8" />
             <span className="text-[10px] uppercase tracking-wider text-ink-faint">
-              ChurchOS — church management, kindly
+              ChurchOS church management
             </span>
           </span>
           <span className="flex items-center gap-4 text-[11px]">
