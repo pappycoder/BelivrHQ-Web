@@ -9,7 +9,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "..");
 const source = path.join(root, "src/lib/legal");
 const output = path.join(root, "docs/legal");
-const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "churchos-legal-"));
+const temporary = fs.mkdtempSync(path.join(os.tmpdir(), "belivrhq-legal-"));
 try {
   for (const name of fs.readdirSync(source).filter((name) => name.endsWith(".ts"))) {
     const compiled = ts.transpileModule(fs.readFileSync(path.join(source, name), "utf8"), {

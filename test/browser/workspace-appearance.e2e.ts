@@ -1,7 +1,7 @@
 import { test, expect, type BrowserContext, type Page } from "@playwright/test";
 
 test.use({ serviceWorkers: "block" });
-const key = "churchos:appearance:v1:profile-a:church-a";
+const key = "belivrhq:appearance:v1:profile-a:church-a";
 const stamp = "2026-10-01T10:00:00Z";
 async function fixture(
   context: BrowserContext,
@@ -11,7 +11,7 @@ async function fixture(
   const calls: { path: string; method: string }[] = [];
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "appearance-test",
       url: "http://127.0.0.1:3107",
     },

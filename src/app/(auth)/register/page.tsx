@@ -192,7 +192,7 @@ export default function RegisterPage() {
       subtitle="One connected home for your people, teams and ministry."
       footer={
         <p>
-          Already part of ChurchOS?{" "}
+          Already part of BelivrHQ?{" "}
           <Link
             href="/login"
             className="font-semibold text-primary hover:underline"
@@ -442,7 +442,7 @@ export default function RegisterPage() {
                 </fieldset>
                 <p className="text-xs leading-relaxed text-muted-foreground">
                   Need Enterprise? Pricing, billing terms and rollout scope are
-                  negotiated directly with the ChurchOS team.
+                  negotiated directly with the BelivrHQ team.
                 </p>
               </>
             )}

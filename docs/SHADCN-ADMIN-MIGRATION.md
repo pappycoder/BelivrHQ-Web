@@ -1,6 +1,6 @@
 # Shadcn Admin UI migration
 
-ChurchOS-Web now uses the Shadcn Admin sidebar, theme foundation, typography and component conventions, adapted from https://github.com/satnaing/shadcn-admin. The upstream MIT notice is retained in `licenses/shadcn-admin-MIT.txt`. Inter is bundled locally under `src/assets/fonts` with its OFL notice in `licenses/Inter-OFL.txt`.
+BelivrHQ-Web now uses the Shadcn Admin sidebar, theme foundation, typography and component conventions, adapted from https://github.com/satnaing/shadcn-admin. The upstream MIT notice is retained in `licenses/shadcn-admin-MIT.txt`. Inter is bundled locally under `src/assets/fonts` with its OFL notice in `licenses/Inter-OFL.txt`.
 
 ## Scope
 

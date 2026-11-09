@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test.use({ serviceWorkers: "allow" });
 test.beforeEach(async ({ context }) => {
   await context.route("**/sw.js", route => route.fulfill({ contentType: "application/javascript", body: 'self.addEventListener("install", () => self.skipWaiting());' }));
-  await context.addCookies([{ name: "churchos_token", value: "shadcn-ui-fixture", url: "http://127.0.0.1:3107" }]);
+  await context.addCookies([{ name: "belivrhq_token", value: "shadcn-ui-fixture", url: "http://127.0.0.1:3107" }]);
   await context.addInitScript(() => {
     // Keep this visual/navigation regression entirely isolated from live data.
     localStorage.setItem("layout", "horizontal");
@@ -52,7 +52,7 @@ test("Shadcn shell preserves permissions, collapsed navigation, search and theme
   await expect.poll(() => page.locator('[data-slot="chart"]').first().evaluate((chart) =>
     Array.from(chart.querySelectorAll("clipPath rect")).every((rect) => Number(rect.getAttribute("width")) > chart.getBoundingClientRect().width * 0.8),
   )).toBe(true);
-  await page.screenshot({ path: "/tmp/churchos-dashboard-light.png", fullPage: true });
+  await page.screenshot({ path: "/tmp/belivrhq-dashboard-light.png", fullPage: true });
   await expect(page.locator("body")).not.toHaveClass(/menu-horizontal|mini-sidebar/);
   await page.locator("header").getByRole("button", { name: "Toggle Sidebar", exact: true }).click();
   await expect(page.locator('[data-slot="sidebar"][data-state]')).toHaveAttribute("data-state", "collapsed");

@@ -39,7 +39,7 @@ export function VisibleDataExport({
       }
       const exports = await import("@/lib/export-utils");
       const branding = await resolveBranding();
-      const filename = "churchos-export";
+      const filename = "belivrhq-export";
       if (format === "pdf") {
         const doc = await exports.createReportPDF("Export", sections, { branding });
         doc.save(`${filename}.pdf`);

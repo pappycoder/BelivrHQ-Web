@@ -7,7 +7,7 @@ async function fixture(context: BrowserContext, staff = false) {
   if (staff)
     await context.addCookies([
       {
-        name: "churchos_token",
+        name: "belivrhq_token",
         value: "wheel-fixture",
         url: "http://127.0.0.1:3107",
       },
@@ -276,7 +276,7 @@ for (const width of [1280, 320])
       }),
     ).toBeLessThanOrEqual(1);
     await page.screenshot({
-      path: `/tmp/churchos-wheel-${width}.png`,
+      path: `/tmp/belivrhq-wheel-${width}.png`,
       fullPage: true,
     });
     await expect(picker.locator("[data-wheel-preview]")).toHaveText(

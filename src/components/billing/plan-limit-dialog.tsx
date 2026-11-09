@@ -22,8 +22,8 @@ export function PlanLimitDialog() {
   } | null>(null);
   React.useEffect(() => {
     const onLimit = (event: Event) => setError((event as CustomEvent).detail);
-    window.addEventListener("churchos:plan-limit", onLimit);
-    return () => window.removeEventListener("churchos:plan-limit", onLimit);
+    window.addEventListener("belivrhq:plan-limit", onLimit);
+    return () => window.removeEventListener("belivrhq:plan-limit", onLimit);
   }, []);
   return (
     <Dialog

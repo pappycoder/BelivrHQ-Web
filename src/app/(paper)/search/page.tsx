@@ -28,7 +28,7 @@ import { formatDate } from "@/hooks/use-media";
 const SCOPES = ["All", "People", "Gatherings", "Library"] as const;
 type Scope = (typeof SCOPES)[number];
 
-const RECENT_KEY = "churchos:search-recent";
+const RECENT_KEY = "belivrhq:search-recent";
 
 function readRecent(): string[] {
   try {

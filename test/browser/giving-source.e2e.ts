@@ -4,7 +4,7 @@ import { readFile } from "node:fs/promises";
 async function fixture(context: BrowserContext) {
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "giving-source-fixture",
       url: "http://127.0.0.1:3107",
     },
@@ -156,7 +156,7 @@ for (const width of [1280, 320])
       /Unattributed|Anonymous|Sunday collection/i,
     );
     await page.screenshot({
-      path: `/tmp/churchos-giving-source-${width}.png`,
+      path: `/tmp/belivrhq-giving-source-${width}.png`,
       fullPage: true,
       animations: "disabled",
     });

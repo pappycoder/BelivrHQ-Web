@@ -1,3 +1,4 @@
+import { BRAND_NAME } from "@/lib/brand/identity";
 import { LEGAL_COMPANY } from "@/lib/legal/company";
 import { LegalNavigation } from "@/components/legal/legal-navigation";
 import { SubscriptionStartingPrice } from "@/components/billing/subscription-currency";
@@ -30,16 +31,16 @@ import styles from "./landing.module.css";
 
 const questions = [
   [
-    "Is ChurchOS only for large churches?",
+    "Is BelivrHQ only for large churches?",
     "Not at all. The Essentials plan starts at $10 USD per month, with local currency options, while Community and Network add room for more members, staff and locations. Enterprise is designed around the needs of a wider church network. Essentials, Community and Network have yearly options with 10% savings compared with twelve monthly payments. Enterprise pricing and billing terms are negotiated with you.",
   ],
   [
     "Can each branch manage its own work?",
-    "Yes. ChurchOS separates branch records and permissions, while authorised HQ users can work across their church's locations. A person's role and permissions still determine what they can see and change.",
+    "Yes. BelivrHQ separates branch records and permissions, while authorised HQ users can work across their church's locations. A person's role and permissions still determine what they can see and change.",
   ],
   [
     "Can we bring our existing member records?",
-    "ChurchOS supports member imports. You can prepare your data using the import template and review errors before correcting your records. Larger migration and onboarding needs can be discussed as part of an Enterprise rollout.",
+    "BelivrHQ supports member imports. You can prepare your data using the import template and review errors before correcting your records. Larger migration and onboarding needs can be discussed as part of an Enterprise rollout.",
   ],
   [
     "How do WhatsApp, SMS, email and payments work?",
@@ -51,7 +52,7 @@ const questions = [
   ],
   [
     "Can we subscribe to these plans today?",
-    "Choose Essentials, Community or Network during registration, then sign in and complete secure checkout to activate your workspace. Yearly billing saves 10%. Renewals are manual. Enterprise pricing and onboarding scope are agreed with ChurchOS before payment.",
+    "Choose Essentials, Community or Network during registration, then sign in and complete secure checkout to activate your workspace. Yearly billing saves 10%. Renewals are manual. Enterprise pricing and onboarding scope are agreed with BelivrHQ before payment.",
   ],
 ];
 
@@ -489,14 +490,14 @@ export function LandingPage() {
       <footer className={styles.footer}>
         <div className={styles.footerTop}>
           <div className={styles.footerIdentity}>
-            <Link href="/" className={styles.brand} aria-label="ChurchOS home">
+            <Link href="/" className={styles.brand} aria-label="BelivrHQ home">
               <Image
-                src="/brand/churchos-emblem.png"
+                src="/brand/belivrhq-emblem.png"
                 alt=""
                 width={32}
                 height={32}
               />
-              church<span>os</span>
+              {BRAND_NAME}
               <span className={styles.brandDot} />
             </Link>
             <p>
@@ -524,7 +525,7 @@ export function LandingPage() {
         </div>
         <div className={styles.footerBottom}>
           <span>
-            © {new Date().getFullYear()} {LEGAL_COMPANY.name}. ChurchOS, built for the people behind
+            © {new Date().getFullYear()} {LEGAL_COMPANY.name}. BelivrHQ, built for the people behind
             the ministry.
           </span>
           <a href="#hero-title">

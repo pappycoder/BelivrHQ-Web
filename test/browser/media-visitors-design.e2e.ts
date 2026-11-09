@@ -118,7 +118,7 @@ async function fixture(
   ];
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "media-visitors-design",
       url: "http://127.0.0.1:3107",
     },
@@ -129,7 +129,7 @@ async function fixture(
         .serviceWorker;
       localStorage.setItem("theme", dark ? "dark" : "light");
       localStorage.setItem(
-        "churchos:appearance:v1:profile:church",
+        "belivrhq:appearance:v1:profile:church",
         JSON.stringify({ accent: "#7c3aed" }),
       );
       Object.defineProperty(navigator, "clipboard", {
@@ -390,9 +390,9 @@ async function fixture(
   return state;
 }
 async function shot(page: Page, name: string) {
-  await mkdir("/tmp/churchos-media-visitors-previews", { recursive: true });
+  await mkdir("/tmp/belivrhq-media-visitors-previews", { recursive: true });
   await page.screenshot({
-    path: `/tmp/churchos-media-visitors-previews/${name}.png`,
+    path: `/tmp/belivrhq-media-visitors-previews/${name}.png`,
     fullPage: true,
   });
 }

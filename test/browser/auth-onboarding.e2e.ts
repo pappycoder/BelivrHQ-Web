@@ -1,7 +1,7 @@
 import { mockBotChallenges, verifyBotForm } from "../fixtures/bot-protection";
 import { mockTawkWidget } from "../fixtures/tawk-widget";
 import { test, expect, type BrowserContext, type Page } from "@playwright/test";
-const reference = "COSUB_" + "a".repeat(32);
+const reference = "BHQSUB_" + "a".repeat(32);
 async function publicSession(context: BrowserContext) {
   await context.route("**/api/session", (r) =>
     r.fulfill({ json: { hasSession: false } }),
@@ -182,7 +182,7 @@ async function billingSession(
 ) {
   let sharedPaid = false;
   if (options.sharedPaymentState) await context.exposeBinding("readPaymentOutcome", () => sharedPaid ? "success" : "pending");
-  await context.addCookies([{ name: "churchos_token", value: "billing-fixture", url: "http://127.0.0.1:3107" }]);
+  await context.addCookies([{ name: "belivrhq_token", value: "billing-fixture", url: "http://127.0.0.1:3107" }]);
   await context.addInitScript(
     ({ reference, options }) => {
       const original = window.fetch;
@@ -249,7 +249,7 @@ async function billingSession(
           };
         else if (path.endsWith("/billing/subscription")) data = status();
         else if (path.endsWith("/billing/quote")) data = {
-          quoteId: 'COSQ_' + 'b'.repeat(32), currency: body.currency,
+          quoteId: 'BHQQUOTE_' + 'b'.repeat(32), currency: body.currency,
           amount: ({ essentials: 10, community: 20, network: 40 }[body.plan as 'essentials' | 'community' | 'network'] || 10) * (body.cycle === 'annual' ? 10.8 : 1) * 1000,
           expiresAt: new Date(Date.now() + 900000).toISOString(), intent: 'renewal', renewBy: '2027-01-18T00:00:00Z',
         };
@@ -414,8 +414,8 @@ test("an existing active plan and a success query parameter cannot confirm a pen
   await page.goto(`/subscription?reference=${reference}&status=successful`);
   await expect(page.getByText("Waiting for Flutterwave to confirm your payment.", { exact: true })).toBeVisible();
   await page.evaluate(reference => {
-    localStorage.setItem("churchos:subscription-payment-sync", JSON.stringify({ churchId: "c", reference, status: "success", active: true }));
-    window.dispatchEvent(new StorageEvent("storage", { key: "churchos:subscription-payment-sync", newValue: JSON.stringify({ churchId: "c", reference, status: "success", active: true }) }));
+    localStorage.setItem("belivrhq:subscription-payment-sync", JSON.stringify({ churchId: "c", reference, status: "success", active: true }));
+    window.dispatchEvent(new StorageEvent("storage", { key: "belivrhq:subscription-payment-sync", newValue: JSON.stringify({ churchId: "c", reference, status: "success", active: true }) }));
   }, reference);
   await expect(page).toHaveURL(/\/subscription$/);
   await expect(page.getByRole("link", { name: "Back to workspace", exact: true })).toHaveCount(0);
@@ -427,7 +427,7 @@ test("blocked pop-ups do not create a payment attempt", async ({ page, context }
   await context.addInitScript(() => { window.open = () => null; });
   await page.goto("/subscription");
   await page.getByRole("button", { name: "Continue to payment", exact: true }).click();
-  await expect(page.getByText(/Allow pop-ups for ChurchOS/)).toBeVisible();
+  await expect(page.getByText(/Allow pop-ups for BelivrHQ/)).toBeVisible();
   const calls = await page.evaluate(() => (window as unknown as { billingCalls: { path: string }[] }).billingCalls);
   expect(calls.filter(c => c.path.endsWith("/billing/checkout"))).toHaveLength(0);
 });
@@ -491,7 +491,7 @@ test("non-billing roles cannot initialize checkout", async ({
   await billingSession(context, { grants: [] });
   await page.goto("/subscription");
   await expect(
-    page.getByText(/Your church administrator manages the ChurchOS subscription/),
+    page.getByText(/Your church administrator manages the BelivrHQ subscription/),
   ).toContainText("church administrator manages");
   await expect(
     page.getByRole("button", { name: "Continue to payment", exact: true }),
@@ -517,7 +517,7 @@ for (const route of [
       ),
     ).toBe(true);
     await expect(
-      page.getByRole("link", { name: "← Back to ChurchOS", exact: true }),
+      page.getByRole("link", { name: "← Back to BelivrHQ", exact: true }),
     ).toHaveAttribute("href", "/");
     if (route === "/login")
       await expect(
@@ -536,7 +536,7 @@ test("auth desktop design preview", async ({ page, context }) => {
     page.getByRole("heading", { level: 1 }).locator("../.."),
   ).toHaveCSS("opacity", "1");
   await page.screenshot({
-    path: "/tmp/churchos-auth-registration-desktop.png",
+    path: "/tmp/belivrhq-auth-registration-desktop.png",
     fullPage: true,
   });
   await page.goto("/login");
@@ -545,7 +545,7 @@ test("auth desktop design preview", async ({ page, context }) => {
     page.getByRole("heading", { level: 1 }).locator("../.."),
   ).toHaveCSS("opacity", "1");
   await page.screenshot({
-    path: "/tmp/churchos-auth-login-desktop.png",
+    path: "/tmp/belivrhq-auth-login-desktop.png",
     fullPage: true,
   });
 });

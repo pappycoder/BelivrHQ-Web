@@ -2,7 +2,7 @@ import { isAnonymousPublicFormRequest } from "@/lib/anonymous-api";
 import { type NextRequest, NextResponse } from "next/server";
 import {
   BACKEND_URL,
-  SESSION_COOKIES,
+  readSession,
   expireSession,
   saveSession,
   trustedBrowserRequest,
@@ -31,13 +31,13 @@ async function proxy(request: NextRequest, context: Context) {
   const endpoint = path.join("/");
   const headers = new Headers();
   if (process.env.INTERNAL_PROXY_SECRET) {
-    headers.set("x-churchos-proxy-secret", process.env.INTERNAL_PROXY_SECRET);
+    headers.set("x-belivrhq-proxy-secret", process.env.INTERNAL_PROXY_SECRET);
     const ip = request.headers.get("x-vercel-forwarded-for")?.split(",")[0].trim();
-    if (ip) headers.set("x-churchos-client-ip", ip);
+    if (ip) headers.set("x-belivrhq-client-ip", ip);
   }
   const contentType = request.headers.get("content-type");
   if (contentType) headers.set("content-type", contentType);
-  const token = request.cookies.get(SESSION_COOKIES.access)?.value;
+  const token = readSession(request).access;
   // Authentication endpoints must not inherit a different signed-in account.
   if (
     token &&
@@ -56,7 +56,7 @@ async function proxy(request: NextRequest, context: Context) {
   if (length > 55 * 1024 * 1024) return new NextResponse(null, { status: 413 });
   let body: BodyInit | undefined;
   if (endpoint === "auth/refresh") {
-    const refreshToken = request.cookies.get(SESSION_COOKIES.refresh)?.value;
+    const refreshToken = readSession(request).refresh;
     if (!refreshToken)
       return NextResponse.json(
         { success: false, error: { message: "Session expired" } },

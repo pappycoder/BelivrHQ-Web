@@ -1,0 +1,11 @@
+{
+  "src/lib/brand/identity.ts": "Central compatibility aliases.",
+  "src/lib/brand/compatibility.spec.ts": "Legacy session, header, storage and payment fixtures.",
+  "src/lib/brand/legacy-vault.spec.ts": "Physical legacy vault preservation test.",
+  "scripts/gen-brand.mjs": "Original emblem source asset filenames.",
+  "src/app/(auth)/subscription/page.tsx": "Accept issued pending references.",
+  "src/lib/payment-sync.ts": "Accept issued pending references.",
+  "src/app/layout.tsx": "Pre-hydration migration of old browser preferences.",
+  "scripts/audit-brand.mjs": "Audit detector patterns.",
+  "docs/REBRAND-2026-11-09.md": "Explicit retained infrastructure and rollout/rollback inventory."
+}

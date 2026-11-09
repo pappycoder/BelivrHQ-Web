@@ -10,7 +10,7 @@ afterEach(() => {
 const file = () =>
   ({ name: "message.mp4", type: "video/mp4", size: 8 * 1024 * 1024 }) as File;
 describe("direct storage uploads", () => {
-  it("sends only metadata through ChurchOS and bytes to a signed storage URL", async () => {
+  it("sends only metadata through BelivrHQ and bytes to a signed storage URL", async () => {
     const fetch = vi.fn().mockResolvedValue({ ok: true });
     vi.stubGlobal("fetch", fetch);
     vi.mocked(api.post)

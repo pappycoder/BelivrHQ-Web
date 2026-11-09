@@ -16,7 +16,7 @@ async function fixture(
   if (authenticated)
     await context.addCookies([
       {
-        name: "churchos_token",
+        name: "belivrhq_token",
         value: "currency-test",
         url: "http://127.0.0.1:3107",
       },
@@ -113,7 +113,7 @@ async function fixture(
           };
         else if (path.endsWith("/billing/quote"))
           data = {
-            quoteId: "COSQ_" + "b".repeat(32),
+            quoteId: "BHQQUOTE_" + "b".repeat(32),
             currency: body.currency,
             amount: Math.ceil(10 * rate(body.currency)),
             intent: "renewal",
@@ -129,7 +129,7 @@ async function fixture(
             }
           ).captureCurrencyCheckout(body);
           data = {
-            reference: "COSUB_" + "a".repeat(32),
+            reference: "BHQSUB_" + "a".repeat(32),
             authorizationUrl: "https://checkout.flutterwave.com/currency-fixture",
           };
         }
@@ -218,7 +218,7 @@ test("checkout submits the reviewed currency and quote; historical NGN stays NGN
   expect(state.checkouts).toEqual([
     expect.objectContaining({
       currency: "NGN",
-      quoteId: "COSQ_" + "b".repeat(32),
+      quoteId: "BHQQUOTE_" + "b".repeat(32),
       plan: "essentials",
     }),
   ]);
@@ -248,7 +248,7 @@ test("an NGN-only merchant clearly quotes NGN while displaying USD", async ({
   await expect(await captured).toHaveURL("https://checkout.flutterwave.com/currency-fixture");
   expect(state.checkouts[0]).toMatchObject({
     currency: "NGN",
-    quoteId: "COSQ_" + "b".repeat(32),
+    quoteId: "BHQQUOTE_" + "b".repeat(32),
   });
 });
 
@@ -287,5 +287,5 @@ test("converted subscription prices and payment controls fit a phone", async ({ 
   await expect(page.getByText('NGN 15,002 due', { exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.getByLabel('Payment currency', { exact: true }).scrollIntoViewIfNeeded();
-  await page.screenshot({ path: '/tmp/churchos-usd-billing-mobile.png' });
+  await page.screenshot({ path: '/tmp/belivrhq-usd-billing-mobile.png' });
 });

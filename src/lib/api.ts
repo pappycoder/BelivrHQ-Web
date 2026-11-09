@@ -82,7 +82,7 @@ async function tryRefreshSession(): Promise<SessionStorage | null> {
   if (!refreshPromise) {
     const refresh = async () => {
       const response = await fetch(`${API_PREFIX}/auth/refresh`, {
-        method: "POST", headers: { "Content-Type": "application/json", "X-ChurchOS-Client": "web" },
+        method: "POST", headers: { "Content-Type": "application/json", "X-BelivrHQ-Client": "web" },
         body: "{}", cache: "no-store",
       });
       if (response.status === 401 || response.status === 403) return null;
@@ -92,7 +92,7 @@ async function tryRefreshSession(): Promise<SessionStorage | null> {
       return json.data as SessionStorage;
     };
     refreshPromise = (async () => {
-      if (typeof navigator !== "undefined" && navigator.locks) return await navigator.locks.request("churchos-session-refresh", () => refresh());
+      if (typeof navigator !== "undefined" && navigator.locks) return await navigator.locks.request("belivrhq-session-refresh", () => refresh());
       return await refresh();
     })().finally(() => { refreshPromise = null; });
   }
@@ -120,7 +120,7 @@ class ApiClient {
     allowRefresh = true
   ): Promise<T> {
     const generation = authGeneration;
-    const headers: Record<string, string> = { "X-ChurchOS-Client": "web" };
+    const headers: Record<string, string> = { "X-BelivrHQ-Client": "web" };
 
     // FormData bodies must not carry a JSON content-type — the browser
     // sets the multipart boundary itself.
@@ -184,7 +184,7 @@ class ApiClient {
         retryAfterSeconds: Number(res.headers.get("retry-after")) || undefined,
         details: errorBody?.error.details,
       };
-      if (typeof window !== "undefined" && generation === authGeneration && ["PLAN_LIMIT_REACHED","PLAN_FEATURE_REQUIRED"].includes(error.code || "")) window.dispatchEvent(new CustomEvent("churchos:plan-limit",{detail:error}));
+      if (typeof window !== "undefined" && generation === authGeneration && ["PLAN_LIMIT_REACHED","PLAN_FEATURE_REQUIRED"].includes(error.code || "")) window.dispatchEvent(new CustomEvent("belivrhq:plan-limit",{detail:error}));
       throw error;
     }
 
@@ -192,7 +192,7 @@ class ApiClient {
 
     // Unwrap the data envelope: { success: true, data: T, meta: ... } → T
     const successBody = json as BackendSuccessResponse<T>;
-    if (method !== "GET" && !["/assistant/message", "/billing/quote", "/billing/verify"].includes(path) && typeof window !== "undefined") window.dispatchEvent(new CustomEvent("churchos:usage-changed"));
+    if (method !== "GET" && !["/assistant/message", "/billing/quote", "/billing/verify"].includes(path) && typeof window !== "undefined") window.dispatchEvent(new CustomEvent("belivrhq:usage-changed"));
     return successBody.data;
   }
 
@@ -223,7 +223,7 @@ class ApiClient {
   async getBlob(path: string): Promise<Blob> {
     const generation = authGeneration;
     const doFetch = async (): Promise<Response> => {
-      const headers: Record<string, string> = { "X-ChurchOS-Client": "web" };
+      const headers: Record<string, string> = { "X-BelivrHQ-Client": "web" };
       return fetch(`${this.baseUrl}${path}`, { headers, cache: "no-store" });
     };
 
@@ -273,7 +273,7 @@ class ApiClient {
         cache: "no-store",
         headers: {
           "Content-Type": "application/json",
-          "X-ChurchOS-Client": "web",
+          "X-BelivrHQ-Client": "web",
         },
         body: JSON.stringify(body),
       });

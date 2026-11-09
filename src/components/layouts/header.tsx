@@ -15,7 +15,7 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { useEmailUnread } from "@/hooks/use-email";
 import { useVisibleNavigation, navigationLeaves } from "./sidebar";
 import { ContextHelpMenu } from "@/components/help/context-help-menu";
-import { AskChurchOS } from "@/components/assistant/ask-churchos";
+import { AskBelivrHQ } from "@/components/assistant/ask-belivrhq";
 import { AccountMenu } from "./account-menu";
 import { usePathname } from "next/navigation";
 import { areaForPath, groupWorkspaceNavigation } from "@/lib/workspace-navigation";
@@ -44,11 +44,11 @@ export function Header() {
       <Search className="size-4" /><span className="hidden lg:inline">Jump to a page...</span><kbd className="ms-auto hidden rounded border px-1.5 font-mono text-[10px] lg:inline-flex">Ctrl K</kbd>
     </Button>
     <div className="ms-auto flex min-w-0 flex-1 flex-wrap items-center justify-end gap-1 sm:gap-2">
-      <AskChurchOS /><ContextHelpMenu />{/* <OfflineHeaderButton /> */}
+      <AskBelivrHQ /><ContextHelpMenu />{/* <OfflineHeaderButton /> */}
       {canViewInbox && <Button variant="ghost" size="icon" asChild tooltip="Inbox"><Link href="/connect/inbox" className="relative"><Mail className="size-4" />{(unread?.count ?? 0) > 0 && <span className="absolute end-0 top-0 rounded-full bg-destructive px-1 text-[10px] text-white">{unread!.count > 99 ? "99+" : unread!.count}</span>}</Link></Button>}
       <NotificationBell compact /><ColorModeToggle className="md:hidden" /><AccountMenu />
     </div>
-    <CommandDialog open={searchOpen} onOpenChange={setSearchOpen} title="Search navigation" description="Find pages in your ChurchOS workspace.">
+    <CommandDialog open={searchOpen} onOpenChange={setSearchOpen} title="Search navigation" description="Find pages in your BelivrHQ workspace.">
       <CommandInput placeholder="Search pages..." /><CommandList><CommandEmpty>No accessible pages found.</CommandEmpty>
         {groups.map((group) => <CommandGroup heading={group.section} key={group.section}>
           {navigationLeaves(group.items).map((item) => <CommandItem key={item.href} value={`${item.title} ${item.href}`} onSelect={() => { if (!confirmDiscardChanges()) return; setSearchOpen(false); router.push(item.href!); }}>{item.icon && <item.icon className="size-4" />}<span>{item.title}</span><span className="ms-auto text-xs text-muted-foreground">{item.href}</span></CommandItem>)}

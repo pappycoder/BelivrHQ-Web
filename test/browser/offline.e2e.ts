@@ -195,7 +195,7 @@ test("prepares, reopens offline, retains queued changes and syncs on reconnect",
     false,
   );
   await page.evaluate(() => {
-    const channel = new BroadcastChannel("churchos-session");
+    const channel = new BroadcastChannel("belivrhq-session");
     channel.postMessage("ended");
     channel.close();
   });
@@ -268,7 +268,7 @@ test("member accounts cannot open the offline workspace or see event management 
   ).toHaveCount(0);
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "browser-test-only",
       url: "http://127.0.0.1:3107",
     },
@@ -301,7 +301,7 @@ test("staff can dismiss the banner and keep the header offline shortcut", async 
 }) => {
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "browser-test-only",
       url: "http://127.0.0.1:3107",
     },
@@ -337,7 +337,7 @@ test("staff offline shortcut remains visible on mobile", async ({
   await page.setViewportSize({ width: 390, height: 844 });
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "browser-test-only",
       url: "http://127.0.0.1:3107",
     },

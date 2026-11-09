@@ -1,5 +1,5 @@
 {
-  "name": "churchos-web",
+  "name": "belivrhq-web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -16,7 +16,9 @@
     "audit:live-roles": "node scripts/audit-live-role-access.mjs",
     "console": "bash scripts/console.sh",
     "ops:test": "node --test test/ops/console.test.cjs",
-    "legal:export": "node scripts/export-legal-documents.mjs"
+    "legal:export": "node scripts/export-legal-documents.mjs",
+    "brand:audit": "node scripts/audit-brand.mjs",
+    "brand:generate": "node scripts/gen-brand.mjs && node scripts/generate-social-images.mjs && python3 scripts/generate-support-brand-kit.py"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

@@ -15,7 +15,7 @@ const fields = [
 const metadata = {
   title: "Member registration",
   churchName: "Grace Community Church",
-  churchLogoUrl: "/brand/churchos-logo.png",
+  churchLogoUrl: "/brand/belivrhq-logo.png",
   branchName: "Main Branch",
   fields,
 };
@@ -71,7 +71,7 @@ for (const width of [1280, 390, 320]) {
       ).toBe(true);
       if (width !== 390)
         await page.screenshot({
-          path: `/tmp/churchos-registration-skeleton-${width}.png`,
+          path: `/tmp/belivrhq-registration-skeleton-${width}.png`,
           fullPage: true,
         });
     } finally {
@@ -96,7 +96,7 @@ for (const width of [1280, 390, 320]) {
     ).toBe(true);
     if (width === 1280)
       await page.screenshot({
-        path: "/tmp/churchos-registration-form-desktop.png",
+        path: "/tmp/belivrhq-registration-form-desktop.png",
         fullPage: true,
       });
   });
@@ -160,7 +160,7 @@ test("pending registrations render table skeletons while responses are fetched",
 }) => {
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "loading-fixture",
       url: "http://127.0.0.1:3107",
     },
@@ -240,7 +240,7 @@ test("converted landing-page prices remain skeletons until a quote arrives", asy
 }) => {
   await publicSession(context);
   await context.addInitScript(() =>
-    localStorage.setItem("churchos:subscription-currency", "NGN"),
+    localStorage.setItem("belivrhq:subscription-currency", "NGN"),
   );
   let release!: () => void;
   const wait = new Promise<void>((resolve) => {

@@ -5,9 +5,9 @@ export const termsAndConditions: LegalDocument = {
   slug: "terms-and-conditions",
   title: "Website Terms and Conditions",
   description:
-    "Rules for using the ChurchOS public website, product information, branding, links, enquiries and public-facing forms.",
+    "Rules for using the BelivrHQ public website, product information, branding, links, enquiries and public-facing forms.",
   introduction: [
-    `These Website Terms and Conditions ("Website Terms") govern use of the ChurchOS public website and related public information supplied by ${LEGAL_COMPANY.name}, Nigeria ("Company", "ChurchOS", "we", "us" or "our"). They explain permitted website use, intellectual property, third-party material, enquiries and the allocation of responsibility for public-facing interactions.`,
+    `These Website Terms and Conditions ("Website Terms") govern use of the BelivrHQ public website and related public information supplied by ${LEGAL_COMPANY.name}, Nigeria ("Company", "BelivrHQ", "we", "us" or "our"). They explain permitted website use, intellectual property, third-party material, enquiries and the allocation of responsibility for public-facing interactions.`,
     "The subscription platform is governed by our separate Terms of Service and the applicable Order. Personal-information handling is described in the Privacy Policy. These documents serve different purposes and should be read together where an activity involves more than one of them. Mandatory law prevails over a conflicting provision.",
     "We make these rules available before account creation and through website links. Express agreement is obtained where required for the relevant transaction. Merely reading a privacy notice is not consent to every processing purpose, and these Website Terms do not claim that an unnoticed footer link alone creates every possible contractual obligation.",
   ],
@@ -22,7 +22,7 @@ export const termsAndConditions: LegalDocument = {
       id: "operator",
       title: "1. Operator, scope and document priority",
       paragraphs: [
-        `The website is operated for ChurchOS by ${LEGAL_COMPANY.name}, based in ${LEGAL_COMPANY.country}. Our designated legal and privacy contact is ${LEGAL_COMPANY.email}. This contact is available to visitors who do not have a ChurchOS account.`,
+        `The website is operated for BelivrHQ by ${LEGAL_COMPANY.name}, based in ${LEGAL_COMPANY.country}. Our designated legal and privacy contact is ${LEGAL_COMPANY.email}. This contact is available to visitors who do not have a BelivrHQ account.`,
         "These Website Terms cover public pages, product descriptions, Help Centre content, publicly available resources and ordinary enquiries. They do not independently grant access to a church workspace, a member record, an administrator function or a private download. An invitation or public link has only the scope the relevant feature actually permits.",
         "For subscribed platform activity, the Terms of Service and any applicable signed Order or processing addendum take priority on their subject. For a donation, event registration or church-created public form, the church’s separate relationship with the participant also matters. We do not acquire the church’s responsibilities as organiser or recipient simply by supplying the website or underlying software.",
       ],
@@ -41,7 +41,7 @@ export const termsAndConditions: LegalDocument = {
       paragraphs: [
         "You may view public pages, follow ordinary navigation, print or save reasonable extracts for personal use or an organisation’s internal evaluation, and refer people to publicly available pages. Preserve relevant ownership notices and do not alter an extract so that it misrepresents the original meaning, price, date or scope.",
         "A specific download or third-party item may carry its own licence or usage conditions. Those conditions apply to that item. Public access is not a licence to copy our whole website, redistribute paid resources, extract proprietary software or claim ownership of our original material.",
-        "Use of our legal policies to understand your relationship with ChurchOS is permitted. Their wording is specific to our product and processing; their publication is not an assurance that they are appropriate for an unrelated organisation or service.",
+        "Use of our legal policies to understand your relationship with BelivrHQ is permitted. Their wording is specific to our product and processing; their publication is not an assurance that they are appropriate for an unrelated organisation or service.",
       ],
     },
     {
@@ -64,8 +64,8 @@ export const termsAndConditions: LegalDocument = {
       id: "ownership",
       title: "5. Intellectual property and branding",
       paragraphs: [
-        "The Company or its licensors own the rights in the ChurchOS brand, original site content, interface assets, software and documentation, except for material clearly belonging to a customer or another rights holder. Copyright, trademark, software and other rights are reserved except for the permissions expressly granted.",
-        "Do not use ChurchOS or PappyCoder Technologies Limited branding to imply sponsorship, certification, partnership or official status without permission. You may make a truthful textual reference to the product where lawful, but must not mislead people about your relationship with us.",
+        "The Company or its licensors own the rights in the BelivrHQ brand, original site content, interface assets, software and documentation, except for material clearly belonging to a customer or another rights holder. Copyright, trademark, software and other rights are reserved except for the permissions expressly granted.",
+        "Do not use BelivrHQ or PappyCoder Technologies Limited branding to imply sponsorship, certification, partnership or official status without permission. You may make a truthful textual reference to the product where lawful, but must not mislead people about your relationship with us.",
         "A third-party logo on an integration page identifies a compatible or discussed service and does not by itself prove a formal partnership or endorsement. Third-party marks remain the property of their owners. Customer-uploaded church names, images, sermons and other material remain subject to their owners’ rights and permissions.",
       ],
     },
@@ -83,8 +83,8 @@ export const termsAndConditions: LegalDocument = {
       title: "7. Prices, quotations and purchases",
       paragraphs: [
         "Public starting prices, yearly savings and currency conversions describe the offers shown with them. They may depend on the plan, period, supported currency, quotation date and stated eligibility. The amount and currency you authorise at the applicable checkout or in an accepted Order control the purchase, subject to law and correction of an actual error.",
-        "Third-party messaging, calling and payment processing can carry separate provider charges. A ChurchOS software price does not automatically include a provider balance, donor transaction fee, message credit or custom implementation work. Enterprise scope must be separately agreed where the public offer says so.",
-        "Subscriptions, activation, manual renewals, prorated upgrades, downgrades, cancellation and refunds are addressed in the Terms of Service. Do not send money to an unverified destination merely because a person claims to represent ChurchOS. Use the identified checkout or a verified written arrangement, and report suspected impersonation.",
+        "Third-party messaging, calling and payment processing can carry separate provider charges. A BelivrHQ software price does not automatically include a provider balance, donor transaction fee, message credit or custom implementation work. Enterprise scope must be separately agreed where the public offer says so.",
+        "Subscriptions, activation, manual renewals, prorated upgrades, downgrades, cancellation and refunds are addressed in the Terms of Service. Do not send money to an unverified destination merely because a person claims to represent BelivrHQ. Use the identified checkout or a verified written arrangement, and report suspected impersonation.",
       ],
     },
     {
@@ -100,7 +100,7 @@ export const termsAndConditions: LegalDocument = {
       id: "public-forms",
       title: "9. Church forms, events, giving and uploaded material",
       paragraphs: [
-        "A church may use ChurchOS to publish a form, register participants, issue event tickets, distribute media, record giving or send a receipt. That church determines the activity’s purpose, the questions asked, the intended audience, eligibility and its own promises to participants. Read the church’s own information and contact it about the underlying activity.",
+        "A church may use BelivrHQ to publish a form, register participants, issue event tickets, distribute media, record giving or send a receipt. That church determines the activity’s purpose, the questions asked, the intended audience, eligibility and its own promises to participants. Read the church’s own information and contact it about the underlying activity.",
         "Do not submit information about another person without appropriate authority, unnecessary sensitive information or misleading details. Before supplying children’s information, the responsible adult and church must consider any required guardian authorisation and safeguards. A publicly reachable link should not be treated as a confidential private counselling channel.",
         "A generated ticket, receipt, confirmation or report is based on the relevant platform and customer records. It is not, merely because it bears software branding, a Company guarantee of an event, a verified charitable status, tax relief, refund entitlement or final provider settlement. The Company remains responsible for its own errors or legal duties to the extent required by the applicable agreement and law.",
       ],
@@ -111,7 +111,7 @@ export const termsAndConditions: LegalDocument = {
       paragraphs: [
         "Links or embedded content can lead to payment processors, communications providers, social platforms, video hosts, regulator websites and other independent services. Those services can have separate terms, privacy practices, cookies, charges and account requirements. We do not control every external page or guarantee that it remains accurate, available or secure.",
         "An external link is not automatically an endorsement, and a provider’s use in the platform does not make it our agent for every purpose. Exercise appropriate care before providing information or paying on another service. We remain responsible for our own selection, representations and contractual or statutory duties where those apply.",
-        "If you operate a site linking to ChurchOS, link fairly to public pages and avoid deceptive framing, implied affiliation or presentation that obscures the source. Do not link in a way that facilitates unlawful access to private resources. We may request removal of a misleading or unlawful presentation where we have a legitimate basis.",
+        "If you operate a site linking to BelivrHQ, link fairly to public pages and avoid deceptive framing, implied affiliation or presentation that obscures the source. Do not link in a way that facilitates unlawful access to private resources. We may request removal of a misleading or unlawful presentation where we have a legitimate basis.",
       ],
     },
     {
@@ -165,7 +165,7 @@ export const termsAndConditions: LegalDocument = {
       paragraphs: [
         "We may revise these Website Terms as the website, services or relevant requirements change. The displayed version and date identify the published text. Material changes will be brought to attention where required or appropriate, and express renewed agreement will be requested where legally required rather than presumed from a notice alone.",
         "An invalid or unenforceable provision is limited or severed to the extent permitted, without automatically invalidating the rest. A delay in enforcement is not necessarily a waiver. No modification retroactively removes a mandatory right or an accrued remedy.",
-        `Operator: ${LEGAL_COMPANY.name}. Country: ${LEGAL_COMPANY.country}. Designated ChurchOS privacy, legal and contractual contact: ${LEGAL_COMPANY.email}. For registered-office or formal-service details required for a particular procedure, contact the Company through that address.`,
+        `Operator: ${LEGAL_COMPANY.name}. Country: ${LEGAL_COMPANY.country}. Designated BelivrHQ privacy, legal and contractual contact: ${LEGAL_COMPANY.email}. For registered-office or formal-service details required for a particular procedure, contact the Company through that address.`,
       ],
     },
   ],

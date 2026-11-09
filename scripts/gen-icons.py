@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# One-off favicon / PWA icon / OG image generator for ChurchOS-Web.
+# One-off favicon / PWA icon / OG image generator for BelivrHQ-Web.
 # Sources the transparent navy brand derivatives in public/brand/ (produced by
 # scripts/gen-brand.mjs) and writes:
 #   src/app/favicon.ico                       (16/32/48 multi-size)
@@ -15,7 +15,7 @@ BRAND = os.path.join(ROOT, "public", "brand")
 ICONS = os.path.join(ROOT, "public", "icons")
 APP = os.path.join(ROOT, "src", "app")
 
-EMBLEM = os.path.join(BRAND, "churchos-emblem.png")
+EMBLEM = os.path.join(BRAND, "belivrhq-emblem.png")
 OG = os.path.join(ROOT, "public", "og.png")
 
 NAVY = (4, 30, 78)
@@ -87,7 +87,7 @@ def main():
     ey = (H - e_h) // 2 - 40
     og.paste(e, (ex, ey), e)
 
-    # wordmark "ChurchOS" beneath the emblem
+    # wordmark "BelivrHQ" beneath the emblem
     try:
         from PIL import ImageFont
         # find a bold TTF
@@ -99,8 +99,8 @@ def main():
         if fp:
             f = ImageFont.truetype(fp, 88)
             d = ImageDraw.Draw(og)
-            tw = d.textlength("ChurchOS", font=f)
-            d.text(((W - tw) / 2, ey + e_h + 10), "ChurchOS", font=f, fill=NAVY)
+            tw = d.textlength("BelivrHQ", font=f)
+            d.text(((W - tw) / 2, ey + e_h + 10), "BelivrHQ", font=f, fill=NAVY)
             # tagline
             f2 = ImageFont.truetype(fp, 36)
             sub = "Church Management Platform"

@@ -8,7 +8,7 @@ Designated privacy and legal contact: lucasdeekay98@gmail.com.
 
 Website: https://church-os-web.vercel.app/terms-and-conditions
 
-These Website Terms and Conditions ("Website Terms") govern use of the ChurchOS public website and related public information supplied by PappyCoder Technologies Limited, Nigeria ("Company", "ChurchOS", "we", "us" or "our"). They explain permitted website use, intellectual property, third-party material, enquiries and the allocation of responsibility for public-facing interactions.
+These Website Terms and Conditions ("Website Terms") govern use of the BelivrHQ public website and related public information supplied by PappyCoder Technologies Limited, Nigeria ("Company", "BelivrHQ", "we", "us" or "our"). They explain permitted website use, intellectual property, third-party material, enquiries and the allocation of responsibility for public-facing interactions.
 
 The subscription platform is governed by our separate Terms of Service and the applicable Order. Personal-information handling is described in the Privacy Policy. These documents serve different purposes and should be read together where an activity involves more than one of them. Mandatory law prevails over a conflicting provision.
 
@@ -23,7 +23,7 @@ We make these rules available before account creation and through website links.
 
 ## 1. Operator, scope and document priority
 
-The website is operated for ChurchOS by PappyCoder Technologies Limited, based in Nigeria. Our designated legal and privacy contact is lucasdeekay98@gmail.com. This contact is available to visitors who do not have a ChurchOS account.
+The website is operated for BelivrHQ by PappyCoder Technologies Limited, based in Nigeria. Our designated legal and privacy contact is lucasdeekay98@gmail.com. This contact is available to visitors who do not have a BelivrHQ account.
 
 These Website Terms cover public pages, product descriptions, Help Centre content, publicly available resources and ordinary enquiries. They do not independently grant access to a church workspace, a member record, an administrator function or a private download. An invitation or public link has only the scope the relevant feature actually permits.
 
@@ -41,7 +41,7 @@ You may view public pages, follow ordinary navigation, print or save reasonable 
 
 A specific download or third-party item may carry its own licence or usage conditions. Those conditions apply to that item. Public access is not a licence to copy our whole website, redistribute paid resources, extract proprietary software or claim ownership of our original material.
 
-Use of our legal policies to understand your relationship with ChurchOS is permitted. Their wording is specific to our product and processing; their publication is not an assurance that they are appropriate for an unrelated organisation or service.
+Use of our legal policies to understand your relationship with BelivrHQ is permitted. Their wording is specific to our product and processing; their publication is not an assurance that they are appropriate for an unrelated organisation or service.
 
 ## 4. Prohibited activities and technical misuse
 
@@ -57,9 +57,9 @@ We may take proportionate protective steps, investigate credible abuse, preserve
 
 ## 5. Intellectual property and branding
 
-The Company or its licensors own the rights in the ChurchOS brand, original site content, interface assets, software and documentation, except for material clearly belonging to a customer or another rights holder. Copyright, trademark, software and other rights are reserved except for the permissions expressly granted.
+The Company or its licensors own the rights in the BelivrHQ brand, original site content, interface assets, software and documentation, except for material clearly belonging to a customer or another rights holder. Copyright, trademark, software and other rights are reserved except for the permissions expressly granted.
 
-Do not use ChurchOS or PappyCoder Technologies Limited branding to imply sponsorship, certification, partnership or official status without permission. You may make a truthful textual reference to the product where lawful, but must not mislead people about your relationship with us.
+Do not use BelivrHQ or PappyCoder Technologies Limited branding to imply sponsorship, certification, partnership or official status without permission. You may make a truthful textual reference to the product where lawful, but must not mislead people about your relationship with us.
 
 A third-party logo on an integration page identifies a compatible or discussed service and does not by itself prove a formal partnership or endorsement. Third-party marks remain the property of their owners. Customer-uploaded church names, images, sermons and other material remain subject to their owners’ rights and permissions.
 
@@ -75,9 +75,9 @@ A roadmap, discussion or marketing example is not a binding promise of a future 
 
 Public starting prices, yearly savings and currency conversions describe the offers shown with them. They may depend on the plan, period, supported currency, quotation date and stated eligibility. The amount and currency you authorise at the applicable checkout or in an accepted Order control the purchase, subject to law and correction of an actual error.
 
-Third-party messaging, calling and payment processing can carry separate provider charges. A ChurchOS software price does not automatically include a provider balance, donor transaction fee, message credit or custom implementation work. Enterprise scope must be separately agreed where the public offer says so.
+Third-party messaging, calling and payment processing can carry separate provider charges. A BelivrHQ software price does not automatically include a provider balance, donor transaction fee, message credit or custom implementation work. Enterprise scope must be separately agreed where the public offer says so.
 
-Subscriptions, activation, manual renewals, prorated upgrades, downgrades, cancellation and refunds are addressed in the Terms of Service. Do not send money to an unverified destination merely because a person claims to represent ChurchOS. Use the identified checkout or a verified written arrangement, and report suspected impersonation.
+Subscriptions, activation, manual renewals, prorated upgrades, downgrades, cancellation and refunds are addressed in the Terms of Service. Do not send money to an unverified destination merely because a person claims to represent BelivrHQ. Use the identified checkout or a verified written arrangement, and report suspected impersonation.
 
 ## 8. Enquiries, feedback and support communications
 
@@ -89,7 +89,7 @@ Support channels are for legitimate product or service matters and are not emerg
 
 ## 9. Church forms, events, giving and uploaded material
 
-A church may use ChurchOS to publish a form, register participants, issue event tickets, distribute media, record giving or send a receipt. That church determines the activity’s purpose, the questions asked, the intended audience, eligibility and its own promises to participants. Read the church’s own information and contact it about the underlying activity.
+A church may use BelivrHQ to publish a form, register participants, issue event tickets, distribute media, record giving or send a receipt. That church determines the activity’s purpose, the questions asked, the intended audience, eligibility and its own promises to participants. Read the church’s own information and contact it about the underlying activity.
 
 Do not submit information about another person without appropriate authority, unnecessary sensitive information or misleading details. Before supplying children’s information, the responsible adult and church must consider any required guardian authorisation and safeguards. A publicly reachable link should not be treated as a confidential private counselling channel.
 
@@ -101,7 +101,7 @@ Links or embedded content can lead to payment processors, communications provide
 
 An external link is not automatically an endorsement, and a provider’s use in the platform does not make it our agent for every purpose. Exercise appropriate care before providing information or paying on another service. We remain responsible for our own selection, representations and contractual or statutory duties where those apply.
 
-If you operate a site linking to ChurchOS, link fairly to public pages and avoid deceptive framing, implied affiliation or presentation that obscures the source. Do not link in a way that facilitates unlawful access to private resources. We may request removal of a misleading or unlawful presentation where we have a legitimate basis.
+If you operate a site linking to BelivrHQ, link fairly to public pages and avoid deceptive framing, implied affiliation or presentation that obscures the source. Do not link in a way that facilitates unlawful access to private resources. We may request removal of a misleading or unlawful presentation where we have a legitimate basis.
 
 ## 11. Privacy, cookies and public disclosure
 
@@ -147,4 +147,4 @@ We may revise these Website Terms as the website, services or relevant requireme
 
 An invalid or unenforceable provision is limited or severed to the extent permitted, without automatically invalidating the rest. A delay in enforcement is not necessarily a waiver. No modification retroactively removes a mandatory right or an accrued remedy.
 
-Operator: PappyCoder Technologies Limited. Country: Nigeria. Designated ChurchOS privacy, legal and contractual contact: lucasdeekay98@gmail.com. For registered-office or formal-service details required for a particular procedure, contact the Company through that address.
+Operator: PappyCoder Technologies Limited. Country: Nigeria. Designated BelivrHQ privacy, legal and contractual contact: lucasdeekay98@gmail.com. For registered-office or formal-service details required for a particular procedure, contact the Company through that address.

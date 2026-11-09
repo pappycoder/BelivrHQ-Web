@@ -21,7 +21,7 @@ async function setup(
 ) {
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "dashboard-fixture",
       url: "http://127.0.0.1:3107",
     },

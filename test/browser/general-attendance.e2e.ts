@@ -5,7 +5,7 @@ import { USHER_ATTENDANCE_PERMISSIONS } from "../fixtures/usher-attendance-permi
 test.beforeEach(async ({ context }, info) => {
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "test-only",
       url: "http://127.0.0.1:3107",
     },

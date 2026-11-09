@@ -18,8 +18,8 @@ export const subscriptionCurrencies = [
   "XOF",
 ] as const;
 export type SubscriptionCurrency = (typeof subscriptionCurrencies)[number];
-const storageKey = "churchos:subscription-currency";
-const changeEvent = "churchos:subscription-currency-changed";
+const storageKey = "belivrhq:subscription-currency";
+const changeEvent = "belivrhq:subscription-currency-changed";
 function currentCurrency(): SubscriptionCurrency {
   try {
     const value = localStorage.getItem(storageKey);

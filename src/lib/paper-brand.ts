@@ -1,7 +1,7 @@
 /**
  * @file Switchable Paper accent ("brand") colour.
  *
- * The Paper design ships with ChurchOS teal as the default workspace accent.
+ * The Paper design ships with BelivrHQ teal as the default workspace accent.
  * A user-chosen accent is persisted per-device in localStorage and applied as
  * inline custom properties on <html>, where it overrides the token defaults in
  * paper-tokens.css (--brand / --brand-soft, and --primary/--chart-1 follow via
@@ -27,8 +27,8 @@ export const PAPER_BRAND_PRESETS: PaperBrandPreset[] = [
   { id: "rose", name: "Rose", light: "#a8495a", dark: "#d98a97", softLight: "#f2dade", softDark: "#33202a" },
 ];
 
-export const PAPER_BRAND_STORAGE_KEY = "churchos:paper-brand";
-export const PAPER_BRAND_EVENT = "churchos:paper-brand-changed";
+export const PAPER_BRAND_STORAGE_KEY = "belivrhq:paper-brand";
+export const PAPER_BRAND_EVENT = "belivrhq:paper-brand-changed";
 
 /** The default (teal) is represented by an *absent* entry: the CSS default. */
 type StoredBrand = { brand: string; brandDark: string; soft: string; softDark: string };

@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 
 const form = {
   churchName: "Grace Community Church",
-  churchLogoUrl: "/brand/churchos-logo.png",
+  churchLogoUrl: "/brand/belivrhq-logo.png",
   title: "Find your place to serve",
   description: "Share your interests and help us build a welcoming Sunday community.",
   fields: [
@@ -46,7 +46,7 @@ test("public form is specific, tracks progress and submits without signing in", 
     "aria-valuenow",
     "3",
   );
-  await page.screenshot({ path: "/tmp/churchos-public-form-desktop.png", fullPage: true });
+  await page.screenshot({ path: "/tmp/belivrhq-public-form-desktop.png", fullPage: true });
   await verifyBotForm(page);
   await page.getByRole("button", { name: "Send response", exact: true }).click();
   await expect(
@@ -123,7 +123,7 @@ for (const width of [320, 390])
     );
     await expect(page.getByRole("navigation", { name: "Workspace", exact: true })).toHaveCount(0);
     if (width === 390)
-      await page.screenshot({ path: "/tmp/churchos-public-form-mobile.png", fullPage: true });
+      await page.screenshot({ path: "/tmp/belivrhq-public-form-mobile.png", fullPage: true });
   });
 
 test("an expired account session cannot redirect a public form to login", async ({
@@ -131,7 +131,7 @@ test("an expired account session cannot redirect a public form to login", async 
   context,
 }) => {
   await context.addCookies([
-    { name: "churchos_token", value: "expired-public-fixture", url: "http://127.0.0.1:3107" },
+    { name: "belivrhq_token", value: "expired-public-fixture", url: "http://127.0.0.1:3107" },
   ]);
   await context.route("**/api/session", (route) => route.fulfill({ json: { hasSession: true } }));
   await context.route("**/api/backend/auth/session", (route) =>

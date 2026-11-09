@@ -1,6 +1,7 @@
+import { LEGACY_BRAND } from "../brand/identity";
 import type { Workspace } from "./types";
 
-const DB_NAME = "churchos-offline-v1";
+const DB_NAME = "belivrhq-offline-v1";
 const STORE = "vault";
 const SLOT = "workspace";
 interface Envelope {
@@ -18,14 +19,30 @@ export interface VaultStorage {
   ): Promise<void>;
 }
 
-function database(): Promise<IDBDatabase> {
+let selectedDatabase: Promise<string> | undefined;
+async function databaseName() {
+  if (!selectedDatabase) selectedDatabase = (async () => {
+    // Probe the old store without creating one. Existing outboxes remain authoritative.
+    return new Promise<string>((resolve) => {
+      const probe = indexedDB.open(LEGACY_BRAND.offlineDatabase);
+      let missing = false;
+      probe.onupgradeneeded = () => { missing = true; probe.transaction?.abort(); };
+      probe.onerror = () => resolve(DB_NAME);
+      probe.onsuccess = () => { probe.result.close(); resolve(missing ? DB_NAME : LEGACY_BRAND.offlineDatabase); };
+      probe.onblocked = () => resolve(LEGACY_BRAND.offlineDatabase);
+    });
+  })();
+  return selectedDatabase;
+}
+async function database(): Promise<IDBDatabase> {
+  const name = await databaseName();
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
+    const request = indexedDB.open(name, 1);
     request.onupgradeneeded = () => request.result.createObjectStore(STORE);
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
     request.onblocked = () =>
-      reject(new Error("Close other ChurchOS tabs and try again."));
+      reject(new Error("Close other BelivrHQ tabs and try again."));
   });
 }
 
@@ -240,7 +257,7 @@ export class OfflineVault {
       {
         name: "AES-GCM",
         iv,
-        additionalData: new TextEncoder().encode("churchos-offline-v1"),
+        additionalData: new TextEncoder().encode(LEGACY_BRAND.offlineAad),
       },
       key,
       encoded,
@@ -252,7 +269,7 @@ export class OfflineVault {
       {
         name: "AES-GCM",
         iv: stored.iv,
-        additionalData: new TextEncoder().encode("churchos-offline-v1"),
+        additionalData: new TextEncoder().encode(LEGACY_BRAND.offlineAad),
       },
       key,
       stored.ciphertext,

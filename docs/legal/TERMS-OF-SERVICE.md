@@ -8,7 +8,7 @@ Designated privacy and legal contact: lucasdeekay98@gmail.com.
 
 Website: https://church-os-web.vercel.app/terms-of-service
 
-These Terms of Service ("Terms") govern access to the ChurchOS hosted platform and related account, support and subscription services supplied by PappyCoder Technologies Limited, Nigeria ("Company", "ChurchOS", "we", "us" or "our"). "Customer" or "you" means the church, ministry or other organisation subscribing to the service; an individual user must also comply with obligations applicable to that user.
+These Terms of Service ("Terms") govern access to the BelivrHQ hosted platform and related account, support and subscription services supplied by PappyCoder Technologies Limited, Nigeria ("Company", "BelivrHQ", "we", "us" or "our"). "Customer" or "you" means the church, ministry or other organisation subscribing to the service; an individual user must also comply with obligations applicable to that user.
 
 An authorised representative accepts these Terms when expressly agreeing during registration or another acceptance process. A person acting for an organisation represents that they have authority to bind it. If you do not have that authority, do not create or purchase a workspace on its behalf. Access by invited users is subject to the customer’s valid agreement and each user’s applicable obligations.
 
@@ -19,11 +19,11 @@ These Terms include provisions on payment, customer responsibility, suspension, 
 - Subscriptions currently renew manually. Review the plan, billing period, currency and exact checkout amount before authorising payment.
 - The customer remains responsible for lawful collection and use of church records, staff access, communications and connected provider accounts.
 - Liability limitations and the customer indemnity appear in sections 24 and 25, subject to express exceptions for non-excludable liability.
-- Donations and church event payments are separate from ChurchOS subscription fees. ChurchOS is a software provider, not the recipient church or a bank.
+- Donations and church event payments are separate from BelivrHQ subscription fees. BelivrHQ is a software provider, not the recipient church or a bank.
 
 ## 1. Definitions and contract structure
 
-‘Service’ means the ChurchOS hosted software and related functions made available under the selected plan. ‘Workspace’ means the customer’s church environment, including its branches and authorised users. ‘Customer Data’ means records, files, messages, form responses, personal information and other material submitted to or generated for the customer through the Service. ‘Authorised User’ means a person the customer validly permits to access its workspace. ‘Order’ means a checkout, accepted quotation or separately signed order identifying the service, plan, term, price or additional scope.
+‘Service’ means the BelivrHQ hosted software and related functions made available under the selected plan. ‘Workspace’ means the customer’s church environment, including its branches and authorised users. ‘Customer Data’ means records, files, messages, form responses, personal information and other material submitted to or generated for the customer through the Service. ‘Authorised User’ means a person the customer validly permits to access its workspace. ‘Order’ means a checkout, accepted quotation or separately signed order identifying the service, plan, term, price or additional scope.
 
 The Order identifies commercial selections; these Terms supply the general service conditions. Our Website Terms and Conditions govern public website use and supplement the acceptable-use rules. Our Privacy Policy explains personal-information practices. It is not an unrestricted licence to process personal information or a substitute for a required controller–processor agreement.
 
@@ -65,7 +65,7 @@ If you downgrade or a subscription expires, additions, particular roles, exports
 
 You agree to pay the amount, currency and billing period you authorise in the Order. Standard plans may be offered monthly or annually; an annual payment purchases the stated annual period rather than twelve separately cancellable monthly instalments unless the Order says otherwise. Enterprise fees, implementation work or additional services require a separate agreement where not included in the displayed offer.
 
-Displayed conversions or starting prices are informational until confirmed by an applicable quote or checkout. The checkout may use a supported charge currency different from a display currency. Review the exact amount and currency before paying. Your bank or provider may impose conversion, processing, cross-border or other fees under its own agreement; ChurchOS does not set those third-party charges merely by displaying a converted estimate.
+Displayed conversions or starting prices are informational until confirmed by an applicable quote or checkout. The checkout may use a supported charge currency different from a display currency. Review the exact amount and currency before paying. Your bank or provider may impose conversion, processing, cross-border or other fees under its own agreement; BelivrHQ does not set those third-party charges merely by displaying a converted estimate.
 
 A quote can expire. A pending checkout may preserve the amount and currency recorded when it was created, even if a later display or quote changes. Review any resumed payment before authorisation. Do not create duplicate payments because a return page is delayed; use the available verification process or contact us with the payment reference.
 
@@ -81,13 +81,13 @@ If payment is received but cannot be applied correctly, we will investigate and 
 
 ## 8. Manual renewals, upgrades and downgrades
 
-Standard ChurchOS subscription renewals are currently manual. Selecting a plan, entering a payment method at a one-off checkout or receiving a reminder does not itself authorise recurring platform subscription debits. A future automatic-renewal arrangement would require appropriate disclosure and payment authorisation before it applies.
+Standard BelivrHQ subscription renewals are currently manual. Selecting a plan, entering a payment method at a one-off checkout or receiving a reminder does not itself authorise recurring platform subscription debits. A future automatic-renewal arrangement would require appropriate disclosure and payment authorisation before it applies.
 
 The customer must renew in time to avoid interruption. Reminder delivery is not guaranteed, and a missed reminder does not by itself extend a paid period. The dates and status shown by the verified subscription record determine the applicable period, subject to correction of errors and any express Order terms.
 
 An eligible mid-period upgrade may use the prorated calculation shown in the quote and retain the existing renewal date. A downgrade may be scheduled for the next renewal and does not necessarily create an immediate refund or credit. The confirmed quote and resulting subscription record control the specific change; the interface’s displayed action must be reviewed before confirmation.
 
-Recurring giving is different from platform subscription renewal. A donor’s authorisation to a church and that church’s payment provider may permit recurring donations according to the donor’s separate mandate, even while the church’s ChurchOS software subscription renews manually.
+Recurring giving is different from platform subscription renewal. A donor’s authorisation to a church and that church’s payment provider may permit recurring donations according to the donor’s separate mandate, even while the church’s BelivrHQ software subscription renews manually.
 
 ## 9. Cancellation, refunds and billing disputes
 
@@ -126,12 +126,12 @@ We may investigate credible misuse, preserve proportionate evidence and take the
 - Do not send spam or unauthorised bulk communications, upload purchased lists without a lawful permission, evade suppression or opt-out requests, or impersonate a sender.
 - Do not bypass permissions, authentication, rate limits, quotas or plan restrictions; share paid seats improperly; probe another tenant; scrape restricted information; or introduce malicious code.
 - Do not run load, penetration, vulnerability or other disruptive tests without prior written authorisation defining scope and safeguards. A public sign-up or ordinary API access is not such authorisation.
-- Do not reverse engineer or extract proprietary elements except to the extent a mandatory law permits it, remove ownership notices, or misrepresent ChurchOS as endorsing your organisation or campaign.
+- Do not reverse engineer or extract proprietary elements except to the extent a mandatory law permits it, remove ownership notices, or misrepresent BelivrHQ as endorsing your organisation or campaign.
 - Do not use the platform as an emergency response, regulated medical decision, autonomous financial decision or other safety-critical system that its agreed functionality does not support.
 
 ## 13. Giving, ticketing and payment-provider relationships
 
-ChurchOS supplies software for recording giving, producing receipts, managing events or tickets and connecting supported payment services. Unless a separate written agreement expressly says otherwise, we are not the receiving church, fundraiser, donation beneficiary, event organiser, bank, insurer, custodian, escrow service, payment institution or financial adviser.
+BelivrHQ supplies software for recording giving, producing receipts, managing events or tickets and connecting supported payment services. Unless a separate written agreement expressly says otherwise, we are not the receiving church, fundraiser, donation beneficiary, event organiser, bank, insurer, custodian, escrow service, payment institution or financial adviser.
 
 The relevant church is responsible for its merchant/provider account, bank details, beneficiary information, authority to collect funds, event delivery, donor communications, cancellations and applicable tax treatment. Payment providers control their own onboarding, authorisations, fraud screening, processing, chargebacks, settlement and provider fees. An integration or generated receipt is not an endorsement of a church’s activities or a guarantee of settlement or refund.
 
@@ -141,7 +141,7 @@ Manual cash or bank records depend on information entered by authorised users an
 
 ## 14. Communications, integrations and external providers
 
-Church-selected email, SMS, WhatsApp, calling, payment and webhook services generally require the customer’s own compatible provider accounts, enabled settings and appropriate credentials. Provider charges, recipient restrictions, sender approvals, message-template rules and service availability are separate from the ChurchOS subscription unless an Order expressly includes them.
+Church-selected email, SMS, WhatsApp, calling, payment and webhook services generally require the customer’s own compatible provider accounts, enabled settings and appropriate credentials. Provider charges, recipient restrictions, sender approvals, message-template rules and service availability are separate from the BelivrHQ subscription unless an Order expressly includes them.
 
 You authorise processing and transmission reasonably necessary for the integrations you enable and remain responsible for the legality of those instructions. Keep provider accounts funded where required and credentials current. Platform account emails may use our organisation’s providers even when a church’s own broadcast integration is disabled.
 
@@ -183,7 +183,7 @@ Uploading or publishing material represents that you have authority for the requ
 
 ## 17. AI assistance, scoring and human review
 
-Ask ChurchOS provides product guidance from references and, where enabled, AI-generated explanations. It can be unavailable, incomplete or wrong. It does not independently verify every screen, record, entitlement balance or provider status, and it does not obtain authority to change accounts, inspect unrelated records, issue payments or send messages merely because a user asks.
+Ask BelivrHQ provides product guidance from references and, where enabled, AI-generated explanations. It can be unavailable, incomplete or wrong. It does not independently verify every screen, record, entitlement balance or provider status, and it does not obtain authority to change accounts, inspect unrelated records, issue payments or send messages merely because a user asks.
 
 Do not enter secrets or unnecessary identifiable or sensitive records into assistant questions. Review the applicable privacy information before using external synthesis. Budgets, rate controls, model availability and plan settings may limit responses. Product guidance is not legal, tax, financial, medical, safeguarding or professional advice.
 
@@ -243,7 +243,7 @@ Report a material service defect with sufficient information for reasonable inve
 
 **IMPORTANT LIMITATION OF LIABILITY: Subject to the exceptions below and to the extent permitted by law, the Company’s aggregate contractual and other liability connected with the affected Service is capped at the fees paid or payable to the Company for that affected Service during the 12 months immediately before the event giving rise to the claim.**
 
-24.1 Scope of the cap. The cap applies in aggregate to related claims arising from the same event or connected events and across legal theories, to the extent such limitation is lawful. It is based on ChurchOS software fees, not the total giving, ticket sales, payment-provider balance or other funds recorded or processed through a church’s activities. It does not apply to a separate liability that law prevents us from limiting.
+24.1 Scope of the cap. The cap applies in aggregate to related claims arising from the same event or connected events and across legal theories, to the extent such limitation is lawful. It is based on BelivrHQ software fees, not the total giving, ticket sales, payment-provider balance or other funds recorded or processed through a church’s activities. It does not apply to a separate liability that law prevents us from limiting.
 
 24.2 Excluded loss categories. Subject to section 24.3 and only where legally permitted, we are not liable for indirect, consequential, exemplary or punitive losses, or loss of anticipated profit, revenue, opportunity, goodwill or expected savings. A loss will not be called ‘indirect’ merely to avoid a remedy the law gives for a direct and proven service failure.
 
@@ -279,7 +279,7 @@ Nothing prevents a complaint to the Nigeria Data Protection Commission, the Fede
 
 ## 28. Notices and electronic communications
 
-The Company’s designated ChurchOS privacy, legal and contractual notice email is lucasdeekay98@gmail.com. The customer’s notice contact is its administrator or another authorised address it supplies. Keep that contact up to date and identify the relevant church clearly when sending a notice.
+The Company’s designated BelivrHQ privacy, legal and contractual notice email is lucasdeekay98@gmail.com. The customer’s notice contact is its administrator or another authorised address it supplies. Keep that contact up to date and identify the relevant church clearly when sending a notice.
 
 We may send routine service and contractual communications electronically, including through a reasonably prominent account notice where appropriate. A bounced or rejected email is not automatically effective delivery of a legal notice. Rules for formal court service, regulatory notices and any mandatory delivery method prevail over this general electronic-notice clause. Request the Company’s appropriate physical-service details where required.
 
@@ -293,7 +293,7 @@ We will not use an update to retroactively remove an accrued remedy or silently 
 
 ## 30. General legal provisions
 
-Each party is an independent contractor. These Terms do not establish a partnership, employment relationship, fiduciary relationship, religious endorsement or authority for one party to bind the other beyond an express agreement. A customer must not imply that its fundraising or organisational claims have been certified by ChurchOS.
+Each party is an independent contractor. These Terms do not establish a partnership, employment relationship, fiduciary relationship, religious endorsement or authority for one party to bind the other beyond an express agreement. A customer must not imply that its fundraising or organisational claims have been certified by BelivrHQ.
 
 The customer may not assign its account or agreement to an unrelated organisation without reasonable written approval. We may assign the service agreement as part of a legitimate corporate reorganisation or transfer of the business, subject to applicable privacy law, appropriate continuity and any mandatory customer rights. Assignment is not permission to materially expand the use of personal information without a lawful basis.
 
@@ -303,6 +303,6 @@ These Terms and the applicable agreed documents describe the service agreement, 
 
 ## 31. Company details
 
-Service and brand: ChurchOS. Operator: PappyCoder Technologies Limited. Country: Nigeria. Designated privacy, legal, billing-dispute and contractual contact: lucasdeekay98@gmail.com.
+Service and brand: BelivrHQ. Operator: PappyCoder Technologies Limited. Country: Nigeria. Designated privacy, legal, billing-dispute and contractual contact: lucasdeekay98@gmail.com.
 
-The designated mailbox may be used without a ChurchOS account. Administrator live chat is an additional support channel and is not the exclusive way to give a legal notice or exercise a privacy or consumer right. For registered-office details or information needed for a formal procedure, contact the Company through the designated address.
+The designated mailbox may be used without a BelivrHQ account. Administrator live chat is an additional support channel and is not the exclusive way to give a legal notice or exercise a privacy or consumer right. For registered-office details or information needed for a formal procedure, contact the Company through the designated address.

@@ -68,7 +68,7 @@ async function fixture(
       ];
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "events-visual",
       url: "http://127.0.0.1:3107",
     },
@@ -81,7 +81,7 @@ async function fixture(
         .serviceWorker;
       localStorage.setItem("theme", dark ? "dark" : "light");
       localStorage.setItem(
-        "churchos:appearance:v1:profile:church",
+        "belivrhq:appearance:v1:profile:church",
         JSON.stringify({ accent: "#7c3aed" }),
       );
     },
@@ -240,7 +240,7 @@ for (const width of [390, 768, 1440])
       await fixture(context, { dark });
       await page.clock.setFixedTime(new Date("2026-11-01T08:00:00Z"));
       await page.setViewportSize({ width, height: 1000 });
-      await mkdir("/tmp/churchos-events-previews", { recursive: true });
+      await mkdir("/tmp/belivrhq-events-previews", { recursive: true });
       const errors: string[] = [];
       page.on("pageerror", (error) => errors.push(error.message));
       for (const [path, name] of [
@@ -288,7 +288,7 @@ for (const width of [390, 768, 1440])
           path,
         ).toBe(true);
         await page.screenshot({
-          path: `/tmp/churchos-events-previews/${name}-${width}-${dark ? "dark" : "light"}.png`,
+          path: `/tmp/belivrhq-events-previews/${name}-${width}-${dark ? "dark" : "light"}.png`,
           fullPage: true,
         });
       }
@@ -574,7 +574,7 @@ for (const width of [1280, 320])
     ).toBe(true);
     expect(state.writes).toEqual([]);
     await page.screenshot({
-      path: `/tmp/churchos-calendar-navigation-${width}.png`,
+      path: `/tmp/belivrhq-calendar-navigation-${width}.png`,
       fullPage: true,
     });
   });
@@ -716,7 +716,7 @@ test.describe("event register", () => {
         ),
       ).toBe(true);
       await page.screenshot({
-        path: `/tmp/churchos-event-register-${width}.png`,
+        path: `/tmp/belivrhq-event-register-${width}.png`,
         fullPage: true,
       });
       expect(state.writes).toHaveLength(0);

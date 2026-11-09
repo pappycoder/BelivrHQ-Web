@@ -7,7 +7,7 @@ export const workspaceAreas = [
   { id: "communication", title: "Communication", description: "Keep the conversation going", modules: ["Inbox", "Messages", "Broadcasts", "Templates", "Appointments"] },
   { id: "resources", title: "Resources", description: "Everything your ministry needs", modules: ["Sermons", "Media", "Assets", "Forms"] },
   { id: "insights", title: "Insights", description: "Understand your church’s story", modules: ["Analytics", "Reports"] },
-  { id: "administration", title: "Administration", description: "Make ChurchOS work for you", modules: ["User Management", "Church Settings", "Integrations", "Branches"] },
+  { id: "administration", title: "Administration", description: "Make BelivrHQ work for you", modules: ["User Management", "Church Settings", "Integrations", "Branches"] },
 ] as const;
 
 export interface WorkspaceDestination {

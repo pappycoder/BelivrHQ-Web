@@ -36,7 +36,7 @@ export function memberImportTemplate(branchNames: string[], branchName?: string)
       { step: "2. Choose values", instruction: "Use the Gender and Branch dropdowns. Dropdowns are prepared through row 500; copy a formatted row to extend them." },
       { step: "3. Dates", instruction: "Date of Birth cells are formatted as dates. Use your spreadsheet app's calendar if available, or type YYYY-MM-DD (for example, 1995-04-12). LibreOffice Calc may require typed dates; date validation alone does not add a calendar popup." },
       { step: "4. Phone numbers", instruction: "Phone and WhatsApp columns are preformatted as Text, preserving + country codes and leading zeros. Enter +234 803 456 7890 or 08034567890 directly. When pasting, keep the destination formatting. In an older template, set these columns to Text before entering numbers." },
-      { step: "5. Upload", instruction: "Save as .xlsx and upload it on Import Members. Review the preview before confirming. Workbook edits do not update ChurchOS until imported." },
+      { step: "5. Upload", instruction: "Save as .xlsx and upload it on Import Members. Review the preview before confirming. Workbook edits do not update BelivrHQ until imported." },
     ] },
   ];
 }

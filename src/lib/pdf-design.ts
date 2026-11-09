@@ -15,7 +15,7 @@ export const PDF_COLORS = {
   amber: "#B45309",
 };
 
-export const PDF_FONT = "ChurchOSSans";
+export const PDF_FONT = "BelivrHQSans";
 export interface PdfMetadata { label: string; value: string }
 interface PdfAssets { regular: string; bold: string; logo: string }
 let assetsPromise: Promise<PdfAssets> | undefined;
@@ -35,16 +35,16 @@ export async function preparePdf(doc: jsPDF): Promise<PdfAssets> {
   assetsPromise ??= Promise.all([
     base64Asset("/fonts/pdf/DejaVuSans.ttf"),
     base64Asset("/fonts/pdf/DejaVuSans-Bold.ttf"),
-    base64Asset("/brand/churchos-lockup-light.png"),
+    base64Asset("/brand/belivrhq-lockup-light.png"),
   ]).then(([regular, bold, logo]) => ({ regular, bold, logo })).catch((error) => {
     assetsPromise = undefined;
     throw error;
   });
   const assets = await assetsPromise;
-  doc.addFileToVFS("ChurchOSSans.ttf", assets.regular);
-  doc.addFont("ChurchOSSans.ttf", PDF_FONT, "normal");
-  doc.addFileToVFS("ChurchOSSans-Bold.ttf", assets.bold);
-  doc.addFont("ChurchOSSans-Bold.ttf", PDF_FONT, "bold");
+  doc.addFileToVFS("BelivrHQSans.ttf", assets.regular);
+  doc.addFont("BelivrHQSans.ttf", PDF_FONT, "normal");
+  doc.addFileToVFS("BelivrHQSans-Bold.ttf", assets.bold);
+  doc.addFont("BelivrHQSans-Bold.ttf", PDF_FONT, "bold");
   doc.setFont(PDF_FONT, "normal");
   return assets;
 }
@@ -93,7 +93,7 @@ export function drawPdfHeader(doc: jsPDF, logo: string, label = "REPORT", brandi
     doc.setFont(PDF_FONT, "normal");
     doc.setFontSize(6);
     doc.setTextColor("#D6ED97");
-    doc.text("Powered by ChurchOS", textX, 21);
+    doc.text("Powered by BelivrHQ", textX, 21);
   } else {
     doc.addImage(logo, "PNG", 14, 1, 42, 23);
   }
@@ -103,7 +103,7 @@ export function drawPdfHeader(doc: jsPDF, logo: string, label = "REPORT", brandi
   doc.text(label.toUpperCase(), width - 14, 14, { align: "right" });
 }
 
-export function drawPdfFooters(doc: jsPDF, generatedAt: Date, label = "ChurchOS") {
+export function drawPdfFooters(doc: jsPDF, generatedAt: Date, label = "BelivrHQ") {
   const total = doc.getNumberOfPages();
   for (let i = 1; i <= total; i++) {
     doc.setPage(i);

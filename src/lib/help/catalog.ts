@@ -109,7 +109,7 @@ export const helpArticles = [
     slug: "import-members",
     title: "Import your member directory",
     summary:
-      "Prepare the import template, check errors and bring existing records into ChurchOS.",
+      "Prepare the import template, check errors and bring existing records into BelivrHQ.",
     topic: "people",
     keywords: ["csv", "spreadsheet", "excel", "upload", "migration", "bulk"],
     minutes: 4,
@@ -354,7 +354,7 @@ export const helpArticles = [
     slug: "get-help-and-report-a-problem",
     title: "Get help and report a problem",
     summary:
-      "Find a guide or ask your church administrator to contact ChurchOS through the in-app chat.",
+      "Find a guide or ask your church administrator to contact BelivrHQ through the in-app chat.",
     topic: "troubleshooting",
     keywords: ["help", "support", "bug", "contact", "tawk", "documentation", "ticket", "tickets", "email", "new conversation"],
     minutes: 2,

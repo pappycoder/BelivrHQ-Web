@@ -10,7 +10,7 @@ async function fixture(
   );
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "billing-fixture",
       url: "http://127.0.0.1:3107",
     },
@@ -76,7 +76,7 @@ async function fixture(
               intent: "upgrade",
               amount: 5000,
               currency: "NGN",
-              quoteId: "COSQ_" + "b".repeat(32),
+              quoteId: "BHQQUOTE_" + "b".repeat(32),
               expiresAt: new Date(Date.now() + 900000).toISOString(),
               effectiveAt: new Date().toISOString(),
               renewBy: "2027-01-19T00:00:00Z",
@@ -85,7 +85,7 @@ async function fixture(
           else if (path.endsWith("/checkout"))
             data = {
               authorizationUrl: "https://checkout.flutterwave.com/fixture",
-              reference: "COSUB_" + "a".repeat(32),
+              reference: "BHQSUB_" + "a".repeat(32),
             };
           else {
             if (path.endsWith("/schedule")) scheduled = body.plan || null;
@@ -198,7 +198,7 @@ test("administrator billing fits a phone screen", async ({ page, context }) => {
     ),
   ).toBe(true);
   await page.screenshot({
-    path: "/tmp/churchos-billing-mobile.png",
+    path: "/tmp/belivrhq-billing-mobile.png",
     fullPage: true,
   });
 });

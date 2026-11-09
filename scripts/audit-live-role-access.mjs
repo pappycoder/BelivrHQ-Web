@@ -8,18 +8,18 @@ import ts from "typescript";
 import { auditUiContracts } from "./audit-ui-contracts.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const origin = new URL(process.env.CHURCHOS_AUDIT_URL ?? "https://church-os-web.vercel.app").origin;
-if (process.env.CHURCHOS_AUDIT_DEMO_LOGINS !== "true") throw new Error("Set CHURCHOS_AUDIT_DEMO_LOGINS=true to authorize existing demo-account logins");
+const origin = new URL(process.env.BELIVRHQ_AUDIT_URL ?? "https://church-os-web.vercel.app").origin;
+if (process.env.BELIVRHQ_AUDIT_DEMO_LOGINS !== "true") throw new Error("Set BELIVRHQ_AUDIT_DEMO_LOGINS=true to authorize existing demo-account logins");
 if (!origin.startsWith("https://") && !/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) throw new Error("Use HTTPS for deployed acceptance checks");
-const output = process.env.CHURCHOS_AUDIT_OUTPUT ?? "/tmp/churchos-live-role-access.json";
-const requested = (process.env.CHURCHOS_AUDIT_ACCOUNTS ?? "").split(",").filter(Boolean);
-const requestedRoutes = (process.env.CHURCHOS_AUDIT_ROUTES ?? "").split(",").filter(Boolean);
+const output = process.env.BELIVRHQ_AUDIT_OUTPUT ?? "/tmp/belivrhq-live-role-access.json";
+const requested = (process.env.BELIVRHQ_AUDIT_ACCOUNTS ?? "").split(",").filter(Boolean);
+const requestedRoutes = (process.env.BELIVRHQ_AUDIT_ROUTES ?? "").split(",").filter(Boolean);
 const source = fs.readFileSync(path.join(root, "src/app/(auth)/login/page.tsx"), "utf8");
-const password = process.env.CHURCHOS_AUDIT_PASSWORD ?? source.match(/const DEV_PASSWORD = "([^"]+)"/)?.[1];
+const password = process.env.BELIVRHQ_AUDIT_PASSWORD ?? source.match(/const DEV_PASSWORD = "([^"]+)"/)?.[1];
 if (!password) throw new Error("Demo login password is unavailable");
 const accounts = [...source.matchAll(/label: "([^"]+)", email: "([^"]+)"/g)].slice(0, 16)
   .map((match) => ({ label: match[1], email: match[2] })).filter((account) => !requested.length || requested.includes(account.email));
-if (!accounts.length || accounts.some((account) => !account.email.endsWith("@churchos.dev"))) throw new Error("Only the existing development demo accounts are supported");
+if (!accounts.length || accounts.some((account) => !account.email.endsWith("@belivrhq.dev"))) throw new Error("Only the existing development demo accounts are supported");
 const routeModule = { exports: {} };
 runInNewContext(ts.transpileModule(fs.readFileSync(path.join(root, "src/lib/route-permissions.ts"), "utf8"), {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2021 },
@@ -42,7 +42,7 @@ function pageTitles(entry) {
   };
   visit(source); titleCache.set(entry.file, titles); return titles;
 }
-const headers = { "x-churchos-client": "web", origin, "sec-fetch-site": "same-origin" };
+const headers = { "x-belivrhq-client": "web", origin, "sec-fetch-site": "same-origin" };
 const normalize = (value) => value.replace(/[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}/gi, "[id]");
 const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 let stopRequested = false;
@@ -70,7 +70,7 @@ try {
     if (stopRequested) break;
     // Logout revokes sessions for this identity; parallel audit processes must
     // never test the same account at the same time.
-    const lock = path.join("/tmp", `churchos-role-audit-${createHash("sha256").update(`${origin}:${account.email}`).digest("hex").slice(0, 24)}.lock`);
+    const lock = path.join("/tmp", `belivrhq-role-audit-${createHash("sha256").update(`${origin}:${account.email}`).digest("hex").slice(0, 24)}.lock`);
     let acquired = false;
     while (!acquired && !stopRequested) {
       try { fs.mkdirSync(lock, { mode: 0o700 }); acquired = true; }
@@ -116,26 +116,26 @@ try {
         if (key && row) ids[key] = row[key] ?? row.id ?? row.cellGroupId;
       }
       await context.addInitScript(() => {
-        window.__churchosAcceptance = { pending: 0, responses: [], writes: [] };
+        window.__belivrhqAcceptance = { pending: 0, responses: [], writes: [] };
         const original = window.fetch.bind(window);
         window.fetch = async (input, options) => {
           const method = options?.method ?? (input instanceof Request ? input.method : "GET");
           const pathname = new URL(input instanceof Request ? input.url : String(input), location.origin).pathname;
           if (!["GET", "HEAD", "OPTIONS"].includes(method.toUpperCase())) {
-            window.__churchosAcceptance.writes.push({ method, endpoint: pathname });
+            window.__belivrhqAcceptance.writes.push({ method, endpoint: pathname });
             return new Response(JSON.stringify({ success: false, error: { code: "AUDIT_READ_ONLY", message: "Live mutations are disabled for acceptance testing" } }), { status: 409, headers: { "Content-Type": "application/json" } });
           }
           if (!pathname.startsWith("/api/backend/")) return original(input, options);
-          window.__churchosAcceptance.pending++;
+          window.__belivrhqAcceptance.pending++;
           try {
             const response = await original(input, options);
             const body = response.headers.get("content-type")?.includes("application/json") ? await response.clone().json().catch(() => ({})) : {};
             const data = body.data;
             const rows = Array.isArray(data) ? data : Array.isArray(data?.data) ? data.data : Array.isArray(data?.items) ? data.items : [];
             const keys = ["id", "memberId", "familyId", "eventId", "sermonId", "formId", "profileId", "branchId", "branch_id", "serviceId", "groupId", "cellGroupId", "visitorId", "status", "archivedAt", "archived_at"];
-            window.__churchosAcceptance.responses.push({ endpoint: pathname.slice("/api/backend/".length), status: response.status, rows: rows.map((row) => Object.fromEntries(keys.filter((key) => row[key] !== undefined).map((key) => [key, row[key]]))) });
+            window.__belivrhqAcceptance.responses.push({ endpoint: pathname.slice("/api/backend/".length), status: response.status, rows: rows.map((row) => Object.fromEntries(keys.filter((key) => row[key] !== undefined).map((key) => [key, row[key]]))) });
             return response;
-          } finally { window.__churchosAcceptance.pending--; }
+          } finally { window.__belivrhqAcceptance.pending--; }
         };
       });
       await context.route("**/api/**", async (route) => {
@@ -220,9 +220,9 @@ try {
           const titles = pageTitles(entry);
           if (expected && titles.length && !entry.route.includes("[")) await page.getByRole("main").getByRole("heading", { name: new RegExp(`^(?:${titles.map((title) => title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})$`) }).first().waitFor({ state: "visible", timeout: 15000 });
           const deadline = Date.now() + 16000;
-          do { await pause(250); } while (Date.now() < deadline && (pending.size || await page.evaluate(() => window.__churchosAcceptance?.pending ?? 0) || await page.locator("main").innerText().then((text) => text.trim().length < 8)));
+          do { await pause(250); } while (Date.now() < deadline && (pending.size || await page.evaluate(() => window.__belivrhqAcceptance?.pending ?? 0) || await page.locator("main").innerText().then((text) => text.trim().length < 8)));
           await Promise.allSettled([...responseTasks]);
-          const telemetry = await page.evaluate(() => window.__churchosAcceptance);
+          const telemetry = await page.evaluate(() => window.__belivrhqAcceptance);
           if (telemetry) {
             for (const response of telemetry.responses) {
               if (response.status >= 400) actor.apiFailures.push({ route: activeRoute, endpoint: normalize(response.endpoint), status: response.status });
@@ -232,7 +232,7 @@ try {
               if (!currentProfile.isAdminHq && response.rows.some((row) => (row.branchId ?? row.branch_id) && (row.branchId ?? row.branch_id) !== currentProfile.branchId) && ["members", "families", "events", "sermons", "forms", "profiles", "branches", "assets", "visitors", "admin/departments", "admin/cell-groups", "giving/transactions", "services", "attendance"].includes(response.endpoint)) actor.scopeFailures.push({ route: activeRoute, endpoint: response.endpoint, count: response.rows.filter((row) => (row.branchId ?? row.branch_id) && (row.branchId ?? row.branch_id) !== currentProfile.branchId).length });
             }
             actor.blockedMutations.push(...telemetry.writes.map((write) => ({ route: activeRoute, ...write })));
-            await page.evaluate(() => { window.__churchosAcceptance.responses = []; window.__churchosAcceptance.writes = []; });
+            await page.evaluate(() => { window.__belivrhqAcceptance.responses = []; window.__belivrhqAcceptance.writes = []; });
           }
           const text = await page.locator("main").innerText();
           const denied = /\bAccess denied\b|You do not have permission to view|You don't have access to forms/.test(text);
@@ -278,7 +278,7 @@ try {
       await page.close();
       }
       for (const dynamic of [false, true]) {
-        const queue = pages.filter((entry) => entry.route.includes("[") === dynamic && (!requestedRoutes.length || requestedRoutes.includes(entry.route)) && (!process.env.CHURCHOS_AUDIT_DETAILS_ONLY || dynamic || ["/members/families", "/giving", "/members", "/forms"].includes(entry.route)));
+        const queue = pages.filter((entry) => entry.route.includes("[") === dynamic && (!requestedRoutes.length || requestedRoutes.includes(entry.route)) && (!process.env.BELIVRHQ_AUDIT_DETAILS_ONLY || dynamic || ["/members/families", "/giving", "/members", "/forms"].includes(entry.route)));
         await Promise.all(Array.from({ length: Math.min(3, queue.length) }, () => checkEntries(queue)));
       }
       actor.apiFailures = [...new Map(actor.apiFailures.map((item) => [JSON.stringify(item), item])).values()];

@@ -71,7 +71,7 @@ async function fixture(
   });
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "recording-fixture",
       url: "http://127.0.0.1:3107",
     },

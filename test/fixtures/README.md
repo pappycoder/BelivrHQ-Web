@@ -5,7 +5,7 @@ Secretary defaults. Browser tests import this local JSON so web CI and productio
 builds work without a sibling API checkout. Its source SHA-256 identifies the
 exact seed file used.
 
-When changing API default permissions, place `ChurchOS-Backend` beside this web
+When changing API default permissions, place `BelivrHQ-Backend` beside this web
 repository and run:
 
 ```sh

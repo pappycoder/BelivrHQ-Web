@@ -29,7 +29,7 @@ export function LegalDocument({ document }: { document: Document }) {
             className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary print:hidden"
           >
             <ArrowLeft className="size-4" />
-            Back to ChurchOS
+            Back to BelivrHQ
           </Link>
           <p className="rule-label flex items-center gap-2">
             <Scale className="size-4" />
@@ -188,7 +188,7 @@ export function LegalDocument({ document }: { document: Document }) {
                 Contact {LEGAL_COMPANY.name}
               </h2>
               <p className="mt-3">
-                For ChurchOS privacy requests, legal notices or contractual
+                For BelivrHQ privacy requests, legal notices or contractual
                 enquiries, email{" "}
                 <a
                   href={LEGAL_CONTACT_HREF}
@@ -196,7 +196,7 @@ export function LegalDocument({ document }: { document: Document }) {
                 >
                   {LEGAL_COMPANY.email}
                 </a>
-                . You do not need a ChurchOS account to use this contact.
+                . You do not need a BelivrHQ account to use this contact.
               </p>
               <p className="mt-3 text-sm text-muted-foreground">
                 Describe the matter and provide a safe reply channel. Do not

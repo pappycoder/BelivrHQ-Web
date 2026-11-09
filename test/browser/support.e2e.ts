@@ -9,7 +9,7 @@ test.beforeEach(async ({ context }) => {
 
 async function fixture(context: BrowserContext, role = "church_admin", status = "active") {
   await context.addCookies([
-    { name: "churchos_token", value: "support-fixture", url: "http://127.0.0.1:3107" },
+    { name: "belivrhq_token", value: "support-fixture", url: "http://127.0.0.1:3107" },
   ]);
   await context.addInitScript(
     ({ role, status }) => {
@@ -58,9 +58,9 @@ test("native Tawk bubble loads automatically without expanding and closes on ses
   await expect(page.getByRole("button", { name: "Open Tawk.to chat" })).toBeVisible();
   expect(requests).toBe(1);
   await expect(page.getByRole("button", { name: "Chat with support", exact: true })).toHaveCount(0);
-  await expect(page.getByRole("dialog", { name: "ChurchOS support chat" })).toBeHidden();
+  await expect(page.getByRole("dialog", { name: "BelivrHQ support chat" })).toBeHidden();
   await page.getByRole("button", { name: "Open Tawk.to chat" }).click();
-  await expect(page.getByRole("dialog", { name: "ChurchOS support chat" })).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "BelivrHQ support chat" })).toBeVisible();
   await expect(page).toHaveURL(/\/dashboard$/);
   expect(
     await page.evaluate(() =>
@@ -69,13 +69,13 @@ test("native Tawk bubble loads automatically without expanding and closes on ses
       ),
     ),
   ).toBe(false);
-  await page.evaluate(() => window.dispatchEvent(new Event("churchos-session-ended")));
+  await page.evaluate(() => window.dispatchEvent(new Event("belivrhq-session-ended")));
   const calls = await page.evaluate(() =>
     (window as unknown as { chatCalls: { name: string }[] }).chatCalls.map((c) => c.name),
   );
   expect(calls).toContain("endChat");
   expect(calls).toContain("shutdown");
-  await expect(page.getByRole("dialog", { name: "ChurchOS support chat" })).toBeHidden();
+  await expect(page.getByRole("dialog", { name: "BelivrHQ support chat" })).toBeHidden();
   expect(requests).toBe(1);
 });
 
@@ -140,7 +140,7 @@ test("a blocked automatic widget gives a working retry and an external fallback"
   );
   await page.getByRole("button", { name: "Retry support chat" }).click();
   await expect(page.getByRole("button", { name: "Open Tawk.to chat" })).toBeVisible();
-  await expect(page.getByRole("dialog", { name: "ChurchOS support chat" })).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "BelivrHQ support chat" })).toBeVisible();
   expect(requests).toBe(2);
 });
 
@@ -157,7 +157,7 @@ test("a widget that finishes loading after logout cannot open chat", async ({ pa
   const loading = page.waitForRequest("https://embed.tawk.to/**");
   await page.goto("/dashboard", { waitUntil: "domcontentloaded" });
   await loading;
-  await page.evaluate(() => window.dispatchEvent(new Event("churchos-session-ended")));
+  await page.evaluate(() => window.dispatchEvent(new Event("belivrhq-session-ended")));
   release();
   await expect
     .poll(() => page.evaluate(() => !!(window as unknown as { chatCalls: unknown }).chatCalls))
@@ -182,7 +182,7 @@ test("chat opens on the current page and remains visible when help opens separat
   });
   await page.goto("/dashboard");
   await page.getByRole("button", { name: "Open Tawk.to chat" }).click();
-  await expect(page.getByRole("dialog", { name: "ChurchOS support chat" })).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "BelivrHQ support chat" })).toBeVisible();
   await expect(page).toHaveURL(/\/dashboard$/);
   await page
     .getByRole("navigation", { name: "Workspace", exact: true })
@@ -191,7 +191,7 @@ test("chat opens on the current page and remains visible when help opens separat
   await expect(page).toHaveURL(/\/help$/);
   await expect(page.getByRole("button", { name: "Account menu", exact: true })).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Back to dashboard", exact: true })).toBeVisible();
-  await expect(page.getByRole("dialog", { name: "ChurchOS support chat" })).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "BelivrHQ support chat" })).toBeVisible();
   expect(requests).toBe(1);
 });
 
@@ -207,16 +207,16 @@ test("an already-loaded widget reconnects after leaving the workspace", async ({
   });
   await page.goto("/subscription");
   await page.getByRole("button", { name: "Open Tawk.to chat" }).click();
-  await expect(page.getByRole("dialog", { name: "ChurchOS support chat" })).toBeVisible();
-  await page.getByRole("link", { name: "ChurchOS home", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "BelivrHQ support chat" })).toBeVisible();
+  await page.getByRole("link", { name: "BelivrHQ home", exact: true }).click();
   await expect(page).toHaveURL("/");
-  await expect(page.getByRole("dialog", { name: "ChurchOS support chat" })).toBeHidden();
+  await expect(page.getByRole("dialog", { name: "BelivrHQ support chat" })).toBeHidden();
   await page.getByRole("link", { name: "Help Centre", exact: true }).click();
   await expect(page).toHaveURL(/\/help$/);
   await expect(page.getByRole("button", { name: "Open Tawk.to chat" })).toBeVisible();
-  await expect(page.getByRole("dialog", { name: "ChurchOS support chat" })).toBeHidden();
+  await expect(page.getByRole("dialog", { name: "BelivrHQ support chat" })).toBeHidden();
   await page.getByRole("button", { name: "Open Tawk.to chat" }).click();
-  await expect(page.getByRole("dialog", { name: "ChurchOS support chat" })).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "BelivrHQ support chat" })).toBeVisible();
   expect(requests).toBe(1);
 });
 
@@ -225,7 +225,7 @@ test("contact support has its own dashboard destination", async ({ page, context
   await page.goto("/support");
   await expect(page).toHaveURL(/\/support$/);
   await expect(page.getByRole("navigation", { name: "Workspace", exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Contact ChurchOS Support" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Contact BelivrHQ Support" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Open Tawk.to chat" })).toBeVisible();
 });
 
@@ -247,7 +247,7 @@ test("an expired cookie does not redirect a visitor away from sign-in", async ({
   context,
 }) => {
   await context.addCookies([
-    { name: "churchos_token", value: "expired", url: "http://127.0.0.1:3107" },
+    { name: "belivrhq_token", value: "expired", url: "http://127.0.0.1:3107" },
   ]);
   await context.route("**/api/session", (route) => route.fulfill({ json: { hasSession: true } }));
   await context.route("**/api/backend/**", (route) =>
@@ -265,7 +265,7 @@ for (const active of [true, false]) {
   }) => {
     // Cookie presence lets the fixture through middleware; the verified initial session is absent.
     await context.addCookies([
-      { name: "churchos_token", value: "entry-fixture", url: "http://127.0.0.1:3107" },
+      { name: "belivrhq_token", value: "entry-fixture", url: "http://127.0.0.1:3107" },
     ]);
     await context.route("**/api/session", (route) =>
       route.fulfill({ json: { hasSession: false } }),
@@ -330,12 +330,12 @@ test("contact support opens in-app chat without a ticket portal", async ({ page,
   );
   await nav.getByRole("link", { name: "Contact support", exact: true }).click();
   await expect(page).toHaveURL(/\/support$/);
-  await expect(page.getByRole("heading", { name: "Contact ChurchOS Support" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Contact BelivrHQ Support" })).toBeVisible();
   await expect(page.getByRole("link", { name: /support ticket/i })).toHaveCount(0);
-  await expect(page.locator('iframe[title="ChurchOS Tawk ticket portal"]')).toHaveCount(0);
+  await expect(page.locator('iframe[title="BelivrHQ Tawk ticket portal"]')).toHaveCount(0);
   await expect(page.locator('a[href^="mailto:"]')).toHaveCount(0);
   await page.getByRole("button", { name: "Open support chat", exact: true }).click();
-  await expect(page.getByRole("dialog", { name: "ChurchOS support chat" })).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "BelivrHQ support chat" })).toBeVisible();
   await expect(page).toHaveURL(/\/support$/);
   expect(portalRequests).toBe(0);
 });
@@ -347,7 +347,7 @@ test("staff contact support directs them to their church administrator", async (
   await fixture(context, "usher");
   await page.goto("/support");
   await expect(
-    page.getByText("to contact ChurchOS Support on your behalf.", { exact: false }),
+    page.getByText("to contact BelivrHQ Support on your behalf.", { exact: false }),
   ).toBeVisible();
   await expect(page.getByRole("button", { name: "Open support chat", exact: true })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Open Tawk.to chat" })).toHaveCount(0);
@@ -376,7 +376,7 @@ test("the retired support ticket route is no longer served", async ({ page, cont
   await fixture(context);
   const response = await page.goto("/support/ticket");
   expect(response?.status()).toBe(404);
-  await expect(page.locator('iframe[title="ChurchOS Tawk ticket portal"]')).toHaveCount(0);
+  await expect(page.locator('iframe[title="BelivrHQ Tawk ticket portal"]')).toHaveCount(0);
 });
 
 for (const width of [320, 390])

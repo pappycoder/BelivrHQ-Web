@@ -16,11 +16,11 @@ export function RecoveryCodesPanel({ codes, onDone }: { codes: string[]; onDone:
   };
   const checkboxId = React.useId();
   const download = () => {
-    const blob = new Blob([`ChurchOS recovery codes\nKeep these private. Each code works only once.\n\n${codes.join("\n")}\n`], { type: "text/plain;charset=utf-8" });
+    const blob = new Blob([`BelivrHQ recovery codes\nKeep these private. Each code works only once.\n\n${codes.join("\n")}\n`], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "churchos-recovery-codes.txt";
+    link.download = "belivrhq-recovery-codes.txt";
     link.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   };

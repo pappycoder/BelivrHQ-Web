@@ -302,7 +302,7 @@ export function MeetingAttendanceTable({
                     >
                       {row.attendee}
                     </Link>
-                  ) : row.visitorId && canAny("visitors:details:read") ? (
+                  ) : row.visitorId && canAny("visitors:list:read") ? (
                     <Link
                       data-row-open="true"
                       href={`/people/visitors/${row.visitorId}`}

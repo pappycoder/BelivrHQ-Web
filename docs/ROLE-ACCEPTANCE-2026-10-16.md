@@ -61,7 +61,7 @@ The harness was corrected during the run to support service workers, cancel open
 
 The backend has **33 passing PostgreSQL HTTP workflow tests** using production controllers, DTO validation, permission guards, services and request context for members, visitors, forms, assets, families and attendance services. All ten roles run with both HQ values, verifying persisted authorized changes, rejected writes, own/foreign branch boundaries and foreign-church boundaries. Additional cases cover read-only HQ, form lifecycle/clone/submission boundaries and actual persisted submission approval. Test-only identity middleware replaces JWT verification in that isolated server; actual login verification is provided by the deployed browser checks.
 
-The database was a new disposable local PostgreSQL instance, migrated from the repository and removed after the tests. No deployed records or notification recipients were used. Backend detail: `../ChurchOS-Backend/docs/ROLE-ACCEPTANCE-2026-10-16.md`.
+The database was a new disposable local PostgreSQL instance, migrated from the repository and removed after the tests. No deployed records or notification recipients were used. Backend detail: `../BelivrHQ-Backend/docs/ROLE-ACCEPTANCE-2026-10-16.md`.
 
 - Backend: **1,325 unit tests / 69 suites passed**, 33 database workflow tests passed, production build and changed-file lint passed.
 - Frontend: **312 tests / ten suites passed**, production build and changed-file lint passed; eleven read-only/security browser regressions passed against the production build with mocked API responses.
@@ -76,11 +76,11 @@ This acceptance exercise is not a load test, penetration test or proof of peak p
 ## Reproduce safely
 
 ```sh
-CHURCHOS_AUDIT_DEMO_LOGINS=true \
-CHURCHOS_AUDIT_URL=https://church-os-web.vercel.app \
+BELIVRHQ_AUDIT_DEMO_LOGINS=true \
+BELIVRHQ_AUDIT_URL=https://church-os-web.vercel.app \
 npm run audit:live-roles
 ```
 
-The runner only uses existing `@churchos.dev` demo accounts. It reads the existing development helper configuration; an optional `CHURCHOS_AUDIT_PASSWORD` can supply the password in memory. Do not put secrets in a committed command or report. Cookies are in memory, contexts are logged out/closed, and no storage state, screenshots, response bodies or tokens are saved. Reports contain sanitized account labels, roles, scope, permission counts, route templates and statuses; the default output is `/tmp/churchos-live-role-access.json` with mode 0600.
+The runner only uses existing `@belivrhq.dev` demo accounts. It reads the existing development helper configuration; an optional `BELIVRHQ_AUDIT_PASSWORD` can supply the password in memory. Do not put secrets in a committed command or report. Cookies are in memory, contexts are logged out/closed, and no storage state, screenshots, response bodies or tokens are saved. Reports contain sanitized account labels, roles, scope, permission counts, route templates and statuses; the default output is `/tmp/belivrhq-live-role-access.json` with mode 0600.
 
-Use `CHURCHOS_AUDIT_ACCOUNTS` for a comma-separated demo-account subset, `CHURCHOS_AUDIT_DETAILS_ONLY=true` for record/detail follow-ups, `CHURCHOS_AUDIT_ROUTES` for exact route templates, and `CHURCHOS_AUDIT_OUTPUT` for a separate report path. These live checks are explicitly opt-in and are not part of ordinary CI tests.
+Use `BELIVRHQ_AUDIT_ACCOUNTS` for a comma-separated demo-account subset, `BELIVRHQ_AUDIT_DETAILS_ONLY=true` for record/detail follow-ups, `BELIVRHQ_AUDIT_ROUTES` for exact route templates, and `BELIVRHQ_AUDIT_OUTPUT` for a separate report path. These live checks are explicitly opt-in and are not part of ordinary CI tests.

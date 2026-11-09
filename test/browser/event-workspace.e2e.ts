@@ -23,7 +23,7 @@ async function fixture(context: BrowserContext, options: { permissions?: string[
     registrationCount: 20, capacity: 100,
     archivedAt: options.archived ? "2026-10-26T09:00:00Z" : null,
   };
-  await context.addCookies([{ name: "churchos_token", value: "workspace-fixture", url: "http://127.0.0.1:3107" }]);
+  await context.addCookies([{ name: "belivrhq_token", value: "workspace-fixture", url: "http://127.0.0.1:3107" }]);
   await context.route("https://embed.tawk.to/**", route => route.fulfill({ body: "" }));
   await context.route("**/api/session", route => route.fulfill({ json: { hasSession: true } }));
   await context.route("**/api/backend/**", async route => {

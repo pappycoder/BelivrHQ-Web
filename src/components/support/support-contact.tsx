@@ -39,7 +39,7 @@ export function SupportContact({
         </h1>
         <p className="max-w-2xl leading-relaxed text-muted-foreground">
           Church administrators can use the in-app chat to get help with
-          ChurchOS or report a problem.
+          BelivrHQ or report a problem.
         </p>
       </header>
       <section
@@ -81,7 +81,7 @@ export function SupportContact({
           ) : (
             <p className="text-sm text-muted-foreground">
               Live chat is available to active church administrators. Ask your
-              church administrator to contact ChurchOS Support on your behalf.
+              church administrator to contact BelivrHQ Support on your behalf.
             </p>
           )}
         </div>
@@ -93,7 +93,7 @@ export function SupportContact({
       </section>
       <aside className="rounded-xl border p-5 text-sm leading-relaxed text-muted-foreground">
         Your church administrator manages role assignments, location access and
-        church settings. ChurchOS Support can help investigate product issues;
+        church settings. BelivrHQ Support can help investigate product issues;
         contacting support does not change your account permissions.
       </aside>
     </div>

@@ -73,7 +73,7 @@ async function fixture(
   ];
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "groups-fixture",
       url: "http://127.0.0.1:3107",
     },
@@ -286,7 +286,7 @@ for (const width of [1280, 320])
         await page.evaluate(() => document.documentElement.scrollWidth),
       ).toBeLessThanOrEqual(width);
       await page.screenshot({
-        path: `/tmp/churchos-${kind.replace(" ", "-")}-cards-${width}.png`,
+        path: `/tmp/belivrhq-${kind.replace(" ", "-")}-cards-${width}.png`,
         fullPage: true,
         animations: "disabled",
       });
@@ -416,7 +416,7 @@ for (const width of [1280, 320])
       await page.getByRole("heading", { level: 1 }).click();
       await page.evaluate(() => window.scrollTo(0, 0));
       await page.screenshot({
-        path: `/tmp/churchos-${cell ? "cell" : "department"}-detail-${width}.png`,
+        path: `/tmp/belivrhq-${cell ? "cell" : "department"}-detail-${width}.png`,
         fullPage: true,
         animations: "disabled",
       });
@@ -582,7 +582,7 @@ for (const cell of [false, true])
     await page.getByRole("heading", { level: 1 }).click();
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({
-      path: `/tmp/churchos-${cell ? "cell" : "department"}-attendance-320.png`,
+      path: `/tmp/belivrhq-${cell ? "cell" : "department"}-attendance-320.png`,
       fullPage: true,
       animations: "disabled",
     });
@@ -718,7 +718,7 @@ for (const cell of [false, true])
       .locator('xpath=ancestor::div[contains(@class,"border-dashed")][1]');
     await expect(empty).not.toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
     await page.screenshot({
-      path: `/tmp/churchos-${cell ? "cell" : "department"}-attendance-empty-320.png`,
+      path: `/tmp/belivrhq-${cell ? "cell" : "department"}-attendance-empty-320.png`,
       fullPage: true,
       animations: "disabled",
     });

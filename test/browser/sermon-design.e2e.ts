@@ -46,7 +46,7 @@ async function fixture(
   });
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "sermon-design",
       url: "http://127.0.0.1:3107",
     },
@@ -57,7 +57,7 @@ async function fixture(
         .serviceWorker;
       localStorage.setItem("theme", dark ? "dark" : "light");
       localStorage.setItem(
-        "churchos:appearance:v1:profile:church",
+        "belivrhq:appearance:v1:profile:church",
         JSON.stringify({ accent: "#7c3aed" }),
       );
     },
@@ -202,7 +202,7 @@ for (const width of [390, 1440])
     }) => {
       await fixture(context, { dark });
       await page.setViewportSize({ width, height: 1000 });
-      await mkdir("/tmp/churchos-sermon-previews", { recursive: true });
+      await mkdir("/tmp/belivrhq-sermon-previews", { recursive: true });
       const errors: string[] = [];
       page.on("pageerror", (error) => errors.push(error.message));
       for (const [path, name] of [
@@ -234,7 +234,7 @@ for (const width of [390, 1440])
           path,
         ).toBe(true);
         await page.screenshot({
-          path: `/tmp/churchos-sermon-previews/${name}-${width}-${dark ? "dark" : "light"}.png`,
+          path: `/tmp/belivrhq-sermon-previews/${name}-${width}-${dark ? "dark" : "light"}.png`,
           fullPage: true,
         });
       }
@@ -249,7 +249,7 @@ for (const width of [390, 1440])
           page.getByRole("button", { name: `Save ${section}`, exact: true }),
         ).toBeVisible();
         await page.screenshot({
-          path: `/tmp/churchos-sermon-previews/editor-${section.toLowerCase()}-${width}-${dark ? "dark" : "light"}.png`,
+          path: `/tmp/belivrhq-sermon-previews/editor-${section.toLowerCase()}-${width}-${dark ? "dark" : "light"}.png`,
           fullPage: true,
         });
       }

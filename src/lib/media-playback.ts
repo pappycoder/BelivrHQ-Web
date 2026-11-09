@@ -1,7 +1,7 @@
 /** Managed files use the current web session, even when saved with an older host. */
 export function mediaPlaybackUrl(value: string): string | undefined {
   try {
-    const url = new URL(value, "https://churchos.invalid");
+    const url = new URL(value, "https://belivrhq.invalid");
     if (!["http:", "https:"].includes(url.protocol)) return undefined;
     const managed = url.pathname.match(/^\/api\/(?:backend|v1)\/media\/files\/([a-zA-Z0-9_-]+)$/);
     if (managed) return `/api/backend/media/files/${managed[1]}`;

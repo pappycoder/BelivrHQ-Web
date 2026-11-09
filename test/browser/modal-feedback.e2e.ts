@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 test.beforeEach(async ({ context }) => {
-  await context.addCookies([{ name: "churchos_token", value: "feedback-fixture", url: "http://127.0.0.1:3107" }]);
+  await context.addCookies([{ name: "belivrhq_token", value: "feedback-fixture", url: "http://127.0.0.1:3107" }]);
   await context.addInitScript(() => {
     const original = window.fetch.bind(window);
     window.fetch = async (input, options) => {

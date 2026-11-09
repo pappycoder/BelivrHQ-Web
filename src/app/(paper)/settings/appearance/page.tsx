@@ -57,7 +57,7 @@ export default function SettingsAppearancePage() {
             <Button size="sm" variant="ghost" className="h-7 gap-1.5 rounded-full text-[11px] text-ink-faint" onClick={() => { resetPaperBrand(); setBrand(currentPaperBrand()); }}>
               <RotateCcw className="size-3" /> Reset to teal
             </Button>
-          ) : <Tag tone="moss">Teal (ChurchOS default)</Tag>
+          ) : <Tag tone="moss">Teal (BelivrHQ default)</Tag>
         }
       >
         <div className="flex flex-wrap gap-3">

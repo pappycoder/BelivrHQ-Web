@@ -14,7 +14,7 @@ export async function createTicketPDF(ticket: AllTicketItem, branding?: ExportBr
     QRCode.toDataURL(ticket.code, { width: 480, margin: 4, errorCorrectionLevel: "M", color: { dark: colors.navy, light: colors.white } }),
   ]);
   const churchLogo = await loadExportLogo(branding);
-  doc.setProperties({ title: `${ticket.eventName} - Event pass`, author: branding?.churchName || "ChurchOS", creator: "ChurchOS", subject: `Ticket ${ticket.code}` });
+  doc.setProperties({ title: `${ticket.eventName} - Event pass`, author: branding?.churchName || "BelivrHQ", creator: "BelivrHQ", subject: `Ticket ${ticket.code}` });
   drawPdfHeader(doc, assets.logo, "EVENT PASS", branding, churchLogo);
   pdfLabel(doc, "YOU'RE INVITED", 14, 36);
 
@@ -66,7 +66,7 @@ export async function createTicketPDF(ticket: AllTicketItem, branding?: ExportBr
   pdfLabel(doc, "TICKET CODE", 152, 98);
   pdfText(doc, ticket.code, 152, 104, 44, 7.5, true);
   pdfText(doc, "Present this QR code at event check-in.", 152, 119, 44, 7, false, colors.muted);
-  drawPdfFooters(doc, new Date(), "ChurchOS · Event pass");
+  drawPdfFooters(doc, new Date(), "BelivrHQ · Event pass");
   return doc;
 }
 

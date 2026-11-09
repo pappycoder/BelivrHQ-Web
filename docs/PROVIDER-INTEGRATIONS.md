@@ -22,7 +22,7 @@ If an administrator cannot see the tab or sidebar entry on an existing deploymen
 
 Integrations is also linked from the account menu when `integrations:read` is present, including when the sidebar is collapsed. The permission gate is the same for all navigation entry points and the page itself; no role-based frontend bypass was added. The repair was verified twice against a fresh temporary PostgreSQL database and preserved unrelated/non-administrator grants.
 
-Backend deployment, master keys, callback paths, provider restrictions and verification: [Provider integration guide](../../ChurchOS-Backend/docs/PROVIDER-INTEGRATIONS.md).
+Backend deployment, master keys, callback paths, provider restrictions and verification: [Provider integration guide](../../BelivrHQ-Backend/docs/PROVIDER-INTEGRATIONS.md).
 
 Production-browser tests: `npx playwright test test/browser/messaging-settings.e2e.ts` after a production build. Tests use API/provider fixtures and never place real calls, send messages or charge cards.
 

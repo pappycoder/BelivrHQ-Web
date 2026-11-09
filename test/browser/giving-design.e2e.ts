@@ -112,7 +112,7 @@ async function fixture(context: BrowserContext, options: Options = {}) {
   ];
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "giving-design",
       url: "http://127.0.0.1:3107",
     },
@@ -849,11 +849,11 @@ test("desktop/mobile and light/dark previews retain fixed teal branding", async 
   await fixture(context);
   await context.addInitScript(() =>
     localStorage.setItem(
-      "churchos:appearance:v1:profile-a:church-a",
+      "belivrhq:appearance:v1:profile-a:church-a",
       JSON.stringify({ accent: "#7c3aed" }),
     ),
   );
-  const directory = "/tmp/churchos-giving-previews";
+  const directory = "/tmp/belivrhq-giving-previews";
   await fs.mkdir(directory, { recursive: true });
   for (const [route, name] of [
     ["/giving", "dashboard"],

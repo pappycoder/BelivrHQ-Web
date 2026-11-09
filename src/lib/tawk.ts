@@ -1,4 +1,4 @@
-/** Public widget identifiers supplied by the ChurchOS support team. No API secret. */
+/** Public widget identifiers supplied by the BelivrHQ support team. No API secret. */
 export const TAWK_EMBED_URL = "https://embed.tawk.to/6ad5c1c809d49434c8f515a2/1k59fptu4";
 export const TAWK_CHAT_URL = "https://tawk.to/chat/6ad5c1c809d49434c8f515a2/1k59fptu4";
 
@@ -118,7 +118,7 @@ function loadTawk(): Promise<TawkApi> {
   return loading;
 }
 
-/** Anonymous native widget: ChurchOS tokens, profile and church data are never sent. */
+/** Anonymous native widget: BelivrHQ tokens, profile and church data are never sent. */
 async function showSupportWidget(expand: boolean): Promise<void> {
   const request = ++generation;
   wanted = true;

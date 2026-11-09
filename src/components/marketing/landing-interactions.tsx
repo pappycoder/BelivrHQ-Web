@@ -1,5 +1,7 @@
 "use client";
 
+import { BRAND_NAME } from "@/lib/brand/identity";
+
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -113,15 +115,15 @@ export function MarketingNavigation() {
   return (
     <header className={styles.header}>
       <nav className={styles.navigation} aria-label="Main navigation">
-        <Link href="/" className={styles.brand} aria-label="ChurchOS home">
+        <Link href="/" className={styles.brand} aria-label="BelivrHQ home">
           <Image
-            src="/brand/churchos-emblem.png"
+            src="/brand/belivrhq-emblem.png"
             alt=""
             width={36}
             height={36}
             priority
           />
-          church<span>os</span>
+          {BRAND_NAME}
           <span className={styles.brandDot} />
         </Link>
         <div className={styles.desktopLinks}>
@@ -261,7 +263,7 @@ export function ProductPreview() {
       >
         <aside className={styles.mockSidebar} aria-hidden="true">
           <div className={styles.mockLogo}>
-            c<span>o</span>
+            b<span>hq</span>
             <span className={styles.mockLogoDot} />
           </div>
           <span className={styles.mockNavActive}>
@@ -536,7 +538,7 @@ export function PricingSection() {
             <DialogDescription className={styles.dialogDescription}>
               {plan?.description}{" "}
               {plan?.id === "enterprise"
-                ? "Pricing, billing terms and rollout scope are negotiated directly with the ChurchOS team."
+                ? "Pricing, billing terms and rollout scope are negotiated directly with the BelivrHQ team."
                 : "Choose your plan during registration, then activate your workspace with secure checkout."}
             </DialogDescription>
           </DialogHeader>
@@ -565,7 +567,7 @@ export function PricingSection() {
               </ul>
               {plan.id === "enterprise" ? (
                 <p className={styles.dialogFinePrint}>
-                  Contact the ChurchOS team to discuss your needs and agree on a
+                  Contact the BelivrHQ team to discuss your needs and agree on a
                   tailored proposal.
                 </p>
               ) : (

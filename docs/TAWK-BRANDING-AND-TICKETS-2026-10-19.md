@@ -1,4 +1,4 @@
-# ChurchOS Support: in-app Tawk chat and branding
+# BelivrHQ Support: in-app Tawk chat and branding
 
 ## Current application behavior
 
@@ -11,10 +11,10 @@
 
 ## Apply branding in the Tawk dashboard
 
-Tawk's cross-origin widget owns its logo, colours and welcome text. These settings are saved in the Tawk property, not controlled by the embed snippet's JavaScript API. No connected Tawk administration integration was found, so these remote settings have **not** been applied. The downloadable [brand kit](support-branding/churchos-tawk-brand-kit.zip) contains existing official logos and the exact reference settings. It is a reference bundle, **not** an importable Tawk configuration.
+Tawk's cross-origin widget owns its logo, colours and welcome text. These settings are saved in the Tawk property, not controlled by the embed snippet's JavaScript API. No connected Tawk administration integration was found, so these remote settings have **not** been applied. The downloadable [brand kit](support-branding/belivrhq-tawk-brand-kit.zip) contains existing official logos and the exact reference settings. It is a reference bundle, **not** an importable Tawk configuration.
 
-1. Sign into the Tawk dashboard and select the ChurchOS property for widget `1k59fptu4` (property `6ad5c1c809d49434c8f515a2`).
-2. Set the property name to **ChurchOS Support** and its Property Image to the official square logo. Use `churchos-favicon-white.png` on the dark teal header, or `churchos-emblem.png` if using a light header.
+1. Sign into the Tawk dashboard and select the BelivrHQ property for widget `1k59fptu4` (property `6ad5c1c809d49434c8f515a2`).
+2. Set the property name to **BelivrHQ Support** and its Property Image to the official square logo. Use `belivrhq-favicon-white.png` on the dark teal header, or `belivrhq-emblem.png` if using a light header.
 3. Open **Administration → Chat Widget → Widget Appearance → Advanced** and apply:
 
 | Setting | Value |
@@ -30,10 +30,10 @@ Tawk's cross-origin widget owns its logo, colours and welcome text. These settin
 
 4. Open **Widget Content → Edit Content**. Add the Logo card and configure Online, Away and Offline states:
 
-| Field | Suggested ChurchOS text |
+| Field | Suggested BelivrHQ text |
 | --- | --- |
-| Heading | ChurchOS Support |
-| Online welcome | Welcome to ChurchOS Support. How can we help you today? |
+| Heading | BelivrHQ Support |
+| Online welcome | Welcome to BelivrHQ Support. How can we help you today? |
 | Away message | We may take a little longer to reply. Leave your question and email so we can follow up. |
 | Offline message | We are currently offline. Leave your name, email and message in the chat so we can follow up. |
 | Help link | Your deployed app's `/help` URL |

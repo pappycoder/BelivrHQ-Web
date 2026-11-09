@@ -51,7 +51,7 @@ export const metadata: Metadata = {
       { url: "/favicon-128.png", sizes: "128x128", type: "image/png" },
       { url: "/favicon-256.png", sizes: "256x256", type: "image/png" },
       {
-        url: "/brand/churchos-favicon-white.png",
+        url: "/brand/belivrhq-favicon-white.png",
         sizes: "1024x1024",
         type: "image/png",
       },
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "ChurchOS",
+    title: "BelivrHQ",
   },
   formatDetection: {
     telephone: false,
@@ -112,7 +112,7 @@ export default function RootLayout({
             src/lib/paper-brand.ts; PaperBrandSync re-applies after mount. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var s=JSON.parse(localStorage.getItem("churchos:paper-brand")||"null");if(s){var d=document.documentElement.classList.contains("dark");var b=d?s.brandDark:s.brand;var st=document.documentElement.style;st.setProperty("--brand",b);st.setProperty("--brand-soft",d?s.softDark:s.soft);st.setProperty("--ring","color-mix(in oklab, "+b+" 40%, transparent)")}}catch(e){}`,
+            __html: `try{for(var j=0;j<2;j++){var z=j?sessionStorage:localStorage;var ks=Object.keys(z);for(var i=0;i<ks.length;i++){var k=ks[i];if(/^churchos[:-]/.test(k)){var n=k.replace(/^churchos/,"belivrhq");if(z.getItem(n)===null)z.setItem(n,z.getItem(k))}}}var s=JSON.parse(localStorage.getItem("belivrhq:paper-brand")||"null");if(s){var d=document.documentElement.classList.contains("dark");var b=d?s.brandDark:s.brand;var st=document.documentElement.style;st.setProperty("--brand",b);st.setProperty("--brand-soft",d?s.softDark:s.soft);st.setProperty("--ring","color-mix(in oklab, "+b+" 40%, transparent)")}}catch(e){}`,
           }}
         />
         <ThemeProvider

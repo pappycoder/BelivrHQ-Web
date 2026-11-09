@@ -8,13 +8,13 @@ afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); });
 describe("church-branded exports", () => {
   const sheets = [{ name: "Members", columns: [{ key: "name", label: "Member" }], data: [{ name: "Ada" }] }];
 
-  it("keeps tenant identities separate and retains ChurchOS in saved workbooks", async () => {
+  it("keeps tenant identities separate and retains BelivrHQ in saved workbooks", async () => {
     const first = await createExcelWorkbook(sheets, { branding: { churchName: "Grace Church" } });
     const second = await createExcelWorkbook(sheets, { branding: { churchName: "Hope Church" } });
     expect(first.worksheets[0].getCell("A1").value).toContain("Grace Church");
     expect(second.worksheets[0].getCell("A1").value).toContain("Hope Church");
-    expect(second.worksheets[0].getCell("A3").value).toContain("Powered by ChurchOS");
-    expect(first.creator).toBe("ChurchOS");
+    expect(second.worksheets[0].getCell("A3").value).toContain("Powered by BelivrHQ");
+    expect(first.creator).toBe("BelivrHQ");
     const { Workbook } = await import("exceljs");
     const restored = new Workbook();
     await restored.xlsx.load(await first.xlsx.writeBuffer());
@@ -36,7 +36,7 @@ describe("church-branded exports", () => {
     expect(doc.getNumberOfPages()).toBeGreaterThan(1);
     const pdf = doc.output();
     expect(pdf).toContain(`/Author (${name})`);
-    expect(pdf).toContain("/Creator (ChurchOS)");
+    expect(pdf).toContain("/Creator (BelivrHQ)");
     // The encoded church heading and app footer appear on every generated page.
     const pages = (doc.internal as unknown as { pages: string[][] }).pages.slice(1);
     expect(pages.every((page) => page.some((line) => line.includes("Tj")))).toBe(true);
@@ -52,8 +52,8 @@ describe("church-branded exports", () => {
     const csv = await output!.text();
     expect(csv.split("\n")[0]).toBe("Member,Church,Exported with");
     expect(csv).toContain('"\'=SUM(1,2)"');
-    expect(csv).toContain('"\'=Unsafe, Church",ChurchOS');
-    expect(filename).toContain("Unsafe-Church-members-churchos.csv");
+    expect(csv).toContain('"\'=Unsafe, Church",BelivrHQ');
+    expect(filename).toContain("Unsafe-Church-members-belivrhq.csv");
   });
 
   it("ignores failed, oversized and unsupported logos without failing the export", async () => {

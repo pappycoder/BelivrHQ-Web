@@ -611,7 +611,7 @@ export function Sidebar() {
   return <SidebarPrimitive collapsible="icon" variant="sidebar" aria-label="Main navigation" className="workspace-sidebar">
     <div className="flex min-h-0 flex-1">
       <nav aria-label="Workspace areas" className="workspace-area-rail hidden md:flex">
-        <Link href="/home" aria-label="ChurchOS home" className="workspace-brand-mark" onClick={close}>
+        <Link href="/home" aria-label="BelivrHQ home" className="workspace-brand-mark" onClick={close}>
           <BrandLogo variant="mark" emblemClassName="!size-8 brightness-0 invert" />
         </Link>
         <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto py-3">{areas.map(entry => areaLink(entry, true))}</div>
@@ -624,7 +624,7 @@ export function Sidebar() {
       <div className={cn("workspace-context-panel flex min-h-0 flex-1 flex-col", !open && !isMobile && "hidden")}>
         <div className="workspace-church-heading">
           <span className="workspace-eyebrow">WORKSPACE</span>
-          <p className="truncate text-sm font-semibold" title={profile?.church?.name}>{profile?.church?.name || "ChurchOS"}</p>
+          <p className="truncate text-sm font-semibold" title={profile?.church?.name}>{profile?.church?.name || "BelivrHQ"}</p>
           <p className="truncate text-xs text-muted-foreground">{profile?.isAdminHq ? "Headquarters" : profile?.branch?.name || "Church workspace"}</p>
         </div>
         <SidebarContent>

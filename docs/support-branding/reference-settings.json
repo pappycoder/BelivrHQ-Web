@@ -2,7 +2,7 @@
   "purpose": "Reference settings for manual entry in the Tawk dashboard; not an importable provider configuration",
   "propertyId": "6ad5c1c809d49434c8f515a2",
   "widgetId": "1k59fptu4",
-  "name": "ChurchOS Support",
+  "name": "BelivrHQ Support",
   "colors": {
     "header": "#173D3E",
     "headerText": "#FFFFFF",
@@ -11,7 +11,7 @@
     "visitorMessage": "#173D3E",
     "visitorText": "#FFFFFF"
   },
-  "onlineWelcome": "Welcome to ChurchOS Support. How can we help you today?",
+  "onlineWelcome": "Welcome to BelivrHQ Support. How can we help you today?",
   "awayMessage": "We may take a little longer to reply. Leave your question and email so we can follow up.",
   "offlineMessage": "We are currently offline. Leave your name, email and message in the chat so we can follow up.",
   "helpPath": "/help",

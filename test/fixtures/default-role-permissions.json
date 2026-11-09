@@ -1,5 +1,5 @@
 {
-  "source": "ChurchOS-Backend/prisma/seeds/shared/permissions.seed.ts",
+  "source": "BelivrHQ-Backend/prisma/seeds/shared/permissions.seed.ts",
   "sourceSha256": "4f3e154d1c24bd301da8e70534aa26407fc8c0d53e489de4e54233fc43adaa48",
   "roles": {
     "secretary": [

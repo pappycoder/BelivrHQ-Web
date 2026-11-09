@@ -153,7 +153,7 @@ async function fixture(
   };
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "remaining-workspace-fixture",
       url: "http://127.0.0.1:3107",
     },
@@ -164,7 +164,7 @@ async function fixture(
         .serviceWorker;
       localStorage.setItem("theme", dark ? "dark" : "light");
       localStorage.setItem(
-        "churchos:appearance:v1:profile:church",
+        "belivrhq:appearance:v1:profile:church",
         JSON.stringify({ accent: "#7c3aed" }),
       );
     },
@@ -492,7 +492,7 @@ for (const width of [390, 1440])
       const errors: string[] = [];
       page.on("pageerror", (error) => errors.push(error.message));
       await page.setViewportSize({ width, height: 1000 });
-      await mkdir("/tmp/churchos-remaining-workspace-previews", {
+      await mkdir("/tmp/belivrhq-remaining-workspace-previews", {
         recursive: true,
       });
       for (const path of routes) {
@@ -513,7 +513,7 @@ for (const width of [390, 1440])
           )
           .toBe(true);
         await page.screenshot({
-          path: `/tmp/churchos-remaining-workspace-previews/${path.slice(1).replaceAll("/", "-")}-${width}-${dark ? "dark" : "light"}.png`,
+          path: `/tmp/belivrhq-remaining-workspace-previews/${path.slice(1).replaceAll("/", "-")}-${width}-${dark ? "dark" : "light"}.png`,
           fullPage: true,
         });
       }

@@ -73,9 +73,9 @@ export function SupportChatProvider({ children }: { children: React.ReactNode })
       setError("");
       closeSupportChat();
     };
-    window.addEventListener("churchos-session-ended", stop);
+    window.addEventListener("belivrhq-session-ended", stop);
     return () => {
-      window.removeEventListener("churchos-session-ended", stop);
+      window.removeEventListener("belivrhq-session-ended", stop);
       stop();
     };
   }, [scope]);

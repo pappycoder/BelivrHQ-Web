@@ -5,7 +5,7 @@ import { WifiOff, HardDriveDownload, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePermissions } from "@/hooks/use-permissions";
 
-const DISMISSED = "churchos-offline-banner-dismissed";
+const DISMISSED = "belivrhq-offline-banner-dismissed";
 
 export function OfflineHeaderButton() {
   const { ready, can } = usePermissions();

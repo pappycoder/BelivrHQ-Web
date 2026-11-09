@@ -2,7 +2,7 @@ import { test, expect, type BrowserContext } from '@playwright/test';
 
 async function fixture(context: BrowserContext, hq: boolean, features: string[] = ['giving', 'reports']) {
   await context.route('https://embed.tawk.to/**', route => route.fulfill({ body: '' }));
-  await context.addCookies([{ name: 'churchos_token', value: 'invite-fixture', url: 'http://127.0.0.1:3107' }]);
+  await context.addCookies([{ name: 'belivrhq_token', value: 'invite-fixture', url: 'http://127.0.0.1:3107' }]);
   await context.addInitScript(({ hq, features }) => {
     const original = window.fetch.bind(window);
     const state = { invitations: [] as Record<string, unknown>[], branchReads: 0 };

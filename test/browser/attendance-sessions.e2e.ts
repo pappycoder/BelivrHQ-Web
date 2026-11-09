@@ -10,7 +10,7 @@ test.beforeEach(async ({ context }, info) => {
       : "event";
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "session-test",
       url: "http://127.0.0.1:3107",
     },

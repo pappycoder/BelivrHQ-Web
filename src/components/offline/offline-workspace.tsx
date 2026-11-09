@@ -1,4 +1,6 @@
 "use client";
+import { LEGACY_BRAND } from "@/lib/brand/identity";
+
 
 import { LoadingState } from "@/components/shared/loading-state";
 import Link from "next/link";
@@ -134,12 +136,13 @@ export function OfflineWorkspace() {
     };
     const channel =
       typeof BroadcastChannel !== "undefined"
-        ? new BroadcastChannel("churchos-session")
+        ? new BroadcastChannel("belivrhq-session")
         : undefined;
     if (channel) channel.onmessage = () => lock();
     window.addEventListener("online", connected);
     window.addEventListener("offline", disconnected);
-    window.addEventListener("churchos-session-ended", lock);
+    window.addEventListener("belivrhq-session-ended", lock);
+    window.addEventListener(LEGACY_BRAND.sessionEnded, lock);
     window.addEventListener("pointerdown", active);
     window.addEventListener("keydown", active);
     const timer = window.setInterval(() => {
@@ -151,7 +154,8 @@ export function OfflineWorkspace() {
       clearInterval(timer);
       window.removeEventListener("online", connected);
       window.removeEventListener("offline", disconnected);
-      window.removeEventListener("churchos-session-ended", lock);
+      window.removeEventListener("belivrhq-session-ended", lock);
+      window.removeEventListener(LEGACY_BRAND.sessionEnded, lock);
       window.removeEventListener("pointerdown", active);
       window.removeEventListener("keydown", active);
       offlineVault.lock();
@@ -318,7 +322,7 @@ export function OfflineWorkspace() {
     );
     const link = document.createElement("a");
     link.href = url;
-    link.download = "churchos-pending-changes.json";
+    link.download = "belivrhq-pending-changes.json";
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     toast.info("Export contains personal data. Keep it securely.");
@@ -384,7 +388,7 @@ export function OfflineWorkspace() {
               workspace.
             </p>
             <Button asChild>
-              <Link href="/home" prefetch={false}>Back to ChurchOS</Link>
+              <Link href="/home" prefetch={false}>Back to BelivrHQ</Link>
             </Button>
           </CardContent>
         </Card>
@@ -412,7 +416,7 @@ export function OfflineWorkspace() {
               {online ? "Connected" : "Offline"}
             </span>
             <Button variant="outline" asChild>
-              <Link href="/home" prefetch={false}>Back to ChurchOS</Link>
+              <Link href="/home" prefetch={false}>Back to BelivrHQ</Link>
             </Button>
             {workspace && (
               <Button variant="outline" onClick={lock}>

@@ -18,7 +18,7 @@ No API, database, subscription, route, or permission-seed changes. Dedicated Ana
 - Attendance browser verification covers 49 cases across the full regression and focused reruns (including visitor registration outcomes and duplicate check-ins).
 - New mocked browser coverage checks summary-only/report access, denied access, HQ/branch scope, inclusive dashboard dates, missing demographics, empty states, independent failures/retry, record/report export filters, service lifecycle controls and responsive chart layouts.
 - Existing regression fixtures now navigate the existing Attendance tabs, optional headcount disclosure and event action menu, and declare the existing module entitlements/event-list grant needed by those flows. Application permissions are unchanged.
-- Mock-data previews are saved outside the repository at `/tmp/churchos-attendance-previews/` (desktop/mobile and dark views, check-in, records, services, service form, service detail and reports). These are local test fixtures, not live church data.
+- Mock-data previews are saved outside the repository at `/tmp/belivrhq-attendance-previews/` (desktop/mobile and dark views, check-in, records, services, service form, service detail and reports). These are local test fixtures, not live church data.
 
 ## Release
 

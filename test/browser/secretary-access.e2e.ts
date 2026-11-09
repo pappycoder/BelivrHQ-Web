@@ -19,7 +19,7 @@ async function fixture(context: BrowserContext, essentials = false) {
   };
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "secretary-fixture",
       url: "http://127.0.0.1:3107",
     },

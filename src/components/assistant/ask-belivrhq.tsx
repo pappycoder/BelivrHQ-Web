@@ -34,7 +34,7 @@ interface Context {
 interface Turn { id: number; question: string; reply?: Reply; error?: string; }
 const SUGGESTIONS = ["Explain this page", "What can I access on this page?", "How do I approve form submissions?", "How do table display controls work?"];
 
-export function AskChurchOS() {
+export function AskBelivrHQ() {
   const { isAuthenticated } = useAuth();
   const { data: profile, isError } = useCurrentProfile();
   const { ready } = usePermissions();
@@ -70,11 +70,11 @@ function AssistantPanel({ profile }: { profile: CurrentProfile }) {
     const timeout = window.setTimeout(() => {
       controller.abort();
       setContext(null);
-      setContextError("ChurchOS took too long to verify assistant access. Please retry.");
+      setContextError("BelivrHQ took too long to verify assistant access. Please retry.");
     }, 15000);
     api.get<Context>("/assistant/context", { signal: controller.signal }).then(value => {
       if (!value || !["ai", "guides"].includes(value.mode) || !value.scope || !value.limits)
-        throw new Error("ChurchOS couldn’t load assistant access. Please retry.");
+        throw new Error("BelivrHQ couldn’t load assistant access. Please retry.");
       if (!controller.signal.aborted) setContext(value);
     }).catch(error => {
       if (!controller.signal.aborted) { setContext(null); setContextError(getToastErrorMessage(error, "We couldn’t verify assistant access. Please retry.")); }
@@ -103,7 +103,7 @@ function AssistantPanel({ profile }: { profile: CurrentProfile }) {
       if (active.current !== controller) return;
       controller.abort(); active.current = null;
       setPending(false); setQuestion(cleaned);
-      setTurns(previous => previous.map(turn => turn.id === id ? { ...turn, error: "ChurchOS took too long to answer. Your question is saved below; please try again." } : turn));
+      setTurns(previous => previous.map(turn => turn.id === id ? { ...turn, error: "BelivrHQ took too long to answer. Your question is saved below; please try again." } : turn));
     }, 35000);
     try {
       const reply = await api.post<Reply>("/assistant/message", { question: cleaned, page, history }, { signal: controller.signal });
@@ -123,44 +123,44 @@ function AssistantPanel({ profile }: { profile: CurrentProfile }) {
     setPending(false); setTurns([]); setQuestion("");
   }
   return <Sheet open={open} onOpenChange={setOpen}>
-    <SheetTrigger asChild><Button variant="outline" size="sm" aria-label="Ask ChurchOS" className="gap-2 border-primary/25"><Sparkles className="size-4" /><span className="hidden lg:inline">Ask ChurchOS</span></Button></SheetTrigger>
-    <SheetContent className="w-full gap-0 p-0 sm:max-w-lg" aria-describedby="ask-churchos-description">
+    <SheetTrigger asChild><Button variant="outline" size="sm" aria-label="Ask BelivrHQ" className="gap-2 border-primary/25"><Sparkles className="size-4" /><span className="hidden lg:inline">Ask BelivrHQ</span></Button></SheetTrigger>
+    <SheetContent className="w-full gap-0 p-0 sm:max-w-lg" aria-describedby="ask-belivrhq-description">
       <SheetHeader className="border-b bg-primary/5 p-5 pr-12">
-        <SheetTitle className="flex items-center gap-2"><Sparkles className="size-5 text-primary" />Ask ChurchOS</SheetTitle>
-        <SheetDescription id="ask-churchos-description">A clear next step for your church workspace.</SheetDescription>
+        <SheetTitle className="flex items-center gap-2"><Sparkles className="size-5 text-primary" />Ask BelivrHQ</SheetTitle>
+        <SheetDescription id="ask-belivrhq-description">A clear next step for your church workspace.</SheetDescription>
       </SheetHeader>
       <div className="flex min-h-0 flex-1 flex-col">
         <div className="shrink-0 border-b px-5 py-3 text-xs text-muted-foreground">
-          <p className="flex items-center gap-2 font-medium text-foreground"><ShieldCheck className="size-3.5" />Product guidance · {context?.mode === "ai" ? "AI assisted" : "ChurchOS references"}</p>
+          <p className="flex items-center gap-2 font-medium text-foreground"><ShieldCheck className="size-3.5" />Product guidance · {context?.mode === "ai" ? "AI assisted" : "BelivrHQ references"}</p>
           <p className="mt-1 break-words">Page: {page.replace(/\[.*?\]/g, "record")} · {context?.scope.location ?? <LoadingState label="Checking your access" variant="inline" />}</p>
           {context?.mode === "ai" && <p className="mt-1">Your question and selected product guidance are sent to OpenAI. Keep questions general; avoid personal records, passwords and secrets.</p>}
           <p className="mt-1">This assistant explains the product. It cannot read church records or change anything.</p>
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5" role="log" aria-label="ChurchOS assistant conversation" aria-live="polite" aria-relevant="additions text">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5" role="log" aria-label="BelivrHQ assistant conversation" aria-live="polite" aria-relevant="additions text">
           {contextError ? <div role="alert" className="space-y-3 rounded-xl border p-4 text-sm"><p>{contextError}</p><Button variant="outline" size="sm" onClick={() => setContextAttempt(value => value + 1)}>Retry assistant</Button><p><Link href="/help" onClick={() => setOpen(false)} className="underline">Open Help Centre</Link></p></div> : !context ? <LoadingState label="Checking your access" variant="detail" className="p-0 sm:p-0" /> : turns.length === 0 ? <div className="space-y-5">
-            <div className="rounded-2xl border bg-muted/30 p-5"><MessageCircleQuestion className="mb-3 size-7 text-primary" /><h3 className="font-semibold">What would you like to understand?</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">Find a page, understand your access, or get steps for a ChurchOS workflow. Answers include their references.</p></div>
+            <div className="rounded-2xl border bg-muted/30 p-5"><MessageCircleQuestion className="mb-3 size-7 text-primary" /><h3 className="font-semibold">What would you like to understand?</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">Find a page, understand your access, or get steps for a BelivrHQ workflow. Answers include their references.</p></div>
             <div className="grid gap-2">{SUGGESTIONS.map(suggestion => <Button key={suggestion} variant="outline" className="h-auto justify-start whitespace-normal px-3 py-3 text-left" onClick={() => void send(suggestion)}>{suggestion}</Button>)}</div>
           </div> : <div className="space-y-6">{turns.map(turn => <article key={turn.id} className="space-y-3">
             <p className="ml-8 break-words rounded-2xl rounded-tr-sm bg-primary px-4 py-3 text-sm text-primary-foreground">{turn.question}</p>
             {turn.error && <p role="alert" className="rounded-xl border border-destructive/30 p-3 text-sm">{turn.error}</p>}
             {turn.reply && <div className="space-y-3">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{turn.reply.mode === "ai" ? "AI-assisted answer" : "Verified ChurchOS guidance"}</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{turn.reply.mode === "ai" ? "AI-assisted answer" : "Verified BelivrHQ guidance"}</p>
               {turn.reply.notice && <p role="status" className="rounded-lg bg-muted p-3 text-xs">{turn.reply.notice}</p>}
               <p className="whitespace-pre-wrap break-words text-sm leading-7">{turn.reply.answer}</p>
               {turn.reply.access.length > 0 && <details className="rounded-xl border p-3"><summary className="cursor-pointer text-sm font-medium">Verified access checks</summary><ul className="mt-3 space-y-3">{turn.reply.access.map((item, index) => <li key={index} className="text-xs"><p className="flex items-start gap-2 font-medium"><CheckCircle2 className="mt-0.5 size-3 shrink-0" /><span className="break-all">{item.label} · {item.status.replaceAll("_", " ")}</span></p><p className="mt-1 leading-5 text-muted-foreground">{item.detail}</p></li>)}</ul></details>}
               {turn.reply.navigation.filter(item => safeNavigation(item.path)).length > 0 && <div className="flex flex-wrap gap-2">{turn.reply.navigation.filter(item => safeNavigation(item.path)).map(item => <Button key={item.path} asChild variant="outline" size="sm"><Link href={item.path} onClick={() => setOpen(false)} title={item.trail}>Open {item.title}</Link></Button>)}</div>}
-              {turn.reply.sources.length > 0 && <div className="space-y-2 border-t pt-3"><p className="flex items-center gap-1.5 text-xs font-medium"><BookOpen className="size-3" />References</p>{turn.reply.sources.map(source => source.path && /^\/help(?:\/[a-z0-9-]+)?$/.test(source.path) ? <Link key={source.id} href={source.path} onClick={() => setOpen(false)} className="block text-xs leading-5 text-primary underline underline-offset-2">{source.title}</Link> : <p key={source.id} className="text-xs leading-5 text-muted-foreground">{source.title} · ChurchOS product reference</p>)}</div>}
+              {turn.reply.sources.length > 0 && <div className="space-y-2 border-t pt-3"><p className="flex items-center gap-1.5 text-xs font-medium"><BookOpen className="size-3" />References</p>{turn.reply.sources.map(source => source.path && /^\/help(?:\/[a-z0-9-]+)?$/.test(source.path) ? <Link key={source.id} href={source.path} onClick={() => setOpen(false)} className="block text-xs leading-5 text-primary underline underline-offset-2">{source.title}</Link> : <p key={source.id} className="text-xs leading-5 text-muted-foreground">{source.title} · BelivrHQ product reference</p>)}</div>}
             </div>}
           </article>)}</div>}
           {pending && <LoadingState label="Finding your next step" variant="detail" className="mt-4 rounded-2xl border bg-muted/20" />}
           <div ref={end} />
         </div>
         <form className="shrink-0 space-y-2 border-t bg-background p-4" onSubmit={event => { event.preventDefault(); void send(); }}>
-          <label htmlFor="churchos-question" className="sr-only">Your ChurchOS question</label>
-          <Textarea id="churchos-question" aria-describedby="churchos-question-hint" value={question} onChange={event => setQuestion(event.target.value)} maxLength={1200} placeholder="Ask about ChurchOS…" disabled={!context || pending} className="max-h-32 min-h-20 resize-none" onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); void send(); } }} />
-          <div id="churchos-question-hint" className="text-xs text-muted-foreground">{!context ? (contextError ? "Retry assistant access to send a question." : <LoadingState label="Checking access before you can send" variant="inline" />) : pending ? <LoadingState label="Waiting for an answer" variant="inline" /> : question.trim().length === 0 ? "Type a question to send." : "Press Enter to send, or Shift+Enter for a new line."}</div>
-          <div className="flex items-center justify-between gap-2"><Button type="button" variant="ghost" size="sm" onClick={reset} disabled={!turns.length}><RotateCcw className="size-3.5" />New conversation</Button><Button type="submit" size="sm" disabled={!context || pending || question.trim().length === 0} aria-label="Send ChurchOS question"><ArrowUp className="size-4" />Send</Button></div>
-          <p className="text-[11px] leading-4 text-muted-foreground">{context?.mode === "ai" ? `AI allowance: up to ${context.limits.userDailyQuestions} questions per person and ${context.limits.churchDailyQuestions} per church daily, subject to shared availability. ` : "Answers use ChurchOS product references. "}Conversation stays in this tab and clears when your access changes.</p>
+          <label htmlFor="belivrhq-question" className="sr-only">Your BelivrHQ question</label>
+          <Textarea id="belivrhq-question" aria-describedby="belivrhq-question-hint" value={question} onChange={event => setQuestion(event.target.value)} maxLength={1200} placeholder="Ask about BelivrHQ…" disabled={!context || pending} className="max-h-32 min-h-20 resize-none" onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); void send(); } }} />
+          <div id="belivrhq-question-hint" className="text-xs text-muted-foreground">{!context ? (contextError ? "Retry assistant access to send a question." : <LoadingState label="Checking access before you can send" variant="inline" />) : pending ? <LoadingState label="Waiting for an answer" variant="inline" /> : question.trim().length === 0 ? "Type a question to send." : "Press Enter to send, or Shift+Enter for a new line."}</div>
+          <div className="flex items-center justify-between gap-2"><Button type="button" variant="ghost" size="sm" onClick={reset} disabled={!turns.length}><RotateCcw className="size-3.5" />New conversation</Button><Button type="submit" size="sm" disabled={!context || pending || question.trim().length === 0} aria-label="Send BelivrHQ question"><ArrowUp className="size-4" />Send</Button></div>
+          <p className="text-[11px] leading-4 text-muted-foreground">{context?.mode === "ai" ? `AI allowance: up to ${context.limits.userDailyQuestions} questions per person and ${context.limits.churchDailyQuestions} per church daily, subject to shared availability. ` : "Answers use BelivrHQ product references. "}Conversation stays in this tab and clears when your access changes.</p>
         </form>
       </div>
     </SheetContent>

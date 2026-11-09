@@ -358,7 +358,7 @@ test("password changes preserve a proof through silent session refresh", async (
 }) => {
   const valid = await mockBotChallenges(context);
   await context.addCookies([
-    { name: "churchos_token", value: "fixture", url: "http://127.0.0.1:3107" },
+    { name: "belivrhq_token", value: "fixture", url: "http://127.0.0.1:3107" },
   ]);
   await context.route("**/api/session", (route) =>
     route.fulfill({ json: { hasSession: true } }),
@@ -428,7 +428,7 @@ test("staff invitations use the authenticated challenge and retain branch assign
 }) => {
   const valid = await mockBotChallenges(context);
   await context.addCookies([
-    { name: "churchos_token", value: "fixture", url: "http://127.0.0.1:3107" },
+    { name: "belivrhq_token", value: "fixture", url: "http://127.0.0.1:3107" },
   ]);
   await context.route("**/api/session", (route) =>
     route.fulfill({ json: { hasSession: true } }),
@@ -516,7 +516,7 @@ for (const scheduled of [false, true])
     const valid = await mockBotChallenges(context);
     await context.addCookies([
       {
-        name: "churchos_token",
+        name: "belivrhq_token",
         value: "fixture",
         url: "http://127.0.0.1:3107",
       },

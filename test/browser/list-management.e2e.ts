@@ -19,7 +19,7 @@ async function fixture(
 ) {
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "list-fixture",
       url: "http://127.0.0.1:3107",
     },
@@ -415,7 +415,7 @@ for (const kind of ["members", "visitors"])
         .getByText("2", { exact: true }),
     ).toHaveCount(2);
     await page.screenshot({
-      path: `/tmp/churchos-pending-filters-${kind}-desktop.png`,
+      path: `/tmp/belivrhq-pending-filters-${kind}-desktop.png`,
       fullPage: true,
     });
   });
@@ -528,7 +528,7 @@ test("member tables preserve default columns and can show every extra business f
     table.getByRole("cell", { name: "North", exact: true }),
   ).toBeVisible();
   await page.screenshot({
-    path: "/tmp/churchos-members-extra-columns.png",
+    path: "/tmp/belivrhq-members-extra-columns.png",
     fullPage: true,
   });
   await table
@@ -674,7 +674,7 @@ for (const width of [390, 320])
       ),
     ).toBe(true);
     await page.screenshot({
-      path: `/tmp/churchos-pending-table-${width}.png`,
+      path: `/tmp/belivrhq-pending-table-${width}.png`,
       fullPage: true,
     });
   });

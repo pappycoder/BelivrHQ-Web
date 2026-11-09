@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { mockTawkWidget } from '../fixtures/tawk-widget';
 
 test.beforeEach(async ({ context }) => {
-  await context.addCookies([{ name: 'churchos_token', value: 'offline-hidden-fixture', url: 'http://127.0.0.1:3107' }]);
+  await context.addCookies([{ name: 'belivrhq_token', value: 'offline-hidden-fixture', url: 'http://127.0.0.1:3107' }]);
   await context.route('https://embed.tawk.to/**', route => route.fulfill({ contentType: 'application/javascript', body: mockTawkWidget }));
   await context.addInitScript(() => {
     const original = window.fetch.bind(window);
@@ -36,5 +36,5 @@ test('direct offline links show a reconnect notice without mounting the workspac
   await expect(page.getByRole('button', { name: 'Load available branches' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Enable on this device' })).toHaveCount(0);
   await expect(page.getByLabel('Offline passphrase')).toHaveCount(0);
-  await expect(page.getByRole('link', { name: 'Return to ChurchOS' })).toHaveAttribute('href', '/');
+  await expect(page.getByRole('link', { name: 'Return to BelivrHQ' })).toHaveAttribute('href', '/');
 });

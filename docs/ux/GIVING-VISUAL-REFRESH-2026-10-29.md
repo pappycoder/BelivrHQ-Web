@@ -21,7 +21,7 @@ Record Giving and recurring dialogs accept an optional presentation class for Gi
 - 453 unit tests passed; targeted lint, TypeScript, production build and whitespace checks passed.
 - 32 unique browser scenarios passed across full/focused runs: 30 Giving/download/cell-group cases plus two Attendance chart compatibility cases.
 - Coverage includes dashboard-only access without Analytics, denied access/entitlements, HQ/branch requests, inclusive dates, empty/error/retry states, currency separation, multi-page report/export accuracy, recording cash/bank and refreshing charts, recording NGN while viewing USD, input/selection retention, receipt PDF/email controls, category lifecycle, recurring authorization and actions, read-only views and existing form reset behavior.
-- Reviewed mock-data desktop/mobile and light/dark previews with a saved violet accent at `/tmp/churchos-giving-previews/`. These contain fixture data only.
+- Reviewed mock-data desktop/mobile and light/dark previews with a saved violet accent at `/tmp/belivrhq-giving-previews/`. These contain fixture data only.
 
 ## Release
 

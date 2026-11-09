@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { mockTawkWidget } from '../fixtures/tawk-widget';
 
 test.beforeEach(async ({ context }) => {
-  await context.addCookies([{ name: 'churchos_token', value: 'admin-fixture', url: 'http://127.0.0.1:3107' }]);
+  await context.addCookies([{ name: 'belivrhq_token', value: 'admin-fixture', url: 'http://127.0.0.1:3107' }]);
   await context.route('https://embed.tawk.to/**', route => route.fulfill({ contentType: 'application/javascript', body: mockTawkWidget }));
   await context.addInitScript(() => {
     const original = window.fetch.bind(window);
@@ -39,13 +39,13 @@ for (const width of [375, 768, 1280]) test(`branches remain aligned when compact
   await expect(table).toBeVisible();
   await page.setViewportSize({ width, height: 900 });
   await expect.poll(() => table.locator('tbody tr').first().evaluate(el => el.getBoundingClientRect().height)).toBeLessThan(100);
-  await page.screenshot({ path: `/tmp/churchos-branches-expanded-${width}.png`, fullPage: true });
+  await page.screenshot({ path: `/tmp/belivrhq-branches-expanded-${width}.png`, fullPage: true });
   await page.getByRole('button', { name: 'Table view', exact: true }).click();
   await page.getByRole('button', { name: 'Compact rows', exact: true }).click();
   await page.getByRole('button', { name: 'Compact columns', exact: true }).click();
   await page.keyboard.press('Escape');
   await expect(page.getByText('Table size', { exact: true })).toBeHidden();
-  await page.screenshot({ path: `/tmp/churchos-branches-compact-${width}.png`, fullPage: true });
+  await page.screenshot({ path: `/tmp/belivrhq-branches-compact-${width}.png`, fullPage: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   const row = table.locator('tbody tr').first();
   expect(await row.evaluate(el => el.getBoundingClientRect().height)).toBeLessThan(100);

@@ -5,9 +5,9 @@ export const termsOfService: LegalDocument = {
   slug: "terms-of-service",
   title: "Terms of Service",
   description:
-    "The subscription agreement governing ChurchOS accounts, customer responsibilities, payment, data processing, service availability and allocation of risk.",
+    "The subscription agreement governing BelivrHQ accounts, customer responsibilities, payment, data processing, service availability and allocation of risk.",
   introduction: [
-    `These Terms of Service ("Terms") govern access to the ChurchOS hosted platform and related account, support and subscription services supplied by ${LEGAL_COMPANY.name}, Nigeria ("Company", "ChurchOS", "we", "us" or "our"). "Customer" or "you" means the church, ministry or other organisation subscribing to the service; an individual user must also comply with obligations applicable to that user.`,
+    `These Terms of Service ("Terms") govern access to the BelivrHQ hosted platform and related account, support and subscription services supplied by ${LEGAL_COMPANY.name}, Nigeria ("Company", "BelivrHQ", "we", "us" or "our"). "Customer" or "you" means the church, ministry or other organisation subscribing to the service; an individual user must also comply with obligations applicable to that user.`,
     "An authorised representative accepts these Terms when expressly agreeing during registration or another acceptance process. A person acting for an organisation represents that they have authority to bind it. If you do not have that authority, do not create or purchase a workspace on its behalf. Access by invited users is subject to the customer’s valid agreement and each user’s applicable obligations.",
     "These Terms include provisions on payment, customer responsibility, suspension, customer indemnity, warranty qualifications and limits of liability. Those provisions allocate commercial risk and should be read before acceptance or payment. They do not exclude any right, duty or remedy that cannot lawfully be excluded.",
   ],
@@ -15,14 +15,14 @@ export const termsOfService: LegalDocument = {
     "Subscriptions currently renew manually. Review the plan, billing period, currency and exact checkout amount before authorising payment.",
     "The customer remains responsible for lawful collection and use of church records, staff access, communications and connected provider accounts.",
     "Liability limitations and the customer indemnity appear in sections 24 and 25, subject to express exceptions for non-excludable liability.",
-    "Donations and church event payments are separate from ChurchOS subscription fees. ChurchOS is a software provider, not the recipient church or a bank.",
+    "Donations and church event payments are separate from BelivrHQ subscription fees. BelivrHQ is a software provider, not the recipient church or a bank.",
   ],
   sections: [
     {
       id: "definitions",
       title: "1. Definitions and contract structure",
       paragraphs: [
-        "‘Service’ means the ChurchOS hosted software and related functions made available under the selected plan. ‘Workspace’ means the customer’s church environment, including its branches and authorised users. ‘Customer Data’ means records, files, messages, form responses, personal information and other material submitted to or generated for the customer through the Service. ‘Authorised User’ means a person the customer validly permits to access its workspace. ‘Order’ means a checkout, accepted quotation or separately signed order identifying the service, plan, term, price or additional scope.",
+        "‘Service’ means the BelivrHQ hosted software and related functions made available under the selected plan. ‘Workspace’ means the customer’s church environment, including its branches and authorised users. ‘Customer Data’ means records, files, messages, form responses, personal information and other material submitted to or generated for the customer through the Service. ‘Authorised User’ means a person the customer validly permits to access its workspace. ‘Order’ means a checkout, accepted quotation or separately signed order identifying the service, plan, term, price or additional scope.",
         "The Order identifies commercial selections; these Terms supply the general service conditions. Our Website Terms and Conditions govern public website use and supplement the acceptable-use rules. Our Privacy Policy explains personal-information practices. It is not an unrestricted licence to process personal information or a substitute for a required controller–processor agreement.",
         "If documents conflict, mandatory law prevails. A separately signed agreement or processing addendum controls the subject it expressly addresses. An Order overrides these Terms only for its expressly stated commercial scope or identified exceptions. The data-processing provisions in section 16 control processor activities; these Terms otherwise control the Service over general Website Terms. The Privacy Policy does not reduce statutory privacy rights.",
       ],
@@ -68,7 +68,7 @@ export const termsOfService: LegalDocument = {
       title: "6. Fees, billing periods, quotes and currency",
       paragraphs: [
         "You agree to pay the amount, currency and billing period you authorise in the Order. Standard plans may be offered monthly or annually; an annual payment purchases the stated annual period rather than twelve separately cancellable monthly instalments unless the Order says otherwise. Enterprise fees, implementation work or additional services require a separate agreement where not included in the displayed offer.",
-        "Displayed conversions or starting prices are informational until confirmed by an applicable quote or checkout. The checkout may use a supported charge currency different from a display currency. Review the exact amount and currency before paying. Your bank or provider may impose conversion, processing, cross-border or other fees under its own agreement; ChurchOS does not set those third-party charges merely by displaying a converted estimate.",
+        "Displayed conversions or starting prices are informational until confirmed by an applicable quote or checkout. The checkout may use a supported charge currency different from a display currency. Review the exact amount and currency before paying. Your bank or provider may impose conversion, processing, cross-border or other fees under its own agreement; BelivrHQ does not set those third-party charges merely by displaying a converted estimate.",
         "A quote can expire. A pending checkout may preserve the amount and currency recorded when it was created, even if a later display or quote changes. Review any resumed payment before authorisation. Do not create duplicate payments because a return page is delayed; use the available verification process or contact us with the payment reference.",
         "Fees exclude taxes only where clearly stated. Applicable taxes, withholdings and any required supporting documents will be treated according to law and the Order. We do not impose a tax gross-up or hidden surcharge merely through a general clause in these Terms. We may correct an obvious pricing error before accepting a new Order, provide the corrected information and let you decline it; we will not silently substitute a higher amount after payment approval.",
       ],
@@ -86,10 +86,10 @@ export const termsOfService: LegalDocument = {
       id: "renewals",
       title: "8. Manual renewals, upgrades and downgrades",
       paragraphs: [
-        "Standard ChurchOS subscription renewals are currently manual. Selecting a plan, entering a payment method at a one-off checkout or receiving a reminder does not itself authorise recurring platform subscription debits. A future automatic-renewal arrangement would require appropriate disclosure and payment authorisation before it applies.",
+        "Standard BelivrHQ subscription renewals are currently manual. Selecting a plan, entering a payment method at a one-off checkout or receiving a reminder does not itself authorise recurring platform subscription debits. A future automatic-renewal arrangement would require appropriate disclosure and payment authorisation before it applies.",
         "The customer must renew in time to avoid interruption. Reminder delivery is not guaranteed, and a missed reminder does not by itself extend a paid period. The dates and status shown by the verified subscription record determine the applicable period, subject to correction of errors and any express Order terms.",
         "An eligible mid-period upgrade may use the prorated calculation shown in the quote and retain the existing renewal date. A downgrade may be scheduled for the next renewal and does not necessarily create an immediate refund or credit. The confirmed quote and resulting subscription record control the specific change; the interface’s displayed action must be reviewed before confirmation.",
-        "Recurring giving is different from platform subscription renewal. A donor’s authorisation to a church and that church’s payment provider may permit recurring donations according to the donor’s separate mandate, even while the church’s ChurchOS software subscription renews manually.",
+        "Recurring giving is different from platform subscription renewal. A donor’s authorisation to a church and that church’s payment provider may permit recurring donations according to the donor’s separate mandate, even while the church’s BelivrHQ software subscription renews manually.",
       ],
     },
     {
@@ -130,7 +130,7 @@ export const termsOfService: LegalDocument = {
         "Do not send spam or unauthorised bulk communications, upload purchased lists without a lawful permission, evade suppression or opt-out requests, or impersonate a sender.",
         "Do not bypass permissions, authentication, rate limits, quotas or plan restrictions; share paid seats improperly; probe another tenant; scrape restricted information; or introduce malicious code.",
         "Do not run load, penetration, vulnerability or other disruptive tests without prior written authorisation defining scope and safeguards. A public sign-up or ordinary API access is not such authorisation.",
-        "Do not reverse engineer or extract proprietary elements except to the extent a mandatory law permits it, remove ownership notices, or misrepresent ChurchOS as endorsing your organisation or campaign.",
+        "Do not reverse engineer or extract proprietary elements except to the extent a mandatory law permits it, remove ownership notices, or misrepresent BelivrHQ as endorsing your organisation or campaign.",
         "Do not use the platform as an emergency response, regulated medical decision, autonomous financial decision or other safety-critical system that its agreed functionality does not support.",
       ],
       paragraphs: [
@@ -141,7 +141,7 @@ export const termsOfService: LegalDocument = {
       id: "donations",
       title: "13. Giving, ticketing and payment-provider relationships",
       paragraphs: [
-        "ChurchOS supplies software for recording giving, producing receipts, managing events or tickets and connecting supported payment services. Unless a separate written agreement expressly says otherwise, we are not the receiving church, fundraiser, donation beneficiary, event organiser, bank, insurer, custodian, escrow service, payment institution or financial adviser.",
+        "BelivrHQ supplies software for recording giving, producing receipts, managing events or tickets and connecting supported payment services. Unless a separate written agreement expressly says otherwise, we are not the receiving church, fundraiser, donation beneficiary, event organiser, bank, insurer, custodian, escrow service, payment institution or financial adviser.",
         "The relevant church is responsible for its merchant/provider account, bank details, beneficiary information, authority to collect funds, event delivery, donor communications, cancellations and applicable tax treatment. Payment providers control their own onboarding, authorisations, fraud screening, processing, chargebacks, settlement and provider fees. An integration or generated receipt is not an endorsement of a church’s activities or a guarantee of settlement or refund.",
         "A donor or ticket holder’s dispute about the underlying donation, event, recurring mandate or church promise should ordinarily be raised with the receiving church and relevant provider. We can assist with platform records where authorised or legally required. This allocation does not excuse a platform error or unlawful act for which we are responsible.",
         "Manual cash or bank records depend on information entered by authorised users and may not be independently verified by a connected provider. A customer must not issue a misleading receipt, imply tax relief we have not verified, or represent a recorded amount as settled money without checking the appropriate evidence.",
@@ -151,7 +151,7 @@ export const termsOfService: LegalDocument = {
       id: "integrations",
       title: "14. Communications, integrations and external providers",
       paragraphs: [
-        "Church-selected email, SMS, WhatsApp, calling, payment and webhook services generally require the customer’s own compatible provider accounts, enabled settings and appropriate credentials. Provider charges, recipient restrictions, sender approvals, message-template rules and service availability are separate from the ChurchOS subscription unless an Order expressly includes them.",
+        "Church-selected email, SMS, WhatsApp, calling, payment and webhook services generally require the customer’s own compatible provider accounts, enabled settings and appropriate credentials. Provider charges, recipient restrictions, sender approvals, message-template rules and service availability are separate from the BelivrHQ subscription unless an Order expressly includes them.",
         "You authorise processing and transmission reasonably necessary for the integrations you enable and remain responsible for the legality of those instructions. Keep provider accounts funded where required and credentials current. Platform account emails may use our organisation’s providers even when a church’s own broadcast integration is disabled.",
         "Queueing, API acceptance or a ‘sent’ processing status does not guarantee inbox placement, device delivery, call completion, WhatsApp approval, payment settlement or a recipient’s response. External services can filter, delay, reject, change or discontinue functionality. We will handle our own integration duties with reasonable care but do not control an independent provider’s entire service.",
         "Disabling or removing an integration does not necessarily undo completed deliveries, recall information, cancel a provider contract or revoke a donor mandate. You must take any additional steps required with that provider. We may disable a connection that is insecure, unlawful, incompatible or credibly abusive, subject to proportionate handling and applicable rights.",
@@ -188,7 +188,7 @@ export const termsOfService: LegalDocument = {
       id: "ai",
       title: "17. AI assistance, scoring and human review",
       paragraphs: [
-        "Ask ChurchOS provides product guidance from references and, where enabled, AI-generated explanations. It can be unavailable, incomplete or wrong. It does not independently verify every screen, record, entitlement balance or provider status, and it does not obtain authority to change accounts, inspect unrelated records, issue payments or send messages merely because a user asks.",
+        "Ask BelivrHQ provides product guidance from references and, where enabled, AI-generated explanations. It can be unavailable, incomplete or wrong. It does not independently verify every screen, record, entitlement balance or provider status, and it does not obtain authority to change accounts, inspect unrelated records, issue payments or send messages merely because a user asks.",
         "Do not enter secrets or unnecessary identifiable or sensitive records into assistant questions. Review the applicable privacy information before using external synthesis. Budgets, rate controls, model availability and plan settings may limit responses. Product guidance is not legal, tax, financial, medical, safeguarding or professional advice.",
         "Reports and engagement or risk indicators are aids to administration, not determinations of faith, conduct, diagnosis or entitlement. The customer must provide appropriate human review, test relevant facts and explain or correct use of such indicators where required. Do not make a legally or similarly significant adverse decision solely from an automated output without satisfying the applicable legal conditions and safeguards.",
       ],
@@ -255,7 +255,7 @@ export const termsOfService: LegalDocument = {
       notice:
         "IMPORTANT LIMITATION OF LIABILITY: Subject to the exceptions below and to the extent permitted by law, the Company’s aggregate contractual and other liability connected with the affected Service is capped at the fees paid or payable to the Company for that affected Service during the 12 months immediately before the event giving rise to the claim.",
       paragraphs: [
-        "24.1 Scope of the cap. The cap applies in aggregate to related claims arising from the same event or connected events and across legal theories, to the extent such limitation is lawful. It is based on ChurchOS software fees, not the total giving, ticket sales, payment-provider balance or other funds recorded or processed through a church’s activities. It does not apply to a separate liability that law prevents us from limiting.",
+        "24.1 Scope of the cap. The cap applies in aggregate to related claims arising from the same event or connected events and across legal theories, to the extent such limitation is lawful. It is based on BelivrHQ software fees, not the total giving, ticket sales, payment-provider balance or other funds recorded or processed through a church’s activities. It does not apply to a separate liability that law prevents us from limiting.",
         "24.2 Excluded loss categories. Subject to section 24.3 and only where legally permitted, we are not liable for indirect, consequential, exemplary or punitive losses, or loss of anticipated profit, revenue, opportunity, goodwill or expected savings. A loss will not be called ‘indirect’ merely to avoid a remedy the law gives for a direct and proven service failure.",
         "24.3 Non-excludable matters. No disclaimer, cap, indemnity, suspension right or other provision excludes or restricts liability for fraud, fraudulent misrepresentation, wilful misconduct, gross negligence, death or personal injury where the relevant liability cannot lawfully be limited, or any other liability, statutory right, privacy right, regulatory duty or remedy that cannot lawfully be excluded or capped. The applicable mandatory rule prevails to that extent.",
         "24.4 Responsibility and mitigation. Liability should reflect causation and legally applicable responsibility. We are not responsible for a customer’s independent unlawful instruction, incorrect record, unauthorised recipient choice or provider act solely because the Service was involved, but remain responsible for our own actionable contribution. Each party must take reasonable steps to mitigate a known loss where the law requires it. You cannot recover the same loss twice under different descriptions.",
@@ -294,7 +294,7 @@ export const termsOfService: LegalDocument = {
       id: "notices",
       title: "28. Notices and electronic communications",
       paragraphs: [
-        `The Company’s designated ChurchOS privacy, legal and contractual notice email is ${LEGAL_COMPANY.email}. The customer’s notice contact is its administrator or another authorised address it supplies. Keep that contact up to date and identify the relevant church clearly when sending a notice.`,
+        `The Company’s designated BelivrHQ privacy, legal and contractual notice email is ${LEGAL_COMPANY.email}. The customer’s notice contact is its administrator or another authorised address it supplies. Keep that contact up to date and identify the relevant church clearly when sending a notice.`,
         "We may send routine service and contractual communications electronically, including through a reasonably prominent account notice where appropriate. A bounced or rejected email is not automatically effective delivery of a legal notice. Rules for formal court service, regulatory notices and any mandatory delivery method prevail over this general electronic-notice clause. Request the Company’s appropriate physical-service details where required.",
         "The published contact can be updated. A change does not invalidate a notice already properly delivered to the previous designated address. We may need reasonable verification before acting on a notice seeking data release, account transfer, a refund to a new destination or permanent deletion.",
       ],
@@ -311,7 +311,7 @@ export const termsOfService: LegalDocument = {
       id: "general",
       title: "30. General legal provisions",
       paragraphs: [
-        "Each party is an independent contractor. These Terms do not establish a partnership, employment relationship, fiduciary relationship, religious endorsement or authority for one party to bind the other beyond an express agreement. A customer must not imply that its fundraising or organisational claims have been certified by ChurchOS.",
+        "Each party is an independent contractor. These Terms do not establish a partnership, employment relationship, fiduciary relationship, religious endorsement or authority for one party to bind the other beyond an express agreement. A customer must not imply that its fundraising or organisational claims have been certified by BelivrHQ.",
         "The customer may not assign its account or agreement to an unrelated organisation without reasonable written approval. We may assign the service agreement as part of a legitimate corporate reorganisation or transfer of the business, subject to applicable privacy law, appropriate continuity and any mandatory customer rights. Assignment is not permission to materially expand the use of personal information without a lawful basis.",
         "If a provision is unlawful or unenforceable, it will apply only to the lawful extent or be severed where permitted, while the remainder continues if workable. A failure to enforce a provision immediately does not automatically waive it. No clause removes a mandatory third-party or data-subject right.",
         "These Terms and the applicable agreed documents describe the service agreement, but do not exclude fraud, actionable misrepresentation or a statutory promise that cannot be excluded. A change or special commitment must be made by an authorised representative in a form that reasonably records the agreement. Keep the version and Order relevant to your subscription.",
@@ -321,8 +321,8 @@ export const termsOfService: LegalDocument = {
       id: "contact",
       title: "31. Company details",
       paragraphs: [
-        `Service and brand: ChurchOS. Operator: ${LEGAL_COMPANY.name}. Country: ${LEGAL_COMPANY.country}. Designated privacy, legal, billing-dispute and contractual contact: ${LEGAL_COMPANY.email}.`,
-        "The designated mailbox may be used without a ChurchOS account. Administrator live chat is an additional support channel and is not the exclusive way to give a legal notice or exercise a privacy or consumer right. For registered-office details or information needed for a formal procedure, contact the Company through the designated address.",
+        `Service and brand: BelivrHQ. Operator: ${LEGAL_COMPANY.name}. Country: ${LEGAL_COMPANY.country}. Designated privacy, legal, billing-dispute and contractual contact: ${LEGAL_COMPANY.email}.`,
+        "The designated mailbox may be used without a BelivrHQ account. Administrator live chat is an additional support channel and is not the exclusive way to give a legal notice or exercise a privacy or consumer right. For registered-office details or information needed for a formal procedure, contact the Company through the designated address.",
       ],
     },
   ],

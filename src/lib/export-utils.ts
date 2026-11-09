@@ -21,7 +21,7 @@ export function exportCSV<T extends Record<string, unknown>>(
 ): void {
   const header = [...columns.map((c) => escapeCSV(c.label)), ...(branding ? ["Church", "Exported with"] : [])].join(",");
   const rows = data.map((row) =>
-    [...columns.map((c) => escapeCSV(String(row[c.key] ?? ""))), ...(branding ? [escapeCSV(branding.churchName), "ChurchOS"] : [])].join(",")
+    [...columns.map((c) => escapeCSV(String(row[c.key] ?? ""))), ...(branding ? [escapeCSV(branding.churchName), "BelivrHQ"] : [])].join(",")
   );
   const csv = [header, ...rows].join("\n");
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -29,7 +29,7 @@ export function exportCSV<T extends Record<string, unknown>>(
   const a = document.createElement("a");
   a.href = url;
   const churchSlug = branding?.churchName.replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "").slice(0, 80);
-  a.download = `${churchSlug ? `${churchSlug}-` : ""}${filename}${branding ? "-churchos" : ""}.csv`;
+  a.download = `${churchSlug ? `${churchSlug}-` : ""}${filename}${branding ? "-belivrhq" : ""}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -63,7 +63,7 @@ export async function createReportPDF(
   const assets = await preparePdf(doc);
   const churchLogo = await loadExportLogo(options.branding);
   const generatedAt = new Date();
-  doc.setProperties({ title, author: options.branding?.churchName || "ChurchOS", creator: "ChurchOS", subject: "Church administration report" });
+  doc.setProperties({ title, author: options.branding?.churchName || "BelivrHQ", creator: "BelivrHQ", subject: "Church administration report" });
 
   sections.forEach((section, index) => {
     if (index) doc.addPage();
@@ -167,7 +167,7 @@ export async function createExcelWorkbook(sheets: ExcelSheet[], options: { brand
   const ExcelJS = await import("exceljs");
   const workbook = new ExcelJS.Workbook();
   initializeWorkbook(workbook);
-  workbook.company = options.branding?.churchName || "ChurchOS";
+  workbook.company = options.branding?.churchName || "BelivrHQ";
   const churchLogo = sheets.some((sheet) => !sheet.template) ? await loadExportLogo(options.branding) : undefined;
   sheets.forEach((sheet, index) => addDesignedSheet(workbook, sheet, index, options.branding, churchLogo));
   // Keep the input sheet first, including when validation adds a hidden sheet.

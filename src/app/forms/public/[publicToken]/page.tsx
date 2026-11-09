@@ -305,7 +305,7 @@ function PublicFormContent({ token }: { token: string }) {
         </section>
       </main>
       <footer className="pb-7 text-center text-xs text-muted-foreground">
-        Made for your community · Powered by ChurchOS
+        Made for your community · Powered by BelivrHQ
       </footer>
     </div>
   );

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { mockTawkWidget } from '../fixtures/tawk-widget';
 
 test.beforeEach(async ({ context }) => {
-  await context.addCookies([{ name: 'churchos_token', value: 'permissions-fixture', url: 'http://127.0.0.1:3107' }]);
+  await context.addCookies([{ name: 'belivrhq_token', value: 'permissions-fixture', url: 'http://127.0.0.1:3107' }]);
   await context.route('https://embed.tawk.to/**', route => route.fulfill({ contentType: 'application/javascript', body: mockTawkWidget }));
   await context.addInitScript(() => {
     const original = window.fetch.bind(window);
@@ -53,5 +53,5 @@ for (const width of [375, 768, 1440]) test(`resource names remain visible beside
   await expect(table.getByRole('rowheader', { name: 'members', exact: true })).toBeInViewport();
   await expect(table.getByRole('columnheader', { name: 'approve', exact: true })).toBeInViewport();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.screenshot({ path: `/tmp/churchos-user-permissions-${width}.png`, fullPage: true });
+  await page.screenshot({ path: `/tmp/belivrhq-user-permissions-${width}.png`, fullPage: true });
 });

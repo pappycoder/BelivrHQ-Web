@@ -1,7 +1,9 @@
+import { LEGACY_BRAND } from "@/lib/brand/identity";
 import { type NextRequest, NextResponse } from "next/server";
 
 function getTokenFromRequest(request: NextRequest): string | null {
-  const cookie = request.cookies.get("churchos_token");
+  const modern = request.cookies.has("belivrhq_token") || request.cookies.has("belivrhq_refresh_token");
+  const cookie = request.cookies.get(modern ? "belivrhq_token" : LEGACY_BRAND.cookies.access);
   return cookie?.value || null;
 }
 
@@ -15,7 +17,8 @@ export function middleware(request: NextRequest) {
 
   const token = getTokenFromRequest(request);
   // Presence is only a routing hint. The backend verifies the actual session.
-  const authenticated = !!token || !!request.cookies.get("churchos_refresh_token")?.value;
+  const modern = request.cookies.has("belivrhq_token") || request.cookies.has("belivrhq_refresh_token");
+  const authenticated = !!token || !!request.cookies.get(modern ? "belivrhq_refresh_token" : LEGACY_BRAND.cookies.refresh)?.value;
   const { pathname } = request.nextUrl;
 
   const protectedPaths = [

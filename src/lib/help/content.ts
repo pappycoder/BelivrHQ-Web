@@ -21,7 +21,7 @@ export const helpContent: Record<HelpSlug, HelpSection[]> = {
       id: "create-your-workspace",
       title: "Create your workspace",
       steps: [
-        "Choose Create account from the ChurchOS sign-in page and enter your church’s details.",
+        "Choose Create account from the BelivrHQ sign-in page and enter your church’s details.",
         "Enter the administrator’s name and email, then choose a strong password. Each staff member should have their own account.",
         "Compare the monthly or yearly plans. You can change the display currency before reviewing your selection.",
         "Review your details and create the account. Sign in and follow Plan & Billing to complete activation through an available payment provider.",
@@ -35,7 +35,7 @@ export const helpContent: Record<HelpSlug, HelpSection[]> = {
         "Prepare the member directory using the import template or add people individually.",
         "Invite staff into the right roles and locations. Confirm each person can see the pages needed for their work.",
       ],
-      note: "ChurchOS subscriptions renew manually. Creating an account does not itself confirm payment or enable a paid subscription.",
+      note: "BelivrHQ subscriptions renew manually. Creating an account does not itself confirm payment or enable a paid subscription.",
     },
   ],
   "sign-in-and-account-recovery": [
@@ -43,7 +43,7 @@ export const helpContent: Record<HelpSlug, HelpSection[]> = {
       id: "sign-in",
       title: "Sign in to your own account",
       steps: [
-        "Open the ChurchOS sign-in page and enter the email associated with your staff account.",
+        "Open the BelivrHQ sign-in page and enter the email associated with your staff account.",
         "Enter your password. If prompted, use the code from your authenticator app or the available recovery-code option.",
         "Check the name and church shown in your workspace before entering records.",
       ],
@@ -122,7 +122,7 @@ export const helpContent: Record<HelpSlug, HelpSection[]> = {
       paragraphs: [
         "Archiving preserves a record while removing it from the active directory. Restoring a record adds it back to the active member allowance, so restoration can be blocked when the allowance is full.",
       ],
-      note: "A directory record is not a staff login. Adding, editing or restoring a member does not grant access to ChurchOS.",
+      note: "A directory record is not a staff login. Adding, editing or restoring a member does not grant access to BelivrHQ.",
     },
   ],
   "import-members": [
@@ -299,7 +299,7 @@ export const helpContent: Record<HelpSlug, HelpSection[]> = {
       id: "before-selling",
       title: "Before taking ticket payments",
       paragraphs: [
-        "Confirm the church plan includes paid tickets, the event is configured correctly and a church-owned payment provider is ready. Event payments belong to the church’s provider account; they are separate from the ChurchOS subscription payment.",
+        "Confirm the church plan includes paid tickets, the event is configured correctly and a church-owned payment provider is ready. Event payments belong to the church’s provider account; they are separate from the BelivrHQ subscription payment.",
       ],
     },
     {
@@ -423,7 +423,7 @@ export const helpContent: Record<HelpSlug, HelpSection[]> = {
       id: "compare-plans",
       title: "Compare the published plans",
       paragraphs: [
-        "Essentials includes 100 members, 2 staff accounts and 1 location. Community includes 300 members, 5 staff accounts and 1 location. Network includes 1,500 members, 15 staff accounts and 3 locations. Enterprise limits and pricing are agreed directly with ChurchOS.",
+        "Essentials includes 100 members, 2 staff accounts and 1 location. Community includes 300 members, 5 staff accounts and 1 location. Network includes 1,500 members, 15 staff accounts and 3 locations. Enterprise limits and pricing are agreed directly with BelivrHQ.",
         "The published USD base prices are $10, $20 and $40 monthly, or $108, $216 and $432 yearly, respectively. Annual base prices save 10% against twelve monthly payments. Use Plan & Billing for current prices and currency quotes.",
       ],
     },
@@ -445,7 +445,7 @@ export const helpContent: Record<HelpSlug, HelpSection[]> = {
       id: "display-currency",
       title: "Choose how prices are displayed",
       paragraphs: [
-        "ChurchOS uses USD base subscription prices. The currency selector converts those prices using the available exchange-rate data and rounds the total up to a whole currency unit. The annual total is converted once; local rounding can slightly change the effective discount.",
+        "BelivrHQ uses USD base subscription prices. The currency selector converts those prices using the available exchange-rate data and rounds the total up to a whole currency unit. The annual total is converted once; local rounding can slightly change the effective discount.",
         "Your display currency is remembered in this browser. Historical payment records keep their original amount and currency.",
       ],
     },
@@ -455,9 +455,9 @@ export const helpContent: Record<HelpSlug, HelpSection[]> = {
       steps: [
         "Sign in as a church administrator and open Plan & Billing.",
         "Choose a plan, billing period and available payment provider.",
-        "Check Payment currency. A provider can only charge currencies enabled for the ChurchOS merchant account; the charge currency may differ from the display currency.",
+        "Check Payment currency. A provider can only charge currencies enabled for the BelivrHQ merchant account; the charge currency may differ from the display currency.",
         "Review the exact amount and quote expiry before choosing Continue to payment. A new quote is locked for 15 minutes.",
-        "Complete the hosted payment and return to ChurchOS. Wait for verification before treating the subscription as active.",
+        "Complete the hosted payment and return to BelivrHQ. Wait for verification before treating the subscription as active.",
       ],
     },
     {
@@ -466,7 +466,7 @@ export const helpContent: Record<HelpSlug, HelpSection[]> = {
       paragraphs: [
         "Renewals are manual, with no automatic subscription charges. Renew the same plan after the current paid period ends. An existing pending checkout keeps its stored amount and currency even after the original quote expires; review that pending amount before resuming it.",
       ],
-      note: "ChurchOS subscription payments are separate from donations and event payments collected through your church’s own provider accounts.",
+      note: "BelivrHQ subscription payments are separate from donations and event payments collected through your church’s own provider accounts.",
     },
   ],
   "subscription-payment-problems": [
@@ -477,7 +477,7 @@ export const helpContent: Record<HelpSlug, HelpSection[]> = {
         "Return to Plan & Billing using the same church administrator account.",
         "Review the pending payment and choose Check my payment if that option is shown.",
         "Allow time for the provider’s confirmation. Check the payment history and any message returned by verification.",
-        "If the payment remains unresolved, contact ChurchOS support with the payment reference, time and provider. Do not send card details, passwords or tokens.",
+        "If the payment remains unresolved, contact BelivrHQ support with the payment reference, time and provider. Do not send card details, passwords or tokens.",
       ],
     },
     {
@@ -494,7 +494,7 @@ export const helpContent: Record<HelpSlug, HelpSection[]> = {
       id: "review-needed",
       title: "If a received payment needs review",
       paragraphs: [
-        "A payment may be received after the subscription changed or the relevant upgrade period ended. ChurchOS can mark it for review without overwriting the current subscription. Contact support with the payment reference and the message shown in billing history.",
+        "A payment may be received after the subscription changed or the relevant upgrade period ended. BelivrHQ can mark it for review without overwriting the current subscription. Contact support with the payment reference and the message shown in billing history.",
       ],
     },
   ],
@@ -503,7 +503,7 @@ export const helpContent: Record<HelpSlug, HelpSection[]> = {
       id: "prepare-provider",
       title: "Prepare your provider account",
       paragraphs: [
-        "Church-owned email, SMS, WhatsApp, call and payment integrations use your church’s provider accounts. They start disabled until configured. Provider approvals, balances and usage or transaction charges are separate from the ChurchOS subscription.",
+        "Church-owned email, SMS, WhatsApp, call and payment integrations use your church’s provider accounts. They start disabled until configured. Provider approvals, balances and usage or transaction charges are separate from the BelivrHQ subscription.",
       ],
       note: "You need integration-management access. The church plan must also include the feature you intend to use. Never include private API keys in support messages or screenshots.",
     },
@@ -563,7 +563,7 @@ export const helpContent: Record<HelpSlug, HelpSection[]> = {
       paragraphs: [
         "These guides are public and can be shared without sharing church records or signing in. Search by the task you are trying to complete, such as importing members, checking in attendees or renewing a subscription.",
         "Inside the workspace, the Help Centre and the page’s help menu suggest relevant guides. A guide explains a feature; reading it does not grant permission to use that feature.",
-        "Active staff can open Ask ChurchOS in the workspace header for product guidance, navigation links and explanations of their verified access. Answers include references. The assistant cannot read church records or perform actions; do not enter personal records, passwords or secrets. Administrator-only live chat remains the channel for human ChurchOS Support.",
+        "Active staff can open Ask BelivrHQ in the workspace header for product guidance, navigation links and explanations of their verified access. Answers include references. The assistant cannot read church records or perform actions; do not enter personal records, passwords or secrets. Administrator-only live chat remains the channel for human BelivrHQ Support.",
       ],
     },
     {
@@ -571,7 +571,7 @@ export const helpContent: Record<HelpSlug, HelpSection[]> = {
       title: "Contact the right person",
       bullets: [
         "Staff: ask your church administrator about roles, location access, plan availability or church-owned provider settings.",
-        "Active church administrators can use the floating chat bubble or Live chat in the account/help menu. Other staff should ask their church administrator to contact ChurchOS Support on their behalf.",
+        "Active church administrators can use the floating chat bubble or Live chat in the account/help menu. Other staff should ask their church administrator to contact BelivrHQ Support on their behalf.",
         "If the support team is offline, use the available chat form to leave a message and reply email. Response availability depends on the team’s working hours.",
       ],
     },

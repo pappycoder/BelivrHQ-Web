@@ -50,7 +50,7 @@ function addChoices(workbook: Workbook, values: string[]): string {
   choices.state = "veryHidden";
   const col = choices.columnCount + 1;
   values.forEach((value, i) => { choices.getCell(i + 1, col).value = value; });
-  const name = `ChurchOSChoices${col}`;
+  const name = `BelivrHQChoices${col}`;
   workbook.definedNames.add(`'_Choices'!$${choices.getColumn(col).letter}$1:$${choices.getColumn(col).letter}$${values.length}`, name);
   return name;
 }
@@ -63,7 +63,7 @@ export function addDesignedSheet(workbook: Workbook, spec: ExcelSheet, index: nu
   const sheet = workbook.addWorksheet(sheetName(workbook, spec.name), {
     properties: { defaultRowHeight: 23, tabColor: { argb: colors.blue } },
     pageSetup: { paperSize: 9, orientation: columns.length > 5 ? "landscape" : "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0 },
-    headerFooter: { oddFooter: "&LChurchOS&C&P / &N&R&D" },
+    headerFooter: { oddFooter: "&LBelivrHQ&C&P / &N&R&D" },
   });
   const headerRow = spec.template ? 1 : 6;
   const startRow = headerRow + 1;
@@ -74,7 +74,7 @@ export function addDesignedSheet(workbook: Workbook, spec: ExcelSheet, index: nu
 
   if (!spec.template) {
     sheet.mergeCells(1, 1, 1, titleWidth);
-    sheet.getCell("A1").value = `${branding?.churchName || "ChurchOS"}  /  ${spec.name}`;
+    sheet.getCell("A1").value = `${branding?.churchName || "BelivrHQ"}  /  ${spec.name}`;
     sheet.getRow(1).height = branding ? 64 : 42;
     sheet.getCell("A1").fill = { type: "pattern", pattern: "solid", fgColor: { argb: colors.navy } };
     sheet.getCell("A1").font = { name: "Aptos Display", size: 20, bold: true, color: { argb: colors.white } };
@@ -90,7 +90,7 @@ export function addDesignedSheet(workbook: Workbook, spec: ExcelSheet, index: nu
     sheet.getCell("A2").font = { name: "Aptos", size: 10, color: { argb: colors.muted } };
     sheet.getCell("A2").alignment = { vertical: "middle", wrapText: true, indent: 1 };
     sheet.mergeCells(3, 1, 3, titleWidth);
-    sheet.getCell("A3").value = "Powered by ChurchOS · Use the column arrows to sort and filter. Dropdown cells offer choices. Edits stay in this workbook.";
+    sheet.getCell("A3").value = "Powered by BelivrHQ · Use the column arrows to sort and filter. Dropdown cells offer choices. Edits stay in this workbook.";
     sheet.getCell("A3").font = { name: "Aptos", size: 10, color: { argb: colors.muted } };
     sheet.getCell("A3").alignment = { wrapText: true, vertical: "middle", indent: 1 };
     sheet.getRow(3).height = 32;
@@ -105,7 +105,7 @@ export function addDesignedSheet(workbook: Workbook, spec: ExcelSheet, index: nu
     rows.forEach((row) => sheet.addRow(row));
     sheet.autoFilter = { from: { row: 1, column: 1 }, to: { row: Math.max(2, rows.length + 1), column: columns.length } };
   } else if (rows.length) {
-    const tableName = `ChurchOSData${index + 1}`;
+    const tableName = `BelivrHQData${index + 1}`;
     sheet.addTable({ name: tableName, ref: `A${headerRow}`, headerRow: true, totalsRow: false, style: { theme: "TableStyleMedium4", showRowStripes: true }, columns: labels.map((name) => ({ name, filterButton: true })), rows });
     const endRow = startRow + rows.length - 1;
     const countColumn = sheet.getColumn(Math.max(3, columns.length + 1));
@@ -159,7 +159,7 @@ export function addDesignedSheet(workbook: Workbook, spec: ExcelSheet, index: nu
           error: "Choose a date or enter YYYY-MM-DD, for example 1995-04-12.",
         };
       }
-      if (choiceName) cell.dataValidation = { type: "list", allowBlank: true, formulae: [choiceName], showInputMessage: true, promptTitle: column.label, prompt: spec.template ? "Choose an option from the dropdown." : "Choices come from the exported rows. Workbook edits do not update ChurchOS.", showErrorMessage: !!explicitChoices, errorStyle: "stop", errorTitle: "Choose a listed value", error: "Use one of the available options." };
+      if (choiceName) cell.dataValidation = { type: "list", allowBlank: true, formulae: [choiceName], showInputMessage: true, promptTitle: column.label, prompt: spec.template ? "Choose an option from the dropdown." : "Choices come from the exported rows. Workbook edits do not update BelivrHQ.", showErrorMessage: !!explicitChoices, errorStyle: "stop", errorTitle: "Choose a listed value", error: "Use one of the available options." };
     }
     if (/status/i.test(column.key)) {
       sheet.addConditionalFormatting({ ref: `${sheet.getColumn(col).letter}${startRow}:${sheet.getColumn(col).letter}${lastRow}`, rules: [
@@ -177,7 +177,7 @@ export function addDesignedSheet(workbook: Workbook, spec: ExcelSheet, index: nu
 }
 
 export function initializeWorkbook(workbook: Workbook): void {
-  workbook.creator = "ChurchOS";
+  workbook.creator = "BelivrHQ";
   workbook.created = new Date();
   workbook.modified = new Date();
   workbook.calcProperties.fullCalcOnLoad = true;

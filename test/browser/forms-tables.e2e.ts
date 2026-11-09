@@ -7,7 +7,7 @@ async function session(
   failSecondOnce = false,
 ) {
   await context.addCookies([
-    { name: "churchos_token", value: "forms-tables", url: "http://127.0.0.1:3107" },
+    { name: "belivrhq_token", value: "forms-tables", url: "http://127.0.0.1:3107" },
   ]);
   await context.addInitScript(
     ({ review, readSubmissions, failSecondOnce }) => {
@@ -219,7 +219,7 @@ test("form detail shows its own questions, metadata and distinct answer columns"
   await expect(table.getByRole("cell", { name: "Grace Adeyemi", exact: true })).toBeVisible();
   await expect(table.getByRole("cell", { name: "David Okoro", exact: true })).toBeVisible();
   await expect(table.getByRole("cell", { name: "Welcome, Music", exact: true })).toBeVisible();
-  await page.screenshot({ path: "/tmp/churchos-form-detail.png", fullPage: true });
+  await page.screenshot({ path: "/tmp/belivrhq-form-detail.png", fullPage: true });
   await table.getByRole("button", { name: responseId, exact: true }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await expect(
@@ -327,7 +327,7 @@ for (const width of [390, 1024])
       true,
     );
     if (width === 390)
-      await page.screenshot({ path: "/tmp/churchos-form-detail-mobile.png", fullPage: true });
+      await page.screenshot({ path: "/tmp/belivrhq-form-detail-mobile.png", fullPage: true });
     await context.close();
   });
 

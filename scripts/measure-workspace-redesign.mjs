@@ -10,7 +10,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const argument = (name, fallback) => process.argv[process.argv.indexOf(name) + 1] ?? fallback;
 const baseURL = process.argv.includes("--base-url") ? argument("--base-url") : "http://127.0.0.1:3107";
 if (!["127.0.0.1", "localhost"].includes(new URL(baseURL).hostname)) throw new Error("Benchmark requires a local server.");
-const output = process.argv.includes("--output") ? argument("--output") : "/tmp/churchos-redesign-performance.json";
+const output = process.argv.includes("--output") ? argument("--output") : "/tmp/belivrhq-redesign-performance.json";
 const source = await fs.readFile(path.join(root, "test/fixtures/workspace-redesign.ts"), "utf8");
 const fixtureModule = {};
 runInNewContext(ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, { exports: fixtureModule, URL });
@@ -21,7 +21,7 @@ try {
     const context = await browser.newContext({ viewport: { width, height: 1000 }, serviceWorkers: "allow" });
     const { calls } = await fixtureModule.workspaceFixture(context, { navigation: true });
     const url = new URL(baseURL);
-    await context.addCookies([{ name: "churchos_token", value: "redesign-benchmark", url: url.origin }]);
+    await context.addCookies([{ name: "belivrhq_token", value: "redesign-benchmark", url: url.origin }]);
     await context.addInitScript(() => {
       localStorage.setItem("theme", "light");
       window.__workspaceMetrics = { lcp: null, cls: 0, eventDuration: 0, searchPaint: null };

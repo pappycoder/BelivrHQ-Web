@@ -90,7 +90,7 @@ describe("read-only workflow queries", () => {
     const signal = new AbortController().signal;
     await options.queryFn({ signal });
     const request = vi.mocked(api.get).mock.calls.at(-1)!;
-    const url = new URL(request[0], "https://churchos.invalid");
+    const url = new URL(request[0], "https://belivrhq.invalid");
     expect(Object.fromEntries(url.searchParams)).toEqual({ branchId: "branch-selected", page: "2", limit: "15", search: "Family & friends", archived: "true" });
     expect(request[1]).toEqual({ signal });
   });

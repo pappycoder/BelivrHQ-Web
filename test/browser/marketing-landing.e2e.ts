@@ -38,7 +38,7 @@ test("landing page remains public after the unauthenticated session check", asyn
   await expect(
     page.getByRole("link", { name: "Bring your church together", exact: true }),
   ).toHaveAttribute("href", "/register");
-  await expect(page).toHaveTitle(/ChurchOS.*ministry/);
+  await expect(page).toHaveTitle(/BelivrHQ.*ministry/);
   expect(requests.every(url => new URL(url).pathname === "/api/backend/pricing/subscriptions")).toBe(true);
 });
 
@@ -146,7 +146,7 @@ test("Enterprise has negotiated pricing without an amount or checkout in either 
       .click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toContainText(
-      "negotiated directly with the ChurchOS team",
+      "negotiated directly with the BelivrHQ team",
     );
     await expect(dialog).not.toContainText("₦");
     await expect(
@@ -185,17 +185,17 @@ for (const width of [320, 390, 768, 1440])
       await page.evaluate(() => document.documentElement.scrollWidth),
     ).toBeLessThanOrEqual(width);
     if (width === 1440) {
-      await page.screenshot({ path: "/tmp/churchos-landing-desktop.png" });
+      await page.screenshot({ path: "/tmp/belivrhq-landing-desktop.png" });
       await page.screenshot({
-        path: "/tmp/churchos-landing-full.png",
+        path: "/tmp/belivrhq-landing-full.png",
         fullPage: true,
       });
       await page
         .locator("#pricing")
-        .screenshot({ path: "/tmp/churchos-landing-pricing.png" });
+        .screenshot({ path: "/tmp/belivrhq-landing-pricing.png" });
     }
     if (width === 390) {
-      await page.screenshot({ path: "/tmp/churchos-landing-mobile.png" });
+      await page.screenshot({ path: "/tmp/belivrhq-landing-mobile.png" });
       await page
         .getByRole("button", { name: "Open navigation", exact: true })
         .click();
@@ -238,13 +238,13 @@ test("mobile account actions are distinct buttons and policies stay in the foote
     await register.evaluate(el => getComputedStyle(el).backgroundColor),
   );
   await expect(menu.getByRole("link", { name: /Legal/ })).toHaveCount(0);
-  await page.screenshot({ path: "/tmp/churchos-landing-mobile-menu.png" });
+  await page.screenshot({ path: "/tmp/belivrhq-landing-mobile-menu.png" });
   await page.keyboard.press("Escape");
   await expect(menu).toHaveCount(0);
   await expect(page.getByText("Departments & cell groups", { exact: true })).toHaveCount(0);
   const footer = page.locator("footer");
-  await footer.screenshot({ path: "/tmp/churchos-landing-mobile-footer.png" });
-  const brand = await footer.getByRole("link", { name: "ChurchOS home", exact: true }).boundingBox();
+  await footer.screenshot({ path: "/tmp/belivrhq-landing-mobile-footer.png" });
+  const brand = await footer.getByRole("link", { name: "BelivrHQ home", exact: true }).boundingBox();
   const description = await footer.getByText(/A thoughtful home for the work/).boundingBox();
   expect(description!.y).toBeGreaterThan(brand!.y + brand!.height);
   expect(Math.abs(description!.x - brand!.x)).toBeLessThan(2);
@@ -300,7 +300,7 @@ for (const width of [320, 390, 1440]) {
     await strip.scrollIntoViewIfNeeded();
     expect(await strip.getByText("People", { exact: true }).evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(15);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
-    await page.getByRole("tablist").screenshot({ path: `/tmp/churchos-larger-preview-tabs-${width}.png` });
-    await strip.screenshot({ path: `/tmp/churchos-larger-workspace-strip-${width}.png` });
+    await page.getByRole("tablist").screenshot({ path: `/tmp/belivrhq-larger-preview-tabs-${width}.png` });
+    await strip.screenshot({ path: `/tmp/belivrhq-larger-workspace-strip-${width}.png` });
   });
 }

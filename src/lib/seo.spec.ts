@@ -36,7 +36,7 @@ describe("SEO publication boundaries", () => {
     const meta = publicPageMetadata({ title: "Record attendance", description: "A guide", path: "/help/attendance", image: "/og/help/attendance.png", article: true });
     expect(meta.alternates?.canonical).toBe("https://church.example/help/attendance");
     expect(meta.openGraph).toMatchObject({ url: "https://church.example/help/attendance", type: "article", images: [{ url: "https://church.example/og/help/attendance.png" }] });
-    expect(meta.twitter).toMatchObject({ title: "Record attendance | ChurchOS", images: [{ url: "https://church.example/og/help/attendance.png" }] });
+    expect(meta.twitter).toMatchObject({ title: "Record attendance | BelivrHQ", images: [{ url: "https://church.example/og/help/attendance.png" }] });
   });
   it("keeps preview deployments out of search and omits their sitemap entries", () => {
     vi.stubEnv("VERCEL_ENV", "preview");

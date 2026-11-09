@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { publishPaymentHint, subscribePaymentHints } from "./payment-sync";
-const reference = "COSUB_" + "a".repeat(32);
-const topic = "churchos:subscription-payment-sync";
+const reference = "BHQSUB_" + "a".repeat(32);
+const topic = "belivrhq:subscription-payment-sync";
 let target: EventTarget;
 let storage: { setItem: ReturnType<typeof vi.fn>; removeItem: ReturnType<typeof vi.fn> };
 let channels: FakeChannel[];

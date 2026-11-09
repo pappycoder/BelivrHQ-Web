@@ -185,7 +185,7 @@ export default function ReportsStudioPage() {
       ];
       if (format === "PDF") {
         const sections = sheets.flatMap((s) => s.sections);
-        await exportReportPDF("Ministry report", sections, `churchos-report-${stamp}`, { metadata });
+        await exportReportPDF("Ministry report", sections, `belivrhq-report-${stamp}`, { metadata });
       } else if (format === "XLSX") {
         await exportExcel(
           sheets.map((s) => ({
@@ -194,7 +194,7 @@ export default function ReportsStudioPage() {
             data: s.sections[0]!.data,
             metadata,
           })),
-          `churchos-report-${stamp}`,
+          `belivrhq-report-${stamp}`,
         );
       } else {
         for (const s of sheets) {

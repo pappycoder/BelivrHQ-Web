@@ -5,7 +5,7 @@ const groupId = "44444444-4444-4444-8444-444444444444";
 
 test.beforeEach(async ({ context }, testInfo) => {
   const role = testInfo.title.startsWith("treasurer") ? "treasurer" : testInfo.title.startsWith("usher") ? "usher" : "cell_leader";
-  await context.addCookies([{ name: "churchos_token", value: "browser-test-only", url: "http://127.0.0.1:3107" }]);
+  await context.addCookies([{ name: "belivrhq_token", value: "browser-test-only", url: "http://127.0.0.1:3107" }]);
   await context.addInitScript(({ role, groupId, hq, unowned }) => {
     const nativeFetch = window.fetch.bind(window);
     const records: Record<string, unknown>[] = [];

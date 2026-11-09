@@ -23,7 +23,7 @@ Create/edit and calendar quick-create fields use restrained section panels. Tick
 - Targeted lint, TypeScript, whitespace checks and the production web build passed.
 - Mock fixtures now include required ticket plan features, complete session identity, exact tier selectors and disabled PWA registration for intercepted-network tests; runtime-error assertions remain enabled.
 
-Fixture-only previews are captured in `/tmp/churchos-events-previews/` for calendar, directory, details, forms, registrations, check-in, tiers and tickets at 390/768/1440px in light/dark modes with a saved violet accent.
+Fixture-only previews are captured in `/tmp/belivrhq-events-previews/` for calendar, directory, details, forms, registrations, check-in, tiers and tickets at 390/768/1440px in light/dark modes with a saved violet accent.
 
 ## Release boundaries
 

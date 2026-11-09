@@ -1,4 +1,4 @@
-name: ChurchOS Web CI
+name: BelivrHQ Web CI
 
 on:
   push:

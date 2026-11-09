@@ -15,7 +15,7 @@ test("login has no seeded-account dropdown or prefilled credentials", async ({ p
 });
 
 async function installReadOnlySession(context: BrowserContext, grants: string[], hq = false) {
-  await context.addCookies([{ name: "churchos_token", value: "readonly-test", url: "http://127.0.0.1:3107" }]);
+  await context.addCookies([{ name: "belivrhq_token", value: "readonly-test", url: "http://127.0.0.1:3107" }]);
   await context.addInitScript(({ grants, hq }) => {
     const original = window.fetch.bind(window);
     const calls: string[] = [];

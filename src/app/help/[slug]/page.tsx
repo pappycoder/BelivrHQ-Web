@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       robots: { index: false, follow: false },
     };
   return publicPageMetadata({
-    title: `${article.title} | ChurchOS Help Centre`,
+    title: `${article.title} | BelivrHQ Help Centre`,
     description: article.summary, path: `/help/${article.slug}`,
     image: `/og/help/${article.slug}.png`, article: true, modifiedTime: HELP_REVIEWED_AT,
   });
@@ -161,7 +161,7 @@ export default async function HelpArticlePage({ params }: Props) {
           <aside className="mt-12 rounded-xl border bg-card p-6">
             <h2 className="text-lg font-semibold">Still need help?</h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Church administrators can chat with ChurchOS Support for product help. For
+              Church administrators can chat with BelivrHQ Support for product help. For
               role assignments or church settings, start with your church administrator.
             </p>
             <div className="mt-4 flex flex-wrap gap-3">

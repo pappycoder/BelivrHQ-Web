@@ -11,8 +11,8 @@ const { outputText } = ts.transpileModule(catalogSource, {
 });
 const { helpArticles, helpTopics } = await import(`data:text/javascript;base64,${Buffer.from(outputText).toString("base64")}`);
 const ink = "#183b40", lime = "#d6ed97", paper = "#fafbf7";
-const logo = await sharp(path.join(root, "public/brand/churchos-lockup-light.png")).trim().resize({ width: 200 }).png().toBuffer();
-const mark = await sharp(path.join(root, "public/brand/churchos-emblem.png")).trim().resize({ width: 130 }).png().toBuffer();
+const logo = await sharp(path.join(root, "public/brand/belivrhq-lockup-light.png")).trim().resize({ width: 200 }).png().toBuffer();
+const mark = await sharp(path.join(root, "public/brand/belivrhq-emblem.png")).trim().resize({ width: 130 }).png().toBuffer();
 const xml = (text) => text.replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" })[char]);
 const lines = (text, limit) => {
   const result = [""];
@@ -37,7 +37,7 @@ ${home ? `<text x="64" y="263" font-family="DejaVu Sans" font-size="60" letter-s
 <text x="64" y="342" font-family="DejaVu Serif" font-size="60" font-style="italic" letter-spacing="-2.5" fill="${lime}">A lot more ministry.</text>` : textLines(title, 64, 247, 48, paper, 25, 59, "DejaVu Sans", 500)}
 ${textLines(subtitle, 68, home ? 408 : 437, 19, "#c4d5d0", 48, 29)}
 <path d="M68 530H650" stroke="#ecf1e8" stroke-opacity=".2"/>
-<text x="68" y="565" font-family="DejaVu Sans" font-size="13" letter-spacing="1.3" fill="#c4d5d0">${home ? "PEOPLE  /  ATTENDANCE  /  GIVING  /  BRANCHES" : "CHURCHOS HELP CENTRE  /  CLEAR, PRACTICAL GUIDES"}</text>
+<text x="68" y="565" font-family="DejaVu Sans" font-size="13" letter-spacing="1.3" fill="#c4d5d0">${home ? "PEOPLE  /  ATTENDANCE  /  GIVING  /  BRANCHES" : "BELIVRHQ HELP CENTRE  /  CLEAR, PRACTICAL GUIDES"}</text>
 <rect x="773" y="140" width="340" height="380" rx="170" fill="#d6ed97"/>
 <path d="M773 398h340M773 444h340" stroke="#183b40" stroke-opacity=".10"/>
 <circle cx="943" cy="300" r="103" fill="${paper}"/>

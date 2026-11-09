@@ -8,7 +8,7 @@ import { toast } from "@/lib/toast";
 import { api, refreshSession, setUnauthorizedHandler, advanceSessionGeneration } from "@/lib/api";
 import { fetchCurrentProfile, type CurrentProfile } from "@/hooks/use-profile";
 import { permissionReturnTo } from "@/lib/route-permissions";
-import { clearTokens } from "@/lib/session";
+import { clearTokens, publishSessionEnded } from "@/lib/session";
 import type {
   LoginInput,
   LoginResponse,
@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loggingOutRef.current = true;
       sessionGeneration.current++;
       advanceSessionGeneration();
-      window.dispatchEvent(new Event("churchos-session-ended"));
+      publishSessionEnded();
       clearRefreshTimer();
       await queryClient.cancelQueries();
       try { await clearTokens(); } catch { toast.error("Unable to clear the session. Please reload."); }
@@ -89,7 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const generation = sessionGeneration.current;
     async function restore() {
       try {
-        const presence = await fetch("/api/session", { headers: { "X-ChurchOS-Client": "web" }, cache: "no-store" });
+        const presence = await fetch("/api/session", { headers: { "X-BelivrHQ-Client": "web" }, cache: "no-store" });
         if (!presence.ok) throw new Error("Unable to check session");
         if (!(await presence.json()).hasSession) {
           if (active && generation === sessionGeneration.current && !isPublicContentPath(window.location.pathname) && !["/", "/login", "/register", "/forgot-password", "/reset-password", "/subscription", "/offline"].includes(window.location.pathname)) router.replace("/login");

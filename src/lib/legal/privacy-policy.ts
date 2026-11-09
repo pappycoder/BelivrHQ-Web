@@ -5,14 +5,14 @@ export const privacyPolicy: LegalDocument = {
   slug: "privacy-policy",
   title: "Privacy Policy",
   description:
-    "How ChurchOS and PappyCoder Technologies Limited collect, use, disclose, retain and protect personal information, and how to exercise your privacy rights.",
+    "How BelivrHQ and PappyCoder Technologies Limited collect, use, disclose, retain and protect personal information, and how to exercise your privacy rights.",
   introduction: [
-    `ChurchOS is operated by ${LEGAL_COMPANY.name}, a company based in Nigeria ("ChurchOS", "we", "us" or "our"). This Privacy Policy explains our handling of personal information through our website, account services, church management platform, support channels and connected features. It also explains the different responsibilities of ChurchOS and the churches that use the platform.`,
+    `BelivrHQ is operated by ${LEGAL_COMPANY.name}, a company based in Nigeria ("BelivrHQ", "we", "us" or "our"). This Privacy Policy explains our handling of personal information through our website, account services, church management platform, support channels and connected features. It also explains the different responsibilities of BelivrHQ and the churches that use the platform.`,
     "This Policy is a notice about data processing. Reading it, visiting the website or accepting our commercial terms does not, by itself, provide consent for every use of personal information. Where consent is required, it must be obtained for the relevant purpose. Mandatory privacy rights remain available regardless of any contractual limitation.",
   ],
   highlights: [
-    "Your church generally decides why member, visitor, attendance, giving and pastoral records are collected. ChurchOS processes those records to provide the church's chosen services.",
-    "ChurchOS separately handles account administration, platform billing, security and support information for its own operational purposes.",
+    "Your church generally decides why member, visitor, attendance, giving and pastoral records are collected. BelivrHQ processes those records to provide the church's chosen services.",
+    "BelivrHQ separately handles account administration, platform billing, security and support information for its own operational purposes.",
     "Church records can reveal religious beliefs and other sensitive information. Access must be restricted, and children’s information needs appropriate safeguards.",
     "Privacy requests can be sent to the company’s designated email without creating an account or using live chat.",
   ],
@@ -21,8 +21,8 @@ export const privacyPolicy: LegalDocument = {
       id: "scope",
       title: "1. Scope and application",
       paragraphs: [
-        "This Policy applies to website visitors, account holders, church administrators and staff, people who contact us, and people whose information is entered into a ChurchOS workspace. It covers information collected directly, supplied by a church or another authorised person, generated through use of the service, or received from a connected provider.",
-        "A church may operate its own website, publish a form, organise an event, collect giving or communicate through a provider connected to ChurchOS. That church must provide its own privacy information for its activities. Our Policy does not replace the church’s notices or the notices of payment processors, communications providers, video platforms and other independent services.",
+        "This Policy applies to website visitors, account holders, church administrators and staff, people who contact us, and people whose information is entered into a BelivrHQ workspace. It covers information collected directly, supplied by a church or another authorised person, generated through use of the service, or received from a connected provider.",
+        "A church may operate its own website, publish a form, organise an event, collect giving or communicate through a provider connected to BelivrHQ. That church must provide its own privacy information for its activities. Our Policy does not replace the church’s notices or the notices of payment processors, communications providers, video platforms and other independent services.",
         "The Nigeria Data Protection Act 2023 and applicable implementing instruments inform this Policy. Other mandatory privacy laws may also apply depending on the people, organisations and processing concerned. We do not represent that the platform is automatically suitable for every country, sector or regulated use.",
       ],
     },
@@ -31,8 +31,8 @@ export const privacyPolicy: LegalDocument = {
       title: "2. Who is responsible for your information",
       paragraphs: [
         "For information processed to run our business (such as account contact details, subscription payments, enquiries, platform security and our own legal compliance), PappyCoder Technologies Limited generally acts as a data controller, determining the relevant purposes and means of processing.",
-        "For information a church submits or generates in its workspace, the church generally acts as controller and ChurchOS acts as processor on the church’s documented instructions. An authorised administrator’s use of the platform and agreed settings form part of those instructions. The precise legal role depends on the actual activity, not only the label used in this Policy.",
-        "A church’s administrators manage access to its workspace, including branch assignments, roles, permissions, invitations, exports and public sharing. Staff, volunteers or contractors with access act under that church’s authority. ChurchOS support cannot automatically override a church’s permissions or disclose its records merely because a person asks for them.",
+        "For information a church submits or generates in its workspace, the church generally acts as controller and BelivrHQ acts as processor on the church’s documented instructions. An authorised administrator’s use of the platform and agreed settings form part of those instructions. The precise legal role depends on the actual activity, not only the label used in this Policy.",
+        "A church’s administrators manage access to its workspace, including branch assignments, roles, permissions, invitations, exports and public sharing. Staff, volunteers or contractors with access act under that church’s authority. BelivrHQ support cannot automatically override a church’s permissions or disclose its records merely because a person asks for them.",
         "If your request concerns a church record, contact the church first where practical. You may also contact us directly. We will identify our role, verify the request as appropriate and assist or refer it to the responsible church without preventing you from exercising rights against us where we are legally responsible.",
       ],
     },
@@ -72,7 +72,7 @@ export const privacyPolicy: LegalDocument = {
           ],
           [
             "Connected services and assistant questions",
-            "Provider settings and credentials supplied by an administrator, relevant callback data, and questions or recent question context submitted to Ask ChurchOS when that feature is used.",
+            "Provider settings and credentials supplied by an administrator, relevant callback data, and questions or recent question context submitted to Ask BelivrHQ when that feature is used.",
           ],
         ],
       },
@@ -147,14 +147,14 @@ export const privacyPolicy: LegalDocument = {
         "Being identified in a church database can reveal religious beliefs even when a record does not contain a field labelled ‘religion’. Pastoral notes, family circumstances, health information and other records may create additional sensitivity. Churches must assess those risks, collect the minimum necessary, identify a lawful condition for sensitive-data processing and limit access to people with a legitimate need.",
         "A church’s religious or charitable purpose does not create an unrestricted permission to collect, disclose, market with or publish sensitive personal information. Any statutory exception must be evaluated against its actual conditions. In particular, public disclosure or sharing with unrelated organisations requires separate consideration.",
         "The platform includes permission and branch controls, and selected categories of secrets or records receive additional protection. This does not mean all stored information is end-to-end encrypted or inaccessible to every authorised service operator. Administrators must configure permissions carefully and avoid placing highly confidential information in ordinary messages, AI questions, public forms or broadly accessible attachments.",
-        "ChurchOS is not a medical records system, crisis response service, safeguarding authority or substitute for professional counselling. Do not use it to bypass professional confidentiality requirements, mandatory reporting duties or legal restrictions on particularly sensitive information.",
+        "BelivrHQ is not a medical records system, crisis response service, safeguarding authority or substitute for professional counselling. Do not use it to bypass professional confidentiality requirements, mandatory reporting duties or legal restrictions on particularly sensitive information.",
       ],
     },
     {
       id: "children",
       title: "7. Children and people requiring additional protection",
       paragraphs: [
-        "An individual creating or administering a ChurchOS account must be at least 18 and legally capable of acting for the relevant organisation. Children may nevertheless appear in church records, such as family, attendance or event records, under the church’s responsibility.",
+        "An individual creating or administering a BelivrHQ account must be at least 18 and legally capable of acting for the relevant organisation. Children may nevertheless appear in church records, such as family, attendance or event records, under the church’s responsibility.",
         "Before entering a child’s information, the church must determine whether parental or guardian authorisation, age or authority verification, an appropriate legal exception, or another safeguard is required. Only information needed for the specified activity should be collected. Photographs, family contact details, health information and public sharing require particular care.",
         "Parents and guardians may contact the responsible church or our designated contact to raise a concern. We may need to verify the requester’s authority and coordinate with the church. We will not disclose a child’s record to an unverified person or assume that every person claiming to be a relative has access rights.",
       ],
@@ -171,7 +171,7 @@ export const privacyPolicy: LegalDocument = {
         "A business successor: in a merger, restructuring, financing or transfer involving the service, subject to appropriate confidentiality and applicable privacy requirements; material changes to use will be addressed through appropriate notice or a new lawful basis.",
       ],
       paragraphs: [
-        "We do not sell church member lists or license identifiable church records to advertisers. We do not permit an unrelated church to browse another church’s records simply because both use ChurchOS. A customer can still expose its own data through an export, public link, misconfigured permission, incorrect recipient or compromised account; the relevant controller remains responsible for those choices, and we remain responsible for our own legal duties.",
+        "We do not sell church member lists or license identifiable church records to advertisers. We do not permit an unrelated church to browse another church’s records simply because both use BelivrHQ. A customer can still expose its own data through an export, public link, misconfigured permission, incorrect recipient or compromised account; the relevant controller remains responsible for those choices, and we remain responsible for our own legal duties.",
         "We seek to limit operational access to what is needed for the relevant function and to use appropriate contractual and security arrangements with providers. A provider acting independently for fraud prevention, payment processing or its own account services may have separate controller responsibilities and its own notice.",
       ],
     },
@@ -230,9 +230,9 @@ export const privacyPolicy: LegalDocument = {
     },
     {
       id: "ai-and-profiling",
-      title: "10. Ask ChurchOS, analytics and calculated indicators",
+      title: "10. Ask BelivrHQ, analytics and calculated indicators",
       paragraphs: [
-        "Ask ChurchOS is a product guidance feature. Depending on configuration, it can answer from product references or request an AI-generated explanation. When external synthesis is used, the submitted question, recent user-question context, selected references and verified access context are sent to the configured AI provider. The current integration requests that the provider not store the response as a stored API response; that setting is not a promise of zero provider retention for all operational or security purposes.",
+        "Ask BelivrHQ is a product guidance feature. Depending on configuration, it can answer from product references or request an AI-generated explanation. When external synthesis is used, the submitted question, recent user-question context, selected references and verified access context are sent to the configured AI provider. The current integration requests that the provider not store the response as a stored API response; that setting is not a promise of zero provider retention for all operational or security purposes.",
         "The assistant is not given general tools to inspect member records, make payments, change permissions or act on your behalf. Nevertheless, text you type can itself contain personal information. Do not submit passwords, payment credentials, pastoral notes, health details or identifiable member information that is unnecessary for a product question.",
         "Enabled reporting or scoring features may calculate attendance patterns, engagement summaries or follow-up indicators from church activity. These are administrative indicators that can be incomplete or wrong. The church must explain its use where required, check the underlying information, provide meaningful human review and avoid treating a score as a determination of a person’s faith, health, entitlement, character or suitability.",
         "We do not intend these features to make legally or similarly significant decisions about people solely by automated means. If you believe a church is using them that way, contact that church and you may also contact us. Applicable rights relating to profiling, objections and human review remain available.",
@@ -242,7 +242,7 @@ export const privacyPolicy: LegalDocument = {
       id: "cookies",
       title: "11. Cookies, browser storage and device information",
       paragraphs: [
-        "ChurchOS uses first-party session cookies to support authentication and session continuity. The web application uses HttpOnly cookies for its principal session tokens; persistent session cookies may be set for up to 30 days, while the validity and revocation of the underlying session can differ. Clearing cookies or ending a session can require you to sign in again.",
+        "BelivrHQ uses first-party session cookies to support authentication and session continuity. The web application uses HttpOnly cookies for its principal session tokens; persistent session cookies may be set for up to 30 days, while the validity and revocation of the underlying session can differ. Clearing cookies or ending a session can require you to sign in again.",
         "Browser storage may retain interface preferences, selected billing currency, short-lived payment coordination information and cached application resources. Installed web-app resources and previously enabled device features can also leave local data. Signing out is not a guarantee that every downloaded file, browser backup, third-party cookie or previously saved device record has been removed.",
         "The Tawk.to widget can load automatically for eligible active administrators on supported workspace or help pages, and may use its own cookies or storage. Optional embeds and configured monitoring services may also receive connection or device information. We do not claim that all third-party technologies operate without identifiers or that the website currently provides a universal cookie-preferences centre.",
         "You can inspect, block or remove cookies and site storage through your browser, decline to open third-party links or embeds, and contact us about a particular technology. Blocking essential storage can prevent sign-in or other requested functionality. Where a technology requires prior consent or additional controls under applicable law, that requirement applies independently of this notice and commercial acceptance.",
@@ -253,7 +253,7 @@ export const privacyPolicy: LegalDocument = {
       title: "12. Service messages and church communications",
       paragraphs: [
         "Account verification, invitations, sign-in security, password recovery, subscription confirmations, renewals and important service notices are operational communications. They are distinct from optional marketing. Some are necessary to provide a requested account or transaction and cannot be disabled while retaining the relevant function.",
-        "A church controls its own broadcasts and member communications. It must establish an appropriate permission or consent, identify the sender, honour objections and opt-outs, and comply with the relevant channel’s rules. ChurchOS does not convert a contact upload into permission to send promotional or sensitive messages.",
+        "A church controls its own broadcasts and member communications. It must establish an appropriate permission or consent, identify the sender, honour objections and opt-outs, and comply with the relevant channel’s rules. BelivrHQ does not convert a contact upload into permission to send promotional or sensitive messages.",
         "If an unwanted message relates to a particular church, contact the church or follow its supplied opt-out instructions. Contact us about suspected abuse of the platform. We may need the sender, date, delivery channel and a limited copy of the message to investigate; avoid forwarding unrelated sensitive records.",
       ],
     },
@@ -308,7 +308,7 @@ export const privacyPolicy: LegalDocument = {
       id: "requests",
       title: "17. How to make a request",
       paragraphs: [
-        `Email ${LEGAL_COMPANY.email} with the subject “ChurchOS Privacy Request”. Describe the request, the church involved where relevant, the email or other identifier associated with the record, and a safe reply channel. Provide only the information reasonably needed to locate the record and understand the request.`,
+        `Email ${LEGAL_COMPANY.email} with the subject “BelivrHQ Privacy Request”. Describe the request, the church involved where relevant, the email or other identifier associated with the record, and a safe reply channel. Provide only the information reasonably needed to locate the record and understand the request.`,
         "We may request proportionate proof of identity, authority or guardianship before acting. A rights request is not an instruction to send a password or provide excessive identification. If ordinary email is unsuitable for the evidence involved, ask us to arrange an appropriate channel before sending it.",
         "We will respond without undue delay and within the time required by applicable law. Where a lawful extension, clarification, refusal or referral is necessary, we will explain it as required. Rights requests are ordinarily handled without charge; a fee or refusal will be considered only where the relevant law permits it and with the required explanation.",
       ],
@@ -317,9 +317,9 @@ export const privacyPolicy: LegalDocument = {
       id: "public-sharing",
       title: "18. Public links, exports and connected destinations",
       paragraphs: [
-        "A public form, publicly available media asset, external link, receipt attachment or export may be accessible outside the ordinary workspace permission controls. Anyone receiving an exported file or forwarded link may retain another copy. A browser download cannot generally be recalled from another person’s device through ChurchOS.",
+        "A public form, publicly available media asset, external link, receipt attachment or export may be accessible outside the ordinary workspace permission controls. Anyone receiving an exported file or forwarded link may retain another copy. A browser download cannot generally be recalled from another person’s device through BelivrHQ.",
         "Customers must check recipient addresses, branch selections, link visibility and the fields included in an export before sharing. People completing a public church form should read the church’s explanation of collection and avoid submitting unnecessary confidential information. The church is responsible for the questions it creates and the lawful use of responses.",
-        "Third-party sites and embedded services apply their own practices when you access them. We do not control those practices solely because a link or embed appears in ChurchOS. This does not remove any responsibility we have for our own selection or use of a provider.",
+        "Third-party sites and embedded services apply their own practices when you access them. We do not control those practices solely because a link or embed appears in BelivrHQ. This does not remove any responsibility we have for our own selection or use of a provider.",
       ],
     },
     {
@@ -335,7 +335,7 @@ export const privacyPolicy: LegalDocument = {
       id: "complaints",
       title: "20. Questions and regulatory complaints",
       paragraphs: [
-        `Contact ${LEGAL_COMPANY.name} at ${LEGAL_COMPANY.email} to raise a concern about our processing. For a church-controlled record, identify the church so that we can involve the responsible administrator where appropriate. You may complain about ChurchOS directly when the concern relates to our own conduct.`,
+        `Contact ${LEGAL_COMPANY.name} at ${LEGAL_COMPANY.email} to raise a concern about our processing. For a church-controlled record, identify the church so that we can involve the responsible administrator where appropriate. You may complain about BelivrHQ directly when the concern relates to our own conduct.`,
         "You may also complain to the Nigeria Data Protection Commission through its official channels at ndpc.gov.ng, or to another competent regulator where applicable. Contacting us first can help resolve a concern, but this Policy does not impose a contractual barrier to a regulatory complaint, an urgent application or another mandatory remedy.",
       ],
     },
@@ -352,7 +352,7 @@ export const privacyPolicy: LegalDocument = {
       title: "22. Company and privacy contact",
       paragraphs: [
         `Operator: ${LEGAL_COMPANY.name}. Country: ${LEGAL_COMPANY.country}. Product: ${LEGAL_COMPANY.product}. Designated privacy and legal contact: ${LEGAL_COMPANY.email}.`,
-        "This mailbox is designated by the company for ChurchOS privacy, legal and contractual notices even though the address is not on a company-branded domain. A published contact change will not invalidate a request already properly sent to the previous address. Ask for the appropriate postal or formal service details if your matter requires physical delivery or a procedure prescribed by law.",
+        "This mailbox is designated by the company for BelivrHQ privacy, legal and contractual notices even though the address is not on a company-branded domain. A published contact change will not invalidate a request already properly sent to the previous address. Ask for the appropriate postal or formal service details if your matter requires physical delivery or a procedure prescribed by law.",
       ],
     },
   ],

@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 for (const { width, noEvents } of [{ width: 1280, noEvents: false }, { width: 390, noEvents: false }, { width: 1280, noEvents: true }, { width: 390, noEvents: true }]) test(`ticket availability errors use the general toast with the modal open (${width}px, empty=${noEvents})`, async ({ page, context }) => {
   await page.setViewportSize({ width, height: 900 });
-  await context.addCookies([{ name: "churchos_token", value: "browser-test-only", url: "http://127.0.0.1:3107" }]);
+  await context.addCookies([{ name: "belivrhq_token", value: "browser-test-only", url: "http://127.0.0.1:3107" }]);
   await context.addInitScript((noEvents) => {
     const original = window.fetch.bind(window);
     window.fetch = async (input, options) => {

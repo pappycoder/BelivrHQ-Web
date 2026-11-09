@@ -30,7 +30,7 @@ for (const width of [390, 1440]) for (const [path, title] of documents) {
     expect(chatRequests).toHaveLength(0);
     expect(new URL((await page.locator('link[rel="canonical"]').getAttribute("href"))!).pathname).toBe(path);
     await expect(page).toHaveURL(new RegExp(`${path}$`));
-    if (path === "/privacy-policy" && width === 390) await page.screenshot({ path: "/tmp/churchos-legal-mobile.png" });
+    if (path === "/privacy-policy" && width === 390) await page.screenshot({ path: "/tmp/belivrhq-legal-mobile.png" });
   });
 }
 

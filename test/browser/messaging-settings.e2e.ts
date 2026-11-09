@@ -9,7 +9,7 @@ async function session(
 ) {
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "integration-browser-test",
       url: "http://127.0.0.1:3107",
     },

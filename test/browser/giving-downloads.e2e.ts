@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 
 async function fixture(context: BrowserContext, failExport = false) {
   await context.route('https://embed.tawk.to/**', route => route.fulfill({body:''}));
-  await context.addCookies([{name:'churchos_token',value:'giving-download-fixture',url:'http://127.0.0.1:3107'}]);
+  await context.addCookies([{name:'belivrhq_token',value:'giving-download-fixture',url:'http://127.0.0.1:3107'}]);
   await context.addInitScript(({failExport}) => {
     const original=window.fetch.bind(window);
     const calls: string[]=[];

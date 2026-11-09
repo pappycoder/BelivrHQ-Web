@@ -1,7 +1,7 @@
 import { test, expect, type BrowserContext } from '@playwright/test';
 async function fixture(context: BrowserContext, features: string[] | undefined, role = "branch_pastor") {
   await context.route('https://embed.tawk.to/**', route => route.fulfill({body:''}));
-  await context.addCookies([{name:'churchos_token',value:'plan-fixture',url:'http://127.0.0.1:3107'}]);
+  await context.addCookies([{name:'belivrhq_token',value:'plan-fixture',url:'http://127.0.0.1:3107'}]);
   await context.addInitScript(({features,role}) => {
     const original=window.fetch.bind(window);
     const requests:string[]=[];

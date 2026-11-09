@@ -1,6 +1,6 @@
 # SEO and social previews
 
-ChurchOS now shares the landing page's teal, cream and lime identity across 22 PNG social banners: the homepage (`/og.png`), Help Centre (`/og/help.png`) and each of the 20 published guides (`/og/help/<slug>.png`). Every image is 1200 × 630, uses the official logo/emblem, and is served as a static public file. Guide images use the actual article title and topic. Open Graph and Twitter use the same matching image and text. No external image generation service, runtime rendering dependency, or invented testimonials/usage metrics are involved.
+BelivrHQ now shares the landing page's teal, cream and lime identity across 22 PNG social banners: the homepage (`/og.png`), Help Centre (`/og/help.png`) and each of the 20 published guides (`/og/help/<slug>.png`). Every image is 1200 × 630, uses the official logo/emblem, and is served as a static public file. Guide images use the actual article title and topic. Open Graph and Twitter use the same matching image and text. No external image generation service, runtime rendering dependency, or invented testimonials/usage metrics are involved.
 
 Run `npm run og:generate` after changing a guide title/topic or the banner design. The generator uses the existing TypeScript help catalog, Sharp, system DejaVu fonts and official brand PNGs. Generated images are checked in; deployment does not require a font download or image-generation call. The unit checks verify that every published guide has an actual PNG of the expected dimensions.
 
@@ -14,7 +14,7 @@ Vercel preview deployments have noindex metadata, a disallow-all robots file and
 
 ## Deployment configuration
 
-Set `NEXT_PUBLIC_SITE_URL` to the public **production origin**, for example `https://church-os-web.vercel.app`, and rebuild. Use a custom domain here when one is ready. This setting wins over Vercel's production-domain variable; when absent, `VERCEL_PROJECT_PRODUCTION_URL` is used, followed by the existing documented ChurchOS Vercel origin. The local `.env.local` currently deliberately specifies localhost and was not edited. The acceptance build overrides that value with the existing production origin. Avoid using a temporary preview origin in this setting.
+Set `NEXT_PUBLIC_SITE_URL` to the public **production origin**, for example `https://church-os-web.vercel.app`, and rebuild. Use a custom domain here when one is ready. This setting wins over Vercel's production-domain variable; when absent, `VERCEL_PROJECT_PRODUCTION_URL` is used, followed by the existing documented BelivrHQ Vercel origin. The local `.env.local` currently deliberately specifies localhost and was not edited. The acceptance build overrides that value with the existing production origin. Avoid using a temporary preview origin in this setting.
 
 Optional `GOOGLE_SITE_VERIFICATION` and `BING_SITE_VERIFICATION` values render ownership meta tags when configured. Obtain the real tokens from the respective webmaster account; no placeholder verification tag is emitted. After deployment, verify domain ownership and submit `/sitemap.xml` in Google Search Console/Bing Webmaster Tools. Those account actions are not performed by this change. Social platforms may retain older shared previews until their caches refresh; use their sharing debugger/inspector to request a refresh after deployment.
 

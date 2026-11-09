@@ -20,8 +20,8 @@ export function useBillingStatus() {
       void client.invalidateQueries({ queryKey: ["notifications"] });
       void client.invalidateQueries({ queryKey: ["notifications-unread"] });
     };
-    window.addEventListener("churchos:usage-changed", refresh);
-    return () => window.removeEventListener("churchos:usage-changed", refresh);
+    window.addEventListener("belivrhq:usage-changed", refresh);
+    return () => window.removeEventListener("belivrhq:usage-changed", refresh);
   }, [allowed, client]);
   return {
     allowed,

@@ -6,7 +6,7 @@ async function fixture(context: BrowserContext, hq = true) {
   const requests: URL[] = [];
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "filters-fixture",
       url: "http://127.0.0.1:3107",
     },
@@ -147,7 +147,7 @@ for (const width of [1280, 320]) {
       .toBe(true);
     await settleScreenshot(page, "Services", "30");
     await page.screenshot({
-      path: `/tmp/churchos-services-toolbar-${width}.png`,
+      path: `/tmp/belivrhq-services-toolbar-${width}.png`,
       fullPage: true,
     });
     expect(
@@ -213,7 +213,7 @@ for (const width of [1280, 320]) {
       .toBe(true);
     await settleScreenshot(page, "Matching records", "40");
     await page.screenshot({
-      path: `/tmp/churchos-records-toolbar-${width}.png`,
+      path: `/tmp/belivrhq-records-toolbar-${width}.png`,
       fullPage: true,
     });
     expect(

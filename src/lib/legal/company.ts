@@ -1,7 +1,7 @@
 /** Update this single source when the company's designated contact changes. */
 export const LEGAL_COMPANY = {
   name: "PappyCoder Technologies Limited",
-  product: "ChurchOS",
+  product: "BelivrHQ",
   country: "Nigeria",
   email: "lucasdeekay98@gmail.com",
 } as const;

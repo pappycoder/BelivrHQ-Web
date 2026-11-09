@@ -1,15 +1,15 @@
-> Current pricing: USD $10/$20/$40 monthly and $108/$216/$432 annually, with a shared currency selector and server-locked converted payment quotes. See [Subscription currencies](../../ChurchOS-Backend/docs/SUBSCRIPTION-CURRENCIES-2026-10-19.md); this supersedes the original NGN pricing examples below.
+> Current pricing: USD $10/$20/$40 monthly and $108/$216/$432 annually, with a shared currency selector and server-locked converted payment quotes. See [Subscription currencies](../../BelivrHQ-Backend/docs/SUBSCRIPTION-CURRENCIES-2026-10-19.md); this supersedes the original NGN pricing examples below.
 
 # Progressive authentication and platform subscriptions
 
 > New subscriptions use Flutterwave only. The signup session now continues directly
-> to payment review. See [October 20 fix](../../ChurchOS-Backend/docs/FLUTTERWAVE-SUBSCRIPTION-CHECKOUT-2026-10-20.md).
+> to payment review. See [October 20 fix](../../BelivrHQ-Backend/docs/FLUTTERWAVE-SUBSCRIPTION-CHECKOUT-2026-10-20.md).
 
 Registration collects church details, the administrator account, a plan and a review in four animated steps. Values survive moving back; passwords and challenge secrets remain in memory only. After creating the account, the web proxy saves the approved signup session as HttpOnly cookies and the browser automatically opens `/subscription` without a second login request to review the selected plan, billing period and payment quote. The existing session proxy establishes HttpOnly cookies. Clicking Continue to payment opens the configured provider's secure checkout.
 
 If email confirmation, MFA or a login outage prevents automatic sign-in, registration remains successful and navigates to `/login?returnTo=%2Fsubscription&registered=1`, with an account-created notice. It does not invite duplicate registration or store the password. Unpaid administrators return to Plan & Billing after signing in and can reopen `/subscription` later or resume an existing pending checkout. The account-menu Plan & Billing link remains available to authorized administrators. Existing authenticator enrollment, recovery codes and password recovery remain available.
 
-New platform subscription checkout supports Flutterwave only, using the backend's `FLUTTERWAVE_SECRET_KEY`, separate from a church-owned Flutterwave account under Settings → Integrations. Redis must be available to save the server-owned payment quote even though display currency conversion can tolerate an unavailable cache. With Docker running, start the local dependency with `docker compose up -d redis` from `ChurchOS-Backend`. Restart the backend after changing its environment. No real account registration or payment is performed by the browser regression fixtures.
+New platform subscription checkout supports Flutterwave only, using the backend's `FLUTTERWAVE_SECRET_KEY`, separate from a church-owned Flutterwave account under Settings → Integrations. Redis must be available to save the server-owned payment quote even though display currency conversion can tolerate an unavailable cache. With Docker running, start the local dependency with `docker compose up -d redis` from `BelivrHQ-Backend`. Restart the backend after changing its environment. No real account registration or payment is performed by the browser regression fixtures.
 
 October 20 validation: production build, TypeScript and targeted lint passed.
 All 29 onboarding, currency and entitlement browser checks passed with mocked
@@ -31,7 +31,7 @@ deployment and starting the unavailable local Redis service remain operational s
 ## Deploy
 
 1. Apply `20261019000000_platform_subscriptions` and `20261019010000_remove_legacy_integrations` using the backend migration console (or `npx prisma migrate deploy --config .config/prisma.config.ts`) before deploying the new API. Deploy web/API together.
-2. Set `WEB_URL` to the exact frontend origin and configure the **ChurchOS organization** payment keys on the backend. Configure `FLUTTERWAVE_WEBHOOK_SECRET` when using Flutterwave. No secret belongs in a `NEXT_PUBLIC_` variable.
+2. Set `WEB_URL` to the exact frontend origin and configure the **BelivrHQ organization** payment keys on the backend. Configure `FLUTTERWAVE_WEBHOOK_SECRET` when using Flutterwave. No secret belongs in a `NEXT_PUBLIC_` variable.
 3. Configure platform merchant callbacks at `PUBLIC_API_URL/api/v1/billing/webhooks/paystack` or `/flutterwave`. The hosted redirect is derived server-side as `WEB_URL/subscription`. Church-specific payment callbacks remain separate. If retiring a previous organization webhook, reconcile its outstanding transactions before switching it.
 4. Run test-mode provider acceptance for successful, declined, cancelled and asynchronous payments on the deployed origins, including sign-in/email confirmation/MFA and a browser closed before redirect. Automated tests use provider fixtures and cannot prove live merchant account readiness.
 5. Retire seeded credentials before a real production launch as previously planned. Their picker is preserved at the user's explicit request for current testing.

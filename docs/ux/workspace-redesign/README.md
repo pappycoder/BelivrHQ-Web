@@ -1,6 +1,6 @@
 # Workspace redesign
 
-The authenticated ChurchOS workspace uses a teal area rail, contextual module navigation, a task-led home and one shared presentation system. All 84 dashboard routes inherit it. Canonical URLs, API calls, query keys, permissions, plan checks, ownership rules and branch scoping stay intact. `contracts.json` records the route/navigation inventory and the source audit findings.
+The authenticated BelivrHQ workspace uses a teal area rail, contextual module navigation, a task-led home and one shared presentation system. All 84 dashboard routes inherit it. Canonical URLs, API calls, query keys, permissions, plan checks, ownership rules and branch scoping stay intact. `contracts.json` records the route/navigation inventory and the source audit findings.
 
 ## Design
 

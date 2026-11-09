@@ -27,7 +27,7 @@ for (const role of roles)
     }) => {
       await context.addCookies([
         {
-          name: "churchos_token",
+          name: "belivrhq_token",
           value: "analytics-fixture",
           url: "http://127.0.0.1:3107",
         },

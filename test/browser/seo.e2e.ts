@@ -19,7 +19,7 @@ for (const [route, image] of [["/", "/og.png"], ["/help", "/og/help.png"], ["/he
 }
 for (const route of ["/login", "/register", "/subscription", "/payment/complete", "/forms/public/seo-token", "/dashboard"]) {
   test(`non-public content stays out of search: ${route}`, async ({ page, context }) => {
-    await context.addCookies([{ name: "churchos_token", value: "metadata-only-fixture", url: "http://127.0.0.1:3107" }]);
+    await context.addCookies([{ name: "belivrhq_token", value: "metadata-only-fixture", url: "http://127.0.0.1:3107" }]);
     await page.goto(route);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", "noindex, nofollow");
     await expect(page.locator('link[rel="canonical"]')).toHaveCount(0);

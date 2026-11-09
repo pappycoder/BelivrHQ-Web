@@ -113,7 +113,7 @@ export function BotProtection({
           challenge: challengeUrl(path),
           fetch: async (input, init) => {
             const headers = new Headers(init?.headers);
-            headers.set("X-ChurchOS-Client", "web");
+            headers.set("X-BelivrHQ-Client", "web");
             const options = {
               ...init,
               headers,

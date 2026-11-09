@@ -8,7 +8,7 @@ const fields = [
 ];
 const identity = {
   churchName: "Grace Community Church",
-  churchLogoUrl: "/brand/churchos-logo.png",
+  churchLogoUrl: "/brand/belivrhq-logo.png",
 };
 async function fixture(
   context: BrowserContext,
@@ -33,7 +33,7 @@ async function fixture(
   if (options.private)
     await context.addCookies([
       {
-        name: "churchos_token",
+        name: "belivrhq_token",
         value: "intake-fixture",
         url: "http://127.0.0.1:3107",
       },
@@ -234,7 +234,7 @@ for (const kind of ["members", "visitors"]) {
       await page.getByLabel("Last name", { exact: false }).fill("Adeyemi");
     if (kind === "members")
       await page.screenshot({
-        path: "/tmp/churchos-intake-members-mobile.png",
+        path: "/tmp/belivrhq-intake-members-mobile.png",
         fullPage: true,
       });
     await verifyBotForm(page);
@@ -424,7 +424,7 @@ test("missing church logo falls back to the app mark while keeping the church na
     page.getByText(identity.churchName, { exact: true }),
   ).toBeVisible();
   await expect(
-    page.getByRole("img", { name: "ChurchOS", exact: true }),
+    page.getByRole("img", { name: "BelivrHQ", exact: true }),
   ).toBeVisible();
 });
 
@@ -441,7 +441,7 @@ test("failed church logo keeps church identity without app-logo substitution", a
     page.getByRole("img", { name: "Church logo unavailable" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("img", { name: "ChurchOS", exact: true }),
+    page.getByRole("img", { name: "BelivrHQ", exact: true }),
   ).toHaveCount(0);
 });
 

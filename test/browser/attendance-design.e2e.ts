@@ -19,7 +19,7 @@ async function fixture(
   let archived = false;
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "attendance-design",
       url: "http://127.0.0.1:3107",
     },
@@ -326,7 +326,7 @@ test("desktop, mobile and dark previews retain compact charts and scoped present
   context,
 }) => {
   await fixture(context, { reports: true });
-  const directory = "/tmp/churchos-attendance-previews";
+  const directory = "/tmp/belivrhq-attendance-previews";
   await fs.mkdir(directory, { recursive: true });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/attendance");

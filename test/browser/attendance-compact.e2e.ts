@@ -43,7 +43,7 @@ async function fixture(
   }));
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "attendance-compact",
       url: "http://127.0.0.1:3107",
     },
@@ -54,7 +54,7 @@ async function fixture(
         .serviceWorker;
       localStorage.setItem("theme", dark ? "dark" : "light");
       localStorage.setItem(
-        "churchos:appearance:v1:profile:church",
+        "belivrhq:appearance:v1:profile:church",
         JSON.stringify({ accent: "#7c3aed" }),
       );
     },
@@ -182,7 +182,7 @@ for (const width of [390, 1440])
     }) => {
       await fixture(context, { dark });
       await page.setViewportSize({ width, height: 1000 });
-      await mkdir("/tmp/churchos-attendance-compact-previews", {
+      await mkdir("/tmp/belivrhq-attendance-compact-previews", {
         recursive: true,
       });
       const errors: string[] = [];
@@ -222,7 +222,7 @@ for (const width of [390, 1440])
         ),
       ).toBe(true);
       await page.screenshot({
-        path: `/tmp/churchos-attendance-compact-previews/service-${width}-${dark ? "dark" : "light"}.png`,
+        path: `/tmp/belivrhq-attendance-compact-previews/service-${width}-${dark ? "dark" : "light"}.png`,
         fullPage: true,
       });
       await page.getByRole("button", { name: "Next", exact: true }).click();
@@ -244,7 +244,7 @@ for (const width of [390, 1440])
         ),
       ).toBe(true);
       await page.screenshot({
-        path: `/tmp/churchos-attendance-compact-previews/check-in-${width}-${dark ? "dark" : "light"}.png`,
+        path: `/tmp/belivrhq-attendance-compact-previews/check-in-${width}-${dark ? "dark" : "light"}.png`,
         fullPage: true,
       });
       expect(errors).toEqual([]);

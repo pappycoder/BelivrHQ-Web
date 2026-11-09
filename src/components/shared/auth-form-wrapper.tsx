@@ -25,14 +25,14 @@ export function AuthFormWrapper({
     >
       <Link
         href="/"
-        aria-label="ChurchOS home"
+        aria-label="BelivrHQ home"
         className="mx-auto flex w-fit items-center gap-2 text-lg font-semibold lg:hidden"
       >
         <BrandLogo
           variant="mark"
           emblemClassName="size-8 dark:brightness-0 dark:invert"
         />
-        ChurchOS
+        BelivrHQ
       </Link>
       <div className="space-y-3">
         <div className="mb-4 flex items-center gap-2 text-[10px] font-semibold tracking-[.18em] text-muted-foreground">

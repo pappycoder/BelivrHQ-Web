@@ -420,7 +420,7 @@ test("a narrow mobile layout keeps prefix space, cursor editing and no page over
   ).toBeGreaterThanOrEqual(32);
   await field.press("Tab");
   await page.screenshot({
-    path: "/tmp/churchos-field-feedback-mobile.png",
+    path: "/tmp/belivrhq-field-feedback-mobile.png",
     fullPage: true,
   });
   expect(

@@ -6,7 +6,7 @@ import { runInNewContext } from "node:vm";
 import { MEDIA_UPLOAD_PERMISSIONS, mediaUploadPermissions } from "./media-upload-policy";
 
 describe("media upload permission contract", () => {
-  const backend = path.resolve(process.cwd(), "../ChurchOS-Backend/src/media/media-upload-policy.ts");
+  const backend = path.resolve(process.cwd(), "../BelivrHQ-Backend/src/media/media-upload-policy.ts");
   it.skipIf(!fs.existsSync(backend))("keeps exact upload purpose grants identical to the backend", () => {
     const source = ts.createSourceFile(backend, fs.readFileSync(backend, "utf8"), ts.ScriptTarget.Latest, true);
     let expression: string | undefined;

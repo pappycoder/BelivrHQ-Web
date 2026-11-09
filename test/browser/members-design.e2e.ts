@@ -91,7 +91,7 @@ async function fixture(
   };
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "members-design",
       url: "http://127.0.0.1:3107",
     },
@@ -550,7 +550,7 @@ for (const width of [390, 1440])
           page.getByText("Adeyemi Family", { exact: true }),
         ).toBeVisible();
       await page.screenshot({
-        path: `/tmp/churchos-members-previews/${width}${path.replace(/\//g, "-")}.png`,
+        path: `/tmp/belivrhq-members-previews/${width}${path.replace(/\//g, "-")}.png`,
         fullPage: true,
       });
     }

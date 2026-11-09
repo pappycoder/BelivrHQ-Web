@@ -17,7 +17,7 @@ async function staffSession(
 ) {
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "help-fixture",
       url: "http://127.0.0.1:3107",
     },
@@ -82,7 +82,7 @@ test("public search finds tasks, filters topics and recovers from no results", a
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/help");
   await expect(page.getByRole("heading", { name: "How can we help?", exact: true })).toBeVisible();
-  await page.screenshot({ path: "/tmp/churchos-help-centre-desktop.png" });
+  await page.screenshot({ path: "/tmp/belivrhq-help-centre-desktop.png" });
   await page
     .getByRole("searchbox", { name: "Search help articles" })
     .fill("How do I import my members?");
@@ -144,7 +144,7 @@ test("an expired session does not redirect public articles to sign-in", async ({
 }) => {
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "expired-help-session",
       url: "http://127.0.0.1:3107",
     },
@@ -203,9 +203,9 @@ test("administrator opens support from a standalone guide without navigation", a
   await expect(page.getByRole("button", { name: "Live chat", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Open Tawk.to chat" })).toBeVisible();
   expect(widgets).toBe(1);
-  await expect(page.getByRole("dialog", { name: "ChurchOS support chat" })).toBeHidden();
+  await expect(page.getByRole("dialog", { name: "BelivrHQ support chat" })).toBeHidden();
   await page.getByRole("button", { name: "Live chat", exact: true }).click();
-  await expect(page.getByRole("dialog", { name: "ChurchOS support chat" })).toBeVisible();
+  await expect(page.getByRole("dialog", { name: "BelivrHQ support chat" })).toBeVisible();
   await expect(page).toHaveURL(/\/help\/get-help-and-report-a-problem$/);
   expect(widgets).toBe(1);
 });
@@ -269,7 +269,7 @@ for (const width of [320, 390])
     );
     if (width === 390)
       await page.screenshot({
-        path: "/tmp/churchos-help-article-mobile.png",
+        path: "/tmp/belivrhq-help-article-mobile.png",
         fullPage: true,
       });
   });
@@ -294,7 +294,7 @@ for (const role of ["usher", "church_admin"])
       true,
     );
     if (role === "church_admin")
-      await page.screenshot({ path: "/tmp/churchos-standalone-help-mobile.png" });
+      await page.screenshot({ path: "/tmp/belivrhq-standalone-help-mobile.png" });
   });
 
 test("signed-in help articles stay separate and return directly to dashboard", async ({
@@ -318,7 +318,7 @@ test("signed-in help articles stay separate and return directly to dashboard", a
     "href",
     "/dashboard",
   );
-  await page.screenshot({ path: "/tmp/churchos-standalone-help-desktop.png" });
+  await page.screenshot({ path: "/tmp/belivrhq-standalone-help-desktop.png" });
   await page.getByRole("link", { name: "Back to dashboard", exact: true }).click();
   await expect(page).toHaveURL(/\/dashboard$/);
   await expect(page.getByRole("heading", { name: "Dashboard", exact: true })).toBeVisible();
@@ -365,7 +365,7 @@ for (const width of [320, 390])
       true,
     );
     if (width === 390)
-      await page.screenshot({ path: "/tmp/churchos-standalone-help-article-mobile.png" });
+      await page.screenshot({ path: "/tmp/belivrhq-standalone-help-article-mobile.png" });
   });
 
 test("public help returns home and old docs bookmarks preserve search", async ({

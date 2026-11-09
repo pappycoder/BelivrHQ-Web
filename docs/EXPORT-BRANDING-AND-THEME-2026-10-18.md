@@ -1,10 +1,10 @@
 # Church identity in exports and the dashboard palette
 
-Record exports use the signed-in church's name and uploaded logo, while retaining ChurchOS as the producing application. The shared dropdown, visible collection exports, composed reports and event passes all resolve branding from the existing current-profile query. A matching church-settings cache can supply a recently updated name/logo. Exports never require church-settings permissions or a separate settings request, and branding is not cached globally across churches.
+Record exports use the signed-in church's name and uploaded logo, while retaining BelivrHQ as the producing application. The shared dropdown, visible collection exports, composed reports and event passes all resolve branding from the existing current-profile query. A matching church-settings cache can supply a recently updated name/logo. Exports never require church-settings permissions or a separate settings request, and branding is not cached globally across churches.
 
-- PDF reports and event passes show the church name/logo in the repeated header and “Powered by ChurchOS” in the document. PDF author identifies the church; creator remains ChurchOS.
-- Excel reports include the church identity/logo in their header, ChurchOS attribution and print footer. Workbook company identifies the church; creator remains ChurchOS. Existing filters, formulas, row types and column choices remain available.
-- CSVs retain the original data columns and append Church and Exported with fields. Filenames also identify the church and ChurchOS, including empty exports. CSV cannot embed a logo. Existing spreadsheet-formula escaping applies to church names as well as data values.
+- PDF reports and event passes show the church name/logo in the repeated header and “Powered by BelivrHQ” in the document. PDF author identifies the church; creator remains BelivrHQ.
+- Excel reports include the church identity/logo in their header, BelivrHQ attribution and print footer. Workbook company identifies the church; creator remains BelivrHQ. Existing filters, formulas, row types and column choices remain available.
+- CSVs retain the original data columns and append Church and Exported with fields. Filenames also identify the church and BelivrHQ, including empty exports. CSV cannot embed a logo. Existing spreadsheet-formula escaping applies to church names as well as data values.
 - Import templates retain their first-row machine-readable headers. Offline recovery backups and authentication recovery-code files are not report exports and retain their existing formats.
 
 Browser logo loading accepts PNG/JPEG/WebP, has a five-second timeout, caps downloads at 2 MB and decodes/resizes to at most 256px. Missing, unavailable, unsupported or CORS-blocked images fall back to the church's name. Static app PDF fonts/assets remain shared; church branding remains local to each export. Logos use their original aspect ratio.

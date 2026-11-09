@@ -10,7 +10,7 @@ async function fixture(
 ) {
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "manage-fixture",
       url: "http://127.0.0.1:3107",
     },
@@ -581,7 +581,7 @@ test("confirmation remains usable at 320px", async ({ page, context }) => {
     await dialog.evaluate((node) => node.getBoundingClientRect().width),
   ).toBeLessThanOrEqual(320);
   await page.screenshot({
-    path: "/tmp/churchos-manage-confirmation-mobile.png",
+    path: "/tmp/belivrhq-manage-confirmation-mobile.png",
     fullPage: true,
   });
   await dialog.getByRole("button", { name: "Cancel", exact: true }).click();

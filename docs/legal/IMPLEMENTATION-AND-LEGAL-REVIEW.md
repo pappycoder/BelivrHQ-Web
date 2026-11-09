@@ -1,6 +1,6 @@
-# ChurchOS legal pages — implementation and review notes
+# BelivrHQ legal pages — implementation and review notes
 
-Prepared 24 October 2026 for the ChurchOS website. These are product-specific drafts for the operator to adopt after appropriate Nigerian legal and operational review. Publishing text does not establish regulatory compliance, complete a provider contract, appoint a DPO or make every proposed clause enforceable.
+Prepared 24 October 2026 for the BelivrHQ website. These are product-specific drafts for the operator to adopt after appropriate Nigerian legal and operational review. Publishing text does not establish regulatory compliance, complete a provider contract, appoint a DPO or make every proposed clause enforceable.
 
 ## Operator details supplied by the owner
 

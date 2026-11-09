@@ -4,7 +4,7 @@ async function fixture(context: BrowserContext, failSave = false) {
   const writes: Record<string, unknown>[] = [];
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "builder-fixture",
       url: "http://127.0.0.1:3107",
     },
@@ -141,7 +141,7 @@ for (const width of [320, 1440]) {
       .getByLabel("Email address", { exact: false })
       .fill("still-not-an-email");
     await page.screenshot({
-      path: `/tmp/churchos-form-builder-live-${width}.png`,
+      path: `/tmp/belivrhq-form-builder-live-${width}.png`,
       fullPage: true,
     });
     if (width === 320)
@@ -209,7 +209,7 @@ test("builder preserves stable identifiers, validates choices and retains edits 
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(1440);
   await page.screenshot({
-    path: "/tmp/churchos-form-builder-desktop.png",
+    path: "/tmp/belivrhq-form-builder-desktop.png",
     fullPage: true,
   });
 });
@@ -232,7 +232,7 @@ test("empty builder guides creation and mobile preview fits 320px", async ({
     await page.evaluate(() => document.documentElement.scrollWidth),
   ).toBeLessThanOrEqual(320);
   await page.screenshot({
-    path: "/tmp/churchos-form-builder-mobile.png",
+    path: "/tmp/belivrhq-form-builder-mobile.png",
     fullPage: true,
   });
   await page.getByRole("button", { name: "Create form", exact: true }).click();

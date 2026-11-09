@@ -1,10 +1,10 @@
-> Current pricing: USD $10/$20/$40 monthly and $108/$216/$432 annually, with a shared currency selector and server-locked converted payment quotes. See [Subscription currencies](../../ChurchOS-Backend/docs/SUBSCRIPTION-CURRENCIES-2026-10-19.md); this supersedes the original NGN pricing examples below.
+> Current pricing: USD $10/$20/$40 monthly and $108/$216/$432 annually, with a shared currency selector and server-locked converted payment quotes. See [Subscription currencies](../../BelivrHQ-Backend/docs/SUBSCRIPTION-CURRENCIES-2026-10-19.md); this supersedes the original NGN pricing examples below.
 
-# Public ChurchOS landing page
+# Public BelivrHQ landing page
 
-The public `/` route now presents ChurchOS with a warm cream, deep teal and lime visual identity, editorial typography, an interactive illustrative workspace, product features, branch/HQ information, provider integrations, proposed pricing and FAQs. Existing registration and sign-in routes remain the destinations for account actions.
+The public `/` route now presents BelivrHQ with a warm cream, deep teal and lime visual identity, editorial typography, an interactive illustrative workspace, product features, branch/HQ information, provider integrations, proposed pricing and FAQs. Existing registration and sign-in routes remain the destinations for account actions.
 
-The landing page links published plans to registration and the organization-owned subscription checkout described in AUTH-ONBOARDING-AND-BILLING-2026-10-18.md. Enterprise pricing, billing terms and rollout scope are negotiated directly with the ChurchOS team, with no advertised amount or fixed-price checkout. Member/staff limits are not enforced by this page.
+The landing page links published plans to registration and the organization-owned subscription checkout described in AUTH-ONBOARDING-AND-BILLING-2026-10-18.md. Enterprise pricing, billing terms and rollout scope are negotiated directly with the BelivrHQ team, with no advertised amount or fixed-price checkout. Member/staff limits are not enforced by this page.
 
 ## Recommended launch packages
 
@@ -17,7 +17,7 @@ The landing page links published plans to registration and the organization-owne
 
 Essentials, Community and Network yearly plans save 10% against twelve monthly payments. Effective monthly rates are ₦9,000, ₦18,000 and ₦36,000 respectively; full yearly totals appear beside them. Enterprise pricing and billing terms are negotiated, with no listed minimum or automatic yearly discount. Third-party usage/transaction charges are excluded. Taxes, final limits, support terms and availability require confirmation during onboarding. Validate hosting, storage and support costs before commercially committing to these proposals.
 
-Initial pricing research used the official [Churchplus pricing page](https://churchplus.co/pricing/) and [Planning Center pricing page](https://www.planningcenter.com/pricing). The current packages follow the user's revised ₦10,000 monthly minimum and request for modest yearly discounts. All free-plan wording has been removed. On 2026-10-19, the user increased Essentials from 50 to 100 members while retaining its prices, one location and two staff accounts. Backend entitlement enforcement is planned in `../../ChurchOS-Backend/docs/SUBSCRIPTION-ENTITLEMENTS-PLAN-2026-10-19.md` and is not implemented by this display change.
+Initial pricing research used the official [Churchplus pricing page](https://churchplus.co/pricing/) and [Planning Center pricing page](https://www.planningcenter.com/pricing). The current packages follow the user's revised ₦10,000 monthly minimum and request for modest yearly discounts. All free-plan wording has been removed. On 2026-10-19, the user increased Essentials from 50 to 100 members while retaining its prices, one location and two staff accounts. Backend entitlement enforcement is planned in `../../BelivrHQ-Backend/docs/SUBSCRIPTION-ENTITLEMENTS-PLAN-2026-10-19.md` and is not implemented by this display change.
 
 ## Implementation boundaries
 
@@ -29,6 +29,6 @@ Initial pricing research used the official [Churchplus pricing page](https://chu
 
 ## Verification
 
-Production build and scoped ESLint passed, along with all 298 existing frontend unit tests and all nine focused Playwright tests. The browser suite covers public access after the session check, no private API fetches, protected-route redirects, keyboard preview tabs, pricing calculations/dialog links and focus restoration, FAQ/anchor links, mobile navigation and layouts at 320/390/768/1440px. Desktop, full-page, pricing and mobile screenshots under `/tmp/churchos-landing-*.png` were visually reviewed. The existing UI contract audit reported no issues across 87 pages and 433 links.
+Production build and scoped ESLint passed, along with all 298 existing frontend unit tests and all nine focused Playwright tests. The browser suite covers public access after the session check, no private API fetches, protected-route redirects, keyboard preview tabs, pricing calculations/dialog links and focus restoration, FAQ/anchor links, mobile navigation and layouts at 320/390/768/1440px. Desktop, full-page, pricing and mobile screenshots under `/tmp/belivrhq-landing-*.png` were visually reviewed. The existing UI contract audit reported no issues across 87 pages and 433 links.
 
 This change is local; it does not publish or deploy the website.

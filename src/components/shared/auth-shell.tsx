@@ -20,13 +20,13 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
     <MotionConfig reducedMotion="user">
       <div className={styles.shell} data-paper-root>
         <aside className={styles.story}>
-          <Link href="/" aria-label="ChurchOS home" className={styles.brand}>
+          <Link href="/" aria-label="BelivrHQ home" className={styles.brand}>
             <BrandLogo
               variant="mark"
               emblemClassName="size-9 brightness-0 invert"
             />
             <span>
-              ChurchOS<span className={styles.brandDot}>.</span>
+              BelivrHQ<span className={styles.brandDot}>.</span>
             </span>
           </Link>
           <div className={styles.storyContent}>
@@ -111,7 +111,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         <main className={styles.main}>
           <header className={styles.topbar}>
             <Link href="/" className={styles.backLink}>
-              ← Back to ChurchOS
+              ← Back to BelivrHQ
             </Link>
             <div className="flex items-center gap-3">
               <span className={styles.topbarLabel}>
@@ -123,7 +123,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           <div className={styles.formArea}>{children}</div>
           <footer className={styles.mainFooter}>
             <span>Made for people. Built for ministry.</span>
-            <span>© {new Date().getFullYear()} ChurchOS</span>
+            <span>© {new Date().getFullYear()} BelivrHQ</span>
           </footer>
         </main>
       </div>

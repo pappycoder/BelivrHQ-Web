@@ -49,7 +49,7 @@ async function fixture(context: BrowserContext, failWorklist = false) {
   let integrationReads = 0;
   await context.addCookies([
     {
-      name: "churchos_token",
+      name: "belivrhq_token",
       value: "dashboard-fixes",
       url: "http://127.0.0.1:3107",
     },

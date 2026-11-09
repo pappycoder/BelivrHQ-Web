@@ -12,7 +12,7 @@ describe("registration cookie session", () => {
     }, { status: 201 }));
     vi.stubGlobal("fetch", fetch);
     const req = new NextRequest("http://localhost/api/backend/auth/register", {
-      method: "POST", headers: { "x-churchos-client": "web", "Content-Type": "application/json", cookie: "churchos_token=old-account" },
+      method: "POST", headers: { "x-belivrhq-client": "web", "Content-Type": "application/json", cookie: "belivrhq_token=old-account" },
       body: JSON.stringify({ email: "admin@example.org", password: "private-password" }),
     });
     const response = await POST(req, { params: Promise.resolve({ path: ["auth", "register"] }) });
@@ -20,8 +20,8 @@ describe("registration cookie session", () => {
     const body = await response.json();
     expect(body.data).toMatchObject({ userId: "new-admin", churchId: "church", sessionEstablished: true });
     expect(JSON.stringify(body)).not.toContain("private-");
-    expect(response.cookies.get("churchos_token")?.value).toBe("private-access");
-    expect(response.cookies.get("churchos_refresh_token")?.value).toBe("private-refresh");
+    expect(response.cookies.get("belivrhq_token")?.value).toBe("private-access");
+    expect(response.cookies.get("belivrhq_refresh_token")?.value).toBe("private-refresh");
     expect(response.headers.get("set-cookie")).toMatch(/HttpOnly/i);
     expect(response.headers.get("cache-control")).toBe("private, no-store");
     expect(fetch.mock.calls[0][1].headers.has("authorization")).toBe(false);

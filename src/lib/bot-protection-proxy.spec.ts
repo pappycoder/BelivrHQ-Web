@@ -22,8 +22,8 @@ describe("bot protection proxy boundary", () => {
         `http://localhost/api/backend/bot-protection/${endpoint}?method=POST&path=%2Fauth%2Flogin`,
         {
           headers: {
-            "x-churchos-client": "web",
-            cookie: "churchos_token=existing-session",
+            "x-belivrhq-client": "web",
+            cookie: "belivrhq_token=existing-session",
           },
         },
       );
@@ -53,9 +53,9 @@ describe("bot protection proxy boundary", () => {
       {
         method: "POST",
         headers: {
-          "x-churchos-client": "web",
+          "x-belivrhq-client": "web",
           "content-type": "application/json",
-          cookie: "churchos_token=old-session",
+          cookie: "belivrhq_token=old-session",
         },
         body: JSON.stringify(body),
       },

@@ -2,7 +2,7 @@ import { test, expect, type BrowserContext } from "@playwright/test";
 import { workspaceFixture } from "../fixtures/workspace-redesign";
 import { mockBotChallenges } from "../fixtures/bot-protection";
 
-const reference = "COSUB_" + "a".repeat(32);
+const reference = "BHQSUB_" + "a".repeat(32);
 async function fixture(
   context: BrowserContext,
   options: {
@@ -69,7 +69,7 @@ async function fixture(
           }
         : null,
     payments: Array.from({ length: 12 }, (_, i) => ({
-      reference: `COSUB_${String(i).padStart(32, "0")}`,
+      reference: `BHQSUB_${String(i).padStart(32, "0")}`,
       plan: "community",
       cycle: "monthly",
       amount: i === 0 ? 15000 : 20,
@@ -141,7 +141,7 @@ async function fixture(
       data = status();
     } else if (path.endsWith("/quote"))
       data = {
-        quoteId: "COSQ_" + "b".repeat(32),
+        quoteId: "BHQQUOTE_" + "b".repeat(32),
         currency: body?.currency || "USD",
         amount: 20,
         intent: "renewal",
@@ -299,7 +299,7 @@ test("unconfigured checkout and non-administrator states have no sign-out button
   await fixture(context, { active: false, noGateway: true });
   await page.goto("/subscription");
   await expect(
-    page.getByText("Checkout is being configured. Contact ChurchOS.", {
+    page.getByText("Checkout is being configured. Contact BelivrHQ.", {
       exact: true,
     }),
   ).toBeVisible();

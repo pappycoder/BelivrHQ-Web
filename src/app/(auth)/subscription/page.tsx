@@ -114,12 +114,12 @@ export default function SubscriptionPage() {
     try {
       paymentWindow.current =
         params.get("payment_window") === "1" ||
-        sessionStorage.getItem("churchos:subscription-payment-window") === "1";
+        sessionStorage.getItem("belivrhq:subscription-payment-window") === "1";
     } catch {
       paymentWindow.current = params.get("payment_window") === "1";
     }
     const ref = params.get("reference") || params.get("tx_ref") || "";
-    if (/^COSUB_[a-f0-9]{32}$/.test(ref)) setReference(ref);
+    if (/^(?:BHQSUB_|COSUB_)[a-f0-9]{32}$/.test(ref)) setReference(ref);
     if (params.get("status") === "cancelled")
       setMessage("Payment was cancelled. Your current plan is unchanged.");
     window.history.replaceState(
@@ -149,14 +149,14 @@ export default function SubscriptionPage() {
   const pending = data?.latestPayment;
   const trackedReference = reference || pending?.reference || "";
   const storageKey = status.churchId
-    ? `churchos:subscription-payment:${status.churchId}`
+    ? `belivrhq:subscription-payment:${status.churchId}`
     : "";
   React.useEffect(() => {
     if (!storageKey || reference) return;
     try {
       const saved =
         pending?.reference || sessionStorage.getItem(storageKey) || "";
-      if (/^COSUB_[a-f0-9]{32}$/.test(saved))
+      if (/^(?:BHQSUB_|COSUB_)[a-f0-9]{32}$/.test(saved))
         setReference((current) => current || saved);
     } catch {
       /* Server pending-payment recovery still works without storage. */
@@ -321,7 +321,7 @@ export default function SubscriptionPage() {
       if (!url) {
         if (preparingWindow.current) checkoutWindow.current?.close();
         preparingWindow.current = false;
-        setMessage("Unable to open a trusted payment page. Contact ChurchOS.");
+        setMessage("Unable to open a trusted payment page. Contact BelivrHQ.");
         return;
       }
       setReference(result.reference);
@@ -378,7 +378,7 @@ export default function SubscriptionPage() {
       );
       if (!popup) {
         setMessage(
-          "Allow pop-ups for ChurchOS, then continue to payment again.",
+          "Allow pop-ups for BelivrHQ, then continue to payment again.",
         );
         return;
       }
@@ -386,7 +386,7 @@ export default function SubscriptionPage() {
       showCheckoutLoading(popup);
       try {
         popup.sessionStorage.setItem(
-          "churchos:subscription-payment-window",
+          "belivrhq:subscription-payment-window",
           "1",
         );
       } catch {
@@ -469,7 +469,7 @@ export default function SubscriptionPage() {
             Contact your administrator
           </h2>
           <p className="max-w-lg text-sm leading-relaxed text-ink-soft">
-            Your church administrator manages the ChurchOS subscription. Contact
+            Your church administrator manages the BelivrHQ subscription. Contact
             them to activate or renew your workspace.
           </p>
           <Button variant="outline" asChild className="rounded-full">
@@ -517,7 +517,7 @@ export default function SubscriptionPage() {
           className="rounded-2xl border border-gold/30 bg-gold/5 p-5 text-sm text-ink"
         >
           A payment has a partial refund or an open dispute. Access funded by
-          that payment is held for ChurchOS review. Other paid periods remain
+          that payment is held for BelivrHQ review. Other paid periods remain
           available. Contact support with the payment reference shown below.
         </div>
       )}
@@ -543,7 +543,7 @@ export default function SubscriptionPage() {
               {outcome === "applied"
                 ? "Payment verified. Your subscription is active."
                 : outcome === "review"
-                  ? "Your payment requires a ChurchOS review. Contact support with your payment reference."
+                  ? "Your payment requires a BelivrHQ review. Contact support with your payment reference."
                   : outcome === "revoked"
                     ? "Access funded by this payment has been removed. Other paid periods remain available. Contact support with your reference."
                     : outcome === "closed"
@@ -870,7 +870,7 @@ export default function SubscriptionPage() {
                         {item.id === "enterprise" ? (
                           <>
                             <p className="mb-3 text-xs text-ink-faint">
-                              Contact ChurchOS sales for an agreed quote.
+                              Contact BelivrHQ sales for an agreed quote.
                             </p>
                             <Button
                               asChild
@@ -1088,7 +1088,7 @@ export default function SubscriptionPage() {
                         ) : !data.gateways.length ||
                           !availableCurrencies.length ? (
                           <p role="status" className="text-sm text-ink-soft">
-                            Checkout is being configured. Contact ChurchOS.
+                            Checkout is being configured. Contact BelivrHQ.
                           </p>
                         ) : (
                           <LoadingState
@@ -1127,7 +1127,7 @@ export default function SubscriptionPage() {
                             : "Continue to payment"}
                         </Button>
                         <p className="text-xs leading-relaxed text-ink-faint">
-                          Flutterwave opens in a separate window. ChurchOS waits
+                          Flutterwave opens in a separate window. BelivrHQ waits
                           here for verified payment.
                         </p>
                       </>
@@ -1154,7 +1154,7 @@ export default function SubscriptionPage() {
                         </Button>
                         <p className="text-xs text-ink-faint">
                           Closing checkout does not refund a payment already
-                          sent. A late payment will go to ChurchOS for review.
+                          sent. A late payment will go to BelivrHQ for review.
                         </p>
                       </div>
                     )}
