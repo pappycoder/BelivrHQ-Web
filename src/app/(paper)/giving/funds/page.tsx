@@ -1,5 +1,7 @@
 "use client";
 
+import { RequiredFieldsNotice } from "@/components/ui/required-fields";
+
 import * as React from "react";
 import {
   Archive,
@@ -351,8 +353,9 @@ function FundFormDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
+          <RequiredFieldsNotice className="col-span-full" />
           <div className="space-y-1.5">
-            <Label className="text-xs">Category name</Label>
+            <Label required className="text-xs">Category name</Label>
             <Input
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}

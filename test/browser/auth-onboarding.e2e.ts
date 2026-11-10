@@ -221,6 +221,7 @@ async function billingSession(
       "pending" | "error" | "success" | "review" | "failed"
     )[];
     sharedPaymentState?: boolean;
+    registrationUnavailableInReturn?: boolean;
   } = {},
 ) {
   let sharedPaid = false;
@@ -314,9 +315,12 @@ async function billingSession(
         else if (
           path.endsWith("/billing/subscription") ||
           path.endsWith("/billing/registration/subscription")
-        )
+        ) {
+          if (options.registrationUnavailableInReturn &&
+              new URLSearchParams(location.search).get("payment_window") === "1")
+            return Response.json({ success: false, error: { message: "Checkout expired" } }, { status: 401 });
           data = status();
-        else if (
+        } else if (
           path.endsWith("/billing/quote") ||
           path.endsWith("/billing/registration/quote")
         )
@@ -1065,6 +1069,62 @@ test("registration payment closes its tab and returns the initial tab to sign-in
       (window as unknown as { billingCalls: { path: string }[] }).billingCalls,
   );
   expect(calls.some((call) => call.path.endsWith("/auth/login"))).toBe(false);
+});
+
+test("registration closes a delayed returning tab after the hidden original tab has already verified payment", async ({
+  page, context,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(document, "visibilityState", { configurable: true, get: () => "hidden" });
+  });
+  const payment = await billingSession(context, {
+    registration: true, sharedPaymentState: true,
+    registrationUnavailableInReturn: true,
+    checkoutUrl: "https://checkout.flutterwave.com/registration-fixture",
+  });
+  await context.route("https://checkout.flutterwave.com/**", route => route.fulfill({
+    contentType: "text/html", body: "<h1>Payment completed</h1>",
+  }));
+  await page.goto("/subscription");
+  const opened = page.waitForEvent("popup");
+  await page.getByRole("button", { name: "Continue to payment", exact: true }).click();
+  const popup = await opened;
+  await expect(popup).toHaveURL("https://checkout.flutterwave.com/registration-fixture");
+  await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+  await expect.poll(() => page.evaluate(() =>
+    (window as unknown as { billingCalls: { path: string }[] }).billingCalls
+      .filter(call => call.path.endsWith("/verify")).length)).toBeGreaterThan(0);
+  // A provider success screen or URL alone must not close the unpaid checkout.
+  expect(popup.isClosed()).toBe(false);
+  payment.completePayment();
+  await expect(page).toHaveURL(/\/login\?registered=1&subscription=active$/, { timeout: 15000 });
+  // The provider has no opener. The parent cannot force-close its cross-origin
+  // page; it must close itself on return even if the billing cookie is gone.
+  await popup.goto(`/subscription?payment_window=1&tx_ref=${reference}&status=successful`)
+    .catch(error => { if (!popup.isClosed()) throw error; });
+  await expect.poll(() => popup.isClosed()).toBe(true);
+  const calls = await page.evaluate(() =>
+    (window as unknown as { billingCalls: { path: string; body: { callbackOrigin?: string } }[] }).billingCalls);
+  expect(calls.find(call => call.path.endsWith("/checkout"))?.body.callbackOrigin)
+    .toBe("http://127.0.0.1:3107");
+});
+
+test("closing a successful provider return does not confirm registration without server application", async ({ page, context }) => {
+  await billingSession(context, { registration: true, sharedPaymentState: true,
+    checkoutUrl: "https://checkout.flutterwave.com/registration-fixture" });
+  await context.route("https://checkout.flutterwave.com/**", route => route.fulfill({
+    contentType: "text/html", body: "<h1>Provider checkout</h1>",
+  }));
+  await page.goto("/subscription");
+  const opened = page.waitForEvent("popup");
+  await page.getByRole("button", { name: "Continue to payment", exact: true }).click();
+  const popup = await opened;
+  await expect(popup).toHaveURL("https://checkout.flutterwave.com/registration-fixture");
+  await popup.goto(`/subscription?payment_window=1&tx_ref=${reference}&status=successful`)
+    .catch(error => { if (!popup.isClosed()) throw error; });
+  await expect.poll(() => popup.isClosed()).toBe(true);
+  await expect(page).toHaveURL(/\/subscription$/);
+  await expect(page.getByText("Waiting for Flutterwave to confirm your payment.")).toBeVisible();
 });
 
 for (const width of [320, 1440]) {

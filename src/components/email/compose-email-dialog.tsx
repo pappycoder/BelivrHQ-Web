@@ -1,5 +1,7 @@
 "use client";
 
+import { RequiredFieldsNotice } from "@/components/ui/required-fields";
+
 import * as React from "react";
 import { toast, getToastErrorMessage } from "@/lib/toast";
 import { Loader2, Send, X } from "lucide-react";
@@ -106,9 +108,10 @@ export function ComposeEmailDialog({
         </DialogHeader>
 
         <div className="space-y-4">
+          <RequiredFieldsNotice className="col-span-full" />
           {/* Recipients */}
           <div className="space-y-2">
-            <Label>To</Label>
+            <Label required>To</Label>
             {selected.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {selected.map((c) => (
@@ -135,7 +138,7 @@ export function ComposeEmailDialog({
 
           {/* Subject */}
           <div className="space-y-2">
-            <Label htmlFor="email-subject">Subject</Label>
+            <Label required htmlFor="email-subject">Subject</Label>
             <Input
               id="email-subject"
               placeholder={replySubject ? `Re: ${replySubject}` : "Subject"}
@@ -146,7 +149,7 @@ export function ComposeEmailDialog({
 
           {/* Body */}
           <div className="space-y-2">
-            <Label htmlFor="email-body">Message</Label>
+            <Label required htmlFor="email-body">Message</Label>
             <Textarea
               id="email-body"
               rows={4}

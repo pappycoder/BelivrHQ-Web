@@ -1,4 +1,6 @@
 "use client";
+
+import { RequiredFieldsNotice, RequiredIndicator } from "@/components/ui/required-fields";
 import { GivingFormSection as StyledGivingFormSection } from "./giving-presentation";
 
 import * as React from "react";
@@ -252,10 +254,11 @@ export function RecordCashDialog({
         </DialogHeader>
 
         <div className="space-y-4">
+          <RequiredFieldsNotice className="col-span-full" />
           <GivingFormSection title="Gift details">
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="block space-y-1.5">
-                <span className="text-sm font-medium">Giving Date *</span>
+                <span className="text-sm font-medium">Giving Date <RequiredIndicator /></span>
                 <Input picker="wheel"
                   aria-label="Giving Date"
                   type="date"
@@ -266,7 +269,7 @@ export function RecordCashDialog({
                 />
               </label>
               <div className="space-y-1.5">
-                <p className="text-sm font-medium">Branch *</p>
+                <p className="text-sm font-medium">Branch <RequiredIndicator /></p>
                 <AvailableSelect
                   unavailableMessage={
                     profile?.isAdminHq && !branchesQuery.data?.data.length
@@ -283,7 +286,7 @@ export function RecordCashDialog({
                     setEventId("");
                   }}
                 >
-                  <SelectTrigger className="w-full" aria-label="Giving branch">
+                  <SelectTrigger aria-required={true} className="w-full" aria-label="Giving branch">
                     <SelectValue placeholder="Select a branch" />
                   </SelectTrigger>
                   <SelectContent>
@@ -307,7 +310,7 @@ export function RecordCashDialog({
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <p className="text-sm font-medium">Amount (NGN) *</p>
+                <p className="text-sm font-medium">Amount (NGN) <RequiredIndicator /></p>
                 <Input
                   aria-label="Giving amount"
                   type="number"
@@ -318,14 +321,14 @@ export function RecordCashDialog({
                 />
               </div>
               <div className="space-y-1.5">
-                <p className="text-sm font-medium">Method *</p>
+                <p className="text-sm font-medium">Method <RequiredIndicator /></p>
                 <Select
                   value={method}
                   onValueChange={(v) =>
                     setMethod(v as "cash" | "bank_transfer")
                   }
                 >
-                  <SelectTrigger className="w-full" aria-label="Giving method">
+                  <SelectTrigger aria-required={true} className="w-full" aria-label="Giving method">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -337,7 +340,7 @@ export function RecordCashDialog({
             </div>
 
             <div className="space-y-1.5">
-              <p className="text-sm font-medium">Category *</p>
+              <p className="text-sm font-medium">Category <RequiredIndicator /></p>
               <Select
                 value={categorySelectValue}
                 onValueChange={(v) => {
@@ -345,7 +348,7 @@ export function RecordCashDialog({
                   if (v !== "__new_category__") setNewCategoryName("");
                 }}
               >
-                <SelectTrigger className="w-full" aria-label="Giving category">
+                <SelectTrigger aria-required={true} className="w-full" aria-label="Giving category">
                   <SelectValue placeholder="Choose or type a category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -424,7 +427,7 @@ export function RecordCashDialog({
                         : undefined
                   }
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger aria-required={true} className="w-full">
                     <SelectValue placeholder="Select service" />
                   </SelectTrigger>
                   <SelectContent>
@@ -449,7 +452,7 @@ export function RecordCashDialog({
                         : undefined
                   }
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger aria-required={true} className="w-full">
                     <SelectValue placeholder="Select event" />
                   </SelectTrigger>
                   <SelectContent>

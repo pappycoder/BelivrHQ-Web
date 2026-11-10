@@ -1,4 +1,6 @@
 "use client";
+
+import { ValidatedForm } from "@/components/ui/validated-form";
 import { WorkspaceFormSection } from "@/components/workspace/workspace-presentation";
 
 import * as React from "react";
@@ -52,9 +54,9 @@ import {
 
 const APPOINTMENT_SCHEMA = z
   .object({
-    title: z.string().min(1, "Title is required").max(200),
-    scheduledAt: z.string().min(1, "Date and time are required"),
-    withId: z.string().min(1, "Select a pastor (With)"),
+    title: z.string().trim().min(1, "Title is required").max(200),
+    scheduledAt: z.string().trim().min(1, "Date and time are required"),
+    withId: z.string().trim().min(1, "Select a pastor (With)"),
     whoKind: z.enum(["profile", "visitor"]),
     whoId: z.string().optional(),
     visitorId: z.string().optional(),
@@ -313,10 +315,10 @@ export function AppointmentFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {/* With pastor picker */}
             <WorkspaceFormSection title="People">
-              <FormField
+              <FormField required
                 control={form.control}
                 name="withId"
                 render={({ field }) => (
@@ -466,7 +468,7 @@ export function AppointmentFormDialog({
               {/* Title */}
             </WorkspaceFormSection>
             <WorkspaceFormSection title="Appointment details">
-              <FormField
+              <FormField required
                 control={form.control}
                 name="title"
                 render={({ field }) => (
@@ -481,7 +483,7 @@ export function AppointmentFormDialog({
               />
 
               {/* Scheduled date/time */}
-              <FormField
+              <FormField required
                 control={form.control}
                 name="scheduledAt"
                 render={({ field }) => (
@@ -582,7 +584,7 @@ export function AppointmentFormDialog({
                 {isEdit ? "Save Changes" : "Book Appointment"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

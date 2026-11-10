@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -48,8 +50,8 @@ const MAX_PHOTO_MB = 5;
 const RELATIONSHIP_OPTIONS = ["spouse", "child", "parent", "sibling", "ward", "other"];
 
 const schema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
+  firstName: z.string().trim().min(1, "First name is required"),
+  lastName: z.string().trim().min(1, "Last name is required"),
   email: z.string().email("Invalid email address").optional().or(z.literal("")),
   phone: z.string().optional(),
   whatsappNumber: z.string().optional(),
@@ -58,7 +60,7 @@ const schema = z.object({
   address: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
-  branchId: z.string().optional(),
+  branchId: z.string().trim().min(1, "Select a branch"),
   notes: z.string().optional(),
   familyId: z.string().optional(),
   familyRelationship: z.string().optional(),
@@ -91,6 +93,10 @@ export default function NewMemberPage() {
       notes: "", familyId: "", familyRelationship: "", isFamilyHead: false,
     },
   });
+
+  React.useEffect(() => {
+    if (profile?.branchId && !form.getValues("branchId")) form.setValue("branchId", profile.branchId);
+  }, [profile?.branchId, form]);
 
   React.useEffect(() => () => { if (photoPreview) URL.revokeObjectURL(photoPreview); }, [photoPreview]);
 
@@ -171,7 +177,7 @@ export default function NewMemberPage() {
       />
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 lg:grid-cols-[1fr_320px]">
+        <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 lg:grid-cols-[1fr_320px]">
           <div className="min-w-0 space-y-4">
             <SectionCard eyebrow="Identity" title="Who are they?">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -336,7 +342,7 @@ export default function NewMemberPage() {
               <p className="mt-3 text-center text-[10px] text-ink-faint">Your role can view the register but not add to it.</p>
             ) : null}
           </aside>
-        </form>
+        </ValidatedForm>
       </Form>
     </div>
   );
@@ -347,7 +353,6 @@ function RhfField({
   label,
   type = "text",
   placeholder,
-  required,
   autoFocus,
   className,
 }: {
@@ -361,12 +366,12 @@ function RhfField({
 }) {
   const form = useFormContextLike();
   return (
-    <FormField
+    <FormField required={name === "branchId" || name === "firstName" || name === "lastName"}
       control={form.control}
       name={name as never}
       render={({ field }) => (
         <FormItem className={className}>
-          <FormLabel className="text-xs">{label}{required ? <span className="text-rose"> *</span> : null}</FormLabel>
+          <FormLabel className="text-xs">{label}</FormLabel>
           <FormControl>
             <Input picker="wheel"
               type={type}
@@ -398,7 +403,7 @@ function SelectField({
   const form = useFormContextLike();
   const items = options.map((o) => (typeof o === "string" ? { value: o, label: o } : o));
   return (
-    <FormField
+    <FormField required={name === "branchId" || name === "firstName" || name === "lastName"}
       control={form.control}
       name={name as never}
       render={({ field }) => (

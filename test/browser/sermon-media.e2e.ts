@@ -286,7 +286,7 @@ test("section saves isolate details and both files while preserving unsaved draf
 }) => {
   const state = await fixture(context, true);
   await page.goto("/sermons/sermon-a/edit");
-  await page.getByLabel("Title *", { exact: true }).fill("Updated Message");
+  await page.getByLabel("Title", { exact: true }).fill("Updated Message");
   await page.getByRole("tab", { name: "2. Audio", exact: true }).click();
   await page.getByLabel("Audio file", { exact: true }).setInputFiles({
     name: "Sunday Message.wav",
@@ -310,7 +310,7 @@ test("section saves isolate details and both files while preserving unsaved draf
     page.getByRole("button", { name: "Save Details", exact: true }),
   ).toBeEnabled();
   // Invalid, unsaved details must not block a recording save.
-  await page.getByLabel("Title *", { exact: true }).fill("");
+  await page.getByLabel("Title", { exact: true }).fill("");
   await page.getByRole("tab", { name: "2. Audio", exact: true }).click();
   await expect(
     page.getByText("Sunday Message.wav", { exact: true }),
@@ -345,9 +345,9 @@ test("section saves isolate details and both files while preserving unsaved draf
   for (const body of state.uploads)
     expect(body).toMatchObject({ branchId: "branch-a", folder: "sermons" });
   await page.getByRole("tab", { name: "1. Details", exact: true }).click();
-  await expect(page.getByLabel("Title *", { exact: true })).toHaveValue("");
+  await expect(page.getByLabel("Title", { exact: true })).toHaveValue("");
   await page.reload();
-  await expect(page.getByLabel("Title *", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("Title", { exact: true })).toHaveValue(
     "Updated Message",
   );
   await page.goto("/sermons/sermon-a");
@@ -441,7 +441,7 @@ for (const failure of ["upload", "save"] as const) {
       page.getByRole("button", { name: "Save Video", exact: true }),
     ).toBeEnabled();
     await page.getByRole("tab", { name: "1. Details", exact: true }).click();
-    await expect(page.getByLabel("Title *", { exact: true })).toHaveValue(
+    await expect(page.getByLabel("Title", { exact: true })).toHaveValue(
       "Sunday Message",
     );
     await page.getByRole("tab", { name: "2. Audio", exact: true }).click();
@@ -461,7 +461,7 @@ for (const failure of ["upload", "save"] as const) {
         videoUrl: "https://old-api.example/api/v1/media/files/video-a",
       });
     await page.reload();
-    await expect(page.getByLabel("Title *", { exact: true })).toHaveValue(
+    await expect(page.getByLabel("Title", { exact: true })).toHaveValue(
       "Sunday Message",
     );
     await page.getByRole("tab", { name: "2. Audio", exact: true }).click();
@@ -483,8 +483,8 @@ test("new sermons save details before independent recording updates to the same 
   await expect(
     page.getByRole("tab", { name: "2. Audio", exact: true }),
   ).toBeDisabled();
-  await page.getByLabel("Title *", { exact: true }).fill("New Message");
-  await page.getByLabel("Date *", { exact: true }).fill("2026-10-25");
+  await page.getByLabel("Title", { exact: true }).fill("New Message");
+  await page.getByLabel("Date", { exact: true }).fill("2026-10-25");
   await page.getByRole("button", { name: "Save Details", exact: true }).click();
   await expect(page).toHaveURL(/\/sermons\/sermon-a\/edit$/);
   expect(state.uploads).toHaveLength(0);
@@ -505,7 +505,7 @@ test("new sermons save details before independent recording updates to the same 
   ).toBeEnabled();
   expect(state.writes[1].path).toBe("/api/backend/sermons/sermon-a");
   await page.reload();
-  await expect(page.getByLabel("Title *", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("Title", { exact: true })).toHaveValue(
     "New Message",
   );
 });
@@ -519,12 +519,12 @@ test("details save failures retain drafts without changing either recording", as
     failSaveOnce: true,
   });
   await page.goto("/sermons/sermon-a/edit");
-  await page.getByLabel("Title *", { exact: true }).fill("Details Updated");
+  await page.getByLabel("Title", { exact: true }).fill("Details Updated");
   await page.getByRole("button", { name: "Save Details", exact: true }).click();
   await expect(
     page.getByText("Details could not be saved", { exact: true }),
   ).toBeVisible();
-  await expect(page.getByLabel("Title *", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("Title", { exact: true })).toHaveValue(
     "Details Updated",
   );
   await page.getByRole("button", { name: "Save Details", exact: true }).click();

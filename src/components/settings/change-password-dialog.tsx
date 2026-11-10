@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import { BotProtection } from "@/components/shared/bot-protection";
 import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
@@ -125,8 +127,8 @@ export function ChangePasswordDialog({
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField required
               control={form.control}
               name="currentPassword"
               render={({ field }) => (
@@ -144,7 +146,7 @@ export function ChangePasswordDialog({
                 </FormItem>
               )}
             />
-            <FormField
+            <FormField required
               control={form.control}
               name="newPassword"
               render={({ field }) => (
@@ -162,7 +164,7 @@ export function ChangePasswordDialog({
                 </FormItem>
               )}
             />
-            <FormField
+            <FormField required
               control={form.control}
               name="confirmPassword"
               render={({ field }) => (
@@ -189,7 +191,7 @@ export function ChangePasswordDialog({
                 {changeMutation.isPending ? "Changing..." : "Change Password"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

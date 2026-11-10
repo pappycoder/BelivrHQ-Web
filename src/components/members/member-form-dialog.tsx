@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import * as React from "react";
 import { confirmDiscardChanges } from "@/hooks/use-unsaved-changes";
 import {
@@ -42,6 +44,7 @@ import {
   type Member,
   type MemberStatus,
 } from "@/hooks/use-members";
+import { useCurrentProfile } from "@/hooks/use-profile";
 import { useBranchesList } from "@/hooks/use-branches";
 import {
   CustomFieldsEditor,
@@ -50,8 +53,8 @@ import {
 } from "@/components/members/custom-fields-editor";
 
 const memberSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
+  firstName: z.string().trim().min(1, "First name is required"),
+  lastName: z.string().trim().min(1, "Last name is required"),
   email: z.string().email("Invalid email address").optional().or(z.literal("")),
   phone: z.string().optional(),
   whatsappNumber: z.string().optional(),
@@ -60,7 +63,7 @@ const memberSchema = z.object({
   address: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
-  branchId: z.string().optional(),
+  branchId: z.string().trim().min(1, "Select a branch"),
   status: z.string().optional(),
   notes: z.string().optional(),
   customFields: z.array(z.object({ key: z.string(), value: z.string() })),
@@ -111,6 +114,7 @@ export function MemberFormDialog({
   returnFocusRef,
 }: MemberFormDialogProps) {
   const isEdit = !!member;
+  const { data: profile } = useCurrentProfile();
   const createMutation = useCreateMember();
   const updateMutation = useUpdateMember(member?.memberId ?? "");
   const branchesQuery = useBranchesList({ limit: 100 });
@@ -127,9 +131,9 @@ export function MemberFormDialog({
 
   React.useEffect(() => {
     if (open) {
-      form.reset(toFormValues(member));
+      form.reset({ ...toFormValues(member), branchId: member?.branchId ?? profile?.branchId ?? "" });
     }
-  }, [open, member, form]);
+  }, [open, member, form, profile?.branchId]);
 
   const onSubmit = (values: MemberFormValues) => {
     const base = {
@@ -211,10 +215,10 @@ export function MemberFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <PeopleFormSection title="Identity & contact">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField
+                <FormField required
                   control={form.control}
                   name="firstName"
                   render={({ field }) => (
@@ -227,7 +231,7 @@ export function MemberFormDialog({
                     </FormItem>
                   )}
                 />
-                <FormField
+                <FormField required
                   control={form.control}
                   name="lastName"
                   render={({ field }) => (
@@ -327,7 +331,7 @@ export function MemberFormDialog({
                     </FormItem>
                   )}
                 />
-                <FormField
+                <FormField required
                   control={form.control}
                   name="branchId"
                   render={({ field }) => (
@@ -485,7 +489,7 @@ export function MemberFormDialog({
                     : "Add Member"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

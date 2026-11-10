@@ -1,4 +1,6 @@
 "use client";
+
+import { ValidatedForm } from "@/components/ui/validated-form";
 import { GivingFormSection as StyledGivingFormSection } from "./giving-presentation";
 
 import { useEffect, useState } from "react";
@@ -123,7 +125,7 @@ export function RecurringGivingDialog({
             complete payment authorization.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={submit} className="space-y-4">
+        <ValidatedForm onSubmit={submit} className="space-y-4">
           {recurringBlocked ? (
             <div
               role="alert"
@@ -145,7 +147,7 @@ export function RecurringGivingDialog({
           ) : null}
           <GivingFormSection title="Giver & branch">
             <div className="space-y-2">
-              <Label>Branch</Label>
+              <Label required={true}>Branch</Label>
               <AvailableSelect
                 unavailableMessage={
                   profile?.isAdminHq && !branches.data?.data.length
@@ -166,7 +168,7 @@ export function RecurringGivingDialog({
                   setCategoryId("");
                 }}
               >
-                <SelectTrigger aria-label="Recurring giving branch">
+                <SelectTrigger aria-required={true} aria-label="Recurring giving branch">
                   <SelectValue placeholder="Select a branch" />
                 </SelectTrigger>
                 <SelectContent>
@@ -185,7 +187,7 @@ export function RecurringGivingDialog({
               </AvailableSelect>
             </div>
             <div className="space-y-2">
-              <Label>Member</Label>
+              <Label required>Member</Label>
               <MemberCombobox
                 branchId={branchId || undefined}
                 value={memberId}
@@ -203,7 +205,7 @@ export function RecurringGivingDialog({
           </GivingFormSection>
           <GivingFormSection title="Schedule & authorization">
             <div className="space-y-2">
-              <Label>Category</Label>
+              <Label required={true}>Category</Label>
               <AvailableSelect
                 value={categoryId || undefined}
                 onValueChange={setCategoryId}
@@ -218,7 +220,7 @@ export function RecurringGivingDialog({
                       : undefined
                 }
               >
-                <SelectTrigger aria-label="Recurring giving category">
+                <SelectTrigger aria-required={true} aria-label="Recurring giving category">
                   <SelectValue placeholder="Select a recurring category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -240,7 +242,7 @@ export function RecurringGivingDialog({
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="recurring-email">Payer email</Label>
+              <Label required htmlFor="recurring-email">Payer email</Label>
               <Input
                 id="recurring-email"
                 type="email"
@@ -251,7 +253,7 @@ export function RecurringGivingDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="recurring-amount">Amount (NGN)</Label>
+              <Label required htmlFor="recurring-amount">Amount (NGN)</Label>
               <Input
                 id="recurring-amount"
                 type="number"
@@ -264,7 +266,7 @@ export function RecurringGivingDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label>Frequency</Label>
+              <Label required={true}>Frequency</Label>
               <Select
                 value={frequency}
                 onValueChange={(value) =>
@@ -272,7 +274,7 @@ export function RecurringGivingDialog({
                 }
                 disabled={mutation.isPending}
               >
-                <SelectTrigger aria-label="Giving frequency">
+                <SelectTrigger aria-required={true} aria-label="Giving frequency">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -302,7 +304,7 @@ export function RecurringGivingDialog({
               Create Schedule
             </Button>
           </DialogFooter>
-        </form>
+        </ValidatedForm>
       </DialogContent>
     </Dialog>
   );

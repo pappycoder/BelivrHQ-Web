@@ -142,16 +142,16 @@ test("create form keeps visible validation, conditional pricing and the existing
   await expect(page.getByRole("group", { name: "Schedule and location", exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Create Event", exact: true }).click();
   await expect(page.getByText("Title must be at least 2 characters")).toBeVisible();
-  await page.getByLabel("Title *", { exact: true }).fill("Community Gathering");
+  await page.getByLabel("Title", { exact: true }).fill("Community Gathering");
   await page.getByRole("combobox", { name: "Type *", exact: true }).click();
   await page.getByRole("option", { name: "Conference", exact: true }).click();
-  await page.getByLabel("Start Date *", { exact: true }).fill("2026-11-01T09:00");
+  await page.getByLabel("Start Date", { exact: true }).fill("2026-11-01T09:00");
   await page.getByLabel("Description (optional)", { exact: true }).fill("Community event");
   await page.getByRole("switch", { name: "Free Event", exact: true }).click();
-  await expect(page.getByLabel("Price *", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Price", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Create Event", exact: true }).click();
   await expect(page.getByText("Price is required for paid events")).toBeVisible();
-  await page.getByLabel("Price *", { exact: true }).fill("5000");
+  await page.getByLabel("Price", { exact: true }).fill("5000");
   await page.getByRole("button", { name: "Create Event", exact: true }).click();
   await expect.poll(() => state.writes.length).toBe(1);
   expect(state.writes[0]).toEqual({ method: "POST", path: "/api/backend/events", body: { branchId: "west", title: "Community Gathering", description: "Community event", type: "conference", startDate: "2026-11-01T09:00", isFree: false, price: 5000 } });
@@ -160,7 +160,7 @@ test("create form keeps visible validation, conditional pricing and the existing
 test("edit form retains saved values and clearing optional fields sends null", async ({ context, page }) => {
   const state = await fixture(context);
   await page.goto("/events/workspace-event/edit");
-  await expect(page.getByLabel("Title *", { exact: true })).toHaveValue("Community Gathering");
+  await expect(page.getByLabel("Title", { exact: true })).toHaveValue("Community Gathering");
   await expect(page.getByLabel("Description (optional)", { exact: true })).toHaveValue("A gathering for our community.");
   await page.getByLabel("Description (optional)", { exact: true }).fill("");
   await page.getByRole("button", { name: "Save Changes", exact: true }).click();

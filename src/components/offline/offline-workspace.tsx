@@ -1,4 +1,6 @@
 "use client";
+
+import { RequiredFieldsNotice } from "@/components/ui/required-fields";
 import { LEGACY_BRAND } from "@/lib/brand/identity";
 
 
@@ -453,7 +455,7 @@ export function OfflineWorkspace() {
                   </Button>
                   {branches.length > 0 && (
                     <div className="space-y-2">
-                      <Label htmlFor="offline-branch">Branch</Label>
+                      <Label required htmlFor="offline-branch">Branch</Label>
                       <select
                         id="offline-branch"
                         className="h-11 w-full rounded-xl border bg-background px-3"
@@ -474,7 +476,7 @@ export function OfflineWorkspace() {
                 </>
               )}
               <div className="space-y-2">
-                <Label htmlFor="offline-passphrase">Offline passphrase</Label>
+                <Label required htmlFor="offline-passphrase">Offline passphrase</Label>
                 <Input
                   id="offline-passphrase"
                   type="password"
@@ -673,9 +675,10 @@ export function OfflineWorkspace() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
+                    <RequiredFieldsNotice className="col-span-full" />
                     {Object.keys(contact).map((key) => (
                       <div className="space-y-2" key={key}>
-                        <Label htmlFor={`offline-${key}`}>
+                        <Label required={key === "firstName" || (key === "lastName" && editor.entity === "member")} htmlFor={`offline-${key}`}>
                           {contactLabels[key]}
                         </Label>
                         <Input
@@ -741,11 +744,11 @@ export function OfflineWorkspace() {
                   <CardTitle>{form.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <RequiredFieldsNotice />
                   {form.fields?.map((field) => (
                     <div key={field.key} className="space-y-2">
-                      <Label htmlFor={`answer-${field.key}`}>
+                      <Label required={field.required} htmlFor={`answer-${field.key}`}>
                         {field.label}
-                        {field.required ? " *" : ""}
                       </Label>
                       {field.type === "checkbox" ? (
                         <div className="flex flex-wrap gap-3">

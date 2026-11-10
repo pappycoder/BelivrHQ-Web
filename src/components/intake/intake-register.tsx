@@ -1,5 +1,7 @@
 "use client";
 
+import { RequiredFieldsNotice, RequiredIndicator } from "@/components/ui/required-fields";
+
 import { ArrowUpDown, Check, ClipboardList, Eye, X } from "lucide-react";
 import { StatCard } from "@/components/paper/stat";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -147,10 +149,11 @@ export function PublicRegistrationLink({ kind }: { kind: Kind }) {
               review.
             </DialogDescription>
           </DialogHeader>
+          <RequiredFieldsNotice />
           {profile?.isAdminHq ? (
             <label className="grid gap-2 text-sm">
-              Branch
-              <select
+              <span>Branch <RequiredIndicator /></span>
+              <select required
                 aria-label="Registration branch"
                 className="h-10 w-full rounded-md border bg-background px-3"
                 value={selectedBranch}

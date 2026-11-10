@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import * as React from "react";
 import {
   ArrowDownLeft,
@@ -178,14 +180,14 @@ export default function MessagesPage() {
               WhatsApp is tried first, then SMS falls back, using one number, one message.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={submit} className="space-y-4">
+          <ValidatedForm onSubmit={submit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label className="text-xs">To (phone)</Label>
-              <Input value={draft.to} onChange={(e) => setDraft((d) => ({ ...d, to: e.target.value }))} placeholder="+1 415 555 0100" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              <Label required className="text-xs">To (phone)</Label>
+              <Input required value={draft.to} onChange={(e) => setDraft((d) => ({ ...d, to: e.target.value }))} placeholder="+1 415 555 0100" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Message</Label>
-              <Textarea rows={4} value={draft.text} onChange={(e) => setDraft((d) => ({ ...d, text: e.target.value }))} placeholder="Warm, short, and worth a reply…" className="resize-none rounded-lg border-line bg-background text-xs shadow-none" />
+              <Label required className="text-xs">Message</Label>
+              <Textarea required rows={4} value={draft.text} onChange={(e) => setDraft((d) => ({ ...d, text: e.target.value }))} placeholder="Warm, short, and worth a reply…" className="resize-none rounded-lg border-line bg-background text-xs shadow-none" />
             </div>
             <Button type="submit" disabled={send.isPending} className="h-10 w-full gap-2 rounded-lg text-sm">
               <Send className="size-4" /> {send.isPending ? "Sending…" : "Send message"}
@@ -193,7 +195,7 @@ export default function MessagesPage() {
             <p className="text-center text-[10px] text-ink-faint">
               From addresses are managed on {MESSAGE_CHANNELS.join(", ")} in Settings → Integrations.
             </p>
-          </form>
+          </ValidatedForm>
         </DialogContent>
       </Dialog>
     </div>

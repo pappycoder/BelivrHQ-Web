@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import { LoadingState } from "@/components/shared/loading-state";
 
 import { BotProtection } from "@/components/shared/bot-protection";
@@ -134,7 +136,7 @@ function ResetPasswordForm() {
             </Button>
           </motion.div>
         ) : (
-          <motion.form
+          <MotionForm
             key="form"
             onSubmit={handleSubmit}
             initial={{ opacity: 0, y: 12 }}
@@ -199,12 +201,14 @@ function ResetPasswordForm() {
                 {resetPasswordMutation.isPending ? "Resetting..." : "Save new password"}
               </Button>
             </div>
-          </motion.form>
+          </MotionForm>
         )}
       </AnimatePresence>
     </AuthFormWrapper>
   );
 }
+
+const MotionForm = motion.create(ValidatedForm);
 
 export default function ResetPasswordPage() {
   return (

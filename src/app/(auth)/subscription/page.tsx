@@ -144,7 +144,15 @@ export default function SubscriptionPage() {
       paymentWindow.current = params.get("payment_window") === "1";
     }
     const ref = params.get("reference") || params.get("tx_ref") || "";
-    if (/^(?:BHQSUB_|COSUB_)[a-f0-9]{32}$/.test(ref)) setReference(ref);
+    if (/^(?:BHQSUB_|COSUB_)[a-f0-9]{32}$/.test(ref)) {
+      setReference(ref);
+      // The originating tab verifies against the server. The returning popup
+      // only closes its own window: a callback is never proof of paid access.
+      // Do this before fetching billing because the original tab may already
+      // have cleared the shared registration cookie after verification.
+      if (paymentWindow.current && params.get("status") === "successful")
+        window.close();
+    }
     if (params.get("status") === "cancelled")
       setMessage("Payment was cancelled. Your current plan is unchanged.");
     window.history.replaceState(
@@ -211,7 +219,9 @@ export default function SubscriptionPage() {
         : query.state.error
           ? 15000
           : 5000,
-    refetchIntervalInBackground: false,
+    // Checkout runs in another tab; the original tab must keep verifying even
+    // when the provider never redirects after a successful charge.
+    refetchIntervalInBackground: true,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
   });
@@ -350,6 +360,7 @@ export default function SubscriptionPage() {
           cycle: pending?.cycle || cycle,
           gateway: pending?.gateway || gateway,
           currency: paymentCurrency,
+          callbackOrigin: window.location.origin,
           ...(!pending ? { quoteId: quote.data?.quoteId } : {}),
         },
       ),

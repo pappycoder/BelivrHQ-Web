@@ -1,4 +1,6 @@
 "use client";
+
+import { ValidatedForm } from "@/components/ui/validated-form";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 
 import { ContentImage } from "@/components/shared/content-image";
@@ -85,14 +87,14 @@ const MAX_LOGO_BYTES = 5 * 1024 * 1024;
 // ─── Church (branding tile + identity/contact form) ─────────
 
 const churchFormSchema = z.object({
-  name: z.string().min(1, "Church name is required"),
+  name: z.string().trim().min(1, "Church name is required"),
   denomination: z.string().optional(),
   phone: z.string().optional(),
   website: z.string().optional(),
   address: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
-  country: z.string().min(1, "Country is required"),
+  country: z.string().trim().min(1, "Country is required"),
 });
 
 type ChurchFormValues = z.infer<typeof churchFormSchema>;
@@ -232,7 +234,7 @@ function ChurchSection({ church }: { church: ChurchProfile }) {
     <SettingsSection id="church" title="Church">
       <LogoTile church={church} />
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSave)}>
+        <ValidatedForm schemaValidation onSubmit={form.handleSubmit(handleSave)}>
           <p className="-mt-1 mb-4 text-xs text-muted-foreground">
             The church name and denomination are set at registration; contact
             and location details are editable below.
@@ -323,7 +325,7 @@ function ChurchSection({ church }: { church: ChurchProfile }) {
               </Button>
             </div>
           )}
-        </form>
+        </ValidatedForm>
       </Form>
     </SettingsSection>
   );
@@ -395,8 +397,8 @@ function EmailSection({ church }: { church: ChurchProfile }) {
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-              <FormField
+            <ValidatedForm schemaValidation onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+              <FormField required
                 control={form.control}
                 name="email"
                 render={({ field }) => (
@@ -432,7 +434,7 @@ function EmailSection({ church }: { church: ChurchProfile }) {
                   )}
                 </Button>
               </DialogFooter>
-            </form>
+            </ValidatedForm>
           </Form>
         </DialogContent>
       </Dialog>

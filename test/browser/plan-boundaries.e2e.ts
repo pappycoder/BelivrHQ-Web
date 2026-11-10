@@ -449,9 +449,9 @@ test("Community keeps check-in separate from registrations and records roster an
     page.getByText("1 attendance records saved", { exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Walk-In", exact: true }).click();
-  await page.getByLabel("First Name *", { exact: true }).fill("New");
-  await page.getByLabel("Last Name *", { exact: true }).fill("Visitor");
-  await page.getByLabel("Phone *", { exact: true }).fill("08012345678");
+  await page.getByLabel("First Name", { exact: true }).fill("New");
+  await page.getByLabel("Last Name", { exact: true }).fill("Visitor");
+  await page.getByLabel("Phone", { exact: true }).fill("08012345678");
   await page
     .getByRole("button", { name: "Check In Walk-In", exact: true })
     .click();
@@ -670,7 +670,7 @@ test("service creation and editing round-trip local clock times", async ({
   });
   await page.goto("/attendance/services");
   await page.getByRole("button", { name: "Add Service", exact: true }).click();
-  await page.getByLabel("Name *", { exact: true }).fill("Sunday Service");
+  await page.getByLabel("Name", { exact: true }).fill("Sunday Service");
   await page.getByLabel("Start Time", { exact: true }).fill("09:00");
   await page.getByLabel("End Time", { exact: true }).fill("11:00");
   await page

@@ -126,7 +126,7 @@ test("Secretary can create and send a branch broadcast", async ({
     .getByRole("button", { name: "New Broadcast", exact: true })
     .click();
   await page
-    .getByLabel("Broadcast Name *", { exact: true })
+    .getByLabel("Broadcast Name", { exact: true })
     .fill("Secretary notice");
   await page.getByRole("combobox", { name: "Template *", exact: true }).click();
   await page
@@ -171,10 +171,10 @@ test("Secretary can create events and edit event details without gaining check-i
 }) => {
   const state = await fixture(context);
   await page.goto("/events/new");
-  await expect(page.getByLabel("Title *", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Title", { exact: true })).toBeVisible();
   await page.goto("/events/event-a/edit");
   await page
-    .getByLabel("Title *", { exact: true })
+    .getByLabel("Title", { exact: true })
     .fill("Updated Secretary Event");
   await page.getByRole("button", { name: "Save Changes", exact: true }).click();
   await expect.poll(() => state.writes.length).toBe(1);

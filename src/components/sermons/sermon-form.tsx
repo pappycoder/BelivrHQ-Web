@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import {
   BranchAssignmentField,
   useBranchAssignment,
@@ -53,9 +55,9 @@ import type {
 } from "@/hooks/use-sermons";
 
 const sermonSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  title: z.string().trim().min(1, "Title is required"),
   speaker: z.string().optional(),
-  sermonDate: z.string().min(1, "Date is required"),
+  sermonDate: z.string().trim().min(1, "Date is required"),
   scriptureReference: z.string().optional(),
   seriesName: z.string().optional(),
   tags: z.array(z.string()).optional(),
@@ -253,7 +255,7 @@ export function SermonForm({
 
   return (
     <Form {...form}>
-      <form
+      <ValidatedForm schemaValidation
         onSubmit={(event) => {
           if (stage === "details") void form.handleSubmit(handleSubmit)(event);
           else {
@@ -294,7 +296,7 @@ export function SermonForm({
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <BranchAssignmentField assignment={branchAssignment} />
-                  <FormField
+                  <FormField required
                     control={form.control}
                     name="title"
                     render={({ field }) => (
@@ -324,7 +326,7 @@ export function SermonForm({
                         </FormItem>
                       )}
                     />
-                    <FormField
+                    <FormField required
                       control={form.control}
                       name="sermonDate"
                       render={({ field }) => (
@@ -585,7 +587,7 @@ export function SermonForm({
             {savingMessage}
           </p>
         )}
-      </form>
+      </ValidatedForm>
     </Form>
   );
 }

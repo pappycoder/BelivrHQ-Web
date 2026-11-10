@@ -4,6 +4,7 @@ import { useState, useEffect, useId } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { RequiredIndicator } from "@/components/ui/required-fields";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -62,13 +63,13 @@ export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, 
 
       {fields.map((field) => (
         <div key={field.key} className="space-y-1.5">
-          <Label
+          <Label required={!!field.required}
             id={`${fieldId}-${field.key}-label`}
             htmlFor={field.type === "checkbox" ? undefined : `${fieldId}-${field.key}`}
             className="text-sm"
           >
             {field.label}
-            {field.required && <span className="ml-1 text-destructive">*</span>}
+            {field.required && <RequiredIndicator />}
             {showOptional && !field.required && <span className="ml-2 text-xs text-muted-foreground">(optional)</span>}
           </Label>
 
@@ -139,6 +140,7 @@ export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, 
             <div
               className="grid gap-2"
               role="group"
+              data-required={!!field.required}
               aria-labelledby={`${fieldId}-${field.key}-label`}
             >
               {(field.options ?? []).map((opt) => {

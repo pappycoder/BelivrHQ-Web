@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import { BotProtection } from "@/components/shared/bot-protection";
 import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
@@ -53,7 +55,7 @@ export default function ForgotPasswordPage() {
           </Button>
         </motion.div>
       ) : (
-        <form onSubmit={handleSubmit}>
+        <ValidatedForm onSubmit={handleSubmit}>
           <div className="space-y-4">
             <AuthField
               label="Email Address"
@@ -76,7 +78,7 @@ export default function ForgotPasswordPage() {
               </Link>
             </div>
           </div>
-        </form>
+        </ValidatedForm>
       )}
     </AuthFormWrapper>
   );
