@@ -5,6 +5,7 @@ import { AuthShell } from "@/components/shared/auth-shell";
 import { GuestOnly } from "@/components/shared/guest-only";
 import { PublicPaperShell } from "@/components/shared/public-paper-shell";
 import { WorkspaceShell } from "@/components/paper/shell/workspace-shell";
+import { LoadingState } from "@/components/shared/loading-state";
 import { useAuth } from "@/hooks/use-auth";
 
 export default function AuthRouteShell({
@@ -13,7 +14,7 @@ export default function AuthRouteShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const entry = pathname === "/login" || pathname === "/register";
 
   // Billing keeps one engine and two homes: signed-in users manage their
@@ -21,8 +22,20 @@ export default function AuthRouteShell({
   // visitors (fresh registration hand-off) get the same Paper design with
   // the marketing header instead of the workspace chrome.
   if (pathname === "/subscription" || pathname.startsWith("/subscription/")) {
-    return user ? <WorkspaceShell>{children}</WorkspaceShell> : <PublicPaperShell>{children}</PublicPaperShell>;
+    // Resolve the session before mounting checkout: changing shells remounts
+    // children, which would otherwise consume and lose the gateway callback.
+    if (isLoading)
+      return <LoadingState label="Loading your account" variant="detail" />;
+    return user ? (
+      <WorkspaceShell>{children}</WorkspaceShell>
+    ) : (
+      <PublicPaperShell>{children}</PublicPaperShell>
+    );
   }
 
-  return <AuthShell>{entry ? <GuestOnly key={pathname}>{children}</GuestOnly> : children}</AuthShell>;
+  return (
+    <AuthShell>
+      {entry ? <GuestOnly key={pathname}>{children}</GuestOnly> : children}
+    </AuthShell>
+  );
 }

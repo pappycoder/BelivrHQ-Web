@@ -1,29 +1,84 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { LEGACY_BRAND } from "./brand/identity";
 import { NextRequest } from "next/server";
 vi.mock("server-only", () => ({}));
-import { POST } from "../app/api/backend/[...path]/route";
-
+import { GET, POST } from "../app/api/backend/[...path]/route";
 afterEach(() => vi.unstubAllGlobals());
-describe("registration cookie session", () => {
-  it("stores signup tokens in HttpOnly cookies and strips them from browser JSON", async () => {
-    const fetch = vi.fn().mockResolvedValue(Response.json({
-      success: true,
-      data: { userId: "new-admin", churchId: "church", accessToken: "private-access", refreshToken: "private-refresh", expiresAt: 1900000000 },
-    }, { status: 201 }));
+describe("Registration billing-only cookies", () => {
+  it("withholds every full-session token and stores only the scoped HttpOnly credential", async () => {
+    const fetch = vi
+      .fn()
+      .mockResolvedValue(
+        Response.json(
+          {
+            success: true,
+            data: {
+              userId: "new-admin",
+              churchId: "church",
+              registrationCheckoutToken: "private-checkout",
+              accessToken: "old-upstream-token",
+              refreshToken: "old-refresh",
+            },
+          },
+          { status: 201 },
+        ),
+      );
     vi.stubGlobal("fetch", fetch);
-    const req = new NextRequest("http://localhost/api/backend/auth/register", {
-      method: "POST", headers: { "x-belivrhq-client": "web", "Content-Type": "application/json", cookie: "belivrhq_token=old-account" },
-      body: JSON.stringify({ email: "admin@example.org", password: "private-password" }),
+    const request = new NextRequest(
+      "http://localhost/api/backend/auth/register",
+      {
+        method: "POST",
+        headers: {
+          "x-belivrhq-client": "web",
+          "content-type": "application/json",
+          cookie: "belivrhq_token=old-account",
+        },
+        body: JSON.stringify({ email: "admin@example.org" }),
+      },
+    );
+    const response = await POST(request, {
+      params: Promise.resolve({ path: ["auth", "register"] }),
     });
-    const response = await POST(req, { params: Promise.resolve({ path: ["auth", "register"] }) });
-    expect(response.status).toBe(201);
     const body = await response.json();
-    expect(body.data).toMatchObject({ userId: "new-admin", churchId: "church", sessionEstablished: true });
+    expect(body.data).not.toHaveProperty("sessionEstablished");
     expect(JSON.stringify(body)).not.toContain("private-");
-    expect(response.cookies.get("belivrhq_token")?.value).toBe("private-access");
-    expect(response.cookies.get("belivrhq_refresh_token")?.value).toBe("private-refresh");
+    expect(JSON.stringify(body)).not.toContain("old-");
+    expect(response.cookies.get("belivrhq_registration_checkout")?.value).toBe(
+      "private-checkout",
+    );
+    expect(response.cookies.get("belivrhq_token")?.maxAge).toBe(0);
+    expect(response.cookies.get(LEGACY_BRAND.cookies.access)?.maxAge).toBe(0);
     expect(response.headers.get("set-cookie")).toMatch(/HttpOnly/i);
-    expect(response.headers.get("cache-control")).toBe("private, no-store");
     expect(fetch.mock.calls[0][1].headers.has("authorization")).toBe(false);
+  });
+  it("forwards the capability only to registration billing, without a workspace bearer", async () => {
+    const fetch = vi
+      .fn()
+      .mockImplementation(() =>
+        Promise.resolve(Response.json({ success: true, data: {} })),
+      );
+    vi.stubGlobal("fetch", fetch);
+    for (const path of [
+      ["billing", "registration", "subscription"],
+      ["members"],
+    ]) {
+      const request = new NextRequest(
+        "http://localhost/api/backend/" + path.join("/"),
+        {
+          headers: {
+            "x-belivrhq-client": "web",
+            cookie:
+              "belivrhq_registration_checkout=scoped; belivrhq_token=workspace",
+          },
+        },
+      );
+      await GET(request, { params: Promise.resolve({ path }) });
+    }
+    const scoped = fetch.mock.calls[0][1].headers,
+      normal = fetch.mock.calls[1][1].headers;
+    expect(scoped.get("x-belivrhq-registration-checkout")).toBe("scoped");
+    expect(scoped.has("authorization")).toBe(false);
+    expect(normal.has("x-belivrhq-registration-checkout")).toBe(false);
+    expect(normal.get("authorization")).toBe("Bearer workspace");
   });
 });

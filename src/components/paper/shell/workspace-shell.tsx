@@ -1,5 +1,6 @@
 "use client";
 
+import { BillingNotice } from "@/components/billing/billing-notice";
 import * as React from "react";
 import { usePathname } from "next/navigation";
 import { TableColumnsProvider } from "@/contexts/table-columns-context";
@@ -51,6 +52,7 @@ export function WorkspaceShell({ children }: { children: React.ReactNode }) {
             className="mx-auto w-full max-w-[1440px] px-4 pb-28 pt-6 md:px-8 md:pb-20 md:pt-8"
           >
             <PermissionRouteGate>
+              <BillingNotice expiredOnly />
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}

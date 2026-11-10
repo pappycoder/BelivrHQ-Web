@@ -1,3 +1,9 @@
+import {
+  registrationCredential,
+  saveRegistrationCheckout,
+  expireRegistrationCheckout,
+  isRegistrationBillingPath,
+} from "@/lib/registration-checkout-session";
 import { isAnonymousPublicFormRequest } from "@/lib/anonymous-api";
 import { type NextRequest, NextResponse } from "next/server";
 import {
@@ -12,7 +18,12 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 type Context = { params: Promise<{ path: string[] }> };
-const sessionEndpoints = new Set(["auth/register", "auth/login", "auth/login/2fa", "auth/refresh"]);
+const sessionEndpoints = new Set([
+  "auth/register",
+  "auth/login",
+  "auth/login/2fa",
+  "auth/refresh",
+]);
 
 async function proxy(request: NextRequest, context: Context) {
   if (!trustedBrowserRequest(request)) {
@@ -32,15 +43,24 @@ async function proxy(request: NextRequest, context: Context) {
   const headers = new Headers();
   if (process.env.INTERNAL_PROXY_SECRET) {
     headers.set("x-belivrhq-proxy-secret", process.env.INTERNAL_PROXY_SECRET);
-    const ip = request.headers.get("x-vercel-forwarded-for")?.split(",")[0].trim();
+    const ip = request.headers
+      .get("x-vercel-forwarded-for")
+      ?.split(",")[0]
+      .trim();
     if (ip) headers.set("x-belivrhq-client-ip", ip);
   }
   const contentType = request.headers.get("content-type");
   if (contentType) headers.set("content-type", contentType);
+  const registrationBilling = isRegistrationBillingPath(endpoint);
+  if (registrationBilling) {
+    const credential = registrationCredential(request);
+    if (credential) headers.set("x-belivrhq-registration-checkout", credential);
+  }
   const token = readSession(request).access;
   // Authentication endpoints must not inherit a different signed-in account.
   if (
     token &&
+    !registrationBilling &&
     !sessionEndpoints.has(endpoint) &&
     endpoint !== "auth/accept-invitation" &&
     !isAnonymousPublicFormRequest(endpoint, request.method) &&
@@ -50,7 +70,8 @@ async function proxy(request: NextRequest, context: Context) {
   const range = request.headers.get("range");
   if (range) headers.set("range", range);
   const requestId = request.headers.get("x-request-id");
-  if (requestId && /^[a-zA-Z0-9_-]{1,80}$/.test(requestId)) headers.set("x-request-id", requestId);
+  if (requestId && /^[a-zA-Z0-9_-]{1,80}$/.test(requestId))
+    headers.set("x-request-id", requestId);
   const hasBody = !["GET", "HEAD"].includes(request.method);
   const length = Number(request.headers.get("content-length") || 0);
   if (length > 55 * 1024 * 1024) return new NextResponse(null, { status: 413 });
@@ -89,14 +110,17 @@ async function proxy(request: NextRequest, context: Context) {
     body = bytes;
   }
   try {
-    const upstream = await fetch(`${BACKEND_URL}/api/v1/${endpoint}${request.nextUrl.search}`, {
-      method: request.method,
-      headers,
-      body,
-      cache: "no-store",
-      redirect: "manual",
-      signal: AbortSignal.any([request.signal, AbortSignal.timeout(60000)]),
-    });
+    const upstream = await fetch(
+      `${BACKEND_URL}/api/v1/${endpoint}${request.nextUrl.search}`,
+      {
+        method: request.method,
+        headers,
+        body,
+        cache: "no-store",
+        redirect: "manual",
+        signal: AbortSignal.any([request.signal, AbortSignal.timeout(60000)]),
+      },
+    );
     const responseHeaders = new Headers({
       "Cache-Control": "private, no-store",
       Vary: "Cookie",
@@ -118,6 +142,8 @@ async function proxy(request: NextRequest, context: Context) {
       if (value) responseHeaders.set(name, value);
     }
     let session: Record<string, unknown> | undefined;
+    let registrationToken: string | undefined;
+    let registered = false;
     let response: NextResponse;
     if (
       sessionEndpoints.has(endpoint) &&
@@ -125,13 +151,29 @@ async function proxy(request: NextRequest, context: Context) {
     ) {
       const json = await upstream.json();
       responseHeaders.delete("content-length");
-      if (json.success && typeof json.data?.accessToken === "string") {
+      if (endpoint === "auth/register" && json.success) {
+        registered = true;
+        if (typeof json.data?.registrationCheckoutToken === "string")
+          registrationToken = json.data.registrationCheckoutToken;
+        delete json.data.registrationCheckoutToken;
+        delete json.data.accessToken;
+        delete json.data.refreshToken;
+        delete json.data.sessionEstablished;
+      }
+      if (
+        endpoint !== "auth/register" &&
+        json.success &&
+        typeof json.data?.accessToken === "string"
+      ) {
         session = { ...json.data };
         delete json.data.accessToken;
         delete json.data.refreshToken;
         json.data.sessionEstablished = true;
       }
-      response = NextResponse.json(json, { status: upstream.status, headers: responseHeaders });
+      response = NextResponse.json(json, {
+        status: upstream.status,
+        headers: responseHeaders,
+      });
     } else {
       response = new NextResponse(upstream.body, {
         status: upstream.status,
@@ -142,8 +184,13 @@ async function proxy(request: NextRequest, context: Context) {
       responseHeaders.delete("content-length");
       response.headers.delete("content-length");
       saveSession(response, session);
+      expireRegistrationCheckout(response);
     }
-    if (endpoint === "auth/logout" && request.method === "POST") expireSession(response);
+    if (registered) expireSession(response);
+    if (registrationToken)
+      saveRegistrationCheckout(response, registrationToken);
+    if (endpoint === "auth/logout" && request.method === "POST")
+      expireSession(response);
     return response;
   } catch {
     return NextResponse.json(
@@ -159,4 +206,10 @@ async function proxy(request: NextRequest, context: Context) {
   }
 }
 
-export { proxy as GET, proxy as POST, proxy as PUT, proxy as PATCH, proxy as DELETE };
+export {
+  proxy as GET,
+  proxy as POST,
+  proxy as PUT,
+  proxy as PATCH,
+  proxy as DELETE,
+};

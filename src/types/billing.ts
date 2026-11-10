@@ -4,6 +4,7 @@ export type SubscriptionPlan =
 export type BillingCycle = "monthly" | "annual";
 export type SubscriptionGateway = "paystack" | "flutterwave";
 export interface BillingStatus {
+  registrationChurchId?: string;
   verification?: {
     reference: string;
     status: string;

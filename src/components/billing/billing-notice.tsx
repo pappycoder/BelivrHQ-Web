@@ -1,10 +1,31 @@
 "use client";
 import Link from "next/link";
+import { useCurrentProfile } from "@/hooks/use-profile";
 import { useBillingStatus } from "@/hooks/use-billing";
 import { Button } from "@/components/ui/button";
-export function BillingNotice() {
+export function BillingNotice({
+  expiredOnly = false,
+}: { expiredOnly?: boolean } = {}) {
   const { data, allowed } = useBillingStatus();
-  if (!allowed || !data) return null;
+  const { data: profile } = useCurrentProfile();
+  if (profile?.subscriptionReadOnly)
+    return (
+      <aside
+        role="status"
+        className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-100"
+      >
+        <p>
+          Your subscription has ended. You can view and export existing records.
+          Renew through billing to make changes.
+        </p>
+        {allowed && (
+          <Button asChild size="sm" variant="outline">
+            <Link href="/subscription">Renew subscription</Link>
+          </Button>
+        )}
+      </aside>
+    );
+  if (expiredOnly || !allowed || !data) return null;
   const resources = (["members", "staff", "locations"] as const).filter(
     (r) =>
       data.limits?.[r] !== undefined &&

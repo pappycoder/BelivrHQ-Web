@@ -30,7 +30,8 @@ export interface ResetPasswordInput {
 }
 
 export interface RegisterResponse {
-  sessionEstablished?: boolean;
+  /** Registration never establishes a workspace session. */
+  sessionEstablished?: false;
   requiresEmailConfirmation?: boolean;
   userId: string;
   email: string;

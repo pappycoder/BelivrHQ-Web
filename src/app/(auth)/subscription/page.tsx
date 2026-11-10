@@ -69,7 +69,18 @@ const date = (value?: string | null) =>
 export default function SubscriptionPage() {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useAuth();
-  const status = useBillingStatus();
+  const registration = !isAuthenticated;
+  const status = useBillingStatus(registration);
+  const billing = {
+    post: <T,>(path: string, body?: unknown) =>
+      api.post<T>(
+        registration
+          ? path.replace("/billing/", "/billing/registration/")
+          : path,
+        body,
+        { skipAuth: registration },
+      ),
+  };
   const pricing = useSubscriptionPricing();
   const [paymentChoice, setPaymentChoice] = React.useState<{
     key: string;
@@ -102,6 +113,18 @@ export default function SubscriptionPage() {
   const preparingWindow = React.useRef(false);
   const confirmed = React.useRef("");
   const paymentWindow = React.useRef(false);
+  const registrationFinished = React.useRef(false);
+  const finishRegistration = React.useCallback(() => {
+    if (registrationFinished.current) return;
+    registrationFinished.current = true;
+    void fetch("/api/registration-checkout", {
+      method: "DELETE",
+      headers: { "X-BelivrHQ-Client": "web" },
+      signal: AbortSignal.timeout(3000),
+    })
+      .catch(() => undefined)
+      .finally(() => router.replace("/login?registered=1&subscription=active"));
+  }, [router]);
   const data = status.data;
   const refresh = async () => {
     await Promise.all([
@@ -173,7 +196,7 @@ export default function SubscriptionPage() {
   const verification = useQuery({
     queryKey: ["billing-verification", status.churchId, trackedReference],
     queryFn: () =>
-      api.post<BillingStatus>("/billing/verify", {
+      billing.post<BillingStatus>("/billing/verify", {
         reference: trackedReference,
       }),
     enabled: status.canPay && !!trackedReference,
@@ -191,6 +214,12 @@ export default function SubscriptionPage() {
     refetchOnReconnect: true,
   });
   const outcome = paymentOutcome(verification.data, trackedReference);
+  React.useEffect(() => {
+    // Recovery after a verified webhook when the originating tab was reloaded.
+    if (!registration || !data?.active || trackedReference) return;
+    if (paymentWindow.current) window.close();
+    else finishRegistration();
+  }, [registration, data?.active, trackedReference, finishRegistration]);
   const refetchVerification = verification.refetch;
   React.useEffect(() => {
     if (!status.canPay || !status.churchId || !trackedReference) return;
@@ -211,10 +240,7 @@ export default function SubscriptionPage() {
     outcome !== "revoked";
   React.useEffect(() => {
     if (!verification.data) return;
-    client.setQueryData(
-      ["platform-subscription", status.churchId],
-      verification.data,
-    );
+    client.setQueryData(status.queryKey, verification.data);
     if (outcome !== "applied" || confirmed.current === trackedReference) return;
     confirmed.current = trackedReference;
     setMessage("");
@@ -232,6 +258,12 @@ export default function SubscriptionPage() {
       window.close();
       return;
     }
+    checkoutWindow.current?.close();
+    window.focus();
+    if (registration) {
+      finishRegistration();
+      return;
+    }
     // The receiving tab never trusts the hint as proof: this branch is reached
     // only after its own authenticated server verification returns applied.
     void client.invalidateQueries({ queryKey: ["current-profile"] });
@@ -241,10 +273,13 @@ export default function SubscriptionPage() {
     verification.data,
     client,
     status.churchId,
+    status.queryKey,
     outcome,
     trackedReference,
     storageKey,
     router,
+    registration,
+    finishRegistration,
   ]);
   const availableCurrencies = data?.gatewayCurrencies?.[gateway] ?? ["NGN"];
   const choiceKey = `${pricing.currency}:${gateway}`;
@@ -276,7 +311,7 @@ export default function SubscriptionPage() {
       data?.subscription?.paid_until,
     ],
     queryFn: () =>
-      api.post<BillingQuote>("/billing/quote", {
+      billing.post<BillingQuote>("/billing/quote", {
         plan,
         cycle,
         gateway,
@@ -306,7 +341,7 @@ export default function SubscriptionPage() {
   }, [quoteExpiresAt, pending, refreshQuote]);
   const checkout = useMutation({
     mutationFn: () =>
-      api.post<{ authorizationUrl: string; reference: string }>(
+      billing.post<{ authorizationUrl: string; reference: string }>(
         "/billing/checkout",
         {
           plan: pending?.plan || plan,
@@ -348,11 +383,11 @@ export default function SubscriptionPage() {
       });
     },
     mutationFn: (paymentReference: string) =>
-      api.post<BillingStatus>("/billing/checkout/close", {
+      billing.post<BillingStatus>("/billing/checkout/close", {
         reference: paymentReference,
       }),
     onSuccess: (result) => {
-      client.setQueryData(["platform-subscription", status.churchId], result);
+      client.setQueryData(status.queryKey, result);
       checkoutWindow.current?.close();
       setReference("");
       if (storageKey) {
@@ -404,7 +439,7 @@ export default function SubscriptionPage() {
   }
   const schedule = useMutation({
     mutationFn: (cancel: boolean) =>
-      api.post<BillingStatus>(
+      billing.post<BillingStatus>(
         "/billing/schedule",
         cancel ? {} : { plan, cycle },
       ),
@@ -443,7 +478,23 @@ export default function SubscriptionPage() {
         <LoadingState label="Loading your account" variant="detail" />
       </div>
     );
-  if (!isAuthenticated)
+  if (registration && outcome === "applied" && paymentWindow.current)
+    return (
+      <section className="mx-auto max-w-lg space-y-4 px-5 py-12">
+        <h1 className="text-2xl font-semibold">Payment confirmed</h1>
+        <p>You can close this tab and return to the original tab to sign in.</p>
+        <Button asChild>
+          <Link href="/login?registered=1&subscription=active">
+            Continue to sign in
+          </Link>
+        </Button>
+      </section>
+    );
+  if (registration && status.isPending)
+    return (
+      <LoadingState label="Loading registration checkout" variant="detail" />
+    );
+  if (registration && status.isError)
     return (
       <div className="mx-auto max-w-3xl space-y-6 px-5 py-8">
         {heading}

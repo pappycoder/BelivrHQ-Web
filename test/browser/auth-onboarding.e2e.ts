@@ -29,37 +29,77 @@ async function accountStep(page: Page) {
 }
 test.beforeEach(async ({ page, context }) => {
   await mockBotChallenges(context);
-  await context.route("https://embed.tawk.to/**", route => route.fulfill({ contentType: "application/javascript", body: mockTawkWidget }));
+  await context.route("https://embed.tawk.to/**", (route) =>
+    route.fulfill({
+      contentType: "application/javascript",
+      body: mockTawkWidget,
+    }),
+  );
   await page.emulateMedia({ reducedMotion: "reduce" });
 });
 for (const entry of ["/login", "/register"]) {
-  test(`restored session at ${entry} opens the workspace home`, async ({ page, context }) => {
-    await context.route("**/api/session", route => route.fulfill({ json: { hasSession: true } }));
-    await context.route("**/api/backend/auth/session", route => route.fulfill({
-      json: { success: true, data: { userId: "restored-user", email: "restored@example.org" } },
-    }));
+  test(`restored session at ${entry} opens the workspace home`, async ({
+    page,
+    context,
+  }) => {
+    await context.route("**/api/session", (route) =>
+      route.fulfill({ json: { hasSession: true } }),
+    );
+    await context.route("**/api/backend/auth/session", (route) =>
+      route.fulfill({
+        json: {
+          success: true,
+          data: { userId: "restored-user", email: "restored@example.org" },
+        },
+      }),
+    );
     // Isolate entry routing from workspace data and permission loading.
-    await context.route("**/home", route => route.fulfill({
-      contentType: "text/html", body: "<html><body>Workspace home</body></html>",
-    }));
+    await context.route("**/home", (route) =>
+      route.fulfill({
+        contentType: "text/html",
+        body: "<html><body>Workspace home</body></html>",
+      }),
+    );
     const dashboardRequests: string[] = [];
-    page.on("request", request => {
-      if (new URL(request.url()).pathname === "/dashboard") dashboardRequests.push(request.url());
+    page.on("request", (request) => {
+      if (new URL(request.url()).pathname === "/dashboard")
+        dashboardRequests.push(request.url());
     });
     await page.goto(entry);
     await expect(page).toHaveURL(/\/home$/);
     expect(dashboardRequests).toEqual([]);
   });
 }
-test("registration preserves edits and redirects to sign-in when email confirmation is required", async ({
+test("registration preserves edits and opens public billing without signing in when email confirmation is required", async ({
   page,
   context,
 }) => {
   await publicSession(context);
-  await page.route("**/api/backend/auth/login", (r) => r.fulfill({
-    status: 401,
-    json: { success: false, error: { message: "Email not confirmed" } },
-  }));
+  await page.route("**/api/backend/auth/login", (r) =>
+    r.fulfill({
+      status: 401,
+      json: { success: false, error: { message: "Email not confirmed" } },
+    }),
+  );
+  let loginCalls = 0;
+  await page.route("**/api/backend/auth/login", (route) => {
+    loginCalls++;
+    return route.fulfill({
+      status: 401,
+      json: { success: false, error: { message: "Email not confirmed" } },
+    });
+  });
+  await page.route(
+    "**/api/backend/billing/registration/subscription",
+    (route) =>
+      route.fulfill({
+        status: 401,
+        json: {
+          success: false,
+          error: { message: "Checkout fixture unavailable" },
+        },
+      }),
+  );
   let payload: Record<string, unknown> | undefined;
   await page.route("**/api/backend/auth/register", (r) => {
     payload = r.request().postDataJSON();
@@ -99,8 +139,8 @@ test("registration preserves edits and redirects to sign-in when email confirmat
   await page
     .getByRole("button", { name: "Create account & continue", exact: true })
     .click();
-  await expect(page).toHaveURL(/\/login\?returnTo=%2Fsubscription&registered=1$/);
-  await expect(page.getByRole("status").filter({ hasText: "Your account has been created" })).toContainText("Your account has been created");
+  await expect(page).toHaveURL(/\/subscription$/);
+  expect(loginCalls).toBe(0);
   expect(payload).toMatchObject({
     termsAccepted: true,
     acceptedTermsVersion: "2026-10-24",
@@ -176,13 +216,26 @@ async function billingSession(
     pending?: boolean;
     registration?: boolean;
     checkoutUrl?: string;
-    verificationSequence?: ("pending" | "error" | "success" | "review" | "failed")[];
+    readOnly?: boolean;
+    verificationSequence?: (
+      "pending" | "error" | "success" | "review" | "failed"
+    )[];
     sharedPaymentState?: boolean;
   } = {},
 ) {
   let sharedPaid = false;
-  if (options.sharedPaymentState) await context.exposeBinding("readPaymentOutcome", () => sharedPaid ? "success" : "pending");
-  await context.addCookies([{ name: "belivrhq_token", value: "billing-fixture", url: "http://127.0.0.1:3107" }]);
+  if (options.sharedPaymentState)
+    await context.exposeBinding("readPaymentOutcome", () =>
+      sharedPaid ? "success" : "pending",
+    );
+  if (!options.registration)
+    await context.addCookies([
+      {
+        name: "belivrhq_token",
+        value: "billing-fixture",
+        url: "http://127.0.0.1:3107",
+      },
+    ]);
   await context.addInitScript(
     ({ reference, options }) => {
       const original = window.fetch;
@@ -199,13 +252,18 @@ async function billingSession(
           input instanceof Request ? input.url : String(input),
           location.origin,
         ).pathname;
-        if (!path.startsWith("/api/") || path.startsWith("/api/backend/bot-protection/")) return original(input, init);
+        if (
+          !path.startsWith("/api/") ||
+          path.startsWith("/api/backend/bot-protection/")
+        )
+          return original(input, init);
         if (path === "/api/session")
           return new Response(JSON.stringify({ hasSession: authenticated }));
         const body = init?.body ? JSON.parse(String(init.body)) : undefined;
         calls.push({ path, body });
         let data: unknown = {};
         const status = () => ({
+          registrationChurchId: options.registration ? "c" : undefined,
           active,
           subscription: {
             plan,
@@ -228,11 +286,15 @@ async function billingSession(
         if (path.endsWith("/auth/register")) {
           plan = body.plan;
           cycle = body.billingCycle;
-          authenticated = true;
-          data = { sessionEstablished: true, userId: "u", churchId: "c", email: "grace@example.org" };
+          authenticated = false;
+          data = { userId: "u", churchId: "c", email: "grace@example.org" };
         } else if (path.endsWith("/auth/login")) {
           authenticated = true;
-          data = { sessionEstablished: true, userId: "u", email: "grace@example.org" };
+          data = {
+            sessionEstablished: true,
+            userId: "u",
+            email: "grace@example.org",
+          };
         } else if (path.endsWith("/auth/session"))
           data = { userId: "u", email: "admin@example.org" };
         else if (path.endsWith("/profiles/me"))
@@ -245,26 +307,78 @@ async function billingSession(
             status: "active",
             role: ["church_admin"],
             isAdminHq: true,
+            subscriptionReadOnly: options.readOnly,
             permissions: options.grants ?? ["billing:read", "billing:update"],
           };
-        else if (path.endsWith("/billing/subscription")) data = status();
-        else if (path.endsWith("/billing/quote")) data = {
-          quoteId: 'BHQQUOTE_' + 'b'.repeat(32), currency: body.currency,
-          amount: ({ essentials: 10, community: 20, network: 40 }[body.plan as 'essentials' | 'community' | 'network'] || 10) * (body.cycle === 'annual' ? 10.8 : 1) * 1000,
-          expiresAt: new Date(Date.now() + 900000).toISOString(), intent: 'renewal', renewBy: '2027-01-18T00:00:00Z',
-        };
-        else if (path.endsWith("/billing/verify")) {
+        else if (
+          path.endsWith("/billing/subscription") ||
+          path.endsWith("/billing/registration/subscription")
+        )
+          data = status();
+        else if (
+          path.endsWith("/billing/quote") ||
+          path.endsWith("/billing/registration/quote")
+        )
+          data = {
+            quoteId: "BHQQUOTE_" + "b".repeat(32),
+            currency: body.currency,
+            amount:
+              ({ essentials: 10, community: 20, network: 40 }[
+                body.plan as "essentials" | "community" | "network"
+              ] || 10) *
+              (body.cycle === "annual" ? 10.8 : 1) *
+              1000,
+            expiresAt: new Date(Date.now() + 900000).toISOString(),
+            intent: "renewal",
+            renewBy: "2027-01-18T00:00:00Z",
+          };
+        else if (
+          path.endsWith("/billing/verify") ||
+          path.endsWith("/billing/registration/verify")
+        ) {
           const sequence = options.verificationSequence || ["success"];
           const next = options.sharedPaymentState
-            ? await (window as unknown as { readPaymentOutcome: () => Promise<string> }).readPaymentOutcome()
+            ? await (
+                window as unknown as {
+                  readPaymentOutcome: () => Promise<string>;
+                }
+              ).readPaymentOutcome()
             : sequence[Math.min(verificationCount++, sequence.length - 1)];
-          if (next === "error") return Response.json({ success: false, error: { message: "Verification temporarily unavailable" } }, { status: 503 });
-          if (next === "success") { active = true; paymentCompleted = true; }
-          data = { ...status(), verification: { reference: body.reference, status: ["success", "review"].includes(next) ? "success" : next,
-            application_status: next === "review" ? "review" : next === "success" ? "applied" : "pending" } };
-        } else if (path.endsWith("/billing/checkout") && options.checkoutUrl)
+          if (next === "error")
+            return Response.json(
+              {
+                success: false,
+                error: { message: "Verification temporarily unavailable" },
+              },
+              { status: 503 },
+            );
+          if (next === "success") {
+            active = true;
+            paymentCompleted = true;
+          }
+          data = {
+            ...status(),
+            verification: {
+              reference: body.reference,
+              status: ["success", "review"].includes(next) ? "success" : next,
+              application_status:
+                next === "review"
+                  ? "review"
+                  : next === "success"
+                    ? "applied"
+                    : "pending",
+            },
+          };
+        } else if (
+          (path.endsWith("/billing/checkout") ||
+            path.endsWith("/billing/registration/checkout")) &&
+          options.checkoutUrl
+        )
           data = { authorizationUrl: options.checkoutUrl, reference };
-        else if (path.endsWith("/billing/checkout"))
+        else if (
+          path.endsWith("/billing/checkout") ||
+          path.endsWith("/billing/registration/checkout")
+        )
           return new Response(
             JSON.stringify({
               success: false,
@@ -279,157 +393,363 @@ async function billingSession(
     },
     { reference, options },
   );
-  return { completePayment: () => { sharedPaid = true; } };
+  return {
+    completePayment: () => {
+      sharedPaid = true;
+    },
+  };
 }
-test("registration signs in and opens the selected subscription for Flutterwave payment", async ({ page, context }) => {
+test("registration opens the selected subscription for payment without signing in", async ({
+  page,
+  context,
+}) => {
   await billingSession(context, {
     registration: true,
     gateways: ["flutterwave"],
-    checkoutUrl: "https://checkout-v2.dev-flutterwave.com/v3/hosted/pay/test-subscription",
+    checkoutUrl:
+      "https://checkout-v2.dev-flutterwave.com/v3/hosted/pay/test-subscription",
     verificationSequence: ["pending"],
   });
-  await context.route("https://checkout-v2.dev-flutterwave.com/**", (route) => route.fulfill({
-    contentType: "text/html", body: "<h1>Secure Flutterwave checkout</h1>",
-  }));
+  await context.route("https://checkout-v2.dev-flutterwave.com/**", (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: "<h1>Secure Flutterwave checkout</h1>",
+    }),
+  );
   await page.goto("/register?plan=network&cycle=annual");
   await churchStep(page);
   await accountStep(page);
   await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.getByRole("checkbox", { name: /I am at least 18/ }).check();
   await verifyBotForm(page);
-  await page.getByRole("button", { name: "Create account & continue", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Create account & continue", exact: true })
+    .click();
   await expect(page).toHaveURL(/\/subscription$/);
   await expect(page.getByLabel("Billing period")).toHaveValue("annual");
   await expect(page.getByLabel("Payment provider")).toHaveValue("flutterwave");
-  await expect(page.getByRole("button", { name: "Continue to payment", exact: true })).toBeEnabled();
-  const calls = await page.evaluate(() => (window as unknown as { billingCalls: { path: string; body: Record<string, unknown> }[] }).billingCalls);
-  expect(calls.filter(c => c.path.endsWith("/auth/login"))).toHaveLength(0);
-  await expect(page.getByLabel("Payment provider").getByRole("option")).toHaveCount(1);
-  expect(calls.filter(c => c.path.endsWith("/billing/quote")).at(-1)?.body).toMatchObject({
-    plan: "network", cycle: "annual", gateway: "flutterwave", currency: "NGN",
+  await expect(
+    page.getByRole("button", { name: "Continue to payment", exact: true }),
+  ).toBeEnabled();
+  const calls = await page.evaluate(
+    () =>
+      (
+        window as unknown as {
+          billingCalls: { path: string; body: Record<string, unknown> }[];
+        }
+      ).billingCalls,
+  );
+  expect(calls.filter((c) => c.path.endsWith("/auth/login"))).toHaveLength(0);
+  await expect(
+    page.getByLabel("Payment provider").getByRole("option"),
+  ).toHaveCount(1);
+  expect(
+    calls
+      .filter(
+        (c) =>
+          c.path.endsWith("/billing/quote") ||
+          c.path.endsWith("/billing/registration/quote"),
+      )
+      .at(-1)?.body,
+  ).toMatchObject({
+    plan: "network",
+    cycle: "annual",
+    gateway: "flutterwave",
+    currency: "NGN",
   });
-  expect(await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }))).not.toContain("LongUniquePassword");
+  expect(
+    await page.evaluate(() =>
+      JSON.stringify({ ...localStorage, ...sessionStorage }),
+    ),
+  ).not.toContain("LongUniquePassword");
   const popupPromise = page.waitForEvent("popup");
-  await page.getByRole("button", { name: "Continue to payment", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Continue to payment", exact: true })
+    .click();
   const popup = await popupPromise;
-  await expect(popup).toHaveURL("https://checkout-v2.dev-flutterwave.com/v3/hosted/pay/test-subscription");
+  await expect(popup).toHaveURL(
+    "https://checkout-v2.dev-flutterwave.com/v3/hosted/pay/test-subscription",
+  );
   await expect(page).toHaveURL(/\/subscription$/);
-  await expect(page.getByText("Waiting for Flutterwave to confirm your payment.", { exact: true })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Back to workspace", exact: true })).toHaveCount(0);
+  await expect(
+    page.getByText("Waiting for Flutterwave to confirm your payment.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Back to workspace", exact: true }),
+  ).toHaveCount(0);
   expect(await popup.evaluate(() => window.opener === null)).toBe(true);
 });
 
-test("an unpaid administrator can reopen subscription checkout after a reload", async ({ page, context }) => {
+test("an unpaid administrator can reopen subscription checkout after a reload", async ({
+  page,
+  context,
+}) => {
   await billingSession(context, { gateways: ["flutterwave"] });
   await page.goto("/subscription");
-  await expect(page.getByRole("button", { name: "Continue to payment", exact: true })).toBeEnabled();
+  await expect(
+    page.getByRole("button", { name: "Continue to payment", exact: true }),
+  ).toBeEnabled();
   await page.reload();
   await expect(page.getByLabel("Payment provider")).toHaveValue("flutterwave");
-  await expect(page.getByRole("button", { name: "Continue to payment", exact: true })).toBeEnabled();
+  await expect(
+    page.getByRole("button", { name: "Continue to payment", exact: true }),
+  ).toBeEnabled();
 });
 
-test("an existing unpaid administrator is returned to billing after signing in", async ({ page, context }) => {
-  await billingSession(context, { registration: true, gateways: ["flutterwave"] });
+test("an expired administrator signs in to the workspace without being forced to billing", async ({
+  page,
+  context,
+}) => {
+  await billingSession(context, {
+    registration: true,
+    readOnly: true,
+    gateways: ["flutterwave"],
+  });
+  await context.route("**/home", (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: "<h1>Read-only workspace</h1>",
+    }),
+  );
   await page.goto("/login");
-  await page.getByLabel("Email Address", { exact: true }).fill("grace@example.org");
-  await page.getByLabel("Password", { exact: true }).fill("LongUniquePassword!27");
+  await page
+    .getByLabel("Email Address", { exact: true })
+    .fill("grace@example.org");
+  await page
+    .getByLabel("Password", { exact: true })
+    .fill("LongUniquePassword!27");
   await verifyBotForm(page);
   await page.getByRole("button", { name: "Sign In", exact: true }).click();
-  await expect(page).toHaveURL(/\/subscription$/);
-  await expect(page.getByLabel("Payment provider")).toHaveValue("flutterwave");
-  await expect(page.getByRole("button", { name: "Continue to payment", exact: true })).toBeEnabled();
+  await expect(page).toHaveURL(/\/home$/);
 });
 
-test("an interrupted pending checkout retries verification and recovers without another payment", async ({ page, context }) => {
+test("an interrupted pending checkout retries verification and recovers without another payment", async ({
+  page,
+  context,
+}) => {
   await billingSession(context, {
     checkoutUrl: "https://checkout.flutterwave.com/recovery-fixture",
     verificationSequence: ["pending", "error", "success"],
   });
-  await context.route("https://checkout.flutterwave.com/**", route => route.fulfill({ body: "Pending payment" }));
+  await context.route("https://checkout.flutterwave.com/**", (route) =>
+    route.fulfill({ body: "Pending payment" }),
+  );
   await page.goto("/subscription");
   const popupPromise = page.waitForEvent("popup");
-  await page.getByRole("button", { name: "Continue to payment", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Continue to payment", exact: true })
+    .click();
   const popup = await popupPromise;
-  await expect(popup).toHaveURL("https://checkout.flutterwave.com/recovery-fixture");
-  await expect(page.getByText("Waiting for Flutterwave to confirm your payment.", { exact: true })).toBeVisible();
+  await expect(popup).toHaveURL(
+    "https://checkout.flutterwave.com/recovery-fixture",
+  );
+  await expect(
+    page.getByText("Waiting for Flutterwave to confirm your payment.", {
+      exact: true,
+    }),
+  ).toBeVisible();
   await popup.close();
   await page.bringToFront();
-  await expect(page.getByText(/Connection interrupted/)).toBeVisible({ timeout: 12000 });
-  await expect(page.getByRole("link", { name: "Back to workspace", exact: true })).toHaveCount(0);
+  await expect(page.getByText(/Connection interrupted/)).toBeVisible({
+    timeout: 12000,
+  });
+  await expect(
+    page.getByRole("link", { name: "Back to workspace", exact: true }),
+  ).toHaveCount(0);
   await expect(page).toHaveURL(/\/home$/, { timeout: 25000 });
-  const calls = await page.evaluate(() => (window as unknown as { billingCalls: { path: string }[] }).billingCalls);
-  expect(calls.filter(c => c.path.endsWith("/billing/checkout"))).toHaveLength(1);
-  expect(calls.filter(c => c.path.endsWith("/billing/verify")).length).toBeGreaterThanOrEqual(3);
+  const calls = await page.evaluate(
+    () =>
+      (window as unknown as { billingCalls: { path: string }[] }).billingCalls,
+  );
+  expect(
+    calls.filter(
+      (c) =>
+        c.path.endsWith("/billing/checkout") ||
+        c.path.endsWith("/billing/registration/checkout"),
+    ),
+  ).toHaveLength(1);
+  expect(
+    calls.filter(
+      (c) =>
+        c.path.endsWith("/billing/verify") ||
+        c.path.endsWith("/billing/registration/verify"),
+    ).length,
+  ).toBeGreaterThanOrEqual(3);
 });
 
-test("the verified return closes the second tab and wakes the original tab into home", async ({ page, context }) => {
+test("the verified return closes the second tab and wakes the original tab into home", async ({
+  page,
+  context,
+}) => {
   const state = await billingSession(context, {
-    checkoutUrl: "https://checkout.flutterwave.com/success-fixture", sharedPaymentState: true,
+    checkoutUrl: "https://checkout.flutterwave.com/success-fixture",
+    sharedPaymentState: true,
   });
-  await context.route("https://checkout.flutterwave.com/**", route => route.fulfill({ body: "Pending payment" }));
+  await context.route("https://checkout.flutterwave.com/**", (route) =>
+    route.fulfill({ body: "Pending payment" }),
+  );
   await page.goto("/subscription");
   const popupPromise = page.waitForEvent("popup");
-  await page.getByRole("button", { name: "Continue to payment", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Continue to payment", exact: true })
+    .click();
   const popup = await popupPromise;
-  await expect(popup).toHaveURL("https://checkout.flutterwave.com/success-fixture");
-  await expect(page.getByText("Waiting for Flutterwave to confirm your payment.", { exact: true })).toBeVisible();
+  await expect(popup).toHaveURL(
+    "https://checkout.flutterwave.com/success-fixture",
+  );
+  await expect(
+    page.getByText("Waiting for Flutterwave to confirm your payment.", {
+      exact: true,
+    }),
+  ).toBeVisible();
   state.completePayment();
-  await popup.goto(`http://127.0.0.1:3107/subscription?tx_ref=${reference}&payment_window=1&status=successful`);
+  await popup.goto(
+    `http://127.0.0.1:3107/subscription?tx_ref=${reference}&payment_window=1&status=successful`,
+  );
   await expect(page).toHaveURL(/\/home$/, { timeout: 4000 });
   await expect.poll(() => popup.isClosed()).toBe(true);
 });
 
-test("a pending return survives reload and keeps checking without another callback", async ({ page, context }) => {
-  await billingSession(context, { verificationSequence: ["pending", "success"] });
+test("a pending return survives reload and keeps checking without another callback", async ({
+  page,
+  context,
+}) => {
+  await billingSession(context, {
+    verificationSequence: ["pending", "success"],
+  });
   await page.goto(`/subscription?tx_ref=${reference}&status=pending`);
-  await expect(page.getByText("Waiting for Flutterwave to confirm your payment.", { exact: true })).toBeVisible();
+  await expect(
+    page.getByText("Waiting for Flutterwave to confirm your payment.", {
+      exact: true,
+    }),
+  ).toBeVisible();
   await page.reload();
   await expect(page).toHaveURL(/\/home$/, { timeout: 15000 });
-  const calls = await page.evaluate(() => (window as unknown as { billingCalls: { path: string }[] }).billingCalls);
-  expect(calls.filter(c => c.path.endsWith("/billing/checkout"))).toHaveLength(0);
+  const calls = await page.evaluate(
+    () =>
+      (window as unknown as { billingCalls: { path: string }[] }).billingCalls,
+  );
+  expect(
+    calls.filter(
+      (c) =>
+        c.path.endsWith("/billing/checkout") ||
+        c.path.endsWith("/billing/registration/checkout"),
+    ),
+  ).toHaveLength(0);
 });
 
-test("resuming an open pending checkout reuses its window without navigating it from the parent", async ({ page, context }) => {
+test("resuming an open pending checkout reuses its window without navigating it from the parent", async ({
+  page,
+  context,
+}) => {
   await billingSession(context, {
-    pending: true, checkoutUrl: "https://checkout.flutterwave.com/resume-fixture", verificationSequence: ["pending"],
+    pending: true,
+    checkoutUrl: "https://checkout.flutterwave.com/resume-fixture",
+    verificationSequence: ["pending"],
   });
   const errors: string[] = [];
-  page.on("console", message => { if (message.type() === "error") errors.push(message.text()); });
-  await context.route("https://checkout.flutterwave.com/**", route => route.fulfill({ body: "Pending payment" }));
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
+  await context.route("https://checkout.flutterwave.com/**", (route) =>
+    route.fulfill({ body: "Pending payment" }),
+  );
   await page.goto("/subscription");
   const popupPromise = page.waitForEvent("popup");
-  await page.getByRole("button", { name: "Resume secure checkout", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Resume secure checkout", exact: true })
+    .click();
   const popup = await popupPromise;
-  await expect(popup).toHaveURL("https://checkout.flutterwave.com/resume-fixture");
+  await expect(popup).toHaveURL(
+    "https://checkout.flutterwave.com/resume-fixture",
+  );
   await page.bringToFront();
-  await page.getByRole("button", { name: "Resume secure checkout", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Resume secure checkout", exact: true })).toBeEnabled();
+  await page
+    .getByRole("button", { name: "Resume secure checkout", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Resume secure checkout", exact: true }),
+  ).toBeEnabled();
   expect(context.pages()).toHaveLength(2);
   expect(popup.isClosed()).toBe(false);
-  expect(errors.some(message => message.includes("Unsafe attempt"))).toBe(false);
+  expect(errors.some((message) => message.includes("Unsafe attempt"))).toBe(
+    false,
+  );
 });
 
-test("an existing active plan and a success query parameter cannot confirm a pending upgrade", async ({ page, context }) => {
-  await billingSession(context, { active: true, verificationSequence: ["pending"] });
+test("an existing active plan and a success query parameter cannot confirm a pending upgrade", async ({
+  page,
+  context,
+}) => {
+  await billingSession(context, {
+    active: true,
+    verificationSequence: ["pending"],
+  });
   await page.goto(`/subscription?reference=${reference}&status=successful`);
-  await expect(page.getByText("Waiting for Flutterwave to confirm your payment.", { exact: true })).toBeVisible();
-  await page.evaluate(reference => {
-    localStorage.setItem("belivrhq:subscription-payment-sync", JSON.stringify({ churchId: "c", reference, status: "success", active: true }));
-    window.dispatchEvent(new StorageEvent("storage", { key: "belivrhq:subscription-payment-sync", newValue: JSON.stringify({ churchId: "c", reference, status: "success", active: true }) }));
+  await expect(
+    page.getByText("Waiting for Flutterwave to confirm your payment.", {
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.evaluate((reference) => {
+    localStorage.setItem(
+      "belivrhq:subscription-payment-sync",
+      JSON.stringify({
+        churchId: "c",
+        reference,
+        status: "success",
+        active: true,
+      }),
+    );
+    window.dispatchEvent(
+      new StorageEvent("storage", {
+        key: "belivrhq:subscription-payment-sync",
+        newValue: JSON.stringify({
+          churchId: "c",
+          reference,
+          status: "success",
+          active: true,
+        }),
+      }),
+    );
   }, reference);
   await expect(page).toHaveURL(/\/subscription$/);
-  await expect(page.getByRole("link", { name: "Back to workspace", exact: true })).toHaveCount(0);
-  await expect(page.getByText("Payment verified. Your subscription is active.", { exact: true })).toHaveCount(0);
+  await expect(
+    page.getByRole("link", { name: "Back to workspace", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByText("Payment verified. Your subscription is active.", {
+      exact: true,
+    }),
+  ).toHaveCount(0);
 });
 
-test("blocked pop-ups do not create a payment attempt", async ({ page, context }) => {
+test("blocked pop-ups do not create a payment attempt", async ({
+  page,
+  context,
+}) => {
   await billingSession(context);
-  await context.addInitScript(() => { window.open = () => null; });
+  await context.addInitScript(() => {
+    window.open = () => null;
+  });
   await page.goto("/subscription");
-  await page.getByRole("button", { name: "Continue to payment", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Continue to payment", exact: true })
+    .click();
   await expect(page.getByText(/Allow pop-ups for BelivrHQ/)).toBeVisible();
-  const calls = await page.evaluate(() => (window as unknown as { billingCalls: { path: string }[] }).billingCalls);
-  expect(calls.filter(c => c.path.endsWith("/billing/checkout"))).toHaveLength(0);
+  const calls = await page.evaluate(
+    () =>
+      (window as unknown as { billingCalls: { path: string }[] }).billingCalls,
+  );
+  expect(
+    calls.filter(
+      (c) =>
+        c.path.endsWith("/billing/checkout") ||
+        c.path.endsWith("/billing/registration/checkout"),
+    ),
+  ).toHaveLength(0);
 });
 
 test("gateway return is verified server-side before entering the dashboard", async ({
@@ -444,9 +764,13 @@ test("gateway return is verified server-side before entering the dashboard", asy
       (window as unknown as { billingCalls: { path: string; body: unknown }[] })
         .billingCalls,
   );
-  expect(calls.filter((c) => c.path.endsWith("/billing/verify"))).toEqual([
-    { path: "/api/backend/billing/verify", body: { reference } },
-  ]);
+  expect(
+    calls.filter(
+      (c) =>
+        c.path.endsWith("/billing/verify") ||
+        c.path.endsWith("/billing/registration/verify"),
+    ),
+  ).toEqual([{ path: "/api/backend/billing/verify", body: { reference } }]);
 });
 test("checkout shows a recoverable error without losing the account", async ({
   page,
@@ -454,7 +778,9 @@ test("checkout shows a recoverable error without losing the account", async ({
 }) => {
   await billingSession(context);
   await page.goto("/subscription");
-  await page.getByRole("button", { name: "Choose Network", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Choose Network", exact: true })
+    .click();
   await page.getByLabel("Billing period").selectOption("annual");
   await expect(page.getByText("USD 432", { exact: true })).toBeVisible();
   await page
@@ -490,9 +816,16 @@ test("non-billing roles cannot initialize checkout", async ({
 }) => {
   await billingSession(context, { grants: [] });
   await page.goto("/subscription");
-  await expect(
-    page.getByText(/Your church administrator manages the BelivrHQ subscription/),
-  ).toContainText("church administrator manages");
+  await expect(page.getByText("Access denied", { exact: true })).toBeVisible();
+  const calls = await page.evaluate(
+    () =>
+      (window as unknown as { billingCalls: { path: string }[] }).billingCalls,
+  );
+  expect(
+    calls.some((call) =>
+      /\/billing\/(?:registration\/)?checkout$/.test(call.path),
+    ),
+  ).toBe(false);
   await expect(
     page.getByRole("button", { name: "Continue to payment", exact: true }),
   ).toHaveCount(0);
@@ -572,7 +905,11 @@ test("password recovery sends the email and gives a non-enumerating confirmation
     page.getByRole("heading", { name: "Check your email", exact: true }),
   ).toBeVisible();
   await expect(page.getByText(/If an account exists/)).toBeVisible();
-  expect(body).toEqual({ email: "recover@example.org", altcha: expect.any(String), website: "" });
+  expect(body).toEqual({
+    email: "recover@example.org",
+    altcha: expect.any(String),
+    website: "",
+  });
 });
 test("reset password preserves the recovery token in memory and removes it from the URL", async ({
   page,
@@ -601,7 +938,8 @@ test("reset password preserves the recovery token in memory and removes it from 
   ).toBeVisible();
   expect(body).toEqual({
     token: "test-recovery-token",
-    altcha: expect.any(String), website: "",
+    altcha: expect.any(String),
+    website: "",
     newPassword: "LongNewPassword!29",
   });
 });
@@ -664,9 +1002,57 @@ test("cancelled checkout keeps the account available for another attempt", async
   ).toBeEnabled();
 });
 
-test("old dashboard bookmarks redirect to home with their query", async ({ request }) => {
-  const response = await request.get("/dashboard?from=bookmark", { maxRedirects: 0 });
+test("old dashboard bookmarks redirect to home with their query", async ({
+  request,
+}) => {
+  const response = await request.get("/dashboard?from=bookmark", {
+    maxRedirects: 0,
+  });
   expect(response.status()).toBe(307);
   expect(new URL(response.headers().location).pathname).toBe("/home");
   expect(new URL(response.headers().location).search).toBe("?from=bookmark");
+});
+
+test("registration payment closes its tab and returns the initial tab to sign-in", async ({
+  page,
+  context,
+}) => {
+  const payment = await billingSession(context, {
+    registration: true,
+    sharedPaymentState: true,
+    checkoutUrl: "https://checkout.flutterwave.com/registration-fixture",
+  });
+  await context.route("https://checkout.flutterwave.com/**", (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: "<h1>Provider checkout</h1>",
+    }),
+  );
+  await page.goto("/subscription");
+  const popupPromise = page.waitForEvent("popup");
+  await page
+    .getByRole("button", { name: "Continue to payment", exact: true })
+    .click();
+  const popup = await popupPromise;
+  await expect(popup).toHaveURL(
+    "https://checkout.flutterwave.com/registration-fixture",
+  );
+  payment.completePayment();
+  await popup
+    .goto(
+      `/subscription?payment_window=1&reference=${reference}&status=successful`,
+    )
+    .catch((error) => {
+      if (!popup.isClosed()) throw error;
+    });
+  await expect.poll(() => popup.isClosed()).toBe(true);
+  await expect(page).toHaveURL(/\/login\?registered=1&subscription=active$/);
+  await expect(
+    page.getByRole("status").filter({ hasText: "Your payment is confirmed" }),
+  ).toBeVisible();
+  const calls = await page.evaluate(
+    () =>
+      (window as unknown as { billingCalls: { path: string }[] }).billingCalls,
+  );
+  expect(calls.some((call) => call.path.endsWith("/auth/login"))).toBe(false);
 });

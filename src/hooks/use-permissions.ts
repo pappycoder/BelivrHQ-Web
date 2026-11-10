@@ -29,16 +29,35 @@ interface PermissionsState {
   permissions: ReadonlySet<PermissionName>;
 }
 
-function usePermissionsState(): PermissionsState {
-  const { data: profile, isLoading, isError } = useCurrentProfile();
+function usePermissionsState(enabled = true): PermissionsState {
+  const { data: profile, isLoading, isError } = useCurrentProfile(enabled);
 
   const permissions = React.useMemo(
-    () => getPermissionSet(profile?.permissions?.filter(permission =>
-      planAllowsPermission(profile?.planFeatures, permission)
-    )),
-    [profile?.permissions, profile?.planFeatures]
+    () =>
+      getPermissionSet(
+        profile?.permissions?.filter(
+          (permission) =>
+            planAllowsPermission(profile?.planFeatures, permission) &&
+            (!profile?.subscriptionReadOnly ||
+              permission.startsWith("billing:") ||
+              /:(?:read|view|export|download)$/.test(permission)),
+        ),
+      ),
+    [
+      profile?.permissions,
+      profile?.planFeatures,
+      profile?.subscriptionReadOnly,
+    ],
   );
-  return { ready: !isLoading && !isError && !!profile && profile.status === "active", permissions };
+  return {
+    ready:
+      enabled &&
+      !isLoading &&
+      !isError &&
+      !!profile &&
+      profile.status === "active",
+    permissions,
+  };
 }
 
 export interface PermissionChecker {
@@ -49,18 +68,19 @@ export interface PermissionChecker {
   canAny: (...names: PermissionName[]) => boolean;
 }
 
-export function usePermissions(): PermissionChecker {
-  const { ready, permissions } = usePermissionsState();
+export function usePermissions(enabled = true): PermissionChecker {
+  const { ready, permissions } = usePermissionsState(enabled);
 
   const can = React.useCallback(
     (resource: string, action: PermissionAction) =>
       ready && permissions.has(`${resource}:${action}`),
-    [ready, permissions]
+    [ready, permissions],
   );
 
   const canAny = React.useCallback(
-    (...names: PermissionName[]) => ready && names.some((n) => permissions.has(n)),
-    [ready, permissions]
+    (...names: PermissionName[]) =>
+      ready && names.some((n) => permissions.has(n)),
+    [ready, permissions],
   );
 
   return { ready, can, canAny };
@@ -69,7 +89,7 @@ export function usePermissions(): PermissionChecker {
 /** Convenience single-check hook: `const allowed = useCan("branches", "update")`. */
 export function useCan(
   resource: string,
-  action: PermissionAction
+  action: PermissionAction,
 ): { allowed: boolean; ready: boolean } {
   const { can, ready } = usePermissions();
   return { allowed: can(resource, action), ready };

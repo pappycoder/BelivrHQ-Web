@@ -5,7 +5,12 @@ import { isPublicContentPath } from "@/lib/public-content-path";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/lib/toast";
-import { api, refreshSession, setUnauthorizedHandler, advanceSessionGeneration } from "@/lib/api";
+import {
+  api,
+  refreshSession,
+  setUnauthorizedHandler,
+  advanceSessionGeneration,
+} from "@/lib/api";
 import { fetchCurrentProfile, type CurrentProfile } from "@/hooks/use-profile";
 import { permissionReturnTo } from "@/lib/route-permissions";
 import { clearTokens, publishSessionEnded } from "@/lib/session";
@@ -25,7 +30,11 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (input: LoginInput) => Promise<LoginResponse>;
-  verifyTwoFactor: (input: { email?: string; code: string; challengeToken?: string }) => Promise<LoginResponse>;
+  verifyTwoFactor: (input: {
+    email?: string;
+    code: string;
+    challengeToken?: string;
+  }) => Promise<LoginResponse>;
   completeLogin: (response: LoginResponse) => Promise<void>;
   register: (input: RegisterInput) => Promise<RegisterResponse>;
   logout: () => Promise<void>;
@@ -61,19 +70,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       publishSessionEnded();
       clearRefreshTimer();
       await queryClient.cancelQueries();
-      try { await clearTokens(); } catch { toast.error("Unable to clear the session. Please reload."); }
+      try {
+        await clearTokens();
+      } catch {
+        toast.error("Unable to clear the session. Please reload.");
+      }
       setIsLoading(false);
       setTokenState(null);
       setUser(null);
       queryClient.clear();
       if (opts?.showToast) {
-        toast.error(opts.message || "Your session has expired. Please sign in again.");
+        toast.error(
+          opts.message || "Your session has expired. Please sign in again.",
+        );
       }
-      if (!isPublicContentPath(window.location.pathname)) router.replace("/login");
+      if (!isPublicContentPath(window.location.pathname))
+        router.replace("/login");
       // Latched: prevents duplicate toasts/redirects from stale in-flight 401s
       // firing after a session ends. Reset on the next successful sign-in.
     },
-    [clearRefreshTimer, router, queryClient]
+    [clearRefreshTimer, router, queryClient],
   );
 
   React.useEffect(() => {
@@ -89,36 +105,91 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const generation = sessionGeneration.current;
     async function restore() {
       try {
-        const presence = await fetch("/api/session", { headers: { "X-BelivrHQ-Client": "web" }, cache: "no-store" });
+        const presence = await fetch("/api/session", {
+          headers: { "X-BelivrHQ-Client": "web" },
+          cache: "no-store",
+        });
         if (!presence.ok) throw new Error("Unable to check session");
         if (!(await presence.json()).hasSession) {
-          if (active && generation === sessionGeneration.current && !isPublicContentPath(window.location.pathname) && !["/", "/login", "/register", "/forgot-password", "/reset-password", "/subscription", "/offline"].includes(window.location.pathname)) router.replace("/login");
+          if (
+            active &&
+            generation === sessionGeneration.current &&
+            !isPublicContentPath(window.location.pathname) &&
+            ![
+              "/",
+              "/login",
+              "/register",
+              "/forgot-password",
+              "/reset-password",
+              "/subscription",
+              "/offline",
+            ].includes(window.location.pathname)
+          )
+            router.replace("/login");
           return;
         }
         let session;
-        try { session = await api.get<{ userId: string; email: string }>("/auth/session", { skipAuth: true }); }
-        catch (error) {
-          if ((error as { statusCode?: number }).statusCode !== 401) throw error;
+        try {
+          session = await api.get<{ userId: string; email: string }>(
+            "/auth/session",
+            { skipAuth: true },
+          );
+        } catch (error) {
+          if ((error as { statusCode?: number }).statusCode !== 401)
+            throw error;
           const refreshed = await refreshSession();
           if (!refreshed) {
-            if (active && generation === sessionGeneration.current && !isPublicContentPath(window.location.pathname) && !["/", "/login", "/register", "/forgot-password", "/reset-password", "/subscription", "/offline"].includes(window.location.pathname)) router.replace("/login");
+            if (
+              active &&
+              generation === sessionGeneration.current &&
+              !isPublicContentPath(window.location.pathname) &&
+              ![
+                "/",
+                "/login",
+                "/register",
+                "/forgot-password",
+                "/reset-password",
+                "/subscription",
+                "/offline",
+              ].includes(window.location.pathname)
+            )
+              router.replace("/login");
             return;
           }
-          session = await api.get<{ userId: string; email: string }>("/auth/session", { skipAuth: true });
+          session = await api.get<{ userId: string; email: string }>(
+            "/auth/session",
+            { skipAuth: true },
+          );
         }
-        if (active && generation === sessionGeneration.current) { setUser(session); setTokenState("server-session"); }
+        if (active && generation === sessionGeneration.current) {
+          setUser(session);
+          setTokenState("server-session");
+        }
       } catch (error) {
-        if (active && generation === sessionGeneration.current && !isPublicContentPath(window.location.pathname) && (error as { statusCode?: number }).statusCode !== 401) {
-          toast.error("Unable to restore your session. Check your connection and reload.");
+        if (
+          active &&
+          generation === sessionGeneration.current &&
+          !isPublicContentPath(window.location.pathname) &&
+          (error as { statusCode?: number }).statusCode !== 401
+        ) {
+          toast.error(
+            "Unable to restore your session. Check your connection and reload.",
+          );
         }
-      } finally { if (active && generation === sessionGeneration.current) setIsLoading(false); }
+      } finally {
+        if (active && generation === sessionGeneration.current)
+          setIsLoading(false);
+      }
     }
     void restore();
-    return () => { active = false; clearRefreshTimer(); };
+    return () => {
+      active = false;
+      clearRefreshTimer();
+    };
   }, [clearRefreshTimer, router]);
 
   const finalizeLogin = React.useCallback(
-    async (res: LoginResponse, registrationDestination?: "/subscription") => {
+    async (res: LoginResponse) => {
       if (!res.sessionEstablished) return;
       sessionGeneration.current++;
       advanceSessionGeneration();
@@ -132,7 +203,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email: res.email ?? "",
         profile: res.profile,
       });
-      toast.success(registrationDestination ? "Your account is ready" : "Welcome back!", {
+      toast.success("Welcome back!", {
         description: `Signed in as ${res.email ?? ""}`,
       });
       // Prime the session cache (profile + permissions) before navigating so
@@ -145,30 +216,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch {
         // Non-fatal: the dashboard will fetch on mount if priming fails.
       }
-      // Registration already selected a plan. Its payment screen performs its
-      // own permission checks even if profile priming was temporarily unavailable.
-      if (registrationDestination) {
-        router.replace(registrationDestination);
-        return;
-      }
-      const destination = new URLSearchParams(window.location.search).get("returnTo");
-      const profile = queryClient.getQueryData<CurrentProfile>(["current-profile"]);
-      const grants = new Set(profile?.status === "active" ? profile.permissions : []);
-      if (grants.has("billing:read")) {
-        try {
-          const billing = await api.get<{active:boolean}>("/billing/subscription");
-          if (!billing.active) {
-            const returnPath = destination?.startsWith("/subscription") ? permissionReturnTo(destination, name => grants.has(name)) : "/subscription";
-            router.push(returnPath);
-            return;
-          }
-        } catch {
-          // Existing workspace access remains independently verified by the API.
-        }
-      }
+      const destination = new URLSearchParams(window.location.search).get(
+        "returnTo",
+      );
+      const profile = queryClient.getQueryData<CurrentProfile>([
+        "current-profile",
+      ]);
+      const grants = new Set(
+        profile?.status === "active" ? profile.permissions : [],
+      );
       router.push(permissionReturnTo(destination, (name) => grants.has(name)));
     },
-    [router, queryClient]
+    [router, queryClient],
   );
 
   const login = React.useCallback(
@@ -183,51 +242,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await finalizeLogin(res);
       return res;
     },
-    [finalizeLogin]
+    [finalizeLogin],
   );
 
   const verifyTwoFactor = React.useCallback(
-    async ({ email, code, challengeToken }: { email?: string; code: string; challengeToken?: string }) => {
-      const res = await api.post<LoginResponse>("/auth/login/2fa", { email, code, challengeToken }, {
-        skipAuth: true,
-      });
-      if (!res.requiresTwoFactor && !res.recoveryCodes?.length) await finalizeLogin(res);
+    async ({
+      email,
+      code,
+      challengeToken,
+    }: {
+      email?: string;
+      code: string;
+      challengeToken?: string;
+    }) => {
+      const res = await api.post<LoginResponse>(
+        "/auth/login/2fa",
+        { email, code, challengeToken },
+        {
+          skipAuth: true,
+        },
+      );
+      if (!res.requiresTwoFactor && !res.recoveryCodes?.length)
+        await finalizeLogin(res);
       return res;
     },
-    [finalizeLogin]
+    [finalizeLogin],
   );
 
-  const register = React.useCallback(async (input: RegisterInput) => {
-    const res = await api.post<RegisterResponse>("/auth/register", input, {
-      skipAuth: true,
-    });
-    if (res.sessionEstablished) {
-      try {
-        await finalizeLogin(res, "/subscription");
-      } catch {
-        // The proxy already saved the signup session; recover it on the payment page.
-        router.replace("/subscription");
-      }
+  const register = React.useCallback(
+    async (input: RegisterInput) => {
+      const res = await api.post<RegisterResponse>("/auth/register", input, {
+        skipAuth: true,
+      });
+      sessionGeneration.current++;
+      advanceSessionGeneration();
+      clearRefreshTimer();
+      await queryClient.cancelQueries();
+      queryClient.clear();
+      setUser(null);
+      setTokenState(null);
+      setIsLoading(false);
+      router.replace("/subscription");
       return res;
-    }
-    // Establish the same verified, cookie-backed session as a normal sign-in.
-    // Once registration succeeds, a login failure must never invite a second
-    // registration attempt for an account that already exists.
-    try {
-      const session = await api.post<LoginResponse>("/auth/login", {
-        email: input.email,
-        password: input.password,
-      }, { skipAuth: true });
-      if (session.sessionEstablished && !session.requiresTwoFactor) {
-        await finalizeLogin(session, "/subscription");
-        return res;
-      }
-    } catch {
-      // Email confirmation, a login outage or MFA can be completed at sign-in.
-    }
-    router.replace("/login?returnTo=%2Fsubscription&registered=1");
-    return res;
-  }, [finalizeLogin, router]);
+    },
+    [clearRefreshTimer, queryClient, router],
+  );
 
   const logout = React.useCallback(async () => {
     try {
@@ -273,7 +332,9 @@ export function useLogin() {
   });
 }
 
-export function useCompleteLogin() { return useAuth().completeLogin; }
+export function useCompleteLogin() {
+  return useAuth().completeLogin;
+}
 
 export function useVerifyTwoFactor() {
   const { verifyTwoFactor } = useAuth();
@@ -301,8 +362,10 @@ export function useForgotPassword() {
 
 export function useAcceptInvitation() {
   return useMutation({
-    mutationFn: (input: {token: string; newPassword: string}) =>
-      api.post<{success: boolean}>("/auth/accept-invitation", input, {skipAuth:true}),
+    mutationFn: (input: { token: string; newPassword: string }) =>
+      api.post<{ success: boolean }>("/auth/accept-invitation", input, {
+        skipAuth: true,
+      }),
   });
 }
 

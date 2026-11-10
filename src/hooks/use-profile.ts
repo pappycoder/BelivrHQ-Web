@@ -1,6 +1,5 @@
 "use client";
 
-
 /**
  * @file Hooks for the current user's own profile — view, edit, avatar and
  * password management via /profiles/me and /auth/password.
@@ -19,6 +18,7 @@ export interface CurrentProfile {
   /** Flat permission names (resource:action) granted across all roles */
   permissions?: string[];
   planFeatures?: string[];
+  subscriptionReadOnly?: boolean;
   firstName: string;
   lastName: string;
   email?: string;
@@ -54,14 +54,17 @@ export interface UpdateCurrentProfileInput {
 }
 
 /** Shared fetcher so the login flow can prime the same cache entry. */
-export function fetchCurrentProfile(context?: { signal?: AbortSignal }): Promise<CurrentProfile> {
+export function fetchCurrentProfile(context?: {
+  signal?: AbortSignal;
+}): Promise<CurrentProfile> {
   return api.get<CurrentProfile>("/profiles/me", { signal: context?.signal });
 }
 
-export function useCurrentProfile() {
+export function useCurrentProfile(enabled = true) {
   return useQuery({
     queryKey: ["current-profile"],
     queryFn: fetchCurrentProfile,
+    enabled,
     staleTime: 60 * 1000,
     // Override the global defaults for authorization state only.
     refetchOnWindowFocus: true,
@@ -106,25 +109,55 @@ export function useChangePassword() {
   });
 }
 
-export interface AuthenticatorSetup { factorId: string; qrCode: string; secret: string; uri: string }
-export interface AuthenticatorFactor { id: string; name?: string; status: string; recoveryCodesRemaining?: number }
+export interface AuthenticatorSetup {
+  factorId: string;
+  qrCode: string;
+  secret: string;
+  uri: string;
+}
+export interface AuthenticatorFactor {
+  id: string;
+  name?: string;
+  status: string;
+  recoveryCodesRemaining?: number;
+}
 
 export function useAuthenticatorFactors() {
-  return useQuery({ queryKey: ["authenticator-factors"], queryFn: ({ signal }) => api.get<AuthenticatorFactor[]>("/profiles/me/2fa/factors", { signal }) });
+  return useQuery({
+    queryKey: ["authenticator-factors"],
+    queryFn: ({ signal }) =>
+      api.get<AuthenticatorFactor[]>("/profiles/me/2fa/factors", { signal }),
+  });
 }
 
 export function useSetupAuthenticator() {
-  return useMutation({ mutationFn: () => api.post<AuthenticatorSetup>("/profiles/me/2fa/setup", {}) });
+  return useMutation({
+    mutationFn: () =>
+      api.post<AuthenticatorSetup>("/profiles/me/2fa/setup", {}),
+  });
 }
 
 export function useToggleTwoFactor() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ purpose, code, factorId }: { purpose: "enable" | "disable"; code: string; factorId: string }) =>
-      api.post<{ recoveryCodes?: string[] }>(`/profiles/me/2fa/${purpose}`, { code, factorId }),
+    mutationFn: ({
+      purpose,
+      code,
+      factorId,
+    }: {
+      purpose: "enable" | "disable";
+      code: string;
+      factorId: string;
+    }) =>
+      api.post<{ recoveryCodes?: string[] }>(`/profiles/me/2fa/${purpose}`, {
+        code,
+        factorId,
+      }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["current-profile"] });
-      await queryClient.invalidateQueries({ queryKey: ["authenticator-factors"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["authenticator-factors"],
+      });
     },
   });
 }
@@ -132,7 +165,12 @@ export function useToggleTwoFactor() {
 export function useRegenerateRecoveryCodes() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ code, factorId }: { code: string; factorId: string }) => api.post<{ recoveryCodes: string[] }>("/profiles/me/2fa/recovery-codes", { code, factorId }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authenticator-factors"] }),
+    mutationFn: ({ code, factorId }: { code: string; factorId: string }) =>
+      api.post<{ recoveryCodes: string[] }>("/profiles/me/2fa/recovery-codes", {
+        code,
+        factorId,
+      }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ["authenticator-factors"] }),
   });
 }
