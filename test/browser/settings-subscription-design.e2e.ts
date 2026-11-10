@@ -490,6 +490,7 @@ test("resuming a pending checkout uses its saved terms after browsing a differen
     .getByRole("button", { name: "Resume secure checkout", exact: true })
     .click();
   const checkout = await popup;
+  await expect(checkout).toHaveURL("https://checkout.flutterwave.com/secure");
   await expect.poll(() => bodies.length).toBe(1);
   expect(bodies[0]).toEqual({
     plan: "network",

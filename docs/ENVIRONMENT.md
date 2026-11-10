@@ -28,3 +28,9 @@ Retained active values were verified unchanged after dotenv parsing. Private ori
 The active web file now explicitly includes `API_URL` and `INTERNAL_PROXY_SECRET` slots. Existing canonical-origin and Sentry values are retained. Fill the API origin on production hosting and use the same private proxy secret as the backend when enabled. Blank local API configuration continues to use the existing localhost default. No shared secret was generated or rotated. The example also shows optional verification tokens and default disabled monitoring flags; those flags do not need active-file entries.
 
 If a direct browser Supabase integration is added later, its project URL and anon/publishable key can use `NEXT_PUBLIC_` names. Service-role and secret keys must remain server-only. No backend Supabase values were changed.
+
+## Local browser origins and fonts
+
+Both `http://localhost:<port>` and `http://127.0.0.1:<port>` work for local registration and other proxy requests. Next.js normalizes loopback request URLs to localhost, so the origin check also accepts the actual loopback Host when the browser Origin matches its exact host, protocol and port. Requests from other sites, mismatched ports and missing client headers remain blocked. This does not require changing production origins or proxy secrets.
+
+Inter, Fraunces and Inter Tight are bundled in `src/assets/fonts` and loaded through `next/font/local`. Builds no longer download Google Fonts, and browsers load the fonts from the application origin. Source revisions and redistribution licenses are documented in [the font assets README](../src/assets/fonts/README.md).
