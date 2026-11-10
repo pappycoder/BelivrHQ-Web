@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { Fraunces, Inter_Tight } from "next/font/google";
 import "sonner/dist/styles.css";
 import "./globals.css";
 import "./modern-ui.css";
@@ -11,7 +10,13 @@ import { Providers } from "@/components/providers/providers";
 import { RecordRowNavigation } from "@/components/shared/record-row-navigation";
 import { FieldFeedback } from "@/components/shared/field-feedback";
 import { SonnerProvider } from "@/components/providers/sonner-provider";
-import { BRAND_COLOR, SITE_DESCRIPTION, SITE_NAME, SITE_TITLE, absoluteUrl } from "@/lib/site";
+import {
+  BRAND_COLOR,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_TITLE,
+  absoluteUrl,
+} from "@/lib/site";
 
 import { PRIVATE_ROBOTS } from "@/lib/seo";
 
@@ -23,15 +28,19 @@ const inter = localFont({
 });
 
 // Abide "Paper" display + body faces (used only inside [data-paper-root])
-const fraunces = Fraunces({
-  subsets: ["latin"],
+const fraunces = localFont({
+  src: "../assets/fonts/fraunces-variable.ttf",
+  weight: "100 900",
+  style: "normal",
+  adjustFontFallback: "Times New Roman",
   variable: "--font-fraunces",
-  axes: ["opsz"],
   display: "swap",
 });
 
-const interTight = Inter_Tight({
-  subsets: ["latin"],
+const interTight = localFont({
+  src: "../assets/fonts/inter-tight-variable.ttf",
+  weight: "100 900",
+  style: "normal",
   variable: "--font-inter-tight",
   display: "swap",
 });
@@ -99,7 +108,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn(inter.variable, fraunces.variable, interTight.variable, "h-full antialiased")}
+      className={cn(
+        inter.variable,
+        fraunces.variable,
+        interTight.variable,
+        "h-full antialiased",
+      )}
       suppressHydrationWarning
     >
       <body

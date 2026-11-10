@@ -245,6 +245,7 @@ async function billingSession(
       let cycle = "monthly";
       let verificationCount = 0;
       let paymentCompleted = false;
+      let checkoutClosed = false;
       const calls: { path: string; body: unknown }[] = [];
       Object.assign(window, { billingCalls: calls });
       window.fetch = async (input, init) => {
@@ -272,7 +273,7 @@ async function billingSession(
           },
           gateways: options.gateways ?? ["flutterwave"],
           latestPayment:
-            options.pending && !paymentCompleted
+            options.pending && !paymentCompleted && !checkoutClosed
               ? {
                   reference,
                   gateway: "flutterwave",
@@ -370,6 +371,12 @@ async function billingSession(
             },
           };
         } else if (
+          path.endsWith("/billing/registration/checkout/close") ||
+          path.endsWith("/billing/checkout/close")
+        ) {
+          checkoutClosed = true;
+          data = status();
+        } else if (
           (path.endsWith("/billing/checkout") ||
             path.endsWith("/billing/registration/checkout")) &&
           options.checkoutUrl
@@ -427,7 +434,12 @@ test("registration opens the selected subscription for payment without signing i
     .click();
   await expect(page).toHaveURL(/\/subscription$/);
   await expect(page.getByLabel("Billing period")).toHaveValue("annual");
-  await expect(page.getByLabel("Payment provider")).toHaveValue("flutterwave");
+  await expect(
+    page.getByText("Secure checkout with Flutterwave.", { exact: false }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Activate your workspace" }),
+  ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Continue to payment", exact: true }),
   ).toBeEnabled();
@@ -440,9 +452,7 @@ test("registration opens the selected subscription for payment without signing i
       ).billingCalls,
   );
   expect(calls.filter((c) => c.path.endsWith("/auth/login"))).toHaveLength(0);
-  await expect(
-    page.getByLabel("Payment provider").getByRole("option"),
-  ).toHaveCount(1);
+  await expect(page.getByLabel("Payment provider")).toHaveCount(0);
   expect(
     calls
       .filter(
@@ -1055,4 +1065,130 @@ test("registration payment closes its tab and returns the initial tab to sign-in
       (window as unknown as { billingCalls: { path: string }[] }).billingCalls,
   );
   expect(calls.some((call) => call.path.endsWith("/auth/login"))).toBe(false);
+});
+
+for (const width of [320, 1440]) {
+  test(`registration checkout uses the authentication layout at ${width}px`, async ({
+    page,
+    context,
+  }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await billingSession(context, { registration: true });
+    await page.goto("/subscription");
+    await expect(
+      page.getByRole("heading", {
+        name: "Activate your workspace",
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(page.getByRole("radio", { name: /Essentials/ })).toBeChecked();
+    await expect(
+      page.getByRole("heading", { name: "Plan & Billing", exact: true }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole("region", { name: "Subscription payment history" }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole("link", { name: "← Back to BelivrHQ" }),
+    ).toBeVisible();
+    await page.getByText("Network", { exact: true }).click();
+    await expect(page.getByRole("radio", { name: /Network/ })).toBeChecked();
+    await page.getByLabel("Billing period").selectOption("annual");
+    await expect(
+      page.getByRole("region", { name: "Payment review" }),
+    ).toContainText("NGN 432,000");
+    await expect(
+      page.getByRole("button", { name: "Continue to payment", exact: true }),
+    ).toBeEnabled();
+    const review = page.getByRole("region", { name: "Payment review" });
+    const totalRight = await review
+      .getByText("NGN 432,000", { exact: true })
+      .evaluate((element) => {
+        const range = document.createRange();
+        range.selectNodeContents(element);
+        return range.getBoundingClientRect().right;
+      });
+    const reviewBox = await review.boundingBox();
+    expect(reviewBox).not.toBeNull();
+    expect(totalRight).toBeLessThanOrEqual(reviewBox!.x + reviewBox!.width);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+    await page.screenshot({
+      path: `/tmp/belivrhq-registration-billing-${width}.png`,
+      fullPage: true,
+    });
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.evaluate(() => {
+      document.documentElement.classList.remove("light");
+      document.documentElement.classList.add("dark");
+    });
+    await expect(
+      page.getByRole("button", { name: "Continue to payment", exact: true }),
+    ).toBeEnabled();
+    await page.screenshot({
+      path: `/tmp/belivrhq-registration-billing-dark-${width}.png`,
+      fullPage: true,
+    });
+  });
+}
+
+test("registration keeps pending terms until checkout is explicitly closed", async ({
+  page,
+  context,
+}) => {
+  await billingSession(context, {
+    registration: true,
+    pending: true,
+    verificationSequence: ["pending"],
+  });
+  await page.goto("/subscription");
+  const review = page.getByRole("region", { name: "Payment review" });
+  await expect(review).toContainText("Essentials · Monthly");
+  await page.getByText("Network", { exact: true }).click();
+  await page.getByLabel("Billing period").selectOption("annual");
+  await expect(review).toContainText("Essentials · Monthly");
+  await expect(review).toContainText("NGN 10,000");
+  await expect(review).toContainText("keeps its original plan");
+  await expect(page.getByLabel("Payment currency")).toBeDisabled();
+  await page
+    .getByRole("button", {
+      name: "Close checkout and change plan",
+      exact: true,
+    })
+    .click();
+  await expect(review).toContainText("Network · Yearly");
+  await expect(review).toContainText("NGN 432,000");
+  await expect(
+    page.getByRole("button", { name: "Continue to payment", exact: true }),
+  ).toBeEnabled();
+  const calls = await page.evaluate(
+    () =>
+      (window as unknown as { billingCalls: { path: string }[] }).billingCalls,
+  );
+  expect(
+    calls.filter((call) => call.path.endsWith("/registration/checkout/close")),
+  ).toHaveLength(1);
+  expect(
+    calls.filter((call) => call.path.endsWith("/registration/checkout")),
+  ).toHaveLength(0);
+});
+
+test("registration checkout explains an unavailable gateway without offering payment", async ({
+  page,
+  context,
+}) => {
+  await billingSession(context, { registration: true, gateways: [] });
+  await page.goto("/subscription");
+  await expect(
+    page.getByRole("heading", { name: "Activate your workspace" }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("Checkout is being configured. Contact BelivrHQ."),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Continue to payment", exact: true }),
+  ).toBeDisabled();
 });
