@@ -1,5 +1,7 @@
 "use client";
 
+import { AuthFormWrapper } from "@/components/shared/auth-form-wrapper";
+import { RegistrationCheckout } from "@/components/billing/registration-checkout";
 import { LoadingState } from "@/components/shared/loading-state";
 import { showCheckoutLoading } from "@/lib/checkout-loading";
 import { LegalNavigation } from "@/components/legal/legal-navigation";
@@ -480,35 +482,49 @@ export default function SubscriptionPage() {
     );
   if (registration && outcome === "applied" && paymentWindow.current)
     return (
-      <section className="mx-auto max-w-lg space-y-4 px-5 py-12">
-        <h1 className="text-2xl font-semibold">Payment confirmed</h1>
-        <p>You can close this tab and return to the original tab to sign in.</p>
+      <AuthFormWrapper
+        heading="Payment confirmed"
+        subtitle="You can close this tab and return to the original tab to sign in."
+      >
         <Button asChild>
           <Link href="/login?registered=1&subscription=active">
             Continue to sign in
           </Link>
         </Button>
-      </section>
+      </AuthFormWrapper>
     );
   if (registration && status.isPending)
     return (
-      <LoadingState label="Loading registration checkout" variant="detail" />
+      <AuthFormWrapper
+        heading="Activate your workspace"
+        subtitle="Just a moment while we prepare your subscription."
+      >
+        <LoadingState label="Loading registration checkout" variant="detail" />
+      </AuthFormWrapper>
     );
   if (registration && status.isError)
     return (
-      <div className="mx-auto max-w-3xl space-y-6 px-5 py-8">
-        {heading}
-        <EmptyState
-          icon={<CreditCard />}
-          title="Sign in to manage your plan"
-          description="Use your church administrator account to manage subscriptions."
-          action={
-            <Button asChild className="rounded-full">
-              <Link href="/login?returnTo=%2Fsubscription">Sign in</Link>
-            </Button>
-          }
-        />
-      </div>
+      <AuthFormWrapper
+        heading="Continue your setup"
+        subtitle="Sign in with your church administrator account to resume billing."
+      >
+        <Button asChild className="h-12 w-full rounded-xl">
+          <Link href="/login?returnTo=%2Fsubscription">
+            Sign in to manage your plan
+          </Link>
+        </Button>
+        <p className="text-sm text-muted-foreground">
+          If you just created your account,{" "}
+          <button
+            type="button"
+            className="text-primary underline"
+            onClick={() => void status.refetch()}
+          >
+            try loading checkout again
+          </button>
+          .
+        </p>
+      </AuthFormWrapper>
     );
   if (!status.allowed && status.accessReady)
     return (
@@ -535,6 +551,46 @@ export default function SubscriptionPage() {
         {heading}
         <LoadingState label="Checking access" variant="detail" />
       </div>
+    );
+  if (registration && data)
+    return (
+      <RegistrationCheckout
+        data={data}
+        plan={plan}
+        cycle={cycle}
+        currency={paymentCurrency}
+        currencies={availableCurrencies}
+        onPlan={setPlan}
+        onCycle={setCycle}
+        onCurrency={(currency) =>
+          setPaymentChoice({ key: choiceKey, currency })
+        }
+        quote={quote.data}
+        quoteError={quote.isError ? quote.error.message : undefined}
+        quoteFetching={quote.isFetching}
+        onQuoteRetry={() => void quote.refetch()}
+        reference={trackedReference}
+        outcome={outcome}
+        verificationError={verification.isError}
+        verificationBusy={verification.isFetching}
+        message={message}
+        checkoutBusy={checkout.isPending}
+        closing={closeCheckout.isPending}
+        checkoutDisabled={
+          !status.canPay ||
+          !data.gateways.length ||
+          !availableCurrencies.length ||
+          (!pending &&
+            (!quote.data?.quoteId ||
+              quote.isError ||
+              Date.parse(quote.data.expiresAt) <= Date.now()))
+        }
+        onCheckout={openCheckout}
+        onCheck={() => checkPayment(trackedReference)}
+        onClose={() => {
+          if (pending) closeCheckout.mutate(pending.reference);
+        }}
+      />
     );
   const payments = data?.payments ?? [];
   const pagedPayments = payments.slice(
