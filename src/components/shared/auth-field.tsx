@@ -29,7 +29,7 @@ export function AuthField({
 
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={fieldId}>{label}</Label>
+      <Label htmlFor={fieldId} required={props.required}>{label}</Label>
       <div className="relative">
         {icon && (
           <span

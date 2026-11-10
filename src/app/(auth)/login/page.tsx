@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import { BotProtection } from "@/components/shared/bot-protection";
 import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
@@ -20,6 +22,8 @@ import {
   useLogin,
   useVerifyTwoFactor,
 } from "@/hooks/use-auth";
+
+const MotionForm = motion.create(ValidatedForm);
 
 export default function LoginPage() {
   const [registered, setRegistered] = React.useState(false);
@@ -174,7 +178,7 @@ export default function LoginPage() {
       ) : (
         <AnimatePresence mode="wait" initial={false}>
           {otpStep ? (
-            <motion.form
+            <MotionForm
               key="otp"
               onSubmit={handleVerify}
               initial={{ opacity: 0, x: 24 }}
@@ -303,9 +307,9 @@ export default function LoginPage() {
                   Back to sign in
                 </button>
               </div>
-            </motion.form>
+            </MotionForm>
           ) : (
-            <motion.form
+            <MotionForm
               key="credentials"
               onSubmit={handleSubmit}
               initial={{ opacity: 0, x: -24 }}
@@ -370,7 +374,7 @@ export default function LoginPage() {
                   Create Account
                 </Link>
               </div>
-            </motion.form>
+            </MotionForm>
           )}
         </AnimatePresence>
       )}

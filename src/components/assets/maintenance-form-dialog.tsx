@@ -1,4 +1,6 @@
 "use client";
+
+import { ValidatedForm } from "@/components/ui/validated-form";
 import { WorkspaceFormSection } from "@/components/workspace/workspace-presentation";
 
 import * as React from "react";
@@ -57,8 +59,8 @@ const STATUS_OPTIONS: Array<{ value: MaintenanceStatus; label: string }> = [
 ];
 
 const maintenanceSchema = z.object({
-  type: z.string().min(1, "Maintenance type is required"),
-  scheduledDate: z.string().min(1, "Scheduled date is required"),
+  type: z.string().trim().min(1, "Maintenance type is required"),
+  scheduledDate: z.string().trim().min(1, "Scheduled date is required"),
   description: z.string().optional(),
   status: z.string().optional(),
   completedDate: z.string().optional(),
@@ -169,10 +171,10 @@ export function MaintenanceFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <WorkspaceFormSection title="Schedule and status">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField
+                <FormField required
                   control={form.control}
                   name="type"
                   render={({ field }) => (
@@ -199,7 +201,7 @@ export function MaintenanceFormDialog({
                     </FormItem>
                   )}
                 />
-                <FormField
+                <FormField required
                   control={form.control}
                   name="scheduledDate"
                   render={({ field }) => (
@@ -340,7 +342,7 @@ export function MaintenanceFormDialog({
                 {pending ? "Saving..." : isEdit ? "Save Changes" : "Schedule"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

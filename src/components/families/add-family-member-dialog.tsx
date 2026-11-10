@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import * as React from "react";
 import { peopleWorkspaceClass } from "@/components/members/people-presentation";
 import { toast } from "@/lib/toast";
@@ -35,8 +37,8 @@ import { useAddFamilyMember, type Family } from "@/hooks/use-families";
 import { MemberCombobox } from "@/components/members/member-combobox";
 
 const addMemberSchema = z.object({
-  memberId: z.string().min(1, "Select a member to add"),
-  relationship: z.string().min(1, "Relationship is required"),
+  memberId: z.string().trim().min(1, "Select a member to add"),
+  relationship: z.string().trim().min(1, "Relationship is required"),
   isHead: z.boolean().optional(),
 });
 
@@ -114,8 +116,8 @@ export function AddFamilyMemberDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField required
               control={form.control}
               name="memberId"
               render={({ field }) => (
@@ -149,7 +151,7 @@ export function AddFamilyMemberDialog({
               )}
             />
 
-            <FormField
+            <FormField required
               control={form.control}
               name="relationship"
               render={({ field }) => (
@@ -212,7 +214,7 @@ export function AddFamilyMemberDialog({
                 {addMutation.isPending ? "Adding..." : "Add Member"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

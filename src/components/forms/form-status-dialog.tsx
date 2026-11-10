@@ -1,5 +1,7 @@
 "use client";
 
+import { RequiredFieldsNotice } from "@/components/ui/required-fields";
+
 import { useRef, useState } from "react";
 import {
   useUpdateForm,
@@ -88,14 +90,15 @@ export function FormStatusDialog({
             {FORM_STATUS_LABELS[form.status]}.
           </DialogDescription>
         </DialogHeader>
+        <RequiredFieldsNotice />
         <div className="space-y-2">
-          <Label htmlFor="form-status">New status</Label>
+          <Label required htmlFor="form-status">New status</Label>
           <Select
             value={status}
             onValueChange={(value) => setStatus(value as FormStatus)}
             disabled={update.isPending}
           >
-            <SelectTrigger id="form-status">
+            <SelectTrigger aria-required="true" id="form-status">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

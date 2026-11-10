@@ -1,5 +1,7 @@
 "use client";
 
+import { RequiredFieldsNotice } from "@/components/ui/required-fields";
+
 import * as React from "react";
 import { toast } from "@/lib/toast";
 import { ClipboardCheck } from "lucide-react";
@@ -91,6 +93,7 @@ export function CellGroupAttendanceDialog({
     payload: { memberId?: string; visitorId?: string; visitorName?: string },
     successMessage: string,
   ) => {
+    if (!meetingDate) { toast.error("Meeting date is required."); return; }
     recordAttendance.mutate(
       {
         ...payload,
@@ -124,6 +127,7 @@ export function CellGroupAttendanceDialog({
   };
 
   const submitNewVisitor = () => {
+    if (!meetingDate) { toast.error("Meeting date is required."); return; }
     if (!newVisitor.firstName.trim()) {
       toast.error("First name is required");
       return;
@@ -173,6 +177,7 @@ export function CellGroupAttendanceDialog({
         </DialogHeader>
 
         <fieldset disabled={savingRoster} className="space-y-4">
+          <RequiredFieldsNotice className="col-span-full" />
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="meeting-date">Meeting Date *</Label>
@@ -184,7 +189,7 @@ export function CellGroupAttendanceDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="attendance-status">Status</Label>
+              <Label required htmlFor="attendance-status">Status</Label>
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger id="attendance-status">
                   <SelectValue />

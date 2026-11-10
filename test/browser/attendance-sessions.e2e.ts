@@ -212,7 +212,7 @@ for (const type of ["department", "cell", "event"])
       .getByRole("button", { name: "Record general attendance", exact: true })
       .click();
     const dialog = page.getByRole("dialog");
-    await dialog.getByLabel("Total attendance *", { exact: true }).fill("25");
+    await dialog.getByLabel("Total attendance", { exact: true }).fill("25");
     await dialog
       .getByRole("button", { name: "Save attendance", exact: true })
       .click();
@@ -294,7 +294,7 @@ test("event check-in records total-only attendance without named details", async
     .getByRole("button", { name: "Record general attendance", exact: true })
     .click();
   const dialog = page.getByRole("dialog");
-  await dialog.getByLabel("Total attendance *", { exact: true }).fill("40");
+  await dialog.getByLabel("Total attendance", { exact: true }).fill("40");
   await dialog
     .getByRole("button", { name: "Save attendance", exact: true })
     .click();
@@ -313,7 +313,7 @@ test("usher can record general event attendance", async ({ page }) => {
     .getByRole("button", { name: "Record general attendance", exact: true })
     .click();
   const dialog = page.getByRole("dialog");
-  await dialog.getByLabel("Total attendance *", { exact: true }).fill("25");
+  await dialog.getByLabel("Total attendance", { exact: true }).fill("25");
   await dialog
     .getByRole("button", { name: "Save attendance", exact: true })
     .click();
@@ -329,7 +329,7 @@ test("usher can record general event attendance", async ({ page }) => {
 
 test("usher can open event creation", async ({ page }) => {
   await page.goto("/events/new");
-  await expect(page.getByLabel("Title *", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Title", { exact: true })).toBeVisible();
 });
 
 test("usher can open event editing and lifecycle controls", async ({
@@ -345,7 +345,7 @@ test("usher can open event editing and lifecycle controls", async ({
   ).toBeVisible();
   await page.getByRole("menuitem", { name: "Edit", exact: true }).click();
   await expect(page).toHaveURL(/\/events\/context-a\/edit$/);
-  await expect(page.getByLabel("Title *", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("Title", { exact: true })).toHaveValue(
     "Meeting A",
   );
   await expect(

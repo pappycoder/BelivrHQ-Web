@@ -527,7 +527,7 @@ for (const failedCheckIn of [false, true])
     await page.getByRole("combobox").first().click();
     await page.getByRole("option", { name: /Sunday Service/ }).click();
     await page.getByRole("button", { name: "Visitor", exact: true }).click();
-    await page.getByLabel("First Name *", { exact: true }).fill("Amina");
+    await page.getByLabel("First Name", { exact: true }).fill("Amina");
     await page.getByLabel("Last Name", { exact: true }).fill("Okafor");
     await page
       .getByRole("button", { name: "Register & Check In", exact: true })

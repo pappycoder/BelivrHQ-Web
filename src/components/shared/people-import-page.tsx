@@ -1,5 +1,7 @@
 "use client";
 
+import { RequiredFieldsNotice, RequiredIndicator } from "@/components/ui/required-fields";
+
 import { LoadingState } from "@/components/shared/loading-state";
 
 import { Skeleton } from "@/components/ui/skeleton";
@@ -640,7 +642,7 @@ export function PeopleImportPage({
                       variant={f.required ? "default" : "outline"}
                     >
                       {f.label.replace(/ \*$/, "").replace(/ \(.*\)$/, "")}
-                      {f.required ? " *" : ""}
+                      {f.required && <RequiredIndicator />}
                     </Badge>
                   ))}
                 </div>
@@ -673,11 +675,12 @@ export function PeopleImportPage({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <RequiredFieldsNotice />
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {TARGET_FIELDS.map((field) => (
                 <div key={field.key}>
                   <label className="text-sm font-medium mb-1.5 block">
-                    {field.label}
+                    {field.label.replace(/ \*$/, "")} {field.required && <RequiredIndicator />}
                   </label>
                   <Select
                     value={mapping[field.key] ?? "__none__"}

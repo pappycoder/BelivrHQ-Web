@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -117,13 +119,13 @@ export default function NewEventPage() {
           Your role can view the calendar but not create events.
         </p>
       ) : (
-        <form onSubmit={submit} className="grid gap-4 lg:grid-cols-[1fr_320px]">
+        <ValidatedForm onSubmit={submit} className="grid gap-4 lg:grid-cols-[1fr_320px]">
           <div className="min-w-0 space-y-4">
             <SectionCard eyebrow="Details" title="What is it?">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5 sm:col-span-2">
-                  <Label className="text-xs">Title</Label>
-                  <Input value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="Sunday Gathering" className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                  <Label required className="text-xs">Title</Label>
+                  <Input required value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="Sunday Gathering" className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5 sm:col-span-2">
                   <Label className="text-xs">Type</Label>
@@ -180,18 +182,18 @@ export default function NewEventPage() {
                   </p>
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Starts</Label>
-                  <Input picker="wheel" type="datetime-local" value={form.start} onChange={(e) => set("start", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                  <Label required className="text-xs">Starts</Label>
+                  <Input required picker="wheel" type="datetime-local" value={form.start} onChange={(e) => set("start", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">
+                  <Label required={form.recurrence === "multi_day"} className="text-xs">
                     {form.recurrence === "one_time"
                       ? "Ends (same day)"
                       : form.recurrence === "multi_day"
                         ? "Ends"
                         : "Until (optional)"}
                   </Label>
-                  <Input picker="wheel" type="datetime-local" value={form.end} onChange={(e) => set("end", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                  <Input required={form.recurrence === "multi_day"} picker="wheel" type="datetime-local" value={form.end} onChange={(e) => set("end", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">Location</Label>
@@ -203,9 +205,9 @@ export default function NewEventPage() {
                 </div>
                 {isHq ? (
                   <div className="space-y-1.5 sm:col-span-2">
-                    <Label className="text-xs">Branch</Label>
-                    <select value={form.branchId} onChange={(e) => set("branchId", e.target.value)} className="h-10 w-full rounded-lg border border-line bg-card px-2 text-xs outline-none">
-                      <option value="">All branches (no assignment)</option>
+                    <Label required className="text-xs">Branch</Label>
+                    <select required value={form.branchId} onChange={(e) => set("branchId", e.target.value)} className="h-10 w-full rounded-lg border border-line bg-card px-2 text-xs outline-none">
+                      <option value="">Select a branch</option>
                       {(branches.data?.data ?? []).map((b) => (
                         <option key={b.branchId} value={b.branchId}>{b.name}</option>
                       ))}
@@ -260,7 +262,7 @@ export default function NewEventPage() {
               </Button>
             </div>
           </aside>
-        </form>
+        </ValidatedForm>
       )}
     </div>
   );

@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import * as React from "react";
 import { VisitorFormSection } from "./visitor-presentation";
 import { useForm } from "react-hook-form";
@@ -43,8 +45,8 @@ import {
 
 const visitorSchema = z.object({
   assignedToId: z.string().optional(),
-  branchId: z.string().optional(),
-  firstName: z.string().min(1, "First name is required"),
+  branchId: z.string().trim().min(1, "Select a branch"),
+  firstName: z.string().trim().min(1, "First name is required"),
   lastName: z.string().optional(),
   gender: z.string().optional(),
   phone: z.string().optional(),
@@ -124,7 +126,7 @@ export function VisitorFormDialog({
       form.reset({
         ...toFormValues(visitor),
         branchId: visitor
-          ? (visitor.branchId ?? "")
+          ? (visitor.branchId ?? profile?.branchId ?? "")
           : (profile?.branchId ?? ""),
       });
     }
@@ -223,10 +225,10 @@ export function VisitorFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <Section title="Visitor details">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <FormField
+                <FormField required
                   control={form.control}
                   name="firstName"
                   render={({ field }) => (
@@ -254,7 +256,7 @@ export function VisitorFormDialog({
                 />
               </div>
 
-              <FormField
+              <FormField required
                 control={form.control}
                 name="branchId"
                 render={({ field }) => (
@@ -466,7 +468,7 @@ export function VisitorFormDialog({
                     : "Register Visitor"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

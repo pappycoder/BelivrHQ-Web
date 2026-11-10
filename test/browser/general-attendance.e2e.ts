@@ -186,7 +186,7 @@ test("staff records total with optional fields and rejects invalid subtotals", a
     .getByRole("button", { name: "Record general attendance", exact: true })
     .click();
   const dialog = page.getByRole("dialog");
-  await dialog.getByLabel("Total attendance *", { exact: true }).fill("123");
+  await dialog.getByLabel("Total attendance", { exact: true }).fill("123");
   await dialog.getByLabel("Adults (optional)", { exact: true }).fill("124");
   await dialog
     .getByRole("button", { name: "Save attendance", exact: true })
@@ -222,7 +222,7 @@ test("staff edits headcounts with update permission", async ({ page }) => {
   await expect(
     dialog.getByLabel("Attendance date", { exact: true }),
   ).toBeDisabled();
-  await dialog.getByLabel("Total attendance *", { exact: true }).fill("120");
+  await dialog.getByLabel("Total attendance", { exact: true }).fill("120");
   await dialog
     .getByRole("button", { name: "Save attendance", exact: true })
     .click();
@@ -321,7 +321,7 @@ test("staff mixed service individual check-ins default to unspecified", async ({
     .getByRole("option", { name: "Family Service", exact: true })
     .click();
   await expect(page.getByRole("combobox").nth(1)).toContainText("Unspecified");
-  await expect(page.getByRole("form", { name: "Reported headcount", exact: true }).getByLabel("Total attendance *", { exact: true })).toBeVisible();
+  await expect(page.getByRole("form", { name: "Reported headcount", exact: true }).getByLabel("Total attendance", { exact: true })).toBeVisible();
 });
 
 test("summary dashboard separates headcounts from individual check-ins", async ({
@@ -371,7 +371,7 @@ test("usher can open general attendance from service check-in", async ({
   await page.goto("/attendance/check-in");
   await page.getByRole("combobox").first().click();
   await page.getByRole("option", { name: /Family Service/ }).click();
-  await expect(page.getByRole("form", { name: "Reported headcount", exact: true }).getByLabel("Total attendance *", { exact: true })).toBeVisible();
+  await expect(page.getByRole("form", { name: "Reported headcount", exact: true }).getByLabel("Total attendance", { exact: true })).toBeVisible();
 });
 
 test("usher can open service creation", async ({ page }) => {

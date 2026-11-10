@@ -1,4 +1,6 @@
 "use client";
+
+import { ValidatedForm } from "@/components/ui/validated-form";
 import { WorkspaceFormSection } from "@/components/workspace/workspace-presentation";
 
 import * as React from "react";
@@ -37,7 +39,7 @@ import {
 } from "@/hooks/use-branches";
 
 const branchSchema = z.object({
-  name: z.string().min(1, "Branch name is required"),
+  name: z.string().trim().min(1, "Branch name is required"),
   isHeadquarters: z.boolean(),
   address: z.string().optional(),
   city: z.string().optional(),
@@ -153,9 +155,9 @@ export function BranchFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <WorkspaceFormSection title="Branch identity">
-              <FormField
+              <FormField required
                 control={form.control}
                 name="name"
                 render={({ field }) => (
@@ -279,7 +281,7 @@ export function BranchFormDialog({
                     : "Create Branch"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

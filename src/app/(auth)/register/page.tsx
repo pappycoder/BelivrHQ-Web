@@ -1,5 +1,8 @@
 "use client";
 
+import { RequiredIndicator } from "@/components/ui/required-fields";
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import { LoadingState } from "@/components/shared/loading-state";
 
 import { BotProtection } from "@/components/shared/bot-protection";
@@ -246,7 +249,7 @@ export default function RegisterPage() {
           ))}
         </ol>
       </nav>
-      <form
+      <ValidatedForm
         onSubmit={submit}
         className="space-y-5"
         aria-busy={register.isPending}
@@ -514,6 +517,7 @@ export default function RegisterPage() {
                       onChange={(event) => setTermsAccepted(event.target.checked)}
                       aria-describedby="registration-risk-notice" className="mt-1.5 size-4 shrink-0 accent-primary" />
                     <label htmlFor="accept-legal-terms">
+                      <RequiredIndicator />{ " " }
                       I am at least 18 and authorised to act for this church. I agree to the
                       {" "}<Link className="underline underline-offset-4" href="/terms-of-service" target="_blank" rel="noopener noreferrer">Terms of Service</Link> and
                       {" "}<Link className="underline underline-offset-4" href="/terms-and-conditions" target="_blank" rel="noopener noreferrer">Website Terms and Conditions</Link>, and acknowledge the
@@ -564,7 +568,7 @@ export default function RegisterPage() {
           <ShieldCheck className="size-3.5" />
           Your account details stay private.
         </p>
-      </form>
+      </ValidatedForm>
     </AuthFormWrapper>
   );
 }

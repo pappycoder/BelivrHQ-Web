@@ -18,11 +18,22 @@ import {
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
+import { toast } from "@/lib/toast"
 
 function DraftGuard() {
   const { formState, control, getValues } = useFormContext();
   const values = useWatch({ control });
   const saved = React.useRef<string | null>(null);
+  const notified = React.useRef(0);
+  React.useEffect(() => {
+    if (formState.submitCount === 0) notified.current = 0;
+    if (formState.submitCount > notified.current && !formState.isSubmitting) {
+      notified.current = formState.submitCount;
+      if (Object.keys(formState.errors).length) toast.error("Please check the required fields", {
+        description: "Fields marked with an asterisk (*) are required. Correct the highlighted fields before saving.",
+      });
+    }
+  }, [formState.submitCount, formState.isSubmitting, formState.errors]);
   React.useEffect(() => {
     if (formState.isSubmitSuccessful && !formState.isSubmitting) saved.current = JSON.stringify(getValues());
   }, [formState.isSubmitSuccessful, formState.isSubmitting, formState.submitCount, getValues]);
@@ -40,6 +51,7 @@ type FormFieldContextValue<
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > = {
   name: TName
+  required?: boolean
 }
 
 const FormFieldContext = React.createContext<FormFieldContextValue>(
@@ -50,10 +62,11 @@ const FormField = <
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
+  required,
   ...props
-}: ControllerProps<TFieldValues, TName>) => {
+}: ControllerProps<TFieldValues, TName> & { required?: boolean }) => {
   return (
-    <FormFieldContext.Provider value={{ name: props.name }}>
+    <FormFieldContext.Provider value={{ name: props.name, required }}>
       <Controller {...props} />
     </FormFieldContext.Provider>
   )
@@ -75,6 +88,7 @@ const useFormField = () => {
   return {
     id,
     name: fieldContext.name,
+    required: fieldContext.required,
     formItemId: `${id}-form-item`,
     formDescriptionId: `${id}-form-item-description`,
     formMessageId: `${id}-form-item-message`,
@@ -108,7 +122,7 @@ function FormLabel({
   className,
   ...props
 }: React.ComponentProps<typeof LabelPrimitive.Root>) {
-  const { error, formItemId } = useFormField()
+  const { error, formItemId, required } = useFormField()
 
   return (
     <Label
@@ -116,13 +130,14 @@ function FormLabel({
       data-error={!!error}
       className={cn("data-[error=true]:text-destructive", className)}
       htmlFor={formItemId}
+      required={required}
       {...props}
     />
   )
 }
 
 function FormControl({ ...props }: React.ComponentProps<typeof Slot.Root>) {
-  const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
+  const { error, formItemId, formDescriptionId, formMessageId, required } = useFormField()
 
   return (
     <Slot.Root
@@ -134,6 +149,7 @@ function FormControl({ ...props }: React.ComponentProps<typeof Slot.Root>) {
           : `${formDescriptionId} ${formMessageId}`
       }
       aria-invalid={!!error}
+      aria-required={required}
       {...props}
     />
   )

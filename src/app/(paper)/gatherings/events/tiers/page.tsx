@@ -1,5 +1,7 @@
 "use client";
 
+import { RequiredFieldsNotice } from "@/components/ui/required-fields";
+
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -266,13 +268,14 @@ function TierFormDialog({
           <DialogDescription className="text-xs">Name the ticket the way the congregation would say it.</DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
+          <RequiredFieldsNotice className="col-span-full" />
           <div className="space-y-1.5">
-            <Label className="text-xs">Tier name</Label>
+            <Label required className="text-xs">Tier name</Label>
             <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Standard" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-xs">Price (₦)</Label>
+              <Label required className="text-xs">Price (₦)</Label>
               <Input inputMode="numeric" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value.replace(/[^\d]/g, "") }))} placeholder="5000" className="num h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
             <div className="space-y-1.5">

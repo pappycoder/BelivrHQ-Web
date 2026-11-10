@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import { LoadingState } from "@/components/shared/loading-state";
 import { UrlTabs } from "@/components/shared/url-tabs";
 import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -653,7 +655,7 @@ function ProviderAccounts({
                 values cannot be viewed after saving.
               </DialogDescription>
             </DialogHeader>
-            <form
+            <ValidatedForm
               key={provider.id}
               onSubmit={create}
               onChange={(event) => {
@@ -698,7 +700,7 @@ function ProviderAccounts({
                   {provider.help}
                 </p>
                 <div className="space-y-1.5">
-                  <Label htmlFor="account-label" className="text-xs">
+                  <Label required htmlFor="account-label" className="text-xs">
                     Account name
                   </Label>
                   <Input
@@ -712,7 +714,7 @@ function ProviderAccounts({
                 </div>
                 {provider.fields.map((field) => (
                   <div className="space-y-1.5" key={field.key}>
-                    <Label
+                    <Label required={!field.optional}
                       htmlFor={`credential-${field.key}`}
                       className="text-xs"
                     >
@@ -769,7 +771,7 @@ function ProviderAccounts({
                   </Button>
                 </div>
               </fieldset>
-            </form>
+            </ValidatedForm>
           </DialogContent>
         </Dialog>
       )}
@@ -972,7 +974,7 @@ function ChannelSettings({
           Calls are limited to ten minutes.
         </p>
       )}
-      <form
+      <ValidatedForm
         ref={formRef}
         onSubmit={save}
         onChange={() => {
@@ -999,7 +1001,7 @@ function ChannelSettings({
           {mode === "custom" && (
             <>
               <div className="space-y-1.5">
-                <Label htmlFor={`${channel}-account`} className="text-xs">
+                <Label required htmlFor={`${channel}-account`} className="text-xs">
                   Provider account
                 </Label>
                 <select
@@ -1055,7 +1057,7 @@ function ChannelSettings({
                     },
                   ].map((field) => (
                     <div className="space-y-1.5" key={field.key}>
-                      <Label
+                      <Label required={field.required}
                         htmlFor={`${channel}-${field.key}`}
                         className="text-xs"
                       >
@@ -1081,7 +1083,7 @@ function ChannelSettings({
               {["sms", "voice", "whatsapp"].includes(channel) &&
                 provider !== "meta" && (
                   <div className="space-y-1.5" key={accountId}>
-                    <Label htmlFor={`${channel}-from`} className="text-xs">
+                    <Label required htmlFor={`${channel}-from`} className="text-xs">
                       {provider === "termii"
                         ? channel === "sms"
                           ? "Approved SMS sender ID"
@@ -1130,7 +1132,7 @@ function ChannelSettings({
             </Button>
           )}
         </fieldset>
-      </form>
+      </ValidatedForm>
       {channel === "payment" && (
         <p className="break-all text-[11px] leading-relaxed text-ink-soft">
           Configure the payment account webhook on your backend at{" "}
@@ -1145,7 +1147,7 @@ function ChannelSettings({
         saved?.mode === "custom" &&
         routeStatus.label !== "Needs attention" &&
         channel !== "payment" && (
-          <form
+          <ValidatedForm
             className="space-y-3 rounded-xl border border-dashed border-line bg-muted/20 p-4"
             data-sentry-block
             onSubmit={(event) => {
@@ -1176,7 +1178,7 @@ function ChannelSettings({
               responsibility.
             </p>
             <div className="space-y-1.5">
-              <Label htmlFor={`${channel}-recipient`} className="text-xs">
+              <Label required htmlFor={`${channel}-recipient`} className="text-xs">
                 {channel === "email"
                   ? "Test email recipient"
                   : channel === "voice"
@@ -1200,7 +1202,7 @@ function ChannelSettings({
             >
               {channel === "voice" ? "Connect test call" : "Send test message"}
             </Button>
-          </form>
+          </ValidatedForm>
         )}
       {notice && (
         <p role="status" className="text-[11px] text-ink-soft">

@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import { useState } from "react";
 import { useCurrentProfile } from "@/hooks/use-profile";
 import { useCellGroup } from "@/hooks/use-admin";
@@ -59,14 +61,14 @@ export function CellGroupGivingPanel({ groupId, archived = false }: { groupId: s
       {data?.data.length ? <Table exportable recordType="givingTransaction" records={data.data ?? []} recordKey="transactionId"><TableHeader><TableRow><TableHead>Meeting</TableHead><TableHead>Category</TableHead><TableHead>Receipt</TableHead><TableHead>Method</TableHead><TableHead className="text-right">Group total</TableHead></TableRow></TableHeader><TableBody>{data.data.map((record) => <TableRow key={record.transactionId}><TableCell>{record.cellGroupMeetingDate ?? "Not available"}</TableCell><TableCell>{record.categoryName}</TableCell><TableCell>{record.receiptNumber ?? "Not available"}</TableCell><TableCell>{record.type === "cash" ? "Cash" : "Bank transfer"}</TableCell><TableCell className="text-right">{money(record.amount)}</TableCell></TableRow>)}</TableBody></Table> : <EmptyState icon={<Banknote className="size-6" />} title="No meeting giving recorded" description="Combined meeting totals will appear here after they are recorded." />}
     </TableCard>
     <Dialog open={open} onOpenChange={setOpen}><DialogContent><DialogHeader><DialogTitle>Record Meeting Giving</DialogTitle><DialogDescription>Enter the combined amount collected for one meeting. A meeting can only be recorded once.</DialogDescription></DialogHeader>
-      <form onSubmit={submit} className="space-y-4">
-        <div className="space-y-2"><Label htmlFor="group-giving-meeting">Meeting date</Label><Input picker="wheel" id="group-giving-meeting" type="date" required value={meetingDate} onChange={(event) => setMeetingDate(event.target.value)} disabled={mutation.isPending} /></div>
-        <div className="space-y-2"><Label htmlFor="group-giving-amount">Combined group total (NGN)</Label><Input id="group-giving-amount" type="number" required min="1" step="0.01" value={amount} onChange={(event) => setAmount(event.target.value)} disabled={mutation.isPending} /></div>
-        <div className="space-y-2"><Label>Category</Label><Select value={categoryId || undefined} onValueChange={setCategoryId} disabled={mutation.isPending}><SelectTrigger aria-label="Meeting giving category"><SelectValue placeholder="Select a category" /></SelectTrigger><SelectContent>{(data?.categories ?? []).map((category) => <SelectItem key={category.categoryId} value={category.categoryId}>{category.name}</SelectItem>)}</SelectContent></Select>{data?.categories.length === 0 && <p className="text-sm text-muted-foreground">A treasurer must create a giving category for this branch first.</p>}</div>
-        <div className="space-y-2"><Label>Method</Label><Select value={method} onValueChange={(value) => setMethod(value as typeof method)} disabled={mutation.isPending}><SelectTrigger aria-label="Meeting giving method"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="cash">Cash</SelectItem><SelectItem value="bank_transfer">Bank transfer</SelectItem></SelectContent></Select></div>
+      <ValidatedForm onSubmit={submit} className="space-y-4">
+        <div className="space-y-2"><Label required htmlFor="group-giving-meeting">Meeting date</Label><Input picker="wheel" id="group-giving-meeting" type="date" required value={meetingDate} onChange={(event) => setMeetingDate(event.target.value)} disabled={mutation.isPending} /></div>
+        <div className="space-y-2"><Label required htmlFor="group-giving-amount">Combined group total (NGN)</Label><Input id="group-giving-amount" type="number" required min="1" step="0.01" value={amount} onChange={(event) => setAmount(event.target.value)} disabled={mutation.isPending} /></div>
+        <div className="space-y-2"><Label required={true}>Category</Label><Select value={categoryId || undefined} onValueChange={setCategoryId} disabled={mutation.isPending}><SelectTrigger aria-required={true} aria-label="Meeting giving category"><SelectValue placeholder="Select a category" /></SelectTrigger><SelectContent>{(data?.categories ?? []).map((category) => <SelectItem key={category.categoryId} value={category.categoryId}>{category.name}</SelectItem>)}</SelectContent></Select>{data?.categories.length === 0 && <p className="text-sm text-muted-foreground">A treasurer must create a giving category for this branch first.</p>}</div>
+        <div className="space-y-2"><Label required={true}>Method</Label><Select value={method} onValueChange={(value) => setMethod(value as typeof method)} disabled={mutation.isPending}><SelectTrigger aria-required={true} aria-label="Meeting giving method"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="cash">Cash</SelectItem><SelectItem value="bank_transfer">Bank transfer</SelectItem></SelectContent></Select></div>
         <div className="space-y-2"><Label htmlFor="group-giving-notes">Notes</Label><Input id="group-giving-notes" value={notes} onChange={(event) => setNotes(event.target.value)} disabled={mutation.isPending} /></div>
         <DialogFooter><Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={mutation.isPending}>Cancel</Button><Button type="submit" loading={mutation.isPending} disabled={!meetingDate || !categoryId || !amount}>Record Group Total</Button></DialogFooter>
-      </form>
+      </ValidatedForm>
     </DialogContent></Dialog>
   </div>;
 }

@@ -1,4 +1,6 @@
 "use client";
+
+import { ValidatedForm } from "@/components/ui/validated-form";
 import { WorkspaceFormSection } from "@/components/workspace/workspace-presentation";
 
 import * as React from "react";
@@ -42,10 +44,10 @@ import {
 } from "@/hooks/use-admin";
 
 const departmentSchema = z.object({
-  name: z.string().min(1, "Department name is required").max(100),
+  name: z.string().trim().min(1, "Department name is required").max(100),
   description: z.string().max(500).optional(),
   parentId: z.string().optional(),
-  branchId: z.string().optional(),
+  branchId: z.string().trim().min(1, "Select a branch"),
   headMemberId: z.string().optional(),
 });
 
@@ -188,9 +190,9 @@ export function DepartmentFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <WorkspaceFormSection title="Identity">
-              <FormField
+              <FormField required
                 control={form.control}
                 name="name"
                 render={({ field }) => (
@@ -241,7 +243,7 @@ export function DepartmentFormDialog({
             </WorkspaceFormSection>
             <WorkspaceFormSection title="Location and leadership">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField
+                <FormField required
                   control={form.control}
                   name="branchId"
                   render={({ field }) => (
@@ -344,7 +346,7 @@ export function DepartmentFormDialog({
                     : "Create Department"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

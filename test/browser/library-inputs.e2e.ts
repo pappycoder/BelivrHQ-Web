@@ -43,8 +43,8 @@ for (const editing of [false, true]) {
     await expect(speaker).toBeVisible({ timeout: 15000 });
     if (editing) await expect(speaker).toHaveValue("Original Speaker");
     else {
-      await page.getByLabel("Title *", { exact: true }).fill("A new message");
-      await page.getByLabel("Date *", { exact: true }).fill("2026-11-09");
+      await page.getByLabel("Title", { exact: true }).fill("A new message");
+      await page.getByLabel("Date", { exact: true }).fill("2026-11-09");
     }
     await speaker.click();
     await page.getByRole("option", { name: "Pastor Ada", exact: true }).click();

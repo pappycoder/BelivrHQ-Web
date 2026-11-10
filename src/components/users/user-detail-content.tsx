@@ -1,4 +1,6 @@
 "use client";
+
+import { RequiredFieldsNotice, RequiredIndicator } from "@/components/ui/required-fields";
 import { UrlTabs } from "@/components/shared/url-tabs";
 
 
@@ -111,6 +113,7 @@ function AccountInfoTab({ user }: AccountInfoTabProps) {
 
   const handleSave = () => {
     if (!canUpdate) return;
+    if (!form.firstName.trim() || !form.lastName.trim() || !form.branchId) { toast.error("First name, last name and branch are required."); return; }
     const payload: Record<string, string> = {};
     if (form.firstName !== user.firstName) payload.firstName = form.firstName.trim();
     if (form.lastName !== user.lastName) payload.lastName = form.lastName.trim();
@@ -175,15 +178,16 @@ function AccountInfoTab({ user }: AccountInfoTabProps) {
         <CardContent>
           {editing && canUpdate ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <RequiredFieldsNotice className="col-span-full" />
               <div className="space-y-1.5">
-                <label className="text-sm text-muted-foreground">First Name</label>
+                <label className="text-sm text-muted-foreground">First Name <RequiredIndicator /></label>
                 <Input
                   value={form.firstName}
                   onChange={(e) => setForm({ ...form, firstName: e.target.value })}
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm text-muted-foreground">Last Name</label>
+                <label className="text-sm text-muted-foreground">Last Name <RequiredIndicator /></label>
                 <Input
                   value={form.lastName}
                   onChange={(e) => setForm({ ...form, lastName: e.target.value })}
@@ -207,18 +211,17 @@ function AccountInfoTab({ user }: AccountInfoTabProps) {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm text-muted-foreground">Branch</label>
+                <label className="text-sm text-muted-foreground">Branch <RequiredIndicator /></label>
                 <Select
-                  value={form.branchId || "none"}
+                  value={form.branchId || ""}
                   onValueChange={(value) =>
-                    setForm({ ...form, branchId: value === "none" ? "" : value })
+                    setForm({ ...form, branchId: value })
                   }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select a branch" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="none">No branch</SelectItem>
                     {(branches ?? []).map((branch) => (
                       <SelectItem key={branch.branchId} value={branch.branchId}>
                         {branch.name}

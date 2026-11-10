@@ -1,4 +1,6 @@
 "use client";
+
+import { ValidatedForm } from "@/components/ui/validated-form";
 import { WorkspaceFormSection } from "@/components/workspace/workspace-presentation";
 
 import * as React from "react";
@@ -41,9 +43,9 @@ import {
 } from "@/hooks/use-pastoral";
 
 const lifeEventSchema = z.object({
-  memberId: z.string().min(1, "Select a member"),
+  memberId: z.string().trim().min(1, "Select a member"),
   type: z.enum(LIFE_EVENT_TYPES),
-  date: z.string().min(1, "Date is required"),
+  date: z.string().trim().min(1, "Date is required"),
   notes: z.string(),
 });
 
@@ -118,9 +120,9 @@ export function LifeEventFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <WorkspaceFormSection title="Member and event">
-              <FormField
+              <FormField required
                 control={form.control}
                 name="memberId"
                 render={({ field }) => (
@@ -139,7 +141,7 @@ export function LifeEventFormDialog({
               />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField
+                <FormField required
                   control={form.control}
                   name="type"
                   render={({ field }) => (
@@ -166,7 +168,7 @@ export function LifeEventFormDialog({
                     </FormItem>
                   )}
                 />
-                <FormField
+                <FormField required
                   control={form.control}
                   name="date"
                   render={({ field }) => (
@@ -217,7 +219,7 @@ export function LifeEventFormDialog({
                 {createMutation.isPending ? "Adding..." : "Add Life Event"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import { LoadingState } from "@/components/shared/loading-state";
 
 import { BotProtection } from "@/components/shared/bot-protection";
@@ -83,7 +85,7 @@ export default function AcceptInvitationPage() {
           </Button>
         </div>
       ) : (
-        <form onSubmit={submit} className="space-y-5">
+        <ValidatedForm onSubmit={submit} className="space-y-5">
           <AuthField
             label="Your Password"
             type="password"
@@ -125,7 +127,7 @@ export default function AcceptInvitationPage() {
               Invitation expired? Request a password link
             </Link>
           </p>
-        </form>
+        </ValidatedForm>
       )}
     </AuthFormWrapper>
   );

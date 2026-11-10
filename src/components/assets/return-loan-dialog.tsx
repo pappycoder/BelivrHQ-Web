@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,7 +44,7 @@ const CONDITION_OPTIONS: Array<{ value: AssetCondition; label: string }> = [
 ];
 
 const returnSchema = z.object({
-  actualReturnDate: z.string().min(1, "Return date is required"),
+  actualReturnDate: z.string().trim().min(1, "Return date is required"),
   conditionAfter: z.string().optional(),
   notes: z.string().optional(),
 });
@@ -120,9 +122,9 @@ export function ReturnLoanDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField
+              <FormField required
                 control={form.control}
                 name="actualReturnDate"
                 render={({ field }) => (
@@ -188,7 +190,7 @@ export function ReturnLoanDialog({
                 {pending ? "Saving..." : "Confirm Return"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

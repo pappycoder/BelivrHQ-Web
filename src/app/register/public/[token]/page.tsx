@@ -1,4 +1,6 @@
 "use client";
+
+import { ValidatedForm } from "@/components/ui/validated-form";
 import { useState, type FormEvent } from "react";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -137,7 +139,7 @@ function Registration({ token }: { token: string }) {
               Fields marked * are required. Take your time before sending.
             </p>
           </header>
-          <form onSubmit={submit} className="space-y-7">
+          <ValidatedForm onSubmit={submit} className="space-y-7">
             <FormFieldsRenderer
               validateRequired={validateFields}
               fields={form.data.fields}
@@ -160,7 +162,7 @@ function Registration({ token }: { token: string }) {
                 {sending ? "Sending…" : "Send registration"}
               </Button>
             </div>
-          </form>
+          </ValidatedForm>
         </>
       )}
     </PublicFormFrame>

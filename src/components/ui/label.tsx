@@ -4,11 +4,15 @@ import * as React from "react"
 import { Label as LabelPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
+import { RequiredIndicator } from "./required-fields"
 
 function Label({
   className,
+  required = false,
+  children,
   ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+}: React.ComponentProps<typeof LabelPrimitive.Root> & { required?: boolean }) {
+  const marked = typeof children === "string" && /\s*\*$/.test(children);
   return (
     <LabelPrimitive.Root
       data-slot="label"
@@ -17,7 +21,10 @@ function Label({
         className
       )}
       {...props}
-    />
+    >
+      {marked ? (children as string).replace(/\s*\*$/, "") : children}
+      {(required || marked) && <RequiredIndicator />}
+    </LabelPrimitive.Root>
   )
 }
 

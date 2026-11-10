@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -31,7 +33,7 @@ import {
 } from "@/hooks/use-assets";
 
 const categorySchema = z.object({
-  name: z.string().min(1, "Category name is required").max(100),
+  name: z.string().trim().min(1, "Category name is required").max(100),
   description: z.string().optional(),
 });
 
@@ -130,8 +132,8 @@ export function CategoryFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField required
               control={form.control}
               name="name"
               render={({ field }) => (
@@ -178,7 +180,7 @@ export function CategoryFormDialog({
                     : "Create Category"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>
