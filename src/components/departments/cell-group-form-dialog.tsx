@@ -1,4 +1,6 @@
 "use client";
+
+import { ValidatedForm } from "@/components/ui/validated-form";
 import { WorkspaceFormSection } from "@/components/workspace/workspace-presentation";
 
 import * as React from "react";
@@ -33,6 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MemberCombobox } from "@/components/members/member-combobox";
+import { useCurrentProfile } from "@/hooks/use-profile";
 import { useBranchesList } from "@/hooks/use-branches";
 import {
   MEETING_DAYS,
@@ -42,8 +45,8 @@ import {
 } from "@/hooks/use-admin";
 
 const cellGroupSchema = z.object({
-  name: z.string().min(1, "Cell group name is required").max(100),
-  branchId: z.string().optional(),
+  name: z.string().trim().min(1, "Cell group name is required").max(100),
+  branchId: z.string().trim().min(1, "Select a branch"),
   leaderId: z.string().optional(),
   address: z
     .string()
@@ -105,6 +108,7 @@ export function CellGroupFormDialog({
   lockedLeaderBranch = false,
 }: CellGroupFormDialogProps) {
   const isEdit = !!group;
+  const { data: profile } = useCurrentProfile();
   const createMutation = useCreateCellGroup();
   const updateMutation = useUpdateCellGroup(group?.id ?? "");
   const { data: branchesData } = useBranchesList({ limit: 100 });
@@ -118,7 +122,7 @@ export function CellGroupFormDialog({
 
   React.useEffect(() => {
     if (open) {
-      form.reset(toFormValues(group));
+      form.reset({ ...toFormValues(group), branchId: group?.branchId ?? profile?.branchId ?? "" });
       setLeaderName(
         group
           ? [group.leaderFirstName, group.leaderLastName]
@@ -127,7 +131,7 @@ export function CellGroupFormDialog({
           : "",
       );
     }
-  }, [open, group, form]);
+  }, [open, group, form, profile?.branchId]);
 
   const onSubmit = (values: CellGroupFormValues) => {
     const payload = {
@@ -201,9 +205,9 @@ export function CellGroupFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <WorkspaceFormSection title="Identity and leadership">
-              <FormField
+              <FormField required
                 control={form.control}
                 name="name"
                 render={({ field }) => (
@@ -218,7 +222,7 @@ export function CellGroupFormDialog({
               />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField
+                <FormField required
                   control={form.control}
                   name="branchId"
                   render={({ field }) => (
@@ -231,7 +235,7 @@ export function CellGroupFormDialog({
                       >
                         <FormControl>
                           <SelectTrigger disabled={lockedLeaderBranch}>
-                            <SelectValue placeholder="No branch" />
+                            <SelectValue placeholder="Select a branch" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -398,7 +402,7 @@ export function CellGroupFormDialog({
                     : "Create Cell Group"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

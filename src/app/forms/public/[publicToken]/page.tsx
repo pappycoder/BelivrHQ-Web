@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import { BotProtection } from "@/components/shared/bot-protection";
 import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
@@ -252,7 +254,7 @@ function PublicFormContent({ token }: { token: string }) {
               </div>
             </div>
           ) : (
-            <form onSubmit={submit} className="space-y-7">
+            <ValidatedForm onSubmit={submit} className="space-y-7">
               <div className="border-b pb-5">
                 <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                   Your response
@@ -300,7 +302,7 @@ function PublicFormContent({ token }: { token: string }) {
                   Review your details before sending your response.
                 </p>
               </div>
-            </form>
+            </ValidatedForm>
           )}
         </section>
       </main>

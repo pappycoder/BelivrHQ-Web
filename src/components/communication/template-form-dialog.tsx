@@ -1,4 +1,6 @@
 "use client";
+
+import { ValidatedForm } from "@/components/ui/validated-form";
 import { WorkspaceFormSection } from "@/components/workspace/workspace-presentation";
 
 import {
@@ -50,8 +52,8 @@ import {
 } from "@/hooks/use-templates";
 
 const templateSchema = z.object({
-  name: z.string().min(1, "Template name is required"),
-  content: z.string().min(1, "Content is required"),
+  name: z.string().trim().min(1, "Template name is required"),
+  content: z.string().trim().min(1, "Content is required"),
   channel: z.enum(
     TEMPLATE_CHANNELS as [TemplateChannel, ...TemplateChannel[]],
     {
@@ -165,10 +167,10 @@ export function TemplateFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <WorkspaceFormSection title="Template details">
               <BranchAssignmentField assignment={branchAssignment} />
-              <FormField
+              <FormField required
                 control={form.control}
                 name="name"
                 render={({ field }) => (
@@ -185,7 +187,7 @@ export function TemplateFormDialog({
                 )}
               />
 
-              <FormField
+              <FormField required
                 control={form.control}
                 name="channel"
                 render={({ field }) => (
@@ -267,7 +269,7 @@ export function TemplateFormDialog({
               </div>
             </WorkspaceFormSection>
             <WorkspaceFormSection title="Message content">
-              <FormField
+              <FormField required
                 control={form.control}
                 name="content"
                 render={({ field }) => (
@@ -347,7 +349,7 @@ export function TemplateFormDialog({
                     : "Add Template"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

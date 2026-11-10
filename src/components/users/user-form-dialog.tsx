@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import { LoadingState } from "@/components/shared/loading-state";
 
 import { BotProtection } from "@/components/shared/bot-protection";
@@ -45,15 +47,15 @@ import type { UserProfile } from "@/hooks/use-users";
 
 const inviteSchema = z.object({
   email: z.string().email("Invalid email address"),
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
+  firstName: z.string().trim().min(1, "First name is required"),
+  lastName: z.string().trim().min(1, "Last name is required"),
   phone: z.string().optional(),
-  role: z.string().min(1, "Role is required"),
-  branchId: z.string().min(1, "Select a branch"),
+  role: z.string().trim().min(1, "Role is required"),
+  branchId: z.string().trim().min(1, "Select a branch"),
 });
 
 const updateRoleSchema = z.object({
-  role: z.string().min(1, "Role is required"),
+  role: z.string().trim().min(1, "Role is required"),
 });
 
 type InviteFormValues = z.infer<typeof inviteSchema>;
@@ -183,12 +185,12 @@ export function UserFormDialog({
 
         {mode === "invite" ? (
           <Form {...inviteForm}>
-            <form
+            <ValidatedForm schemaValidation
               onSubmit={inviteForm.handleSubmit(handleInviteSubmit)}
               className="space-y-4"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField
+                <FormField required
                   control={inviteForm.control}
                   name="firstName"
                   render={({ field }) => (
@@ -201,7 +203,7 @@ export function UserFormDialog({
                     </FormItem>
                   )}
                 />
-                <FormField
+                <FormField required
                   control={inviteForm.control}
                   name="lastName"
                   render={({ field }) => (
@@ -216,7 +218,7 @@ export function UserFormDialog({
                 />
               </div>
 
-              <FormField
+              <FormField required
                 control={inviteForm.control}
                 name="email"
                 render={({ field }) => (
@@ -244,7 +246,7 @@ export function UserFormDialog({
                 )}
               />
 
-              <FormField
+              <FormField required
                 control={inviteForm.control}
                 name="role"
                 render={({ field }) => (
@@ -269,7 +271,7 @@ export function UserFormDialog({
                 )}
               />
 
-              <FormField
+              <FormField required
                 control={inviteForm.control}
                 name="branchId"
                 render={({ field }) => (
@@ -316,15 +318,15 @@ export function UserFormDialog({
                   {isPending ? "Sending..." : "Send Invitation"}
                 </Button>
               </DialogFooter>
-            </form>
+            </ValidatedForm>
           </Form>
         ) : (
           <Form {...updateRoleForm}>
-            <form
+            <ValidatedForm schemaValidation
               onSubmit={updateRoleForm.handleSubmit(handleUpdateRoleSubmit)}
               className="space-y-4"
             >
-              <FormField
+              <FormField required
                 control={updateRoleForm.control}
                 name="role"
                 render={({ field }) => (
@@ -362,7 +364,7 @@ export function UserFormDialog({
                   {isPending ? "Updating..." : "Update Role"}
                 </Button>
               </DialogFooter>
-            </form>
+            </ValidatedForm>
           </Form>
         )}
       </DialogContent>

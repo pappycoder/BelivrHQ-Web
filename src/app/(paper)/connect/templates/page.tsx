@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import * as React from "react";
 import { ListTable } from "@/components/shared/list-table";
 import { CommunicationRegisterControls, useCommunicationRegister } from "@/components/communication/register-controls";
@@ -290,15 +292,15 @@ export default function TemplatesPage() {
           <DialogHeader>
             <DialogTitle className="font-display">{editing ? `Edit ${editing.name}` : "New template"}</DialogTitle>
           </DialogHeader>
-          <form onSubmit={submit} className="space-y-4">
+          <ValidatedForm onSubmit={submit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label className="text-xs">Name</Label>
-              <Input value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="First-time guest welcome" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              <Label required className="text-xs">Name</Label>
+              <Input required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="First-time guest welcome" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-xs">Channel</Label>
-                <select value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as TemplateChannel }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+                <Label required className="text-xs">Channel</Label>
+                <select required value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as TemplateChannel }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
                   {TEMPLATE_CHANNELS.map((c) => <option key={c} value={c}>{TEMPLATE_CHANNEL_LABELS[c]}</option>)}
                 </select>
               </div>
@@ -316,8 +318,8 @@ export default function TemplatesPage() {
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Content</Label>
-              <Textarea rows={5} value={draft.content} onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))} placeholder="Hi {{first_name}}, it was lovely to meet you on Sunday…" className="resize-none rounded-lg border-line bg-background font-mono text-xs shadow-none" />
+              <Label required className="text-xs">Content</Label>
+              <Textarea required rows={5} value={draft.content} onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))} placeholder="Hi {{first_name}}, it was lovely to meet you on Sunday…" className="resize-none rounded-lg border-line bg-background font-mono text-xs shadow-none" />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Variables (comma separated)</Label>
@@ -330,7 +332,7 @@ export default function TemplatesPage() {
             <Button type="submit" disabled={createTemplate.isPending || updateTemplate.isPending} className="h-10 w-full rounded-lg text-sm">
               {editing ? "Save template" : "Create template"}
             </Button>
-          </form>
+          </ValidatedForm>
         </DialogContent>
       </Dialog>
 

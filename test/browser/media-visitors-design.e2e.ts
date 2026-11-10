@@ -648,7 +648,7 @@ test("visitor details edit and lifecycle dialogs restore focus after cache refre
     .click();
   await page
     .getByRole("dialog")
-    .getByLabel("First Name *", { exact: true })
+    .getByLabel("First Name", { exact: true })
     .fill("Ada");
   await page
     .getByRole("dialog")

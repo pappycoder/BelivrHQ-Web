@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -314,19 +316,19 @@ export default function EventCheckInPage() {
           </div>
         ) : (
           <SectionCard eyebrow="No ticket? No problem" title="Walk someone in" bodyClassName="p-5">
-            <form onSubmit={doWalkIn} className="space-y-4">
+            <ValidatedForm onSubmit={doWalkIn} className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label className="text-xs">First name</Label>
-                  <Input value={walkIn.firstName} onChange={(e) => setWalkIn((w) => ({ ...w, firstName: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                  <Label required className="text-xs">First name</Label>
+                  <Input required value={walkIn.firstName} onChange={(e) => setWalkIn((w) => ({ ...w, firstName: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Last name</Label>
-                  <Input value={walkIn.lastName} onChange={(e) => setWalkIn((w) => ({ ...w, lastName: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                  <Label required className="text-xs">Last name</Label>
+                  <Input required value={walkIn.lastName} onChange={(e) => setWalkIn((w) => ({ ...w, lastName: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Phone</Label>
-                  <Input value={walkIn.phone} onChange={(e) => setWalkIn((w) => ({ ...w, phone: e.target.value }))} placeholder="+1 415 555 0100" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                  <Label required className="text-xs">Phone</Label>
+                  <Input required value={walkIn.phone} onChange={(e) => setWalkIn((w) => ({ ...w, phone: e.target.value }))} placeholder="+1 415 555 0100" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs">Email (optional)</Label>
@@ -347,7 +349,7 @@ export default function EventCheckInPage() {
               <p className="text-center text-[10px] text-ink-faint">
                 Walk-ins become visitor records. The follow-up desk will pick them up tomorrow.
               </p>
-            </form>
+            </ValidatedForm>
           </SectionCard>
         )}
 

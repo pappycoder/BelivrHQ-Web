@@ -1,5 +1,7 @@
 "use client";
 
+import { RequiredFieldsNotice } from "@/components/ui/required-fields";
+
 import { BotProtection } from "@/components/shared/bot-protection";
 import { useBotProtectionReady } from "@/hooks/use-bot-protection";
 
@@ -58,8 +60,9 @@ function PasswordCard() {
   return (
     <SectionCard eyebrow="Password" title="Something you'd never type aloud">
       <div className="grid gap-4 sm:grid-cols-2">
+          <RequiredFieldsNotice className="col-span-full" />
         <div className="space-y-1.5">
-          <Label className="text-xs">Current password</Label>
+          <Label required className="text-xs">Current password</Label>
           <div className="relative">
             <Input
               type={show ? "text" : "password"}
@@ -86,7 +89,7 @@ function PasswordCard() {
         </div>
         <div />
         <div className="space-y-1.5">
-          <Label className="text-xs">New password</Label>
+          <Label required className="text-xs">New password</Label>
           <Input
             type={show ? "text" : "password"}
             value={form.newPassword}
@@ -101,7 +104,7 @@ function PasswordCard() {
           ) : null}
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs">Confirm</Label>
+          <Label required className="text-xs">Confirm</Label>
           <Input
             type={show ? "text" : "password"}
             value={form.confirm}
@@ -260,7 +263,7 @@ function TwoFactorCard() {
           </div>
           <div className="flex flex-wrap items-end gap-2">
             <div className="space-y-1.5">
-              <Label className="text-xs">Six-digit code</Label>
+              <Label required className="text-xs">Six-digit code</Label>
               <Input
                 inputMode="numeric"
                 maxLength={6}

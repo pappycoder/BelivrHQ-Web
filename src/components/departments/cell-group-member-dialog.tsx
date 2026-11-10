@@ -1,5 +1,7 @@
 "use client";
 
+import { RequiredFieldsNotice } from "@/components/ui/required-fields";
+
 import * as React from "react";
 import { toast } from "@/lib/toast";
 import { UserPlus } from "lucide-react";
@@ -11,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -80,6 +83,8 @@ export function CellGroupMemberDialog({
         </DialogHeader>
 
         <div className="space-y-4">
+          <RequiredFieldsNotice className="col-span-full" />
+          <Label required>Member</Label>
           <MemberCombobox
             value={memberId}
             onChange={(id, member) => {
@@ -90,6 +95,7 @@ export function CellGroupMemberDialog({
             excludeIds={existingMembers.map((m) => m.memberId)}
             placeholder="Select a member..."
           />
+          <Label required>Role</Label>
           <Select value={role} onValueChange={setRole}>
             <SelectTrigger>
               <SelectValue />

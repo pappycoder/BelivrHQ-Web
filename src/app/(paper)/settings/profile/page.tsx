@@ -1,5 +1,7 @@
 "use client";
 
+import { RequiredFieldsNotice } from "@/components/ui/required-fields";
+
 import * as React from "react";
 import {
   Camera,
@@ -70,6 +72,7 @@ export default function SettingsProfilePage() {
 
   const save = () => {
     if (!p) return;
+    if (!form.firstName.trim() || !form.lastName.trim()) { toast.error("First name and last name are required."); return; }
     const input: { firstName?: string; lastName?: string; phone?: string } = {};
     if (form.firstName !== p.firstName) input.firstName = form.firstName.trim();
     if (form.lastName !== p.lastName) input.lastName = form.lastName.trim();
@@ -259,7 +262,8 @@ export default function SettingsProfilePage() {
         >
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label className="text-xs">First name</Label>
+              <RequiredFieldsNotice />
+              <Label required className="text-xs">First name</Label>
               <Input
                 value={form.firstName}
                 onChange={(e) =>
@@ -269,7 +273,7 @@ export default function SettingsProfilePage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Last name</Label>
+              <Label required className="text-xs">Last name</Label>
               <Input
                 value={form.lastName}
                 onChange={(e) =>

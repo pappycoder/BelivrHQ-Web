@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import * as React from "react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { FilterChip } from "@/components/paper/primitives";
@@ -190,10 +192,10 @@ export function ServiceFormDialog({
             Recurrence, time and category drive the check-in windows. Weekly services can float on any day; one-time and date-range services only accept their own dates.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={submit} className="space-y-4">
+        <ValidatedForm onSubmit={submit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label className="text-xs">Name</Label>
-            <Input value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="Sunday · 11:30" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+            <Label required className="text-xs">Name</Label>
+            <Input required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="Sunday · 11:30" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Category</Label>
@@ -245,8 +247,8 @@ export function ServiceFormDialog({
           ) : draft.recurrence === "one_time" ? (
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5 sm:col-span-2">
-                <Label className="text-xs">Date</Label>
-                <Input picker="wheel" type="date" value={draft.startsOn} onChange={(e) => setDraft((d) => ({ ...d, startsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Label required className="text-xs">Date</Label>
+                <Input required picker="wheel" type="date" value={draft.startsOn} onChange={(e) => setDraft((d) => ({ ...d, startsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Starts</Label>
@@ -260,12 +262,12 @@ export function ServiceFormDialog({
           ) : (
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-xs">Start date</Label>
-                <Input picker="wheel" type="date" value={draft.startsOn} onChange={(e) => setDraft((d) => ({ ...d, startsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Label required className="text-xs">Start date</Label>
+                <Input required picker="wheel" type="date" value={draft.startsOn} onChange={(e) => setDraft((d) => ({ ...d, startsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">End date</Label>
-                <Input picker="wheel" type="date" value={draft.endsOn} onChange={(e) => setDraft((d) => ({ ...d, endsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Label required className="text-xs">End date</Label>
+                <Input required picker="wheel" type="date" value={draft.endsOn} onChange={(e) => setDraft((d) => ({ ...d, endsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Starts</Label>
@@ -279,9 +281,9 @@ export function ServiceFormDialog({
           )}
           {isHq ? (
             <div className="space-y-1.5">
-              <Label className="text-xs">Branch</Label>
-              <select value={draft.branchId} onChange={(e) => setDraft((d) => ({ ...d, branchId: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
-                <option value="">Not assigned</option>
+              <Label required className="text-xs">Branch</Label>
+              <select required value={draft.branchId} onChange={(e) => setDraft((d) => ({ ...d, branchId: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+                <option value="">Select a branch</option>
                 {(branches.data?.data ?? []).map((b) => <option key={b.branchId} value={b.branchId}>{b.name}</option>)}
               </select>
             </div>
@@ -293,7 +295,7 @@ export function ServiceFormDialog({
           <Button type="submit" disabled={createService.isPending || updateService.isPending} className="h-10 w-full rounded-lg text-sm">
             {service ? "Save changes" : "Add service"}
           </Button>
-        </form>
+        </ValidatedForm>
       </DialogContent>
     </Dialog>
   );

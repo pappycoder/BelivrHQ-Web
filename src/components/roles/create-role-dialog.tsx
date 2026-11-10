@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,8 +31,7 @@ import { Button } from "@/components/ui/button";
 import { useCreateRole } from "@/hooks/use-roles";
 
 const createRoleSchema = z.object({
-  label: z
-    .string()
+  label: z.string().trim()
     .min(3, "Name must be at least 3 characters")
     .max(50, "Name must be at most 50 characters"),
   description: z.string().max(200, "Description must be at most 200 characters").optional(),
@@ -103,8 +104,8 @@ export function CreateRoleDialog({ open, onOpenChange, onCreated }: CreateRoleDi
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField required
               control={form.control}
               name="label"
               render={({ field }) => (
@@ -153,7 +154,7 @@ export function CreateRoleDialog({ open, onOpenChange, onCreated }: CreateRoleDi
                 {createMutation.isPending ? "Creating..." : "Create Role"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

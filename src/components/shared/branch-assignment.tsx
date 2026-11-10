@@ -18,7 +18,7 @@ interface AssignedRecord {
   branchName?: string;
 }
 
-/** Unchanged edits omit branchId, preserving legacy and archived assignments. */
+/** Unchanged assigned edits omit branchId, preserving archived assignments. */
 export function useBranchAssignment(
   record?: AssignedRecord | null,
   enabled = true,
@@ -53,7 +53,7 @@ export function useBranchAssignment(
       setError("Your profile is still loading.");
       return null;
     }
-    if (record && (!isHq || value === (record.branchId ?? ""))) return {};
+    if (record?.branchId && (!isHq || value === record.branchId)) return {};
     const selected = isHq ? value : profile.branchId;
     if (
       !selected ||
@@ -104,7 +104,7 @@ export function BranchAssignmentField({
   } = assignment;
   return (
     <div className="space-y-2">
-      <Label htmlFor={id}>Branch{!record ? " *" : ""}</Label>
+      <Label htmlFor={id} required>Branch</Label>
       {isHq ? (
         <Select
           value={value}
@@ -116,9 +116,9 @@ export function BranchAssignmentField({
           }}
           disabled={disabled || branches.isLoading}
         >
-          <SelectTrigger id={id} className="w-full" aria-invalid={!!error}>
+          <SelectTrigger id={id} className="w-full" aria-required="true" aria-invalid={!!error}>
             <SelectValue
-              placeholder={record ? "Church-wide" : "Select a branch"}
+              placeholder="Select a branch"
             />
           </SelectTrigger>
           <SelectContent>

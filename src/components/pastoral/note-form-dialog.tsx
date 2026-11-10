@@ -1,4 +1,6 @@
 "use client";
+
+import { ValidatedForm } from "@/components/ui/validated-form";
 import { WorkspaceFormSection } from "@/components/workspace/workspace-presentation";
 
 import * as React from "react";
@@ -42,8 +44,8 @@ import {
 } from "@/hooks/use-pastoral";
 
 const noteSchema = z.object({
-  memberId: z.string().min(1, "Select a member"),
-  content: z.string().min(1, "Note content is required"),
+  memberId: z.string().trim().min(1, "Select a member"),
+  content: z.string().trim().min(1, "Note content is required"),
   confidentiality: z.enum(["standard", "confidential", "restricted"]),
   tags: z.string(),
 });
@@ -163,9 +165,9 @@ export function NoteFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <WorkspaceFormSection title="Member and note">
-              <FormField
+              <FormField required
                 control={form.control}
                 name="memberId"
                 render={({ field }) => (
@@ -189,7 +191,7 @@ export function NoteFormDialog({
                 )}
               />
 
-              <FormField
+              <FormField required
                 control={form.control}
                 name="content"
                 render={({ field }) => (
@@ -208,7 +210,7 @@ export function NoteFormDialog({
               />
             </WorkspaceFormSection>
             <WorkspaceFormSection title="Access and organization">
-              <FormField
+              <FormField required
                 control={form.control}
                 name="confidentiality"
                 render={({ field }) => (
@@ -276,7 +278,7 @@ export function NoteFormDialog({
                     : "Add Note"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

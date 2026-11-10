@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import * as React from "react";
 import {
   PeopleFormSection,
@@ -35,7 +37,7 @@ import {
 import { MemberCombobox } from "@/components/members/member-combobox";
 
 const familySchema = z.object({
-  name: z.string().min(1, "Family name is required"),
+  name: z.string().trim().min(1, "Family name is required"),
   headId: z.string().optional(),
 });
 
@@ -136,9 +138,9 @@ export function FamilyFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <PeopleFormSection title="Family details">
-              <FormField
+              <FormField required
                 control={form.control}
                 name="name"
                 render={({ field }) => (
@@ -201,7 +203,7 @@ export function FamilyFormDialog({
                 {pending ? "Saving..." : isEdit ? "Save Changes" : "Add Family"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

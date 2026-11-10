@@ -320,7 +320,7 @@ test("calendar navigation, overflow, Sunday services, date defaults and preview 
   await page
     .getByRole("button", { name: "Create event on selected day" })
     .click();
-  await expect(page.getByLabel("Event Date *", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("Event Date", { exact: true })).toHaveValue(
     "2026-11-08",
   );
   await page.getByRole("button", { name: "Cancel", exact: true }).click();
@@ -441,7 +441,7 @@ test("tier management dialogs return keyboard focus without changing data", asyn
   });
   await trigger.click();
   await page.getByRole("menuitem", { name: "Edit tier", exact: true }).click();
-  await expect(page.getByLabel("Name *", { exact: true })).toHaveValue(
+  await expect(page.getByLabel("Name", { exact: true })).toHaveValue(
     "General Admission",
   );
   await page.keyboard.press("Escape");

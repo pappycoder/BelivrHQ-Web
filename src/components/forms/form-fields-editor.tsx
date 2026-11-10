@@ -162,7 +162,7 @@ export function FormFieldsEditor({
                 className="space-y-4 border-t border-line bg-card p-4"
               >
                 <div className="space-y-2">
-                  <Label htmlFor={`${prefix}-label`}>Question label</Label>
+                  <Label required htmlFor={`${prefix}-label`}>Question label</Label>
                   <Input
                     id={`${prefix}-label`}
                     value={field.label}
@@ -179,7 +179,7 @@ export function FormFieldsEditor({
                 </div>
                 <div className="grid items-start gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor={`${prefix}-type`}>Answer type</Label>
+                    <Label required htmlFor={`${prefix}-type`}>Answer type</Label>
                     <Select
                       value={field.type}
                       onValueChange={(value) =>
@@ -217,7 +217,7 @@ export function FormFieldsEditor({
                 </div>
                 {(field.type === "dropdown" || field.type === "checkbox") && (
                   <div className="space-y-2">
-                    <Label htmlFor={`${prefix}-options`}>
+                    <Label required htmlFor={`${prefix}-options`}>
                       Options (one per line)
                     </Label>
                     <textarea
@@ -246,7 +246,7 @@ export function FormFieldsEditor({
                     Advanced: answer identifier
                   </summary>
                   <div className="mt-3 space-y-2">
-                    <Label htmlFor={`${prefix}-key`}>Field Key</Label>
+                    <Label required htmlFor={`${prefix}-key`}>Field Key</Label>
                     <Input
                       id={`${prefix}-key`}
                       value={field.key}

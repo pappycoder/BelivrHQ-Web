@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import { ListTable } from "@/components/shared/list-table";
 import { LoadingState } from "@/components/shared/loading-state";
 
@@ -409,9 +411,9 @@ export function GeneralAttendancePanel({
       compact ? `general-inline-${fieldId}-${key}` : `general-${key}`;
     const countInput = (key: keyof typeof emptyCounts, label: string) => (
       <div key={key} className="space-y-1.5">
-        <Label htmlFor={id(key)} className="text-xs">
+        <Label required={key === "total"} htmlFor={id(key)} className="text-xs">
           {label}
-          {key === "total" ? " *" : " (optional)"}
+          {key === "total" ? "" : " (optional)"}
         </Label>
         <Input
           id={id(key)}
@@ -432,14 +434,14 @@ export function GeneralAttendancePanel({
       </div>
     );
     return (
-      <form
+      <ValidatedForm
         onSubmit={submit}
         aria-label={compact ? "Reported headcount" : undefined}
         className="space-y-3"
       >
         <div className="grid items-start gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor={id("date")}>Attendance date</Label>
+            <Label required htmlFor={id("date")}>Attendance date</Label>
             {controlled && !editing ? (
               <p
                 id={id("date")}
@@ -463,7 +465,7 @@ export function GeneralAttendancePanel({
         </div>
         {!editing && !target?.branchId && profile?.isAdminHq && (
           <div>
-            <Label>Branch</Label>
+            <Label required>Branch</Label>
             <BranchFilter
               value={recordBranch}
               onChange={setRecordBranch}
@@ -503,7 +505,7 @@ export function GeneralAttendancePanel({
             {save.isPending ? "Saving…" : "Save attendance"}
           </Button>
         </div>
-      </form>
+      </ValidatedForm>
     );
   }
   return (

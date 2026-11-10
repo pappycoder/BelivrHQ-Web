@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import * as React from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,8 +51,8 @@ import {
 } from "@/hooks/use-assets";
 
 const assetSchema = z.object({
-  assetTag: z.string().min(1, "Asset tag is required").max(50),
-  name: z.string().min(1, "Asset name is required").max(200),
+  assetTag: z.string().trim().min(1, "Asset tag is required").max(50),
+  name: z.string().trim().min(1, "Asset name is required").max(200),
   description: z.string().optional(),
   imageUrl: z.string().optional(),
   categoryId: z.string().optional(),
@@ -58,7 +60,7 @@ const assetSchema = z.object({
   brand: z.string().optional(),
   model: z.string().optional(),
   departmentId: z.string().optional(),
-  branchId: z.string().optional(),
+  branchId: z.string().trim().min(1, "Select a branch"),
   custodianId: z.string().optional(),
   custodianName: z.string().optional(),
   condition: z.string().optional(),
@@ -230,7 +232,7 @@ export function AssetFormDialog({
 
   const editor = (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {(categoriesQuery.error ||
           branchesQuery.error ||
           departmentsQuery.error) && (
@@ -244,7 +246,7 @@ export function AssetFormDialog({
             <h2 className="text-lg font-semibold">Identity and description</h2>
           </legend>
           <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
-            <FormField
+            <FormField required
               control={form.control}
               name="name"
               render={({ field }) => (
@@ -257,7 +259,7 @@ export function AssetFormDialog({
                 </FormItem>
               )}
             />
-            <FormField
+            <FormField required
               control={form.control}
               name="assetTag"
               render={({ field }) => (
@@ -370,7 +372,7 @@ export function AssetFormDialog({
             <h2 className="text-lg font-semibold">Assignment and location</h2>
           </legend>
           <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
-            <FormField
+            <FormField required
               control={form.control}
               name="branchId"
               render={({ field }) => (
@@ -679,7 +681,7 @@ export function AssetFormDialog({
                 : "Register Asset"}
           </Button>
         </DialogFooter>
-      </form>
+      </ValidatedForm>
     </Form>
   );
   if (presentation === "page") return editor;

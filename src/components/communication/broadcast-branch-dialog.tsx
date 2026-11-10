@@ -1,4 +1,6 @@
 "use client";
+
+import { RequiredFieldsNotice } from "@/components/ui/required-fields";
 import {
   BranchAssignmentField,
   useBranchAssignment,
@@ -38,6 +40,7 @@ export function BroadcastBranchDialog({
             Changing branch recalculates recipients before the scheduled send.
           </DialogDescription>
         </DialogHeader>
+        <RequiredFieldsNotice />
         <BranchAssignmentField
           assignment={assignment}
           disabled={update.isPending}

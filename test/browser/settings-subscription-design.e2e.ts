@@ -497,6 +497,7 @@ test("resuming a pending checkout uses its saved terms after browsing a differen
     cycle: "annual",
     gateway: "flutterwave",
     currency: "USD",
+    callbackOrigin: "http://127.0.0.1:3107",
   });
   await checkout.close();
 });

@@ -261,7 +261,7 @@ test("inline entry preserves failed values, validates subtotals and clears count
     exact: true,
   });
   await form.getByLabel("Attendance date", { exact: true }).fill("2026-10-20");
-  await form.getByLabel("Total attendance *", { exact: true }).fill("100");
+  await form.getByLabel("Total attendance", { exact: true }).fill("100");
   await form.getByLabel("Adults (optional)", { exact: true }).fill("101");
   await form
     .getByRole("button", { name: "Save attendance", exact: true })
@@ -277,14 +277,14 @@ test("inline entry preserves failed values, validates subtotals and clears count
     .click();
   await expect(form.getByRole("alert")).toBeVisible();
   await expect(
-    form.getByLabel("Total attendance *", { exact: true }),
+    form.getByLabel("Total attendance", { exact: true }),
   ).toHaveValue("100");
   state.failSave = false;
   await form
     .getByRole("button", { name: "Save attendance", exact: true })
     .click();
   await expect(
-    form.getByLabel("Total attendance *", { exact: true }),
+    form.getByLabel("Total attendance", { exact: true }),
   ).toHaveValue("");
   await expect(form.getByLabel("Attendance date", { exact: true })).toHaveValue(
     "2026-10-20",
@@ -311,14 +311,14 @@ test("changing service confirms and discards only after approval", async ({
     name: "Reported headcount",
     exact: true,
   });
-  await form.getByLabel("Total attendance *", { exact: true }).fill("75");
+  await form.getByLabel("Total attendance", { exact: true }).fill("75");
   page.once("dialog", (dialog) => dialog.dismiss());
   await page.getByRole("combobox").first().click();
   await page
     .getByRole("option", { name: "Evening Service", exact: true })
     .click();
   await expect(
-    form.getByLabel("Total attendance *", { exact: true }),
+    form.getByLabel("Total attendance", { exact: true }),
   ).toHaveValue("75");
   await expect(page.getByRole("combobox").first()).toContainText(
     "Family Service",
@@ -329,7 +329,7 @@ test("changing service confirms and discards only after approval", async ({
     .getByRole("option", { name: "Evening Service", exact: true })
     .click();
   await expect(
-    form.getByLabel("Total attendance *", { exact: true }),
+    form.getByLabel("Total attendance", { exact: true }),
   ).toHaveValue("");
 });
 test("create-only headcount entry makes no records request", async ({

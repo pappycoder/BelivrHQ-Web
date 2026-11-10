@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import * as React from "react";
 import { VisitorFormSection } from "./visitor-presentation";
 import { useForm } from "react-hook-form";
@@ -36,11 +38,11 @@ import { useConvertVisitor, type Visitor } from "@/hooks/use-visitors";
 import { useBranchesList } from "@/hooks/use-branches";
 
 const convertSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
+  firstName: z.string().trim().min(1, "First name is required"),
+  lastName: z.string().trim().min(1, "Last name is required"),
   email: z.string().email("Invalid email address").optional().or(z.literal("")),
   phone: z.string().optional(),
-  branchId: z.string().optional(),
+  branchId: z.string().trim().min(1, "Select a branch"),
 });
 
 type ConvertFormValues = z.infer<typeof convertSchema>;
@@ -84,7 +86,7 @@ export function ConvertVisitorDialog({
       lastName: visitor?.lastName ?? "",
       email: visitor?.email ?? "",
       phone: visitor?.phone ?? "",
-      branchId: "",
+      branchId: visitor?.branchId ?? "",
     },
   });
 
@@ -95,7 +97,7 @@ export function ConvertVisitorDialog({
         lastName: visitor.lastName ?? "",
         email: visitor.email ?? "",
         phone: visitor.phone ?? "",
-        branchId: "",
+        branchId: visitor?.branchId ?? "",
       });
     }
   }, [open, visitor, form]);
@@ -153,10 +155,10 @@ export function ConvertVisitorDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <Section title="Member details">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <FormField
+                <FormField required
                   control={form.control}
                   name="firstName"
                   render={({ field }) => (
@@ -169,7 +171,7 @@ export function ConvertVisitorDialog({
                     </FormItem>
                   )}
                 />
-                <FormField
+                <FormField required
                   control={form.control}
                   name="lastName"
                   render={({ field }) => (
@@ -218,7 +220,7 @@ export function ConvertVisitorDialog({
               </div>
             </Section>
             <Section title="Membership location">
-              <FormField
+              <FormField required
                 control={form.control}
                 name="branchId"
                 render={({ field }) => (
@@ -259,7 +261,7 @@ export function ConvertVisitorDialog({
                 {pending ? "Converting..." : "Convert to Member"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

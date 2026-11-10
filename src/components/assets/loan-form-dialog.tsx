@@ -1,4 +1,6 @@
 "use client";
+
+import { ValidatedForm } from "@/components/ui/validated-form";
 import { WorkspaceFormSection } from "@/components/workspace/workspace-presentation";
 
 import * as React from "react";
@@ -44,7 +46,7 @@ const CONDITION_OPTIONS: Array<{ value: AssetCondition; label: string }> = [
 ];
 
 const loanSchema = z.object({
-  expectedReturnDate: z.string().min(1, "Expected return date is required"),
+  expectedReturnDate: z.string().trim().min(1, "Expected return date is required"),
   borrowerMemberId: z.string().optional(),
   borrowedByName: z.string().optional(),
   conditionBefore: z.string().optional(),
@@ -128,7 +130,7 @@ export function LoanFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <WorkspaceFormSection title="Borrower">
               <FormField
                 control={form.control}
@@ -175,7 +177,7 @@ export function LoanFormDialog({
             </WorkspaceFormSection>
             <WorkspaceFormSection title="Loan details">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField
+                <FormField required
                   control={form.control}
                   name="expectedReturnDate"
                   render={({ field }) => (
@@ -249,7 +251,7 @@ export function LoanFormDialog({
                 {pending ? "Saving..." : "Loan Out"}
               </Button>
             </DialogFooter>
-          </form>
+          </ValidatedForm>
         </Form>
       </DialogContent>
     </Dialog>

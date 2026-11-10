@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import { CommunicationRegisterControls, useCommunicationRegister } from "@/components/communication/register-controls";
 import { ListTable } from "@/components/shared/list-table";
 import { BotProtection } from "@/components/shared/bot-protection";
@@ -257,23 +259,23 @@ export default function BroadcastsPage() {
               A name, a published template, an audience, sent once, remembered kindly.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={submit} className="space-y-4">
+          <ValidatedForm onSubmit={submit} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-xs">Name</Label>
-                <Input value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="November news" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Label required className="text-xs">Name</Label>
+                <Input required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="November news" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Channel</Label>
-                <select value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as BroadcastChannel, templateId: "" }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+                <Label required className="text-xs">Channel</Label>
+                <select required value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as BroadcastChannel, templateId: "" }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
                   {BROADCAST_CHANNELS.map((c) => <option key={c} value={c}>{BROADCAST_CHANNEL_LABELS[c]}</option>)}
                 </select>
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Template ({TEMPLATE_CHANNEL_LABELS[draft.channel as TemplateChannel] ?? draft.channel} · published only)</Label>
+              <Label required className="text-xs">Template ({TEMPLATE_CHANNEL_LABELS[draft.channel as TemplateChannel] ?? draft.channel} · published only)</Label>
               {channelTemplates.length ? (
-                <select value={draft.templateId} onChange={(e) => setDraft((d) => ({ ...d, templateId: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+                <select required value={draft.templateId} onChange={(e) => setDraft((d) => ({ ...d, templateId: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
                   <option value="">Choose a template…</option>
                   {channelTemplates.map((t) => <option key={t.templateId} value={t.templateId}>{t.name}</option>)}
                 </select>
@@ -293,9 +295,9 @@ export default function BroadcastsPage() {
                 </select>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Branch</Label>
-                <select disabled={!isHq} value={draft.audienceBranch} onChange={(e) => setDraft((d) => ({ ...d, audienceBranch: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none disabled:opacity-50">
-                  <option value="">All branches</option>
+                <Label required className="text-xs">Branch</Label>
+                <select required disabled={!isHq} value={draft.audienceBranch} onChange={(e) => setDraft((d) => ({ ...d, audienceBranch: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none disabled:opacity-50">
+                  <option value="">Select a branch</option>
                   {(branches.data?.data ?? []).map((b) => <option key={b.branchId} value={b.branchId}>{b.name}</option>)}
                 </select>
               </div>
@@ -316,7 +318,7 @@ export default function BroadcastsPage() {
             <Button type="submit" disabled={createBroadcast.isPending || !captchaReady} className="h-10 w-full gap-2 rounded-lg text-sm">
               <Send className="size-4" /> {createBroadcast.isPending ? "Queueing…" : draft.scheduledAt ? "Schedule broadcast" : "Send now"}
             </Button>
-          </form>
+          </ValidatedForm>
         </DialogContent>
       </Dialog>
     </div>

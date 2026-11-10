@@ -1,5 +1,7 @@
 "use client";
 
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import {
   BranchAssignmentField,
   useBranchAssignment,
@@ -36,8 +38,8 @@ import {
 } from "@/hooks/use-forms";
 
 const fieldSchema = z.object({
-  key: z.string().min(1, "Field key is required"),
-  label: z.string().min(1, "Label is required"),
+  key: z.string().trim().min(1, "Field key is required"),
+  label: z.string().trim().min(1, "Label is required"),
   type: z.enum(FIELD_TYPES),
   required: z.boolean().optional(),
   options: z.array(z.string()).optional(),
@@ -45,7 +47,7 @@ const fieldSchema = z.object({
 
 const formSchema = z
   .object({
-    title: z.string().min(1, "Title is required").max(200),
+    title: z.string().trim().min(1, "Title is required").max(200),
     description: z.string().max(2000).optional(),
     fields: z.array(fieldSchema).min(1, "Add at least one field"),
     status: z.enum(["draft", "published", "closed"]).optional(),
@@ -264,7 +266,7 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
           </p>
         )}
         <div className="grid min-w-0 items-start gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
-          <form
+          <ValidatedForm schemaValidation
             id={builderId}
             onSubmit={formControl.handleSubmit(handleSubmit, () =>
               setMode("edit"),
@@ -284,7 +286,7 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
                 assignment={branchAssignment}
                 disabled={saving}
               />
-              <FormField
+              <FormField required
                 control={formControl.control}
                 name="title"
                 render={({ field }) => (
@@ -325,7 +327,7 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
               title="Questions"
               description="Choose the answer types and order that work for your form."
             >
-              <FormField
+              <FormField required
                 control={formControl.control}
                 name="fields"
                 render={() => (
@@ -365,7 +367,7 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
                 )}
               />
             </SectionCard>
-          </form>
+          </ValidatedForm>
           <aside
             className={cn(
               "min-w-0 xl:sticky xl:top-6 xl:block",

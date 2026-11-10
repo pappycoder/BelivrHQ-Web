@@ -1,4 +1,6 @@
 "use client";
+
+import { ValidatedForm } from "@/components/ui/validated-form";
 import { MeetingAttendanceRoster } from "./meeting-attendance-roster";
 import { useState } from "react";
 import {
@@ -76,7 +78,7 @@ export function DepartmentAttendancePanel({
               visitor. Saving the same member and date updates their attendance.
             </DialogDescription>
           </DialogHeader>
-          <form
+          <ValidatedForm
             className="space-y-4"
             onSubmit={async (event) => {
               event.preventDefault();
@@ -98,7 +100,7 @@ export function DepartmentAttendancePanel({
             }}
           >
             <fieldset disabled={savingRoster} className="space-y-4">
-              <Label className="grid gap-2">
+              <Label required className="grid gap-2">
                 Meeting date
                 <Input
                   picker="wheel"
@@ -137,7 +139,7 @@ export function DepartmentAttendancePanel({
                   />
                 </Label>
               )}
-              <Label className="grid gap-2">
+              <Label required className="grid gap-2">
                 Status
                 <select
                   aria-label="Department attendance status"
@@ -152,7 +154,7 @@ export function DepartmentAttendancePanel({
                   ))}
                 </select>
               </Label>
-              <Label className="grid gap-2">
+              <Label required className="grid gap-2">
                 Notes
                 <Input
                   aria-label="Department attendance notes"
@@ -193,7 +195,7 @@ export function DepartmentAttendancePanel({
                 )}
               </div>
             </fieldset>
-          </form>
+          </ValidatedForm>
         </DialogContent>
       </Dialog>
     </>

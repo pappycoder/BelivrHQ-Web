@@ -1,5 +1,7 @@
 "use client";
 
+import { RequiredFieldsNotice, RequiredIndicator } from "@/components/ui/required-fields";
+
 import * as React from "react";
 import { ListTable } from "@/components/shared/list-table";
 import Link from "next/link";
@@ -421,9 +423,10 @@ function UploadDialog({ open, onOpenChange, folders }: { open: boolean; onOpenCh
           <DialogDescription className="text-xs">Images are optimised automatically; audio, video and documents go straight to the folder&apos;s store.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
+          <RequiredFieldsNotice />
           <label className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed border-line bg-muted/20 py-8 text-center transition-colors hover:border-brand/40">
             <UploadCloud className="size-6 text-ink-faint" />
-            <span className="text-xs font-medium">Choose files</span>
+            <span className="text-xs font-medium">Choose files <RequiredIndicator /></span>
             <span className="text-[10px] text-ink-faint">JPG/PNG → WebP · audio/video/docs up to 50 MB</span>
             <input
               type="file"

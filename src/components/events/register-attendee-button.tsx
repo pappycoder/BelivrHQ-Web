@@ -1,5 +1,8 @@
 "use client";
 
+import { RequiredIndicator } from "@/components/ui/required-fields";
+import { ValidatedForm } from "@/components/ui/validated-form";
+
 import { useRef, useState } from "react";
 import { Loader2, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -90,7 +93,7 @@ export function RegisterAttendeeButton({ event }: { event: EventItem }) {
             the event check-in page.
           </DialogDescription>
         </DialogHeader>
-        <form
+        <ValidatedForm
           onSubmit={(event) => {
             event.preventDefault();
             void submit();
@@ -98,7 +101,7 @@ export function RegisterAttendeeButton({ event }: { event: EventItem }) {
           className="space-y-4"
         >
           <fieldset disabled={registration.isPending} className="space-y-2">
-            <p className="text-sm font-medium">Member</p>
+            <p className="text-sm font-medium">Member <RequiredIndicator /></p>
             <MemberCombobox
               value={memberId}
               selectedName={memberName}
@@ -139,7 +142,7 @@ export function RegisterAttendeeButton({ event }: { event: EventItem }) {
               {registration.isPending ? "Registering…" : "Confirm Registration"}
             </Button>
           </DialogFooter>
-        </form>
+        </ValidatedForm>
       </DialogContent>
     </Dialog>
   );
