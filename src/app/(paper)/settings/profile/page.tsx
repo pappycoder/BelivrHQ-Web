@@ -260,11 +260,17 @@ export default function SettingsProfilePage() {
             </div>
           }
         >
+          <RequiredFieldsNotice className="mb-4" />
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <RequiredFieldsNotice />
-              <Label required className="text-xs">First name</Label>
+              <Label htmlFor="profile-first-name" required className="text-xs">First name</Label>
               <Input
+                id="profile-first-name"
+                name="firstName"
+                type="text"
+                autoComplete="given-name"
+                placeholder="Enter your first name"
+                required
                 value={form.firstName}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, firstName: e.target.value }))
@@ -273,8 +279,14 @@ export default function SettingsProfilePage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label required className="text-xs">Last name</Label>
+              <Label htmlFor="profile-last-name" required className="text-xs">Last name</Label>
               <Input
+                id="profile-last-name"
+                name="lastName"
+                type="text"
+                autoComplete="family-name"
+                placeholder="Enter your last name"
+                required
                 value={form.lastName}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, lastName: e.target.value }))
@@ -283,8 +295,13 @@ export default function SettingsProfilePage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Phone</Label>
+              <Label htmlFor="profile-phone" className="text-xs">Phone</Label>
               <Input
+                id="profile-phone"
+                name="phone"
+                type="tel"
+                autoComplete="tel"
+                placeholder="Enter your phone number"
                 value={form.phone}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, phone: e.target.value }))
@@ -293,8 +310,13 @@ export default function SettingsProfilePage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Email (admin-managed)</Label>
+              <Label htmlFor="profile-email" className="text-xs">Email (admin-managed)</Label>
               <Input
+                id="profile-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="No email on file"
                 value={p.email ?? ""}
                 readOnly
                 disabled

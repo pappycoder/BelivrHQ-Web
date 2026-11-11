@@ -64,7 +64,7 @@ export function FieldRow({
   );
 }
 
-/** Label-left / input-right RHF field using the shared row grammar. */
+/** Stacked RHF field using the shared settings spacing. */
 export function InfoField<T extends FieldValues>({
   label,
   name,

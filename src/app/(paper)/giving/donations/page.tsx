@@ -4,11 +4,15 @@ import { useManageConfirmation } from "@/components/shared/manage-confirmation";
 
 import { ListTable } from "@/components/shared/list-table";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 import * as React from "react";
 import { givingSource } from "@/lib/giving-source";
 import { GivingSourceIdentity } from "@/components/giving/giving-source-identity";
 import {
+  CalendarDays,
+  ChevronDown,
   Download,
   FileDown,
   HandCoins,
@@ -206,6 +210,9 @@ export default function GivingDonationsPage() {
   const [categoryId, setCategoryId] = React.useState("");
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
+  const [dateOpen, setDateOpen] = React.useState(false);
+  const [dateDraft, setDateDraft] = React.useState({ from: "", to: "" });
+  const invalidRange = !!dateDraft.from && !!dateDraft.to && dateDraft.from > dateDraft.to;
   const [recordOpen, setRecordOpen] = React.useState(false);
 
   const params = React.useMemo(
@@ -357,31 +364,44 @@ export default function GivingDonationsPage() {
             </option>
           ))}
         </select>
-        <span className="flex flex-wrap items-center gap-1.5 text-[11px] text-ink-faint">
-          <Input
-            picker="native"
-            type="date"
-            value={startDate}
-            onChange={(e) => {
-              setStartDate(e.target.value);
-              setPage(1);
-            }}
-            className="h-8 rounded-full border border-line bg-card px-2.5 text-[11px] outline-none"
-            aria-label="From date"
-          />
-          →
-          <Input
-            picker="native"
-            type="date"
-            value={endDate}
-            onChange={(e) => {
-              setEndDate(e.target.value);
-              setPage(1);
-            }}
-            className="h-8 rounded-full border border-line bg-card px-2.5 text-[11px] outline-none"
-            aria-label="To date"
-          />
-        </span>
+        <Popover open={dateOpen} onOpenChange={open => {
+          if (open) setDateDraft({ from: startDate, to: endDate });
+          setDateOpen(open);
+        }}>
+          <PopoverTrigger asChild>
+            <Button type="button" variant="outline" size="sm" aria-label={startDate || endDate ? `Date range, ${startDate || "any start"} to ${endDate || "any end"}` : "Date range"}
+              className={`h-8 gap-2 rounded-full border-line text-[11px] ${startDate || endDate ? "bg-brand/10 text-brand" : "bg-card"}`}>
+              <CalendarDays className="size-3.5" />
+              {startDate || endDate ? `${startDate || "Any start"} → ${endDate || "Any end"}` : "Date range"}
+              <ChevronDown className="size-3" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="start" aria-label="Filter giving dates" className="space-y-4">
+            <p className="text-sm font-medium">Giving date range</p>
+            <div className="space-y-2">
+              <Label htmlFor="giving-date-from">From date</Label>
+              <Input id="giving-date-from" name="fromDate" picker="native" type="date"
+                value={dateDraft.from} max={dateDraft.to || undefined}
+                onChange={event => setDateDraft(value => ({ ...value, from: event.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="giving-date-to">To date</Label>
+              <Input id="giving-date-to" name="toDate" picker="native" type="date"
+                value={dateDraft.to} min={dateDraft.from || undefined}
+                aria-invalid={invalidRange || undefined} aria-describedby={invalidRange ? "giving-date-error" : undefined}
+                onChange={event => setDateDraft(value => ({ ...value, to: event.target.value }))} />
+            </div>
+            {invalidRange && <p id="giving-date-error" role="alert" className="text-xs text-destructive">To date must be on or after From date.</p>}
+            <div className="flex justify-between gap-2 border-t border-line pt-3">
+              <Button type="button" variant="ghost" size="sm" onClick={() => {
+                setStartDate(""); setEndDate(""); setDateDraft({ from: "", to: "" }); setPage(1); setDateOpen(false);
+              }}>Clear dates</Button>
+              <Button type="button" size="sm" disabled={invalidRange} onClick={() => {
+                setStartDate(dateDraft.from); setEndDate(dateDraft.to); setPage(1); setDateOpen(false);
+              }}>Apply dates</Button>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {transactions.isLoading ? (
