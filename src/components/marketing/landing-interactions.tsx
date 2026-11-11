@@ -8,6 +8,7 @@ import Image from "next/image";
 import {
   ArrowDown,
   ArrowRight,
+  ArrowUpRight,
   Check,
   CheckCheck,
   ChevronDown,
@@ -47,7 +48,7 @@ export function LandingMotion({ children }: { children: React.ReactNode }) {
       `.${styles.enterpriseCopy}`, `.${styles.networkIllustration}`, `.${styles.securityStrip}`,
       `.${styles.integrationsSection} > div:first-child`, `.${styles.providerGrid} > article`,
       `.${styles.sectionHeading}`, `.${styles.planCard}`, `.${styles.faqSection} > div:first-child`,
-      `.${styles.faqList} > details`, `.${styles.finalCta} > *`, "h1 em", "h2 em",
+      `.${styles.faqDesk}`, `.${styles.finalCta} > *`, "h1 em", "h2 em",
     ];
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {
@@ -193,6 +194,83 @@ export function FeatureCarousel({ children }: { children: React.ReactNode }) {
         </div>
       </div>
     </div>
+  );
+}
+
+const faqTopics = ["Finding your fit", "Branches", "Your records", "Providers", "Financial access", "Getting started"];
+
+export function FaqSection({ questions }: { questions: readonly (readonly [string, string])[] }) {
+  const [selected, setSelected] = React.useState(0);
+  const [enhanced, setEnhanced] = React.useState(false);
+  const tabs = React.useRef<(HTMLButtonElement | null)[]>([]);
+  React.useEffect(() => setEnhanced(true), []);
+  function navigate(event: React.KeyboardEvent, index: number) {
+    let next = index;
+    if (event.key === "ArrowDown" || event.key === "ArrowRight") next = (index + 1) % questions.length;
+    else if (event.key === "ArrowUp" || event.key === "ArrowLeft") next = (index - 1 + questions.length) % questions.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = questions.length - 1;
+    else return;
+    event.preventDefault();
+    setSelected(next);
+    tabs.current[next]?.focus();
+  }
+  return (
+    <section id="questions" className={styles.faqSection} aria-labelledby="faq-title">
+      <div className={styles.faqIntro}>
+        <div>
+          <span className={styles.eyebrow}>A FEW THINGS YOU MIGHT BE WONDERING</span>
+          <h2 id="faq-title">Good questions.<br /><em>Straight answers.</em></h2>
+        </div>
+        <p>Choosing a home for your church&apos;s work matters. Here&apos;s a little clarity before you begin.</p>
+      </div>
+      <div className={styles.faqDesk} hidden={!enhanced}>
+        <div className={styles.faqDeskHeader}>
+          <span><CircleHelp size={16} /> THE BELIVRHQ GUIDE</span>
+          <span>{String(questions.length).padStart(2, "0")} QUESTIONS, EXPLAINED</span>
+        </div>
+        <div className={styles.faqQuestionRail}>
+          <span className={styles.faqRailLabel}>CHOOSE A TOPIC</span>
+          <div className={styles.faqTopics} role="tablist" aria-label="Frequently asked questions" aria-orientation="vertical">
+            {questions.map(([question], index) => (
+              <button type="button" key={question} role="tab" id={`faq-question-${index}`}
+                ref={node => { tabs.current[index] = node; }}
+                aria-label={question} aria-selected={selected === index} aria-controls={`faq-answer-${index}`}
+                tabIndex={selected === index ? 0 : -1} onClick={() => setSelected(index)} onKeyDown={event => navigate(event, index)}>
+                <span className={styles.faqQuestionNumber}>{String(index + 1).padStart(2, "0")}</span>
+                <span className={styles.faqQuestionText}>
+                  <span className={styles.faqTopicName}>{faqTopics[index]}</span>
+                  <span className={styles.faqQuestionLabel}>{question}</span>
+                </span>
+                <ArrowUpRight size={16} aria-hidden="true" />
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className={styles.faqAnswerPanel} role="tabpanel" id={`faq-answer-${selected}`} aria-labelledby={`faq-question-${selected}`} tabIndex={0}>
+          <div key={selected} className={styles.faqAnswerContent}>
+            <div className={styles.faqAnswerMeta}>
+              <span>ANSWER {String(selected + 1).padStart(2, "0")}</span>
+              <span>{faqTopics[selected]}</span>
+            </div>
+            <span className={styles.faqAnswerNumber} aria-hidden="true">{String(selected + 1).padStart(2, "0")}</span>
+            <h3>{questions[selected][0]}</h3>
+            <p>{questions[selected][1]}</p>
+          </div>
+          <div className={styles.faqPanelFooter}>
+            <a href="#pricing">Explore the plans <ArrowUpRight size={17} /></a>
+            <span>{String(selected + 1).padStart(2, "0")} / {String(questions.length).padStart(2, "0")}</span>
+          </div>
+        </div>
+      </div>
+      <div className={`${styles.faqList} ${styles.faqFallback}`} hidden={enhanced}>
+        {questions.map(([question, answer], index) => (
+          <details key={question} open={index === 0}>
+            <summary>{question}<span><span /><span /></span></summary><p>{answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
   );
 }
 

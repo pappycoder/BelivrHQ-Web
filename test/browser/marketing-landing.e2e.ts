@@ -365,11 +365,9 @@ test("Enterprise has negotiated pricing without an amount or checkout in either 
 
 test("FAQs and section links work", async ({ page }) => {
   await page.goto("/");
-  const question = page
-    .locator("summary")
-    .filter({ hasText: "Can we subscribe to these plans today?" });
-  await question.click();
-  await expect(page.getByText(/complete secure checkout/)).toBeVisible();
+  const faq = page.locator("#questions");
+  await faq.getByRole("tab", { name: "Can we subscribe to these plans today?", exact: true }).click();
+  await expect(faq.getByRole("tabpanel")).toContainText("complete secure checkout");
   const missing = await page
     .locator('a[href^="#"]')
     .evaluateAll((anchors) =>
@@ -378,6 +376,79 @@ test("FAQs and section links work", async ({ page }) => {
         .filter((id) => id && !document.getElementById(id)),
     );
   expect(missing).toEqual([]);
+});
+
+for (const width of [320, 768, 1440]) {
+  test(`FAQ reading panel and topic index fit ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/#questions");
+    const faq = page.locator("#questions");
+    const tabs = faq.getByRole("tab");
+    await expect(tabs).toHaveCount(6);
+    await expect(faq.locator('[class*="faqFallback"]')).toBeHidden();
+    for (const tab of await tabs.all()) {
+      await tab.click();
+      const question = await tab.getAttribute("aria-label");
+      const panel = faq.getByRole("tabpanel");
+      await expect(panel.getByRole("heading", { level: 3 })).toHaveText(question!);
+      await expect(tab).toHaveAttribute("aria-selected", "true");
+      expect(await panel.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+      expect(await panel.locator('p').evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(15);
+    }
+    await tabs.first().click();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await expect(faq.getByRole("link", { name: "Explore the plans", exact: true })).toHaveAttribute("href", "#pricing");
+    await faq.screenshot({ path: `/tmp/belivrhq-faq-${width}.png`, style: "header { visibility: hidden !important; }" });
+  });
+}
+
+test("FAQ topics support keyboard navigation and a focusable answer", async ({ page }) => {
+  await page.goto("/#questions");
+  const faq = page.locator("#questions");
+  const tabs = faq.getByRole("tab");
+  await tabs.first().focus();
+  await page.keyboard.press("ArrowDown");
+  await expect(tabs.nth(1)).toBeFocused();
+  await expect(faq.getByRole("tabpanel")).toContainText("branch records and permissions");
+  await page.keyboard.press("End");
+  await expect(tabs.last()).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  await expect(tabs.first()).toBeFocused();
+  await page.keyboard.press("ArrowLeft");
+  await expect(tabs.last()).toBeFocused();
+  await page.keyboard.press("Home");
+  await expect(tabs.first()).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(faq.getByRole("tabpanel")).toBeFocused();
+});
+
+test("FAQ answer changes animate gently and respect reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/#questions");
+  const faq = page.locator("#questions");
+  await faq.getByRole("tab").nth(3).click();
+  const content = faq.getByRole("tabpanel").locator('[class*="faqAnswerContent"]');
+  await expect(content).toHaveCSS("animation-name", /faqAnswerIn/);
+  await expect(content).toHaveCSS("animation-duration", "0.38s");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(content).toHaveCSS("animation-name", "none");
+  await faq.getByRole("tab").nth(4).click();
+  await expect(faq.getByRole("tabpanel")).toContainText("HQ status on its own does not grant analytics access");
+});
+
+test("FAQ answers stay accessible without JavaScript", async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 900 } });
+  try {
+    const page = await context.newPage();
+    await page.goto("/#questions");
+    const faq = page.locator("#questions");
+    await expect(faq.locator('summary')).toHaveCount(6);
+    await expect(faq.getByRole('tablist')).toHaveCount(0);
+    await faq.locator('summary').filter({ hasText: "Can we subscribe to these plans today?" }).click();
+    await expect(faq.locator('details').last().locator('p')).toBeVisible();
+    await expect(faq.locator('details').last()).toContainText("complete secure checkout");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  } finally { await context.close(); }
 });
 
 for (const width of [320, 390, 768, 1440])

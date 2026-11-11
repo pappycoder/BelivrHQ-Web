@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import {
   FeatureCarousel,
+  FaqSection,
   LandingMotion,
   MarketingNavigation,
   PricingSection,
@@ -55,7 +56,7 @@ const questions = [
     "Can we subscribe to these plans today?",
     "Choose Essentials, Community or Network during registration, then sign in and complete secure checkout to activate your workspace. Yearly billing saves 10%. Renewals are manual. Enterprise pricing and onboarding scope are agreed with BelivrHQ before payment.",
   ],
-];
+] as const;
 
 export function LandingPage() {
   return (
@@ -458,41 +459,7 @@ export function LandingPage() {
 
         <PricingSection />
 
-        <section
-          id="questions"
-          className={styles.faqSection}
-          aria-labelledby="faq-title"
-        >
-          <div>
-            <span className={styles.eyebrow}>
-              A FEW THINGS YOU MIGHT BE WONDERING
-            </span>
-            <h2 id="faq-title">
-              Good questions.
-              <br />
-              <em>Straight answers.</em>
-            </h2>
-            <p>
-              Choosing a home for your church&apos;s work matters.
-              <br />
-              Here&apos;s a little clarity before you begin.
-            </p>
-          </div>
-          <div className={styles.faqList}>
-            {questions.map(([question, answer]) => (
-              <details key={question}>
-                <summary>
-                  {question}
-                  <span>
-                    <span />
-                    <span />
-                  </span>
-                </summary>
-                <p>{answer}</p>
-              </details>
-            ))}
-          </div>
-        </section>
+        <FaqSection questions={questions} />
         <section className={styles.finalCta}>
           <div className={styles.ctaMark} aria-hidden="true">
             <Heart size={30} />
