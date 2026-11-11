@@ -43,7 +43,7 @@ export function LandingMotion({ children }: { children: React.ReactNode }) {
     const animations = new Set<Animation>();
     const selectors = [
       `.${styles.heroCopy} > *`, `.${styles.heroScribble}`, `.${styles.productStage}`,
-      `.${styles.platformStrip}`, `.${styles.sectionIntro}`, `.${styles.featureBento} > article`,
+      `.${styles.platformStrip}`, `.${styles.sectionIntro}`,
       `.${styles.enterpriseCopy}`, `.${styles.networkIllustration}`, `.${styles.securityStrip}`,
       `.${styles.integrationsSection} > div:first-child`, `.${styles.providerGrid} > article`,
       `.${styles.sectionHeading}`, `.${styles.planCard}`, `.${styles.faqSection} > div:first-child`,
@@ -76,7 +76,7 @@ export function LandingMotion({ children }: { children: React.ReactNode }) {
       }
     }, { threshold: 0.12 });
     const ambientTargets = element.querySelectorAll([
-      `.${styles.featureBento} > article`, `.${styles.providerGrid} > article`,
+      `.${styles.providerGrid} > article`,
       `.${styles.planCard}`, `.${styles.heroScribble}`,
     ].join(","));
     ambientTargets.forEach((target) => ambientObserver.observe(target));
@@ -97,6 +97,102 @@ export function LandingMotion({ children }: { children: React.ReactNode }) {
     };
   }, []);
   return <div ref={root} className={styles.landing}>{children}</div>;
+}
+
+const featureNames = ["People & care", "Attendance", "Giving & records", "Communication", "Teams & groups"];
+
+export function FeatureCarousel({ children }: { children: React.ReactNode }) {
+  const cards = React.Children.toArray(children);
+  const [selected, setSelected] = React.useState(0);
+  const [ready, setReady] = React.useState(false);
+  const [visible, setVisible] = React.useState(false);
+  const [motionAllowed, setMotionAllowed] = React.useState(false);
+  const [hovered, setHovered] = React.useState(false);
+  const [focused, setFocused] = React.useState(false);
+  const root = React.useRef<HTMLDivElement>(null);
+  const touchStart = React.useRef<number | null>(null);
+  const move = (step: number) => setSelected(index => (index + step + cards.length) % cards.length);
+
+  React.useEffect(() => {
+    setReady(true);
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setMotionAllowed(!preference.matches);
+    sync();
+    preference.addEventListener("change", sync);
+    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: 0.2 });
+    if (root.current) observer.observe(root.current);
+    return () => { observer.disconnect(); preference.removeEventListener("change", sync); };
+  }, []);
+
+  React.useEffect(() => {
+    if (!visible || !motionAllowed || hovered || focused) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const schedule = () => {
+      clearTimeout(timer);
+      if (!document.hidden) timer = setTimeout(() => setSelected(index => (index + 1) % cards.length), 3000);
+    };
+    schedule();
+    document.addEventListener("visibilitychange", schedule);
+    return () => { clearTimeout(timer); document.removeEventListener("visibilitychange", schedule); };
+  }, [selected, visible, motionAllowed, hovered, focused, cards.length]);
+
+  return (
+    <div
+      ref={root}
+      className={styles.featureCarousel}
+      data-ready={ready}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Explore church features"
+      tabIndex={0}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocusCapture={() => setFocused(true)}
+      onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}
+      onKeyDown={event => {
+        if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+          event.preventDefault();
+          move(event.key === "ArrowRight" ? 1 : -1);
+        }
+      }}
+    >
+      <div
+        className={`${styles.featureBento} ${styles.featureArc}`}
+        onPointerDown={event => { if (event.pointerType === "touch") touchStart.current = event.clientX; }}
+        onPointerUp={event => {
+          if (touchStart.current === null) return;
+          const distance = event.clientX - touchStart.current;
+          touchStart.current = null;
+          if (Math.abs(distance) > 45) move(distance < 0 ? 1 : -1);
+        }}
+        onPointerCancel={() => { touchStart.current = null; }}
+      >
+        {cards.map((card, index) => {
+          const offset = (index - selected + cards.length + Math.floor(cards.length / 2)) % cards.length - Math.floor(cards.length / 2);
+          const active = index === selected;
+          return (
+            <div key={index} className={styles.featureSlide} data-position={offset} data-active={active}
+              role="group" aria-roledescription="slide" aria-label={`${featureNames[index]}, ${index + 1} of ${cards.length}`}
+              aria-hidden={ready && Math.abs(offset) > 1 ? true : undefined}>
+              <div className={styles.featureCardContent} inert={ready && !active} aria-hidden={ready && !active ? true : undefined}>
+                {card}
+              </div>
+              {ready && !active && Math.abs(offset) === 1 && (
+                <button type="button" className={styles.featureSelect} tabIndex={-1}
+                  aria-label={`View ${featureNames[index]}`} onClick={event => { event.currentTarget.blur(); setSelected(index); }} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <div className={styles.featureCarouselControls}>
+        <div className={styles.featureDots} role="group" aria-label="Choose a feature">
+          {cards.map((_, index) => <button type="button" key={index} aria-label={`Show ${featureNames[index]}`}
+            aria-pressed={selected === index} onClick={() => setSelected(index)}><span /></button>)}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function MarketingNavigation() {
@@ -213,7 +309,46 @@ const views = [
 ];
 export function ProductPreview() {
   const [selected, setSelected] = React.useState(0);
+  const [hovered, setHovered] = React.useState(false);
+  const [focused, setFocused] = React.useState(false);
+  const [visible, setVisible] = React.useState(false);
+  const [motionAllowed, setMotionAllowed] = React.useState(false);
+  const stage = React.useRef<HTMLDivElement>(null);
   const view = views[selected];
+
+  React.useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncPreference = () => setMotionAllowed(!preference.matches);
+    syncPreference();
+    preference.addEventListener("change", syncPreference);
+    const element = stage.current;
+    const observer = new IntersectionObserver(([entry]) => {
+      setVisible(entry.isIntersecting);
+    }, { threshold: 0.15 });
+    if (element) observer.observe(element);
+    return () => {
+      preference.removeEventListener("change", syncPreference);
+      observer.disconnect();
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (hovered || focused || !visible || !motionAllowed) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const schedule = () => {
+      clearTimeout(timer);
+      if (!document.hidden) {
+        timer = setTimeout(() => setSelected((index) => (index + 1) % views.length), 5000);
+      }
+    };
+    schedule();
+    document.addEventListener("visibilitychange", schedule);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("visibilitychange", schedule);
+    };
+  }, [hovered, focused, visible, motionAllowed, selected]);
+
   const tabs = React.useRef<(HTMLButtonElement | null)[]>([]);
   function moveTab(event: React.KeyboardEvent, index: number) {
     let next = index;
@@ -228,12 +363,25 @@ export function ProductPreview() {
     tabs.current[next]?.focus();
   }
   return (
-    <div className={styles.productStage}>
+    <div
+      ref={stage}
+      className={styles.productStage}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocusCapture={() => setFocused(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setFocused(false);
+        }
+      }}
+    >
       <div
         className={styles.previewTabs}
+        style={{ "--preview-index": selected } as React.CSSProperties}
         role="tablist"
         aria-label="Explore the platform"
       >
+        <span className={styles.previewTabGlass} aria-hidden="true" />
         {views.map((item, index) => (
           <button
             ref={(node) => {
@@ -293,7 +441,7 @@ export function ProductPreview() {
               <span className={styles.miniAvatar}>GO</span>
             </div>
           </div>
-          <div className={styles.mockBody}>
+          <div key={view.id} className={`${styles.mockBody} ${styles.previewSlide}`}>
             <div className={styles.mockHeading}>
               <div>
                 <span className={styles.mockEyebrow}>

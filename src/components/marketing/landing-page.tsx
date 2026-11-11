@@ -22,6 +22,7 @@ import {
   Wallet,
 } from "lucide-react";
 import {
+  FeatureCarousel,
   LandingMotion,
   MarketingNavigation,
   PricingSection,
@@ -156,7 +157,7 @@ export function LandingPage() {
               shuffle.
             </p>
           </div>
-          <div className={styles.featureBento}>
+          <FeatureCarousel>
             <article className={styles.peopleFeature}>
               <span className={styles.featureIcon}>
                 <Users size={23} />
@@ -271,7 +272,33 @@ export function LandingPage() {
                 </div>
               </div>
             </article>
-          </div>
+            <article className={styles.communicationFeature}>
+              <span className={styles.featureIcon}><MessageCircle size={23} /></span>
+              <h3>A thoughtful word.<br />At the right time.</h3>
+              <p>Bring your email, SMS and WhatsApp conversations into the work of welcoming, reminding and staying close.</p>
+              <div className={styles.featureTags}>
+                <span>Email</span><span>SMS</span><span>WhatsApp</span>
+              </div>
+              <div className={styles.messageIllustration} aria-hidden="true">
+                <span><MessageCircle size={15} /> A little encouragement</span>
+                <p>We’re glad you’re part of the family. See you on Sunday!</p>
+                <small><Check size={13} /> Keep the conversation going</small>
+              </div>
+            </article>
+            <article className={styles.teamFeature}>
+              <span className={styles.featureIcon}><Network size={23} /></span>
+              <h3>Many helping hands.<br />One shared purpose.</h3>
+              <p>Connect departments, teams and cell groups. Give each person a clearer place in the work you do together.</p>
+              <div className={styles.featureTags}>
+                <span>Departments</span><span>Teams</span><span>Cell groups</span>
+              </div>
+              <div className={styles.teamIllustration} aria-hidden="true">
+                <span><Heart size={18} /> A place to serve</span>
+                <div><span>Welcome</span><span>Worship</span><span>Care</span></div>
+                <small>Different gifts. Connected people.</small>
+              </div>
+            </article>
+          </FeatureCarousel>
         </section>
 
         <section
