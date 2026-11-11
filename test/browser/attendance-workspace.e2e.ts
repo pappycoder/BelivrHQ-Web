@@ -313,3 +313,56 @@ for (const cell of [false, true]) {
     expect(writes).toHaveLength(0);
   });
 }
+
+for (const cell of [false, true]) {
+  for (const width of [320, 1280]) {
+    test(`${cell ? "cell group" : "department"} headcount date dropdown stages, validates and clears filters at ${width}px`, async ({ page, context }) => {
+      const writes = await fixture(context, true);
+      const reads: URL[] = [];
+      const resource = cell ? "cell-groups" : "departments";
+      await context.route(`**/api/backend/admin/${resource}/second/attendance-sessions**`, route => {
+        const url = new URL(route.request().url());
+        reads.push(url);
+        const pageNumber = Number(url.searchParams.get("page") ?? 1);
+        const limit = Number(url.searchParams.get("limit") ?? 20);
+        const rows = Array.from({ length: 35 }, (_, index) => ({
+          id: `head-${index}`, contextType: cell ? "cell_group" : "department", contextId: "second", contextName: "Welcome team", branchId: "west", attendanceDate: "2026-11-08", total: 50 + index,
+        }));
+        return route.fulfill({ json: { success: true, data: { data: rows.slice((pageNumber - 1) * limit, pageNumber * limit), meta: { total: 35, totalPages: 2, page: pageNumber, limit } } } });
+      });
+      await page.setViewportSize({ width, height: 960 });
+      await page.goto(`${cell ? "/gatherings/groups/cell/second" : "/gatherings/groups/second"}?tab=reported`);
+      const filters = page.getByRole("group", { name: "Headcount record filters", exact: true });
+      const trigger = filters.getByRole("button", { name: /^Date range/ });
+      await expect(page.getByLabel("From date", { exact: true })).toHaveCount(0);
+      await page.getByRole("button", { name: "Next", exact: true }).click();
+      await expect.poll(() => reads.some(url => url.searchParams.get("page") === "2")).toBe(true);
+      await trigger.click();
+      await page.getByLabel("From date", { exact: true }).fill("2026-11-20");
+      await page.getByLabel("To date", { exact: true }).fill("2026-11-10");
+      await expect(page.getByRole("alert").filter({ hasText: "To date must be on or after From date." })).toBeVisible();
+      await expect(page.getByRole("button", { name: "Apply dates", exact: true })).toBeDisabled();
+      expect(reads.some(url => url.searchParams.has("startDate"))).toBe(false);
+      await page.keyboard.press("Escape");
+      await expect(trigger).toBeFocused();
+      await trigger.click();
+      await expect(page.getByLabel("From date", { exact: true })).toHaveValue("");
+      await page.getByLabel("From date", { exact: true }).fill("2026-11-01");
+      await page.getByLabel("To date", { exact: true }).fill("2026-11-30");
+      await page.getByRole("button", { name: "Apply dates", exact: true }).click();
+      await expect.poll(() => reads.some(url => url.searchParams.get("startDate") === "2026-11-01" && url.searchParams.get("endDate") === "2026-11-30" && url.searchParams.get("page") === "1")).toBe(true);
+      await expect(trigger).toHaveAccessibleName("Date range, 2026-11-01 to 2026-11-30");
+      await trigger.click();
+      await expect(page.getByLabel("From date", { exact: true })).toHaveValue("2026-11-01");
+      await page.screenshot({ path: `/tmp/headcount-dates-${cell ? "cell" : "department"}-${width}.png`, fullPage: true });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await page.getByRole("button", { name: "Clear dates", exact: true }).click();
+      await expect(trigger).toHaveAccessibleName("Date range");
+      await trigger.click();
+      await page.getByLabel("To date", { exact: true }).fill("2026-11-30");
+      await page.getByRole("button", { name: "Apply dates", exact: true }).click();
+      await expect.poll(() => reads.some(url => !url.searchParams.has("startDate") && url.searchParams.get("endDate") === "2026-11-30")).toBe(true);
+      expect(writes).toHaveLength(0);
+    });
+  }
+}
