@@ -24,6 +24,7 @@ import { CellGroupMemberDialog } from "@/components/departments/cell-group-membe
 import { CellGroupAttendanceDialog } from "@/components/departments/cell-group-attendance-dialog";
 import { MeetingAttendanceTable } from "@/components/departments/meeting-attendance-table";
 import { CellGroupGivingPanel } from "@/components/giving/cell-group-giving-panel";
+import { AttendanceWorkspace } from "@/components/attendance/attendance-workspace";
 import { GeneralAttendancePanel } from "@/components/attendance/general-attendance-panel";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useCurrentProfile } from "@/hooks/use-profile";
@@ -123,8 +124,7 @@ export default function CellGroupDetailPage({
   const tabs = [
     "overview",
     "members",
-    ...(canSeeDetails ? ["attendance"] : []),
-    ...(canSeeReported ? ["reported"] : []),
+    ...(canSeeDetails || canSeeReported ? ["attendance"] : []),
     "giving",
   ];
   return (
@@ -205,7 +205,7 @@ export default function CellGroupDetailPage({
           )}
         </div>
       )}
-      <UrlTabs defaultValue="overview" values={tabs}>
+      <UrlTabs defaultValue="overview" values={tabs} aliases={{ reported: "attendance" }}>
         {(activeTab) => (
           <>
             <TabsList
@@ -337,9 +337,10 @@ export default function CellGroupDetailPage({
                 )}
               </TabsContent>
             )}
-            {canSeeDetails && activeTab === "attendance" && (
+            {(canSeeDetails || canSeeReported) && activeTab === "attendance" && (
               <TabsContent value="attendance" className="mt-5">
-                {" "}
+                <AttendanceWorkspace name={g.name} scope="Cell group" canSeePeople={canSeeDetails} canSeeHeadcount={canSeeReported}>
+                  {canSeeDetails && <TabsContent value="individual" forceMount className="data-[state=inactive]:hidden">
                 <MeetingAttendanceTable
                   records={records}
                   loading={attendance.isLoading}
@@ -360,11 +361,8 @@ export default function CellGroupDetailPage({
                     ) : null
                   }
                 />
-              </TabsContent>
-            )}
-            {canSeeReported && activeTab === "reported" && (
-              <TabsContent value="reported" className="mt-5">
-                {" "}
+                  </TabsContent>}
+                  {canSeeReported && <TabsContent value="general" forceMount className="data-[state=inactive]:hidden">
                 <GeneralAttendancePanel
                   context={{
                     type: "cell_group",
@@ -375,6 +373,8 @@ export default function CellGroupDetailPage({
                   }}
                   canManage={!isCellLeader || isOwnGroup}
                 />
+                  </TabsContent>}
+                </AttendanceWorkspace>
               </TabsContent>
             )}
             {activeTab === "giving" && (
@@ -421,6 +421,7 @@ export default function CellGroupDetailPage({
         onOpenChange={setAttendanceDialogOpen}
         groupId={g.id}
         groupName={g.name}
+        attendanceDate={meetingDate}
         members={memberRows}
         loadingMembers={members.isLoading}
         membersError={members.isError}

@@ -11,6 +11,7 @@ import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { UrlTabs } from "@/components/shared/url-tabs";
 import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import { AttendanceWorkspace } from "@/components/attendance/attendance-workspace";
 import { GeneralAttendancePanel } from "@/components/attendance/general-attendance-panel";
 
 import * as React from "react";
@@ -141,7 +142,7 @@ export function DepartmentDetailContent({
     "overview",
     "members",
     "attendance",
-    ...(canReported ? ["reported"] : []),
+
   ];
   return (
     <div className="space-y-6">
@@ -205,7 +206,7 @@ export function DepartmentDetailContent({
           </p>
         </div>
       </div>
-      <UrlTabs defaultValue="overview" values={tabs}>
+      <UrlTabs defaultValue="overview" values={tabs} aliases={{ reported: "attendance" }}>
         <TabsList
           aria-label="Department workspace"
           className="h-auto group-data-[orientation=horizontal]/tabs:h-auto max-w-full flex-wrap overflow-visible justify-start rounded-2xl border border-line bg-card p-1"
@@ -329,13 +330,14 @@ export function DepartmentDetailContent({
           />
         </TabsContent>
         <TabsContent value="attendance" className="mt-5">
+          <AttendanceWorkspace name={department.name} scope="Department" canSeeHeadcount={canReported}>
+            <TabsContent value="individual" forceMount className="data-[state=inactive]:hidden">
           <DepartmentAttendancePanel
             department={department}
             canManage={canManage}
           />
-        </TabsContent>
-        {canReported && (
-          <TabsContent value="reported" className="mt-5">
+            </TabsContent>
+            {canReported && <TabsContent value="general" forceMount className="data-[state=inactive]:hidden">
             <GeneralAttendancePanel
               context={{
                 type: "department",
@@ -346,8 +348,9 @@ export function DepartmentDetailContent({
               }}
               canManage={canManage}
             />
-          </TabsContent>
-        )}
+            </TabsContent>}
+          </AttendanceWorkspace>
+        </TabsContent>
       </UrlTabs>
       <DepartmentFormDialog
         open={editing}

@@ -365,16 +365,16 @@ for (const width of [1280, 320])
       expect(writes).toHaveLength(0);
       await page.getByRole("tab", { name: "Attendance", exact: true }).click();
       await expect(page.locator("[data-list-table]")).toContainText("Ada Rice");
-      await expect(page.locator('input[type="date"]')).toHaveAttribute(
+      await expect(page.locator('input[type="date"]:visible')).toHaveAttribute(
         "type",
         "date",
       );
       await expect(page.getByRole("spinbutton")).toHaveCount(0);
       await page
-        .getByRole("tab", { name: "Reported totals", exact: true })
+        .getByRole("tab", { name: /^Record headcount/ })
         .click();
       await expect(
-        page.getByRole("tab", { name: "Reported totals", exact: true }),
+        page.getByRole("tab", { name: /^Record headcount/ }),
       ).toHaveAttribute("data-state", "active");
       if (cell) {
         expect(
@@ -404,7 +404,7 @@ for (const width of [1280, 320])
           }),
         ).toHaveCount(0);
         await page
-          .getByRole("tab", { name: "Reported totals", exact: true })
+          .getByRole("tab", { name: /^Record headcount/ })
           .click();
         await expect(
           page.getByText("Total group giving", { exact: true }),
@@ -572,7 +572,7 @@ for (const cell of [false, true])
       .getByRole("button", { name: "Clear filters", exact: true })
       .click();
     await expect(table).toContainText("Bob Rice");
-    await page.locator('input[type="date"]').fill("2026-11-08");
+    await page.locator('input[type="date"]:visible').fill("2026-11-08");
     await expect
       .poll(() =>
         requests.some((path) => path.includes("meetingDate=2026-11-08")),
@@ -723,7 +723,7 @@ for (const cell of [false, true])
       animations: "disabled",
     });
     await page
-      .getByRole("tab", { name: "Reported totals", exact: true })
+      .getByRole("tab", { name: /^Record headcount/ })
       .click();
     await expect(
       page.getByText("No reported attendance yet", { exact: true }),

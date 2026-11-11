@@ -191,14 +191,18 @@ export function GeneralAttendancePanel({
     target?.branchId ?? profile?.branchId ?? "",
   );
   const [values, setValues] = React.useState(emptyCounts);
+  const [entryEditing, setEntryEditing] = React.useState(true);
+  const [lookingUp, setLookingUp] = React.useState(false);
+  const [lookupFailed, setLookupFailed] = React.useState(false);
+  const [lookupVersion, setLookupVersion] = React.useState(0);
+  const [conflictingRecord, setConflictingRecord] = React.useState<GeneralAttendanceRecord | null>(null);
   const [error, setError] = React.useState("");
   // A session already recorded for the selected day (in create mode) is
-  // auto-loaded so the form edits it — the API keeps one session per
+  // loaded in view mode; explicit edit intent is required. The API keeps one session per
   // context/branch/date, and a second create would fail with a conflict.
   const [matched, setMatched] = React.useState<GeneralAttendanceRecord | null>(
     null,
   );
-  const autoFilled = React.useRef<typeof emptyCounts | null>(null);
   const targetType = target?.type;
   const targetId = target?.id;
   const lookupDay = React.useCallback(
@@ -232,8 +236,10 @@ export function GeneralAttendancePanel({
   }, [editing, service, controlled]);
   const inline = entryMode === "inline";
   const fieldId = React.useId();
-  const dirty =
-    inline && canCreate && Object.values(values).some((value) => value !== "");
+  const savedRecord = editing ?? matched;
+  const canEditEntry = savedRecord ? canUpdate : canCreate;
+  const entryEditable = entryEditing && canEditEntry && !lookingUp && !lookupFailed;
+  const dirty = inline && entryEditable && !sameValues(values, savedRecord ? valuesFrom(savedRecord) : emptyCounts);
   useUnsavedChanges(dirty);
   React.useEffect(() => {
     onDirtyChange?.(dirty);
@@ -243,45 +249,46 @@ export function GeneralAttendancePanel({
     onBusyChange?.(save.isPending);
     return () => onBusyChange?.(false);
   }, [save.isPending, onBusyChange]);
-  const autoLookupActive = canCreate && canRead && !editing && (inline || open);
+  const autoLookupActive = canRead && !!recordBranch && !editing && (inline || open);
   React.useEffect(() => {
     if (!autoLookupActive) {
-      setMatched(null);
+      setLookingUp(false);
+      setLookupFailed(false);
       return;
     }
     const controller = new AbortController();
+    setLookingUp(true);
+    setError("");
+    setMatched(null);
+    setValues({ ...emptyCounts });
+    setEntryEditing(false);
+    setLookupFailed(false);
+    setConflictingRecord(null);
     const timer = setTimeout(() => {
       lookupDay(date, recordBranch, controller.signal)
-        .then((found) => {
+        .then(found => {
           if (controller.signal.aborted) return;
-          setMatched(found);
-          if (found) {
-            const next = valuesFrom(found);
-            autoFilled.current = next;
-            setValues(next);
-          } else if (autoFilled.current) {
-            // Only drop the prefilled numbers if nobody typed over them.
-            const previous = autoFilled.current;
-            autoFilled.current = null;
-            setValues((current) =>
-              sameValues(current, previous) ? { ...emptyCounts } : current,
-            );
-          }
+          setMatched(found ?? null);
+          const next = found ? valuesFrom(found) : { ...emptyCounts };
+          setValues(next);
+          setEntryEditing(!found);
+          setError("");
         })
         .catch(() => {
-          // A failed lookup keeps the form blank; the 409 retry on submit is
-          // the safety net for a same-day record we could not preview.
+          if (!controller.signal.aborted) setLookupFailed(true);
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setLookingUp(false);
         });
-    }, 350);
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [autoLookupActive, date, recordBranch, lookupDay]);
+    }, 200);
+    return () => { clearTimeout(timer); controller.abort(); };
+  }, [autoLookupActive, date, recordBranch, lookupDay, lookupVersion]);
   function begin(record?: GeneralAttendanceRecord) {
+    setEntryEditing(true);
+    setConflictingRecord(null);
+    setLookupFailed(false);
     setEditing(record ?? null);
     setMatched(null);
-    autoFilled.current = null;
     setDate(
       record?.attendanceDate ??
         (service
@@ -297,6 +304,7 @@ export function GeneralAttendancePanel({
   }
   async function submit(event: React.FormEvent) {
     event.preventDefault();
+    if (!entryEditable || save.isPending) return;
     setError("");
     const counts = Object.fromEntries(
       countFields.map(([key]) => [
@@ -358,39 +366,24 @@ export function GeneralAttendancePanel({
       attendanceDate: date,
     };
     try {
-      await save.mutateAsync({ ...payload, id: recordId });
+      const persisted = await save.mutateAsync({ ...payload, id: recordId });
       toast.success(
         recordId ? "General attendance updated" : "General attendance recorded",
       );
       setOpen(false);
-      if (inline && !editing) setValues({ ...emptyCounts });
+      if (inline) {
+        setEditing(null);
+        setMatched(persisted);
+        setValues(valuesFrom(persisted));
+        setEntryEditing(false);
+      }
     } catch (err) {
-      // A same-day session may have appeared after the prefill check
-      // (another tablet at the door, offline sync). Instead of dead-ending
-      // on the 409, adopt that record and save into it.
-      const looksLikeConflict =
-        (err as { statusCode?: number }).statusCode === 409 ||
-        /already recorded/i.test(getToastErrorMessage(err, ""));
-      if (!recordId && looksLikeConflict) {
-        const found = await lookupDay(date, recordBranch).catch(() => null);
-        if (found) {
-          try {
-            await save.mutateAsync({ ...payload, id: found.id });
-            setMatched(found);
-            autoFilled.current = valuesFrom(found);
-            toast.success("General attendance updated");
-            setOpen(false);
-            if (inline && !editing) setValues({ ...emptyCounts });
-          } catch (retryError) {
-            setError(
-              getToastErrorMessage(
-                retryError,
-                "Could not save general attendance.",
-              ),
-            );
-          }
-          return;
-        }
+      const conflict = (err as { statusCode?: number }).statusCode === 409 || /already recorded/i.test(getToastErrorMessage(err, ""));
+      if (!recordId && conflict) {
+        const found = canRead ? await lookupDay(date, recordBranch).catch(() => null) : null;
+        setConflictingRecord(found);
+        setError("A headcount has already been saved for this date. Your draft has not changed it. Review the saved headcount before editing. Reviewing will replace the draft values.");
+        return;
       }
       setError(getToastErrorMessage(err, "Could not save general attendance."));
     }
@@ -398,7 +391,7 @@ export function GeneralAttendancePanel({
   if (
     (!canRead && !canCreate) ||
     (requireService && !target) ||
-    (!showRecords && (!inline || !canCreate)) ||
+    (!showRecords && (!inline || (!canCreate && !canRead))) ||
     (entryMode === "hidden" && !canRead)
   )
     return null;
@@ -407,106 +400,57 @@ export function GeneralAttendancePanel({
     contextName: row.contextName ?? row.serviceName,
   }));
   function renderForm(compact: boolean) {
-    const id = (key: string) =>
-      compact ? `general-inline-${fieldId}-${key}` : `general-${key}`;
+    const id = (key: string) => compact ? `general-inline-${fieldId}-${key}` : `general-${fieldId}-${key}`;
     const countInput = (key: keyof typeof emptyCounts, label: string) => (
-      <div key={key} className="space-y-1.5">
-        <Label required={key === "total"} htmlFor={id(key)} className="text-xs">
-          {label}
-          {key === "total" ? "" : " (optional)"}
-        </Label>
-        <Input
-          id={id(key)}
-          type="number"
-          min={0}
-          max={2147483647}
-          step={1}
-          required={key === "total"}
-          value={values[key]}
-          disabled={save.isPending}
-          onChange={(event) =>
-            setValues((previous) => ({
-              ...previous,
-              [key]: event.target.value,
-            }))
-          }
+      <div className="min-w-0 space-y-2" key={key}>
+        <Label required={key === "total"} htmlFor={id(key)} className="text-xs text-ink-muted">{label}</Label>
+        <Input id={id(key)} type="number" min={0} max={2147483647} step={1} required={key === "total"}
+          value={values[key]} placeholder={key === "total" ? "0" : entryEditable ? "Optional" : "Not supplied"}
+          readOnly={!entryEditable} disabled={save.isPending || lookingUp}
+          className={cn("rounded-xl border-line bg-card font-display tabular-nums shadow-none", key === "total" ? styles.totalInput : styles.breakdownInput, key === "total" ? "h-20 text-4xl md:text-4xl" : "h-12 text-xl md:text-xl", !entryEditable && "bg-muted/20 text-ink-muted")}
+          onChange={event => setValues(previous => ({ ...previous, [key]: event.target.value }))}
         />
       </div>
     );
-    return (
-      <ValidatedForm
-        onSubmit={submit}
-        aria-label={compact ? "Reported headcount" : undefined}
-        className="space-y-3"
-      >
-        <div className="grid items-start gap-3 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label required htmlFor={id("date")}>Attendance date</Label>
-            {controlled && !editing ? (
-              <p
-                id={id("date")}
-                className="flex h-9 items-center rounded-lg border border-input bg-muted/40 px-3 text-sm text-muted-foreground"
-              >
-                {format(new Date(`${date}T00:00:00`), "EEE d MMM yyyy")}
-              </p>
-            ) : (
-              <Input
-                picker="wheel"
-                id={id("date")}
-                type="date"
-                required
-                value={date}
-                disabled={!!editing || save.isPending}
-                onChange={(e) => setDate(e.target.value)}
-              />
-            )}
+    const cancelEditing = () => {
+      setValues(savedRecord ? valuesFrom(savedRecord) : { ...emptyCounts });
+      setEntryEditing(false);
+      setError("");
+    };
+    return <ValidatedForm onSubmit={submit} aria-label={compact ? "Reported headcount" : "Headcount entry"} className="space-y-5">
+      <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-line bg-muted/20 p-4">
+        <div><p className="text-[10px] font-semibold uppercase tracking-widest text-ink-faint">{savedRecord ? "Saved headcount" : "New headcount"}</p><p className="mt-1 text-sm font-semibold">{target?.name ?? savedRecord?.contextName ?? savedRecord?.serviceName ?? "Meeting attendance"}</p><p className="mt-1 text-xs text-ink-muted">{entryEditable ? "Edit mode. Review the counts before saving." : savedRecord ? "View mode. Saved counts are protected from accidental changes." : "View mode. Choose Edit attendance to enter counts."}</p></div>
+        {!entryEditable && !lookingUp && !lookupFailed && canEditEntry && <Button type="button" variant="outline" size="sm" onClick={() => setEntryEditing(true)}>Edit attendance</Button>}
+      </div>
+      {lookingUp && <p role="status" className="text-xs text-ink-muted">Checking saved attendance for this date…</p>}
+      {lookupFailed && <div role="alert" className="rounded-xl border border-destructive/30 p-3 text-sm">Saved attendance could not be checked. <Button type="button" variant="outline" size="sm" onClick={() => setLookupVersion(value => value + 1)}>Retry saved headcount</Button></div>}
+      <div className="grid items-start gap-5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="rounded-xl border border-brand/20 bg-brand/5 p-4">{countInput("total", "Total attendance")}<p className="mt-2 text-xs leading-relaxed text-ink-muted">The number of people present. Named check-ins are recorded separately.</p></div>
+        <div className="space-y-4 rounded-xl border border-line p-4">
+          <div className="space-y-2"><Label required htmlFor={id("date")} className="text-xs">Attendance date</Label>
+            {(controlled || !!editing) ? <p id={id("date")} className="text-sm font-medium">{date ? format(new Date(`${date}T00:00:00`), "EEE d MMM yyyy") : "Choose a date"}</p> : <Input picker="wheel" id={id("date")} type="date" required value={date} disabled={save.isPending} onChange={event => {
+              if (dirty && !window.confirm("Discard unsaved headcount changes before changing the date?")) return;
+              setMatched(null);
+              setValues({ ...emptyCounts });
+              setDate(event.target.value);
+            }} />}
           </div>
-          {compact && countInput("total", "Total attendance")}
+          {!editing && !target?.branchId && profile?.isAdminHq && <fieldset disabled={save.isPending || !!editing}><Label required className="text-xs">Branch</Label><BranchFilter value={recordBranch} onChange={value => { if (dirty && !window.confirm("Discard unsaved headcount changes before changing the branch?")) return; setRecordBranch(value); }} allLabel="Select a branch" /></fieldset>}
+          <p className="text-xs leading-relaxed text-ink-muted">Only the total is required. Add age or gender breakdowns when available.</p>
         </div>
-        {!editing && !target?.branchId && profile?.isAdminHq && (
-          <div>
-            <Label required>Branch</Label>
-            <BranchFilter
-              value={recordBranch}
-              onChange={setRecordBranch}
-              allLabel="Select a branch"
-            />
-          </div>
-        )}
-        {matched && !editing ? (
-          <p role="status" className="text-xs text-muted-foreground">
-            {date} already has a recorded headcount. Saving updates that record
-            instead of adding a second one.
-          </p>
-        ) : null}
-        <div
-          className={
-            compact
-              ? "grid grid-cols-2 gap-3 lg:grid-cols-4"
-              : "grid grid-cols-2 gap-4"
-          }
-        >
-          {countFields
-            .filter(([key]) => !compact || key !== "total")
-            .map(([key, label]) => countInput(key, label))}
-        </div>
-        {error && (
-          <p role="alert" className="text-sm text-destructive">
-            {error}
-          </p>
-        )}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-xs text-muted-foreground">
-            {compact
-              ? "Only the total is required. Age and gender describe the same total."
-              : ""}
-          </p>
-          <Button type="submit" size="sm" disabled={save.isPending}>
-            {save.isPending ? "Saving…" : "Save attendance"}
-          </Button>
-        </div>
-      </ValidatedForm>
-    );
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <section className="space-y-3 rounded-xl border border-line p-4" aria-label="Age breakdown"><div><h3 className="text-sm font-semibold">Age breakdown</h3><p className="mt-1 text-xs text-ink-muted">Optional counts within the total.</p></div><div className="grid grid-cols-2 gap-3">{countInput("adultCount", "Adults")}{countInput("childrenCount", "Children")}</div></section>
+        <section className="space-y-3 rounded-xl border border-line p-4" aria-label="Gender breakdown"><div><h3 className="text-sm font-semibold">Gender breakdown</h3><p className="mt-1 text-xs text-ink-muted">Another breakdown of the same total.</p></div><div className="grid grid-cols-2 gap-3">{countInput("maleCount", "Male")}{countInput("femaleCount", "Female")}</div></section>
+      </div>
+      {error && <div role="alert" className="rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">{error}{conflictingRecord && <Button type="button" variant="outline" size="sm" className="mt-2" onClick={() => {
+        setMatched(conflictingRecord); setValues(valuesFrom(conflictingRecord)); setEntryEditing(false); setConflictingRecord(null); setError("");
+      }}>Review saved headcount</Button>}</div>}
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
+        <p className="text-xs text-ink-muted">{lookingUp ? "Checking saved attendance…" : entryEditable ? "Saving locks this headcount for viewing." : savedRecord ? "Choose Edit attendance to change these counts." : "No saved headcount for this date."}</p>
+        {entryEditable && <div className="flex gap-2"><Button type="button" variant="ghost" size="sm" disabled={save.isPending} onClick={cancelEditing}>Cancel editing</Button><Button type="submit" size="sm" disabled={save.isPending || lookingUp}>{save.isPending ? "Saving…" : savedRecord ? "Save changes" : "Save headcount"}</Button></div>}
+      </div>
+    </ValidatedForm>;
   }
   return (
     <Card
@@ -520,14 +464,14 @@ export function GeneralAttendancePanel({
               ? "Reported headcount"
               : entryMode === "hidden"
                 ? "Reported headcount records"
-                : "General Attendance"}
+                : "Headcount"}
           </CardTitle>
           <div className="flex gap-2">
             {canRead && showRecords && (
               <ExportDropdown
                 columns={columns}
                 data={rows.map((row) => ({ ...row }))}
-                title="General Attendance"
+                title="Headcount"
                 filename="general-attendance"
                 disabled={!rows.length}
                 fetchAllRows={async () => {
@@ -544,7 +488,7 @@ export function GeneralAttendancePanel({
             )}
             {canCreate && entryMode === "dialog" && (
               <Button size="sm" onClick={() => begin()}>
-                Record general attendance
+                Record headcount
               </Button>
             )}
           </div>
@@ -557,7 +501,7 @@ export function GeneralAttendancePanel({
             : "Reported meeting totals, separate from named check-ins. A dash means a breakdown was not supplied."}
         </CardDescription>
       </CardHeader>
-      {inline && canCreate && (
+      {inline && (canCreate || canRead) && (
         <CardContent className="px-4">{renderForm(true)}</CardContent>
       )}
       {canRead && showRecords && (
@@ -751,13 +695,13 @@ export function GeneralAttendancePanel({
           )}
         </CardContent>
       )}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className={presentationClassName}>
+      <Dialog open={open} onOpenChange={value => { if (!save.isPending) setOpen(value); }}>
+        <DialogContent className={cn("max-h-[90dvh] overflow-y-auto sm:max-w-3xl", presentationClassName)}>
           <DialogHeader>
             <DialogTitle>
               {editing
-                ? "Edit general attendance"
-                : "Record general attendance"}
+                ? "Edit headcount"
+                : "Record headcount"}
             </DialogTitle>
             <DialogDescription>
               {editing?.contextName ?? editing?.serviceName ?? target?.name}.

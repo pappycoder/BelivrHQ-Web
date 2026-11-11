@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AttendanceWorkspace } from "@/components/attendance/attendance-workspace";
 import { GeneralAttendancePanel } from "@/components/attendance/general-attendance-panel";
 import { attendanceCategoryLabel } from "@/hooks/use-attendance";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -149,7 +150,7 @@ export default function EventDetailPage({
           <div className="flex flex-wrap gap-2">
             {canCheckIn ? (
               <Button asChild size="sm" className="h-8 gap-1.5 rounded-full text-xs">
-                <Link href="/gatherings/events/check-in">
+                <Link href={`/gatherings/events/check-in?event=${encodeURIComponent(e.eventId)}`}>
                   <ScanLine className="size-3.5" /> Check-in desk
                 </Link>
               </Button>
@@ -245,16 +246,8 @@ export default function EventDetailPage({
 
         {canSeeAttendance ? (
           <TabsContent value="attendance" className="mt-4">
-            <Tabs defaultValue="named">
-              <TabsList className="h-9 w-fit rounded-full border border-line bg-card p-0.5">
-                <TabsTrigger value="named" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
-                  Check-ins
-                </TabsTrigger>
-                <TabsTrigger value="reported" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
-                  Reported totals
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="named" className="mt-4">
+            <AttendanceWorkspace name={e.title} scope="Event" peopleValue="named" headcountValue="reported" canSeeHeadcount={true}>
+        <TabsContent value="named" className="mt-4">
             <SectionCard eyebrow="In the room" title={`${attendance.data?.length ?? 0} check-ins`} bodyClassName="p-0">
               {attendance.data?.length ? (
                 <div className="divide-y divide-line/70">
@@ -289,7 +282,7 @@ export default function EventDetailPage({
                   }}
                 />
               </TabsContent>
-            </Tabs>
+            </AttendanceWorkspace>
           </TabsContent>
         ) : null}
 

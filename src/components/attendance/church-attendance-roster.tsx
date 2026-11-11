@@ -14,11 +14,7 @@ export function ChurchAttendanceRoster({
   "onSubmit" | "disabled" | "onBusyChange" | "controls"
 > & { branchId?: string }) {
   const [search, setSearch] = React.useState("");
-  const [query, setQuery] = React.useState("");
-  React.useEffect(() => {
-    const timer = setTimeout(() => setQuery(search.trim()), 350);
-    return () => clearTimeout(timer);
-  }, [search]);
+  const query = search.trim();
   const roster = useInfiniteQuery({
     queryKey: ["attendance-roster", branchId, query],
     initialPageParam: 1,

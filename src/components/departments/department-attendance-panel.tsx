@@ -67,7 +67,7 @@ export function DepartmentAttendancePanel({
       <Dialog
         open={open && canManage}
         onOpenChange={(value) => {
-          if (!savingRoster) setOpen(value);
+          if (!savingRoster && !mutation.isPending) setOpen(value);
         }}
       >
         <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -99,7 +99,7 @@ export function DepartmentAttendancePanel({
               }
             }}
           >
-            <fieldset disabled={savingRoster} className="space-y-4">
+            <fieldset disabled={savingRoster || mutation.isPending} className="space-y-4">
               <Label required className="grid gap-2">
                 Meeting date
                 <Input

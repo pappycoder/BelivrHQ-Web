@@ -19,7 +19,8 @@ import {
 } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TabsContent } from "@/components/ui/tabs";
+import { AttendanceWorkspace } from "@/components/attendance/attendance-workspace";
 import { GeneralAttendancePanel } from "@/components/attendance/general-attendance-panel";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
@@ -130,17 +131,7 @@ export default function ServiceDetailPage({
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
-        <Tabs defaultValue="named" className="min-w-0">
-        {canSeeReported ? (
-          <TabsList className="h-9 w-fit rounded-full border border-line bg-card p-0.5">
-            <TabsTrigger value="named" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
-              Named check-ins
-            </TabsTrigger>
-            <TabsTrigger value="reported" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
-              Reported totals
-            </TabsTrigger>
-          </TabsList>
-        ) : null}
+        <AttendanceWorkspace name={s.name} scope="Service" peopleValue="named" headcountValue="reported" canSeeHeadcount={canSeeReported}>
         <TabsContent value="named" className={canSeeReported ? "mt-4" : undefined}>
         <SectionCard
           eyebrow="Named check-ins"
@@ -151,7 +142,7 @@ export default function ServiceDetailPage({
           {named.isLoading ? (
             <div className="space-y-2 p-5">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-10 rounded-xl" />)}</div>
           ) : namedRows.length === 0 ? (
-            <p className="px-5 py-10 text-center text-[11px] text-ink-faint">No named check-ins yet. The Reported totals tab may still tell the true count.</p>
+            <p className="px-5 py-10 text-center text-[11px] text-ink-faint">No named check-ins yet. A headcount can be recorded independently.</p>
           ) : (
             <div className="divide-y divide-line/70">
               {namedRows.slice(0, 12).map((record) => (
@@ -178,7 +169,7 @@ export default function ServiceDetailPage({
             <GeneralAttendancePanel service={s} />
           </TabsContent>
         ) : null}
-        </Tabs>
+        </AttendanceWorkspace>
 
         <aside className="space-y-4">
           <SectionCard eyebrow="This service" title="The schedule">
@@ -226,7 +217,7 @@ export default function ServiceDetailPage({
 
           <div className="rounded-2xl border border-dashed border-line p-5 text-[10px] leading-relaxed text-ink-faint">
             <Users className="mb-1 size-3.5" />
-            Reported totals and named check-ins keep their own tabs on purpose. One counts the room, the other remembers the names. Both are honest;
+            Headcounts and named check-ins are recorded independently. One counts the room, the other remembers the names. Both are honest;
             neither replaces the other.
           </div>
         </aside>

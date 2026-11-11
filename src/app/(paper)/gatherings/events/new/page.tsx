@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useCurrentProfile } from "@/hooks/use-profile";
 import { useBranchesList } from "@/hooks/use-branches";
-import { useCreateEvent, EVENT_TYPES, type EventType } from "@/hooks/use-events";
+import { useCreateEvent, EVENT_TYPES, EVENT_CREATION_TYPES, type EventType } from "@/hooks/use-events";
 import {
   EVENT_RECURRENCES,
   EVENT_RECURRENCE_LABELS,
@@ -35,6 +35,7 @@ export default function NewEventPage() {
   const { can, ready } = usePermissions();
   const { data: profile } = useCurrentProfile();
   const isHq = !!profile?.isAdminHq;
+  const canCreatePaidEvents = profile?.planFeatures?.includes("tickets") === true;
   // Coarse `events:create` grant — the previous "events:create" resource
   // string built a nonexistent `events:create:create` code that never opened.
   const canCreate = ready && can("events", "create");
@@ -44,7 +45,7 @@ export default function NewEventPage() {
 
   const [form, setForm] = React.useState({
     title: "",
-    type: "service" as EventType,
+    type: "conference" as EventType,
     start: "",
     end: "",
     recurrence: "one_time" as EventRecurrence,
@@ -60,7 +61,8 @@ export default function NewEventPage() {
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!form.title.trim()) { toast.error("Even a service needs a name."); return; }
+    if (!canCreatePaidEvents && !form.isFree) { toast.error("Your plan supports free events. Paid events require Network or Enterprise."); return; }
+    if (!form.title.trim()) { toast.error("Every event needs a name."); return; }
     if (!form.start) { toast.error("When is it, at least roughly?"); return; }
     // Same local-calendar-day arithmetic the service dialog uses: datetime-local
     // values carry their day in the first 10 characters, so no timezone maths.
@@ -130,7 +132,7 @@ export default function NewEventPage() {
                 <div className="space-y-1.5 sm:col-span-2">
                   <Label className="text-xs">Type</Label>
                   <div className="flex flex-wrap gap-1.5">
-                    {EVENT_TYPES.map((item) => (
+                    {EVENT_CREATION_TYPES.map((item) => (
                       <button
                         key={item.value}
                         type="button"
@@ -224,8 +226,9 @@ export default function NewEventPage() {
             <SectionCard eyebrow="Tickets" title="Free or priced">
               <label className="flex items-center justify-between rounded-lg border border-line px-3 py-2.5">
                 <span className="flex items-center gap-2 text-xs"><Ticket className="size-3.5 text-ink-faint" /> Free to attend</span>
-                <Switch checked={form.isFree} onCheckedChange={(v) => set("isFree", !!v)} />
+                <Switch disabled={!canCreatePaidEvents} checked={form.isFree} onCheckedChange={(v) => set("isFree", !!v)} />
               </label>
+              {!canCreatePaidEvents && <p className="mt-3 text-xs leading-relaxed text-ink-muted">Your plan includes free events. Paid events are available on Network and Enterprise.</p>}
               {!form.isFree ? (
                 <div className="mt-3 grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1.5">

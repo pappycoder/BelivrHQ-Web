@@ -23,7 +23,7 @@ import { useBranchesList } from "@/hooks/use-branches";
 import {
   useEvent,
   useUpdateEvent,
-  EVENT_TYPES,
+  EVENT_CREATION_TYPES,
   type EventType,
 } from "@/hooks/use-events";
 import {
@@ -60,6 +60,7 @@ export default function EditEventPage({
   const { can, ready } = usePermissions();
   const { data: profile } = useCurrentProfile();
   const isHq = !!profile?.isAdminHq;
+  const canCreatePaidEvents = profile?.planFeatures?.includes("tickets") === true;
   const canUpdate = ready && can("events", "update");
 
   const event = useEvent(eventId);
@@ -147,15 +148,15 @@ export default function EditEventPage({
       {
         branchId: isHq ? form.branchId : undefined,
         title: form.title.trim(),
-        type: form.type,
+        type: form.type === "service" ? undefined : form.type,
         startDate: toIso(form.start),
         endDate: form.end ? toIso(form.end) : null,
         recurrence: form.recurrence,
         location: form.location.trim() || undefined,
         description: form.description.trim() || undefined,
         capacity: form.capacity ? Number(form.capacity) : undefined,
-        isFree: form.isFree,
-        price: !form.isFree && form.price ? Number(form.price) : undefined,
+        isFree: canCreatePaidEvents ? form.isFree : undefined,
+        price: canCreatePaidEvents && !form.isFree && form.price ? Number(form.price) : undefined,
       },
       {
         onSuccess: () => { toast.success("Event updated."); router.push(`/gatherings/events/${eventId}`); },
@@ -187,7 +188,8 @@ export default function EditEventPage({
               <div className="space-y-1.5 sm:col-span-2">
                 <Label className="text-xs">Type</Label>
                 <div className="flex flex-wrap gap-1.5">
-                  {EVENT_TYPES.map((item) => (
+                  {form.type === "service" && <span className="rounded-full border border-line px-3 py-1.5 text-[11px] text-ink-muted">Service (existing record)</span>}
+                  {EVENT_CREATION_TYPES.map((item) => (
                     <button
                       key={item.value}
                       type="button"
@@ -258,7 +260,7 @@ export default function EditEventPage({
               </div>
               <div className="space-y-1.5">
                 <Label className="text-xs">Capacity</Label>
-                <Input inputMode="numeric" value={form.capacity} onChange={(e) => set("capacity", e.target.value.replace(/[^\d]/g, ""))} className="num h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                <Input disabled={!canCreatePaidEvents} inputMode="numeric" value={form.capacity} onChange={(e) => set("capacity", e.target.value.replace(/[^\d]/g, ""))} className="num h-10 rounded-lg border-line bg-card text-sm shadow-none" />
               </div>
             </div>
           </SectionCard>
@@ -268,12 +270,13 @@ export default function EditEventPage({
           <SectionCard eyebrow="Access" title="Free or ticketed">
             <label className="flex items-center justify-between gap-3 rounded-lg border border-line px-3 py-2.5">
               <span className="text-xs">Free entry</span>
-              <Switch checked={form.isFree} onCheckedChange={(v) => set("isFree", !!v)} />
+              <Switch disabled={!canCreatePaidEvents} checked={form.isFree} onCheckedChange={(v) => set("isFree", !!v)} />
             </label>
+            {!canCreatePaidEvents && <p className="mt-3 text-xs leading-relaxed text-ink-muted">Your plan includes free events. Paid event pricing requires Network or Enterprise.</p>}
             {!form.isFree ? (
               <div className="mt-3 space-y-1.5">
                 <Label className="text-xs">Ticket price (₦)</Label>
-                <Input inputMode="numeric" value={form.price} onChange={(e) => set("price", e.target.value.replace(/[^\d]/g, ""))} className="num h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                <Input disabled={!canCreatePaidEvents} inputMode="numeric" value={form.price} onChange={(e) => set("price", e.target.value.replace(/[^\d]/g, ""))} className="num h-10 rounded-lg border-line bg-card text-sm shadow-none" />
                 <p className="text-[10px] leading-relaxed text-ink-faint">Tiers per ticket type are managed on the Tiers page.</p>
               </div>
             ) : null}

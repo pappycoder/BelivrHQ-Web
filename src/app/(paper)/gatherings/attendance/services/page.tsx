@@ -22,10 +22,12 @@ import {
   EmptyState,
   FilterChip,
   ListPaginationFooter,
+  ManageHeading,
   RowActions,
   SearchField,
   SortDirectionToggle,
 } from "@/components/paper/primitives";
+import { ListTable } from "@/components/shared/list-table";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -93,6 +95,7 @@ function scheduleSummary(service: ChurchService): string {
 export default function AttendanceServicesPage() {
   const { can, ready } = usePermissions();
   const { data: profile } = useCurrentProfile();
+  const canRead = ready && can("attendance:services", "read");
   const canManage = ready && can("attendance:services", "update");
   const canCreate =
     ready &&
@@ -118,6 +121,8 @@ export default function AttendanceServicesPage() {
     return () => clearTimeout(timeout);
   }, [searchInput]);
   const [category, setCategory] = React.useState("all");
+  const [status, setStatus] = React.useState("all");
+  const [weekday, setWeekday] = React.useState("all");
   const [archivedView, setArchivedView] = React.useState(false);
   const [formOpen, setFormOpen] = React.useState(false);
   const [formService, setFormService] = React.useState<ChurchService | null>(
@@ -136,15 +141,43 @@ export default function AttendanceServicesPage() {
     sortOrder,
     archived: archivedView || undefined,
     category: category === "all" ? undefined : category,
+    isActive: status === "all" ? undefined : status === "active",
+    dayOfWeek: weekday === "all" ? undefined : Number(weekday),
   };
-  const services = useAttendanceServices(params);
-  const branches = useBranchesList({ limit: 100 }, { enabled: isHq });
+  const services = useAttendanceServices(params, { enabled: canRead });
+  const branches = useBranchesList(
+    { limit: 100 },
+    { enabled: canRead && isHq },
+  );
   const deleteService = useDeleteService();
   const archive = useArchiveService();
   const restore = useRestoreArchiveService();
 
   const rows = services.data?.data ?? [];
   const total = services.data?.meta?.total ?? 0;
+
+  React.useEffect(() => {
+    if (!services.data || services.isFetching) return;
+    const lastPage = Math.max(1, Math.ceil(total / perPage));
+    if (page > lastPage) setPage(lastPage);
+  }, [services.data, services.isFetching, total, page, perPage]);
+  const hasFilters =
+    !!searchInput ||
+    category !== "all" ||
+    branchId !== "all" ||
+    archivedView ||
+    status !== "all" ||
+    weekday !== "all";
+  const clearFilters = () => {
+    setSearchInput("");
+    setSearch("");
+    setCategory("all");
+    setBranchId("all");
+    setArchivedView(false);
+    setStatus("all");
+    setWeekday("all");
+    setPage(1);
+  };
 
   const branchNames = React.useMemo(() => {
     const map = new Map<string, string>();
@@ -163,6 +196,16 @@ export default function AttendanceServicesPage() {
     setFormService(s);
     setFormOpen(true);
   };
+
+  if (ready && !canRead)
+    return (
+      <EmptyState
+        className="paper-card bg-card"
+        icon={<CalendarClock />}
+        title="Service list is outside your access"
+        description="Your role needs access to the service register."
+      />
+    );
 
   return (
     <div className="space-y-6">
@@ -208,120 +251,153 @@ export default function AttendanceServicesPage() {
         />
       </div>
 
-      <div
-        role="group"
-        aria-label="Service list filters"
-        className="flex flex-wrap items-center gap-2"
-      >
-        <SearchField
-          value={searchInput}
-          onChange={setSearchInput}
-          placeholder="Search services…"
-          className="w-full max-w-xs"
-        />
-        <div className="ml-auto flex max-w-full flex-wrap items-center gap-2">
-          <FilterChip
-            active={archivedView}
-            onClick={() => {
-              setArchivedView((v) => !v);
-              setPage(1);
-            }}
-          >
-            Archived
-          </FilterChip>
-          <Select
-            value={category}
-            onValueChange={(value) => {
-              setCategory(value);
-              setPage(1);
-            }}
-          >
-            <SelectTrigger
-              aria-label="Service category"
-              className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none"
+      <div role="group" aria-label="Service list filters" className="space-y-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <SearchField
+            value={searchInput}
+            onChange={setSearchInput}
+            placeholder="Search services…"
+            className="w-full max-w-xs"
+          />
+          <div className="flex flex-wrap gap-1.5">
+            {[
+              ["all", "All"],
+              ["active", "Active"],
+              ["paused", "Paused"],
+            ].map(([value, label]) => (
+              <FilterChip
+                key={value}
+                active={status === value}
+                onClick={() => {
+                  setStatus(value);
+                  setPage(1);
+                }}
+              >
+                {label}
+              </FilterChip>
+            ))}
+          </div>
+          <div className="ml-auto flex max-w-full flex-wrap items-center gap-2">
+            <FilterChip
+              active={archivedView}
+              onClick={() => {
+                setArchivedView((v) => !v);
+                setPage(1);
+              }}
             >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All categories</SelectItem>
-              {SERVICE_CATEGORIES.map((item) => (
-                <SelectItem key={item.value} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {isHq && (
+              Archived
+            </FilterChip>
             <Select
-              value={branchId}
+              value={category}
               onValueChange={(value) => {
-                setBranchId(value);
+                setCategory(value);
                 setPage(1);
               }}
             >
               <SelectTrigger
-                aria-label="Service branch"
-                data-prefix-icon="building"
-                disabled={branches.isLoading || branches.isError}
-                className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none"
+                aria-label="Service category"
+                className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none"
               >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All branches</SelectItem>
-                {(branches.data?.data ?? []).map((branch) => (
-                  <SelectItem key={branch.branchId} value={branch.branchId}>
-                    {branch.name}
+                <SelectItem value="all">All categories</SelectItem>
+                {SERVICE_CATEGORIES.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          )}
+            {isHq && (
+              <Select
+                value={branchId}
+                onValueChange={(value) => {
+                  setBranchId(value);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger
+                  aria-label="Service branch"
+                  data-prefix-icon="building"
+                  disabled={branches.isLoading || branches.isError}
+                  className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All branches</SelectItem>
+                  {(branches.data?.data ?? []).map((branch) => (
+                    <SelectItem key={branch.branchId} value={branch.branchId}>
+                      {branch.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            <Select
+              value={sortBy}
+              onValueChange={(value) => {
+                setSortBy(value as typeof sortBy);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger
+                aria-label="Sort services"
+                data-prefix-icon="none"
+                className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none"
+              >
+                <ArrowUpDown className="size-3" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="day_of_week">Day of week</SelectItem>
+                <SelectItem value="name">Name</SelectItem>
+                <SelectItem value="created_at">Date added</SelectItem>
+              </SelectContent>
+            </Select>
+            <SortDirectionToggle
+              ascending={sortOrder === "asc"}
+              onToggle={() => {
+                setSortOrder((value) => (value === "asc" ? "desc" : "asc"));
+                setPage(1);
+              }}
+            />
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
           <Select
-            value={sortBy}
+            value={weekday}
             onValueChange={(value) => {
-              setSortBy(value as typeof sortBy);
+              setWeekday(value);
               setPage(1);
             }}
           >
             <SelectTrigger
-              aria-label="Sort services"
-              data-prefix-icon="none"
+              aria-label="Service weekday"
               className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none"
             >
-              <ArrowUpDown className="size-3" />
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="day_of_week">Day of week</SelectItem>
-              <SelectItem value="name">Name</SelectItem>
-              <SelectItem value="created_at">Date added</SelectItem>
+              <SelectItem value="all">All weekdays</SelectItem>
+              {DAYS.map((day, index) => (
+                <SelectItem key={day} value={String(index)}>
+                  {day}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
-          <SortDirectionToggle
-            ascending={sortOrder === "asc"}
-            onToggle={() => {
-              setSortOrder((value) => (value === "asc" ? "desc" : "asc"));
-              setPage(1);
-            }}
-          />
-          {(searchInput ||
-            category !== "all" ||
-            branchId !== "all" ||
-            archivedView) && (
-            <button
-              className="text-xs text-ink-soft underline underline-offset-4"
-              onClick={() => {
-                setSearchInput("");
-                setSearch("");
-                setCategory("all");
-                setBranchId("all");
-                setArchivedView(false);
-                setPage(1);
-              }}
+          {hasFilters && (
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              className="h-8 rounded-full text-[11px]"
+              onClick={clearFilters}
             >
               Clear filters
-            </button>
+            </Button>
           )}
         </div>
         {isHq && branches.isError && (
@@ -337,6 +413,7 @@ export default function AttendanceServicesPage() {
       {services.isError ? (
         <EmptyState
           icon={<CalendarClock />}
+          className="paper-card bg-card"
           title="Services could not be loaded"
           description="Try loading the register again."
           action={
@@ -345,58 +422,155 @@ export default function AttendanceServicesPage() {
             </Button>
           }
         />
-      ) : services.isLoading ? (
+      ) : services.isLoading || !ready ? (
         <div className="space-y-2">
           {Array.from({ length: 5 }).map((_, i) => (
             <Skeleton key={i} className="h-14 rounded-xl" />
           ))}
         </div>
-      ) : rows.length === 0 ? (
-        <EmptyState
-          icon={<CalendarClock />}
-          title={archivedView ? "Nothing archived" : "No services yet"}
-          description="Services are the weekly heartbeat that attendance follows."
-        />
       ) : (
-        <div className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl">
-          {rows.map((service) => (
-            <ServiceRow
-              key={service.serviceId}
-              service={service}
-              branchLabel={
-                service.branchId
-                  ? (branchNames.get(service.branchId) ?? "")
-                  : ""
-              }
-              canManage={!!canManage}
-              canDelete={!!canDelete}
-              onEdit={() => openEdit(service)}
-              onDelete={() => setDeleteTarget(service)}
-              onArchive={() =>
-                archive.mutateAsync(service.serviceId, {
-                  onSuccess: () =>
-                    toast(
-                      `${service.name} archived. Attendance history is kept.`,
-                    ),
-                  onError: (e) =>
-                    toast.error(getToastErrorMessage(e, "Couldn't archive.")),
-                })
-              }
-              onRestore={() =>
-                restore.mutateAsync(service.serviceId, {
-                  onSuccess: () =>
-                    toast(`${service.name} is back in the rota.`),
-                  onError: () => toast.error("Couldn't restore it."),
-                })
-              }
-            />
-          ))}
+        <div className="paper-card overflow-hidden rounded-2xl">
+          <ListTable
+            tableId="services-list"
+            label="Service register"
+            recordType="service"
+            recordKey="serviceId"
+            records={rows}
+            className="min-w-[900px]"
+          >
+            <div className="rule-label grid grid-cols-[minmax(0,1.6fr)_0.8fr_minmax(0,1.8fr)_1fr_0.8fr_0.7fr_auto] items-center gap-4 border-b border-line px-5 py-2.5">
+              <span>Service</span>
+              <span>Category</span>
+              <span>Schedule</span>
+              <span>Branch</span>
+              <span>Status</span>
+              <span className="text-right">Check-ins</span>
+              <ManageHeading />
+            </div>
+            <div className="divide-y divide-line/70">
+              {rows.map((service) => (
+                <div
+                  key={service.serviceId}
+                  className="group grid grid-cols-[minmax(0,1.6fr)_0.8fr_minmax(0,1.8fr)_1fr_0.8fr_0.7fr_auto] items-center gap-4 px-5 py-3 hover:bg-muted/40"
+                >
+                  <Link
+                    href={`/gatherings/attendance/services/${service.serviceId}`}
+                    className="min-w-0"
+                  >
+                    <span className="block truncate text-xs font-semibold">
+                      {service.name}
+                    </span>
+                  </Link>
+                  <span className="text-[11px] text-ink-soft">
+                    {SERVICE_CATEGORIES.find(
+                      (item) => item.value === service.category,
+                    )?.label ?? "Not specified"}
+                  </span>
+                  <span
+                    className="min-w-0 text-[11px] text-ink-soft"
+                    title={scheduleSummary(service)}
+                  >
+                    <span className="block truncate">
+                      {scheduleSummary(service)}
+                    </span>
+                    <span className="mt-0.5 block text-[10px] text-ink-faint">
+                      {service.recurrence === "one_time"
+                        ? "One-time"
+                        : service.recurrence === "multi_day"
+                          ? "Date range"
+                          : "Weekly"}
+                    </span>
+                  </span>
+                  <span className="truncate text-[11px] text-ink-soft">
+                    {service.branchId
+                      ? branchNames.get(service.branchId) || "Not available"
+                      : "Church-wide"}
+                  </span>
+                  <span>
+                    <Tag
+                      tone={
+                        service.archivedAt
+                          ? "neutral"
+                          : service.isActive
+                            ? "moss"
+                            : "gold"
+                      }
+                    >
+                      {service.archivedAt
+                        ? "Archived"
+                        : service.isActive
+                          ? "Active"
+                          : "Paused"}
+                    </Tag>
+                  </span>
+                  <span className="num text-right text-[11px]">
+                    {service.attendanceCount ?? 0}
+                  </span>
+                  <ServiceActions
+                    service={service}
+                    canManage={!!canManage}
+                    canDelete={!!canDelete}
+                    onEdit={() => openEdit(service)}
+                    onDelete={() => setDeleteTarget(service)}
+                    onBulkDelete={() =>
+                      deleteService.mutateAsync(service.serviceId)
+                    }
+                    onArchive={() =>
+                      archive.mutateAsync(service.serviceId, {
+                        onSuccess: () =>
+                          toast(
+                            `${service.name} archived. Attendance history is kept.`,
+                          ),
+                        onError: (error) =>
+                          toast.error(
+                            getToastErrorMessage(error, "Couldn't archive."),
+                          ),
+                      })
+                    }
+                    onRestore={() =>
+                      restore.mutateAsync(service.serviceId, {
+                        onSuccess: () =>
+                          toast(`${service.name} is back in the rota.`),
+                        onError: () => toast.error("Couldn't restore it."),
+                      })
+                    }
+                  />
+                </div>
+              ))}
+            </div>
+            {!rows.length && (
+              <div className="p-6">
+                <EmptyState
+                  className="bg-card"
+                  icon={<CalendarClock />}
+                  title={hasFilters ? "No services match" : "No services yet"}
+                  description="Try another search or adjust the filters."
+                  action={
+                    hasFilters ? (
+                      <Button
+                        variant="outline"
+                        className="rounded-full"
+                        onClick={clearFilters}
+                      >
+                        Clear filters
+                      </Button>
+                    ) : canCreate ? (
+                      <Button onClick={openCreate}>Add service</Button>
+                    ) : undefined
+                  }
+                />
+              </div>
+            )}
+          </ListTable>
           <ListPaginationFooter
             page={page}
             perPage={perPage}
             total={total}
             onPageChange={setPage}
-            onPerPageChange={setPerPage}
+            onPerPageChange={(value) => {
+              setPerPage(value);
+              setPage(1);
+            }}
             itemName="services"
             pending={services.isFetching}
           />
@@ -437,100 +611,106 @@ export default function AttendanceServicesPage() {
   );
 }
 
-function ServiceRow({
+function ServiceActions({
   service,
-  branchLabel,
   canManage,
   canDelete,
   onEdit,
   onDelete,
+  onBulkDelete,
   onArchive,
   onRestore,
 }: {
   service: ChurchService;
-  branchLabel: string;
   canManage: boolean;
   canDelete: boolean;
   onEdit: () => void;
   onDelete: () => void;
-  onArchive: () => void;
-  onRestore: () => void;
+  onBulkDelete: () => Promise<unknown>;
+  onArchive: () => Promise<unknown>;
+  onRestore: () => Promise<unknown>;
 }) {
   const toggleActive = useUpdateService(service.serviceId);
   return (
-    <div data-record-row className="group flex items-center gap-4 px-5 py-3.5">
-      <div className="min-w-0 flex-1">
-        <Link
-          href={`/gatherings/attendance/services/${service.serviceId}`}
-          className="block"
-        >
-          <p className="flex items-center gap-2 truncate text-xs font-semibold hover:text-brand">
-            {service.name}
-            {service.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
-          </p>
-          <p className="num mt-0.5 text-[10px] text-ink-faint">
-            {scheduleSummary(service)}
-            {branchLabel ? ` · ${branchLabel}` : ""}
-          </p>
-        </Link>
-      </div>
-      <span className="num hidden w-20 shrink-0 text-right text-[11px] text-ink-soft sm:block">
-        {service.attendanceCount ?? 0}{" "}
-        <span className="text-[9px] text-ink-faint">counted</span>
-      </span>
-      <RowActions
-        actions={[
-          {
-            label: "Open service",
-            icon: <ArrowUpRight />,
-            href: `/gatherings/attendance/services/${service.serviceId}`,
-          },
-          canManage &&
-            !service.archivedAt && {
-              label: service.isActive ? "Pause counting" : "Resume counting",
-              confirmation: { subject: service.name },
-              icon: service.isActive ? <Pause /> : <Play />,
-              tone: service.isActive ? "success" : "warning",
-              disabled: toggleActive.isPending,
-              onSelect: () =>
-                toggleActive.mutateAsync(
-                  { isActive: !service.isActive },
-                  {
-                    onSuccess: () =>
-                      toast(
-                        `${service.name} ${service.isActive ? "paused" : "counting again"}.`,
-                      ),
-                  },
-                ),
+    <RowActions
+      actions={[
+        {
+          label: "Open service",
+          icon: <ArrowUpRight />,
+          href: `/gatherings/attendance/services/${service.serviceId}`,
+        },
+        canManage &&
+          !service.archivedAt && {
+            label: service.isActive ? "Pause counting" : "Resume counting",
+            bulk: {
+              key: service.isActive ? "pause" : "resume",
+              label: service.isActive
+                ? "Pause selected services"
+                : "Resume selected services",
+              run: () =>
+                toggleActive.mutateAsync({ isActive: !service.isActive }),
             },
-          canManage && {
-            label: `Edit ${service.name}`,
-            icon: <PencilLine />,
-            onSelect: onEdit,
+            confirmation: { subject: service.name },
+            icon: service.isActive ? <Pause /> : <Play />,
+            tone: service.isActive ? "success" : "warning",
+            disabled: toggleActive.isPending,
+            onSelect: () =>
+              toggleActive.mutateAsync(
+                { isActive: !service.isActive },
+                {
+                  onSuccess: () =>
+                    toast(
+                      `${service.name} ${service.isActive ? "paused" : "counting again"}.`,
+                    ),
+                },
+              ),
           },
-          canManage &&
-            !service.archivedAt && {
-              label: "Archive service and keep attendance history",
-              confirmation: { subject: service.name },
-              icon: <Archive />,
-              onSelect: onArchive,
+        canManage && {
+          label: `Edit ${service.name}`,
+          icon: <PencilLine />,
+          onSelect: onEdit,
+        },
+        canManage &&
+          !service.archivedAt && {
+            label: "Archive service and keep attendance history",
+            confirmation: { subject: service.name },
+            icon: <Archive />,
+            onSelect: onArchive,
+            bulk: {
+              key: "archive",
+              label: "Archive selected services",
+              description: "Attendance history is kept.",
+              run: onArchive,
             },
-          canManage &&
-            service.archivedAt && {
-              label: "Restore service",
-              confirmation: { subject: service.name },
-              icon: <ArchiveRestore />,
-              tone: "success",
-              onSelect: onRestore,
-            },
-          canDelete && {
-            label: "Delete service",
-            icon: <Trash2 />,
-            tone: "danger",
-            onSelect: onDelete,
           },
-        ]}
-      />
-    </div>
+        canManage &&
+          service.archivedAt && {
+            label: "Restore service",
+            confirmation: { subject: service.name },
+            icon: <ArchiveRestore />,
+            tone: "success",
+            onSelect: onRestore,
+            bulk: {
+              key: "restore",
+              label: "Restore selected services",
+              run: onRestore,
+            },
+          },
+        canDelete && {
+          label: "Delete service",
+          icon: <Trash2 />,
+          tone: "danger",
+          onSelect: onDelete,
+          bulk: {
+            key: "delete",
+            label: "Delete selected services permanently",
+            destructive: true,
+            description:
+              "Deletion is permanent. Services with attendance history should be archived instead.",
+            run: onBulkDelete,
+          },
+        },
+      ]}
+    />
   );
 }

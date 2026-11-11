@@ -270,6 +270,7 @@ function RegistrationsInner() {
             <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-12 rounded-xl" />)}</div>
           ) : rows.length === 0 ? (
             <EmptyState
+              className="paper-card bg-card"
               icon={<UserPlus />}
               title={query ? "Nobody matches that search" : "No registrations yet"}
               description={selected?.isFree ? "Free events fill at the door or with Register Attendee." : "Tickets appear here the moment someone registers."}
@@ -389,6 +390,7 @@ function RegistrationsInner() {
         </>
       ) : (
         <EmptyState
+          className="paper-card bg-card"
           icon={<ClipboardList />}
           title="Pick an event to see its house"
           description="Registrations, payments and check-ins arrive here the moment a list is chosen."

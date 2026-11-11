@@ -31,6 +31,7 @@ async function fixture(
     empty?: boolean;
     hq?: boolean;
     dark?: boolean;
+    planFeatures?: string[];
   } = {},
 ) {
   const state = {
@@ -134,7 +135,7 @@ async function fixture(
         role: ["church_admin"],
         status: "active",
         isAdminHq: !!options.hq,
-        planFeatures: ["events", "tickets", "attendance", "reports"],
+        planFeatures: options.planFeatures ?? ["events", "tickets", "attendance", "reports"],
         permissions: options.permissions ?? allPermissions,
       };
     else if (path.endsWith("/services")) {
@@ -681,14 +682,10 @@ test.describe("event register", () => {
       await filters
         .getByRole("button", { name: "Clear filters", exact: true })
         .click();
-      const start = page.locator('input[type="date"][aria-label="From date"]');
-      await start.fill("2026-12-25");
-      await start.click();
-      await expect(page.getByRole("dialog")).toHaveCount(0);
-      await start.press("Escape");
-      await page
-        .locator('input[type="date"][aria-label="To date"]')
-        .fill("2026-12-25");
+      await filters.getByRole("button", { name: "Date range", exact: true }).click();
+      await page.getByLabel("From date", { exact: true }).fill("2026-12-25");
+      await page.getByLabel("To date", { exact: true }).fill("2026-12-25");
+      await page.getByRole("button", { name: "Apply dates", exact: true }).click();
       await expect
         .poll(() =>
           state.reads.some((path) => {
@@ -833,4 +830,107 @@ test.describe("event register", () => {
       ),
     ).toBe(false);
   });
+});
+
+for (const width of [320, 1280]) {
+  test(`event date dropdown stages, validates and clears dates at ${width}px`, async ({ page, context }) => {
+    const state = await fixture(context, { eventCount: 20 });
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/gatherings/events/list");
+    const trigger = page.getByRole("button", { name: /^Date range/ });
+    await expect(page.getByLabel("From date", { exact: true })).toHaveCount(0);
+    await page.getByRole("button", { name: "Next", exact: true }).click();
+    await expect.poll(() => state.reads.some(path => new URL(path, "http://test").searchParams.get("page") === "2")).toBe(true);
+    await trigger.click();
+    await page.getByLabel("From date", { exact: true }).fill("2026-11-20");
+    await page.getByLabel("To date", { exact: true }).fill("2026-11-10");
+    await expect(page.getByRole("alert").filter({ hasText: "To date must be on or after From date." })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Apply dates", exact: true })).toBeDisabled();
+    expect(state.reads.some(path => new URL(path, "http://test").searchParams.has("startDate"))).toBe(false);
+    await page.keyboard.press("Escape");
+    await expect(trigger).toBeFocused();
+    await trigger.click();
+    await expect(page.getByLabel("From date", { exact: true })).toHaveValue("");
+    await page.getByLabel("From date", { exact: true }).fill("2026-11-01");
+    await page.getByRole("button", { name: "Apply dates", exact: true }).click();
+    await expect.poll(() => state.reads.some(path => {
+      const params = new URL(path, "http://test").searchParams;
+      return params.has("startDate") && !params.has("endDate") && params.get("page") === "1";
+    })).toBe(true);
+    await expect(trigger).toHaveAccessibleName("Date range, 2026-11-01 to any end");
+    await trigger.click();
+    await expect(page.getByLabel("From date", { exact: true })).toHaveValue("2026-11-01");
+    await page.screenshot({ path: `/tmp/event-date-dropdown-${width}.png`, fullPage: true });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.getByRole("button", { name: "Clear dates", exact: true }).click();
+    await expect(trigger).toHaveAccessibleName("Date range");
+    await trigger.click();
+    await expect(page.getByLabel("From date", { exact: true })).toHaveValue("");
+    expect(state.writes).toHaveLength(0);
+  });
+}
+
+for (const paid of [false, true]) {
+  test(`event creation offers appropriate pricing and no service type: ${paid ? "Network" : "Community"}`, async ({ page, context }) => {
+    await fixture(context, { planFeatures: paid ? ["events", "tickets"] : ["events"] });
+    const writes: Record<string, unknown>[] = [];
+    await context.route("**/api/backend/events", async route => {
+      if (route.request().method() !== "POST") return route.fallback();
+      const body = route.request().postDataJSON();
+      writes.push(body);
+      return route.fulfill({ json: { success: true, data: { ...body, eventId: "gathering" } } });
+    });
+    await page.goto("/gatherings/events/new");
+    await expect(page.getByRole("button", { name: "Service", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Conference", exact: true })).toBeVisible();
+    const pricing = page.getByRole("switch", { name: "Free to attend", exact: true });
+    await expect(pricing).toBeChecked();
+    if (paid) {
+      await expect(pricing).toBeEnabled();
+      await pricing.click();
+      await page.locator('input[type="number"]').last().fill("2500");
+    } else {
+      await expect(pricing).toBeDisabled();
+      await expect(page.getByText("Your plan includes free events.", { exact: false })).toBeVisible();
+    }
+    await page.locator('input[placeholder="Sunday Gathering"]').fill("Community gathering");
+    await page.locator('input[type="datetime-local"]').first().fill("2026-11-15T09:00");
+    await page.getByRole("button", { name: "Create event", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(1);
+    expect(writes[0].type).toBe("conference");
+    expect(writes[0].isFree).toBe(!paid);
+    expect(writes[0].price).toBe(paid ? 2500 : undefined);
+  });
+}
+
+test("Community editing cannot convert free events to paid", async ({ page, context }) => {
+  await fixture(context, { planFeatures: ["events"] });
+  await page.goto("/gatherings/events/gathering/edit");
+  await expect(page.getByRole("button", { name: "Service", exact: true })).toHaveCount(0);
+  const pricing = page.getByRole("switch", { name: "Free entry", exact: true });
+  await expect(pricing).toBeChecked();
+  await expect(pricing).toBeDisabled();
+});
+
+test("Community can amend a legacy service event without reassigning its type or pricing", async ({ page, context }) => {
+  await fixture(context, { planFeatures: ["events"] });
+  const writes: Record<string, unknown>[] = [];
+  await context.route("**/api/backend/events/gathering", route => {
+    if (route.request().method() === "PATCH") {
+      writes.push(route.request().postDataJSON());
+      return route.fulfill({ json: { success: true, data: { eventId: "gathering", title: "Legacy gathering" } } });
+    }
+    return route.fulfill({ json: { success: true, data: {
+      eventId: "gathering", title: "Legacy gathering", type: "service", startDate: "2026-11-15T09:00:00Z", isFree: false, price: 2500, registrationCount: 0,
+    } } });
+  });
+  await page.goto("/gatherings/events/gathering/edit");
+  await expect(page.getByText("Service (existing record)", { exact: true })).toBeVisible();
+  await expect(page.getByRole("switch", { name: "Free entry", exact: true })).toBeDisabled();
+  await expect(page.locator('input[inputmode="numeric"]').last()).toBeDisabled();
+  await page.getByRole("button", { name: "Save changes", exact: true }).click();
+  await expect.poll(() => writes.length).toBe(1);
+  expect(writes[0]).not.toHaveProperty("type");
+  expect(writes[0]).not.toHaveProperty("isFree");
+  expect(writes[0]).not.toHaveProperty("price");
 });
