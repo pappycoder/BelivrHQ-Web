@@ -18,7 +18,6 @@ import { Loader2, CheckCheck } from "lucide-react";
 import {
   useNotificationsList,
   useNotificationsUnread,
-  useMarkAsRead,
   useMarkAllAsRead,
   NOTIFICATION_TYPE_LABELS,
   NOTIFICATIONS_LIST_LIMIT,
@@ -52,7 +51,6 @@ export function NotificationBell({ compact = false }: NotificationBellProps) {
     { page: 1, limit: NOTIFICATIONS_LIST_LIMIT, read: "all" },
     { enabled: previewOpen }
   );
-  const markAsRead = useMarkAsRead();
   const markAllAsRead = useMarkAllAsRead();
 
   const unreadCount = unread.data?.count ?? 0;
@@ -66,7 +64,6 @@ export function NotificationBell({ compact = false }: NotificationBellProps) {
   }, [unreadCount, queryClient]);
 
   const handleOpenNotification = (n: Notification) => {
-    if (!n.readAt) markAsRead.mutate(n.id);
     setSelected(n);
   };
 

@@ -7,7 +7,7 @@ import {
   Camera,
   Check,
   KeyRound,
-  Mail,
+  Bell,
   Phone,
   ShieldCheck,
   UserRound,
@@ -365,11 +365,10 @@ export default function SettingsProfilePage() {
                 two-factor
               </button>
               <Link
-                href="/settings/notifications"
+                href="/notifications"
                 className="flex items-center gap-2 rounded-lg border border-line px-3 py-2 hover:border-brand/40"
               >
-                <Mail className="size-3.5 text-moss" /> What reaches you, and
-                when
+                <Bell className="size-3.5 text-moss" /> Notifications
               </Link>
               <Link
                 href="/settings/appearance"

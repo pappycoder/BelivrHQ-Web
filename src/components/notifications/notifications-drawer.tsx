@@ -134,7 +134,6 @@ export function NotificationsDrawer({
   };
 
   const handleOpen = (n: Notification) => {
-    if (!n.readAt) markAsRead.mutate(n.id);
     onOpenNotification(n);
   };
 
