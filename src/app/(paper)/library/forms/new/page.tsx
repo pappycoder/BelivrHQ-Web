@@ -23,7 +23,7 @@ export default function NewFormPage() {
       <EmptyState
         title="Building forms needs the forms grant"
         description="Your role can read answers but not author forms."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/library/forms">Back to forms</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/library/forms">Back to forms</Link></Button>}
       />
     );
   }
@@ -50,7 +50,7 @@ export default function NewFormPage() {
         title="Build a form."
         description="Build your form and review responses in one place. Keep questions brief and focused."
         actions={
-          <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-xs">
+          <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-sm">
             <Link href="/library/forms">Cancel</Link>
           </Button>
         }

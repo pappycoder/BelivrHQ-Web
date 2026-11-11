@@ -62,7 +62,7 @@ function PasswordCard() {
       <div className="grid gap-4 sm:grid-cols-2">
           <RequiredFieldsNotice className="col-span-full" />
         <div className="space-y-1.5">
-          <Label required className="text-xs">Current password</Label>
+          <Label required className="text-sm">Current password</Label>
           <div className="relative">
             <Input
               type={show ? "text" : "password"}
@@ -89,7 +89,7 @@ function PasswordCard() {
         </div>
         <div />
         <div className="space-y-1.5">
-          <Label required className="text-xs">New password</Label>
+          <Label required className="text-sm">New password</Label>
           <Input
             type={show ? "text" : "password"}
             value={form.newPassword}
@@ -100,11 +100,11 @@ function PasswordCard() {
             className="h-10 rounded-lg border-line bg-card text-sm shadow-none"
           />
           {tooShort ? (
-            <p className="text-[10px] text-rose">Eight characters at least.</p>
+            <p className="text-xs text-rose">Eight characters at least.</p>
           ) : null}
         </div>
         <div className="space-y-1.5">
-          <Label required className="text-xs">Confirm</Label>
+          <Label required className="text-sm">Confirm</Label>
           <Input
             type={show ? "text" : "password"}
             value={form.confirm}
@@ -114,7 +114,7 @@ function PasswordCard() {
             className="h-10 rounded-lg border-line bg-card text-sm shadow-none"
           />
           {mismatch ? (
-            <p className="text-[10px] text-rose">
+            <p className="text-xs text-rose">
               The two don&apos;t match yet.
             </p>
           ) : null}
@@ -123,7 +123,7 @@ function PasswordCard() {
       <BotProtection path="/auth/password" method="PUT" authenticated />
       <div className="mt-4 flex justify-end">
         <Button
-          className="h-9 gap-1.5 rounded-full text-xs"
+          className="h-9 gap-1.5 rounded-full text-sm"
           disabled={!canSubmit || change.isPending || !captchaReady}
           onClick={submit}
         >
@@ -228,13 +228,13 @@ function TwoFactorCard() {
         )
       }
     >
-      <p className="text-[11px] leading-relaxed text-ink-soft">
+      <p className="text-sm leading-relaxed text-ink-soft">
         Sign in using codes from an authenticator app on your phone.
       </p>
 
       {!enabled && action !== "enroll" ? (
         <Button
-          className="mt-3 h-9 gap-1.5 rounded-full text-xs"
+          className="mt-3 h-9 gap-1.5 rounded-full text-sm"
           disabled={setup.isPending}
           onClick={beginSetup}
         >
@@ -253,17 +253,17 @@ function TwoFactorCard() {
               className="size-36 rounded-lg border border-line bg-white p-1"
             />
             <div className="min-w-0 flex-1 space-y-1.5">
-              <p className="text-[11px] text-ink-soft">
+              <p className="text-sm text-ink-soft">
                 Scan the QR in your authenticator app, or paste the key:
               </p>
-              <p className="break-all rounded-lg bg-card px-2.5 py-1.5 font-mono text-[10px] text-ink">
+              <p className="break-all rounded-lg bg-card px-2.5 py-1.5 font-mono text-xs text-ink">
                 {setupData.secret}
               </p>
             </div>
           </div>
           <div className="flex flex-wrap items-end gap-2">
             <div className="space-y-1.5">
-              <Label required className="text-xs">Six-digit code</Label>
+              <Label required className="text-sm">Six-digit code</Label>
               <Input
                 inputMode="numeric"
                 maxLength={6}
@@ -274,7 +274,7 @@ function TwoFactorCard() {
               />
             </div>
             <Button
-              className="h-10 gap-1.5 rounded-lg text-xs"
+              className="h-10 gap-1.5 rounded-lg text-sm"
               disabled={toggle.isPending || code.length < 6}
               onClick={confirmEnable}
             >
@@ -283,7 +283,7 @@ function TwoFactorCard() {
             </Button>
             <Button
               variant="ghost"
-              className="h-10 rounded-lg text-xs text-ink-faint"
+              className="h-10 rounded-lg text-sm text-ink-faint"
               onClick={() => {
                 setAction("idle");
                 setSetupData(null);
@@ -299,7 +299,7 @@ function TwoFactorCard() {
         <div className="mt-3 space-y-2.5">
           {verified?.recoveryCodesRemaining !== undefined ? (
             <div className="flex items-center justify-between rounded-lg border border-dashed border-line px-3 py-2.5">
-              <span className="text-[11px] text-ink-soft">
+              <span className="text-sm text-ink-soft">
                 Recovery codes left:{" "}
                 <span className="num font-semibold text-ink">
                   {verified.recoveryCodesRemaining}
@@ -309,7 +309,7 @@ function TwoFactorCard() {
             </div>
           ) : null}
           <div className="flex items-center justify-between rounded-lg border border-line px-3 py-2.5">
-            <span className="min-w-0 text-[11px] text-ink-soft">
+            <span className="min-w-0 text-sm text-ink-soft">
               Pause two-step? You&apos;ll need a current code.
             </span>
             {action === "disable" ? (
@@ -320,12 +320,12 @@ function TwoFactorCard() {
                   value={code}
                   onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
                   placeholder="000000"
-                  className="num h-8 w-24 rounded-lg border-line bg-card text-center text-xs shadow-none"
+                  className="num h-8 w-24 rounded-lg border-line bg-card text-center text-sm shadow-none"
                 />
                 <Button
                   size="xs"
                   variant="outline"
-                  className="h-8 rounded-full border-line text-[10px] text-rose"
+                  className="h-8 rounded-full border-line text-xs text-rose"
                   disabled={toggle.isPending}
                   onClick={confirmDisable}
                 >
@@ -334,7 +334,7 @@ function TwoFactorCard() {
                 <Button
                   size="xs"
                   variant="ghost"
-                  className="h-8 rounded-full text-[10px]"
+                  className="h-8 rounded-full text-xs"
                   onClick={() => {
                     setAction("idle");
                     setCode("");
@@ -347,7 +347,7 @@ function TwoFactorCard() {
               <Button
                 size="xs"
                 variant="outline"
-                className="h-8 rounded-full border-line text-[10px]"
+                className="h-8 rounded-full border-line text-xs"
                 onClick={() => {
                   setAction("disable");
                   setCode("");
@@ -361,7 +361,7 @@ function TwoFactorCard() {
       ) : null}
 
       {!enabled && action !== "enroll" ? (
-        <p className="mt-2 text-[10px] text-ink-faint">
+        <p className="mt-2 text-xs text-ink-faint">
           {profile.data?.twoFactorEnabled
             ? "Your account shows two-factor on. Refresh if the app list looks empty."
             : "One missed phone is all it takes; second factors exist for that Monday."}
@@ -391,11 +391,11 @@ function RegenerateInline({
             value={code}
             onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
             placeholder="000000"
-            className="num h-8 w-24 rounded-lg border-line bg-card text-center text-xs shadow-none"
+            className="num h-8 w-24 rounded-lg border-line bg-card text-center text-sm shadow-none"
           />
           <Button
             size="xs"
-            className="h-8 rounded-full text-[10px]"
+            className="h-8 rounded-full text-xs"
             disabled={regenerate.isPending || code.length < 6}
             onClick={() =>
               regenerate.mutate(
@@ -422,7 +422,7 @@ function RegenerateInline({
           <Button
             size="xs"
             variant="ghost"
-            className="h-8 rounded-full text-[10px]"
+            className="h-8 rounded-full text-xs"
             onClick={() => setOpen(false)}
           >
             Cancel
@@ -432,7 +432,7 @@ function RegenerateInline({
         <Button
           size="xs"
           variant="outline"
-          className="h-8 gap-1 rounded-full border-line text-[10px]"
+          className="h-8 gap-1 rounded-full border-line text-xs"
           onClick={() => setOpen(true)}
         >
           <RefreshCcw className="size-2.5" /> Regenerate

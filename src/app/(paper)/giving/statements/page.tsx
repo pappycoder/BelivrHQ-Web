@@ -191,7 +191,7 @@ export default function GivingStatementsPage() {
         <select
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
-          className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-[11px] outline-none"
+          className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-sm outline-none"
           aria-label="Fund filter"
         >
           <option value="">All funds</option>
@@ -301,7 +301,7 @@ export default function GivingStatementsPage() {
               <div className="space-y-3">
                 {totals.byMethod.map(([label, value], index) => (
                   <div key={label}>
-                    <div className="flex items-center justify-between text-[11px]">
+                    <div className="flex items-center justify-between text-sm">
                       <span className="flex items-center gap-1.5">
                         <span
                           className="size-1.5 rounded-full"
@@ -328,7 +328,7 @@ export default function GivingStatementsPage() {
                   </div>
                 ))}
               </div>
-              <p className="mt-4 flex items-center gap-1.5 text-[10px] text-ink-faint">
+              <p className="mt-4 flex items-center gap-1.5 text-xs text-ink-faint">
                 <Download className="size-3" /> CSV, Excel and PDF all honour
                 this exact window.
               </p>
@@ -346,21 +346,21 @@ export default function GivingStatementsPage() {
                     key={giver.name}
                     className="flex items-center gap-3 px-5 py-2.5"
                   >
-                    <span className="num w-5 text-[10px] text-ink-faint">
+                    <span className="num w-5 text-xs text-ink-faint">
                       {index + 1}
                     </span>
                     <PersonAvatar name={giver.name} size="xs" />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-xs font-medium">
+                      <span className="block truncate text-sm font-medium">
                         {giver.name}
                       </span>
-                      <span className="block text-[10px] text-ink-faint">
+                      <span className="block text-xs text-ink-faint">
                         {number(giver.count)} gifts
                       </span>
                     </span>
                     <span
                       className={cn(
-                        "num text-xs font-semibold",
+                        "num text-sm font-semibold",
                         range === "lastYear" && "text-moss",
                       )}
                     >
@@ -369,7 +369,7 @@ export default function GivingStatementsPage() {
                   </div>
                 ))}
               </div>
-              <div className="flex items-center justify-between border-t border-line px-5 py-2.5 text-[10px] text-ink-faint">
+              <div className="flex items-center justify-between border-t border-line px-5 py-2.5 text-xs text-ink-faint">
                 <span>
                   Year-end statements for each giver open from the ledger rows.
                 </span>
@@ -378,8 +378,8 @@ export default function GivingStatementsPage() {
             </SectionCard>
           </div>
 
-          <div className="rounded-2xl border border-dashed border-line p-5 text-[11px] leading-relaxed text-ink-soft">
-            <p className="mb-1 font-display text-xs font-semibold text-ink">
+          <div className="rounded-2xl border border-dashed border-line p-5 text-sm leading-relaxed text-ink-soft">
+            <p className="mb-1 font-display text-sm font-semibold text-ink">
               Statement discipline
             </p>
             Every figure here walks the full successful ledger for the window, using the same source the receipts print from, so a board pack and a

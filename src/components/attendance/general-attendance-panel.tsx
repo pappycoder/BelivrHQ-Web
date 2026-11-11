@@ -6,7 +6,12 @@ import { ListTable } from "@/components/shared/list-table";
 import { LoadingState } from "@/components/shared/loading-state";
 
 import * as React from "react";
-import { PencilLine, CalendarDays, TriangleAlert } from "lucide-react";
+import {
+  PencilLine,
+  CalendarDays,
+  ChevronDown,
+  TriangleAlert,
+} from "lucide-react";
 import styles from "./general-attendance-panel.module.css";
 import { format } from "date-fns";
 import {
@@ -39,6 +44,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Dialog,
   DialogContent,
@@ -158,6 +168,13 @@ export function GeneralAttendancePanel({
   const [perPage, setPerPage] = React.useState(20);
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
+  const [dateFilterOpen, setDateFilterOpen] = React.useState(false);
+  const [dateDraft, setDateDraft] = React.useState({ from: "", to: "" });
+  const dateTriggerRef = React.useRef<HTMLButtonElement>(null);
+  const restoreDateFocus = React.useRef(false);
+  const invalidDateRange =
+    !!dateDraft.from && !!dateDraft.to && dateDraft.from > dateDraft.to;
+  const datesLocked = !!filters.startDate && !!filters.endDate;
   const [branchId, setBranchId] = React.useState("");
   const params = {
     ...filters,
@@ -191,14 +208,19 @@ export function GeneralAttendancePanel({
     target?.branchId ?? profile?.branchId ?? "",
   );
   const [values, setValues] = React.useState(emptyCounts);
+  const [entryEditing, setEntryEditing] = React.useState(true);
+  const [lookingUp, setLookingUp] = React.useState(false);
+  const [lookupFailed, setLookupFailed] = React.useState(false);
+  const [lookupVersion, setLookupVersion] = React.useState(0);
+  const [conflictingRecord, setConflictingRecord] =
+    React.useState<GeneralAttendanceRecord | null>(null);
   const [error, setError] = React.useState("");
   // A session already recorded for the selected day (in create mode) is
-  // auto-loaded so the form edits it — the API keeps one session per
+  // loaded in view mode; explicit edit intent is required. The API keeps one session per
   // context/branch/date, and a second create would fail with a conflict.
   const [matched, setMatched] = React.useState<GeneralAttendanceRecord | null>(
     null,
   );
-  const autoFilled = React.useRef<typeof emptyCounts | null>(null);
   const targetType = target?.type;
   const targetId = target?.id;
   const lookupDay = React.useCallback(
@@ -221,10 +243,10 @@ export function GeneralAttendancePanel({
     },
     [targetType, targetId],
   );
-  React.useEffect(
-    () => setPage(1),
-    [target?.id, filters.branchId, filters.startDate, filters.endDate],
-  );
+  React.useEffect(() => {
+    setPage(1);
+    setDateFilterOpen(false);
+  }, [target?.id, filters.branchId, filters.startDate, filters.endDate]);
   React.useEffect(() => {
     if (service && !editing && !controlled) {
       setInternalDate(defaultServiceDate(service));
@@ -232,8 +254,14 @@ export function GeneralAttendancePanel({
   }, [editing, service, controlled]);
   const inline = entryMode === "inline";
   const fieldId = React.useId();
+  const savedRecord = editing ?? matched;
+  const canEditEntry = savedRecord ? canUpdate : canCreate;
+  const entryEditable =
+    entryEditing && canEditEntry && !lookingUp && !lookupFailed;
   const dirty =
-    inline && canCreate && Object.values(values).some((value) => value !== "");
+    inline &&
+    entryEditable &&
+    !sameValues(values, savedRecord ? valuesFrom(savedRecord) : emptyCounts);
   useUnsavedChanges(dirty);
   React.useEffect(() => {
     onDirtyChange?.(dirty);
@@ -243,45 +271,50 @@ export function GeneralAttendancePanel({
     onBusyChange?.(save.isPending);
     return () => onBusyChange?.(false);
   }, [save.isPending, onBusyChange]);
-  const autoLookupActive = canCreate && canRead && !editing && (inline || open);
+  const autoLookupActive =
+    canRead && !!recordBranch && !editing && (inline || open);
   React.useEffect(() => {
     if (!autoLookupActive) {
-      setMatched(null);
+      setLookingUp(false);
+      setLookupFailed(false);
       return;
     }
     const controller = new AbortController();
+    setLookingUp(true);
+    setError("");
+    setMatched(null);
+    setValues({ ...emptyCounts });
+    setEntryEditing(false);
+    setLookupFailed(false);
+    setConflictingRecord(null);
     const timer = setTimeout(() => {
       lookupDay(date, recordBranch, controller.signal)
         .then((found) => {
           if (controller.signal.aborted) return;
-          setMatched(found);
-          if (found) {
-            const next = valuesFrom(found);
-            autoFilled.current = next;
-            setValues(next);
-          } else if (autoFilled.current) {
-            // Only drop the prefilled numbers if nobody typed over them.
-            const previous = autoFilled.current;
-            autoFilled.current = null;
-            setValues((current) =>
-              sameValues(current, previous) ? { ...emptyCounts } : current,
-            );
-          }
+          setMatched(found ?? null);
+          const next = found ? valuesFrom(found) : { ...emptyCounts };
+          setValues(next);
+          setEntryEditing(!found);
+          setError("");
         })
         .catch(() => {
-          // A failed lookup keeps the form blank; the 409 retry on submit is
-          // the safety net for a same-day record we could not preview.
+          if (!controller.signal.aborted) setLookupFailed(true);
+        })
+        .finally(() => {
+          if (!controller.signal.aborted) setLookingUp(false);
         });
-    }, 350);
+    }, 200);
     return () => {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [autoLookupActive, date, recordBranch, lookupDay]);
+  }, [autoLookupActive, date, recordBranch, lookupDay, lookupVersion]);
   function begin(record?: GeneralAttendanceRecord) {
+    setEntryEditing(true);
+    setConflictingRecord(null);
+    setLookupFailed(false);
     setEditing(record ?? null);
     setMatched(null);
-    autoFilled.current = null;
     setDate(
       record?.attendanceDate ??
         (service
@@ -297,6 +330,7 @@ export function GeneralAttendancePanel({
   }
   async function submit(event: React.FormEvent) {
     event.preventDefault();
+    if (!entryEditable || save.isPending) return;
     setError("");
     const counts = Object.fromEntries(
       countFields.map(([key]) => [
@@ -358,39 +392,30 @@ export function GeneralAttendancePanel({
       attendanceDate: date,
     };
     try {
-      await save.mutateAsync({ ...payload, id: recordId });
+      const persisted = await save.mutateAsync({ ...payload, id: recordId });
       toast.success(
         recordId ? "General attendance updated" : "General attendance recorded",
       );
       setOpen(false);
-      if (inline && !editing) setValues({ ...emptyCounts });
+      if (inline) {
+        setEditing(null);
+        setMatched(persisted);
+        setValues(valuesFrom(persisted));
+        setEntryEditing(false);
+      }
     } catch (err) {
-      // A same-day session may have appeared after the prefill check
-      // (another tablet at the door, offline sync). Instead of dead-ending
-      // on the 409, adopt that record and save into it.
-      const looksLikeConflict =
+      const conflict =
         (err as { statusCode?: number }).statusCode === 409 ||
         /already recorded/i.test(getToastErrorMessage(err, ""));
-      if (!recordId && looksLikeConflict) {
-        const found = await lookupDay(date, recordBranch).catch(() => null);
-        if (found) {
-          try {
-            await save.mutateAsync({ ...payload, id: found.id });
-            setMatched(found);
-            autoFilled.current = valuesFrom(found);
-            toast.success("General attendance updated");
-            setOpen(false);
-            if (inline && !editing) setValues({ ...emptyCounts });
-          } catch (retryError) {
-            setError(
-              getToastErrorMessage(
-                retryError,
-                "Could not save general attendance.",
-              ),
-            );
-          }
-          return;
-        }
+      if (!recordId && conflict) {
+        const found = canRead
+          ? await lookupDay(date, recordBranch).catch(() => null)
+          : null;
+        setConflictingRecord(found);
+        setError(
+          "A headcount has already been saved for this date. Your draft has not changed it. Review the saved headcount before editing. Reviewing will replace the draft values.",
+        );
+        return;
       }
       setError(getToastErrorMessage(err, "Could not save general attendance."));
     }
@@ -398,7 +423,7 @@ export function GeneralAttendancePanel({
   if (
     (!canRead && !canCreate) ||
     (requireService && !target) ||
-    (!showRecords && (!inline || !canCreate)) ||
+    (!showRecords && (!inline || (!canCreate && !canRead))) ||
     (entryMode === "hidden" && !canRead)
   )
     return null;
@@ -408,12 +433,17 @@ export function GeneralAttendancePanel({
   }));
   function renderForm(compact: boolean) {
     const id = (key: string) =>
-      compact ? `general-inline-${fieldId}-${key}` : `general-${key}`;
+      compact
+        ? `general-inline-${fieldId}-${key}`
+        : `general-${fieldId}-${key}`;
     const countInput = (key: keyof typeof emptyCounts, label: string) => (
-      <div key={key} className="space-y-1.5">
-        <Label required={key === "total"} htmlFor={id(key)} className="text-xs">
+      <div className="min-w-0 space-y-2" key={key}>
+        <Label
+          required={key === "total"}
+          htmlFor={id(key)}
+          className="text-sm text-ink-muted"
+        >
           {label}
-          {key === "total" ? "" : " (optional)"}
         </Label>
         <Input
           id={id(key)}
@@ -423,7 +453,19 @@ export function GeneralAttendancePanel({
           step={1}
           required={key === "total"}
           value={values[key]}
-          disabled={save.isPending}
+          placeholder={
+            key === "total" ? "0" : entryEditable ? "Optional" : "Not supplied"
+          }
+          readOnly={!entryEditable}
+          disabled={save.isPending || lookingUp}
+          className={cn(
+            "rounded-xl border-line bg-card font-display tabular-nums shadow-none",
+            key === "total" ? styles.totalInput : styles.breakdownInput,
+            key === "total"
+              ? "h-20 text-4xl md:text-4xl"
+              : "h-12 text-xl md:text-xl",
+            !entryEditable && "bg-muted/20 text-ink-muted",
+          )}
           onChange={(event) =>
             setValues((previous) => ({
               ...previous,
@@ -433,77 +475,228 @@ export function GeneralAttendancePanel({
         />
       </div>
     );
+    const cancelEditing = () => {
+      setValues(savedRecord ? valuesFrom(savedRecord) : { ...emptyCounts });
+      setEntryEditing(false);
+      setError("");
+    };
     return (
       <ValidatedForm
         onSubmit={submit}
-        aria-label={compact ? "Reported headcount" : undefined}
-        className="space-y-3"
+        aria-label={compact ? "Reported headcount" : "Headcount entry"}
+        className="space-y-5"
       >
-        <div className="grid items-start gap-3 sm:grid-cols-2">
-          <div className="space-y-1.5">
-            <Label required htmlFor={id("date")}>Attendance date</Label>
-            {controlled && !editing ? (
-              <p
-                id={id("date")}
-                className="flex h-9 items-center rounded-lg border border-input bg-muted/40 px-3 text-sm text-muted-foreground"
-              >
-                {format(new Date(`${date}T00:00:00`), "EEE d MMM yyyy")}
-              </p>
-            ) : (
-              <Input
-                picker="wheel"
-                id={id("date")}
-                type="date"
-                required
-                value={date}
-                disabled={!!editing || save.isPending}
-                onChange={(e) => setDate(e.target.value)}
-              />
-            )}
-          </div>
-          {compact && countInput("total", "Total attendance")}
-        </div>
-        {!editing && !target?.branchId && profile?.isAdminHq && (
+        <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-line bg-muted/20 p-4">
           <div>
-            <Label required>Branch</Label>
-            <BranchFilter
-              value={recordBranch}
-              onChange={setRecordBranch}
-              allLabel="Select a branch"
-            />
+            <p className="text-xs font-semibold uppercase tracking-widest text-ink-faint">
+              {savedRecord ? "Saved headcount" : "New headcount"}
+            </p>
+            <p className="mt-1 text-sm font-semibold">
+              {target?.name ??
+                savedRecord?.contextName ??
+                savedRecord?.serviceName ??
+                "Meeting attendance"}
+            </p>
+            <p className="mt-1 text-sm text-ink-muted">
+              {entryEditable
+                ? "Edit mode. Review the counts before saving."
+                : savedRecord
+                  ? "View mode. Saved counts are protected from accidental changes."
+                  : "View mode. Choose Edit attendance to enter counts."}
+            </p>
+          </div>
+          {!entryEditable && !lookingUp && !lookupFailed && canEditEntry && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setEntryEditing(true)}
+            >
+              Edit attendance
+            </Button>
+          )}
+        </div>
+        {lookingUp && (
+          <p role="status" className="text-sm text-ink-muted">
+            Checking saved attendance for this date…
+          </p>
+        )}
+        {lookupFailed && (
+          <div
+            role="alert"
+            className="rounded-xl border border-destructive/30 p-3 text-sm"
+          >
+            Saved attendance could not be checked.{" "}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setLookupVersion((value) => value + 1)}
+            >
+              Retry saved headcount
+            </Button>
           </div>
         )}
-        {matched && !editing ? (
-          <p role="status" className="text-xs text-muted-foreground">
-            {date} already has a recorded headcount. Saving updates that record
-            instead of adding a second one.
-          </p>
-        ) : null}
-        <div
-          className={
-            compact
-              ? "grid grid-cols-2 gap-3 lg:grid-cols-4"
-              : "grid grid-cols-2 gap-4"
-          }
-        >
-          {countFields
-            .filter(([key]) => !compact || key !== "total")
-            .map(([key, label]) => countInput(key, label))}
+        <div className="grid items-start gap-5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="rounded-xl border border-brand/20 bg-brand/5 p-4">
+            {countInput("total", "Total attendance")}
+            <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+              The number of people present. Named check-ins are recorded
+              separately.
+            </p>
+          </div>
+          <div className="space-y-4 rounded-xl border border-line p-4">
+            <div className="space-y-2">
+              <Label required htmlFor={id("date")} className="text-sm">
+                Attendance date
+              </Label>
+              {controlled || !!editing ? (
+                <p id={id("date")} className="text-sm font-medium">
+                  {date
+                    ? format(new Date(`${date}T00:00:00`), "EEE d MMM yyyy")
+                    : "Choose a date"}
+                </p>
+              ) : (
+                <Input
+                  picker="wheel"
+                  id={id("date")}
+                  type="date"
+                  required
+                  value={date}
+                  disabled={save.isPending}
+                  onChange={(event) => {
+                    if (
+                      dirty &&
+                      !window.confirm(
+                        "Discard unsaved headcount changes before changing the date?",
+                      )
+                    )
+                      return;
+                    setMatched(null);
+                    setValues({ ...emptyCounts });
+                    setDate(event.target.value);
+                  }}
+                />
+              )}
+            </div>
+            {!editing && !target?.branchId && profile?.isAdminHq && (
+              <fieldset disabled={save.isPending || !!editing}>
+                <Label required className="text-sm">
+                  Branch
+                </Label>
+                <BranchFilter
+                  value={recordBranch}
+                  onChange={(value) => {
+                    if (
+                      dirty &&
+                      !window.confirm(
+                        "Discard unsaved headcount changes before changing the branch?",
+                      )
+                    )
+                      return;
+                    setRecordBranch(value);
+                  }}
+                  allLabel="Select a branch"
+                />
+              </fieldset>
+            )}
+            <p className="text-sm leading-relaxed text-ink-muted">
+              Only the total is required. Add age or gender breakdowns when
+              available.
+            </p>
+          </div>
+        </div>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <section
+            className="space-y-3 rounded-xl border border-line p-4"
+            aria-label="Age breakdown"
+          >
+            <div>
+              <h3 className="text-sm font-semibold">Age breakdown</h3>
+              <p className="mt-1 text-sm text-ink-muted">
+                Optional counts within the total.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {countInput("adultCount", "Adults")}
+              {countInput("childrenCount", "Children")}
+            </div>
+          </section>
+          <section
+            className="space-y-3 rounded-xl border border-line p-4"
+            aria-label="Gender breakdown"
+          >
+            <div>
+              <h3 className="text-sm font-semibold">Gender breakdown</h3>
+              <p className="mt-1 text-sm text-ink-muted">
+                Another breakdown of the same total.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {countInput("maleCount", "Male")}
+              {countInput("femaleCount", "Female")}
+            </div>
+          </section>
         </div>
         {error && (
-          <p role="alert" className="text-sm text-destructive">
+          <div
+            role="alert"
+            className="rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive"
+          >
             {error}
-          </p>
+            {conflictingRecord && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-2"
+                onClick={() => {
+                  setMatched(conflictingRecord);
+                  setValues(valuesFrom(conflictingRecord));
+                  setEntryEditing(false);
+                  setConflictingRecord(null);
+                  setError("");
+                }}
+              >
+                Review saved headcount
+              </Button>
+            )}
+          </div>
         )}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-xs text-muted-foreground">
-            {compact
-              ? "Only the total is required. Age and gender describe the same total."
-              : ""}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
+          <p className="text-sm text-ink-muted">
+            {lookingUp
+              ? "Checking saved attendance…"
+              : entryEditable
+                ? "Saving locks this headcount for viewing."
+                : savedRecord
+                  ? "Choose Edit attendance to change these counts."
+                  : "No saved headcount for this date."}
           </p>
-          <Button type="submit" size="sm" disabled={save.isPending}>
-            {save.isPending ? "Saving…" : "Save attendance"}
-          </Button>
+          {entryEditable && (
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                disabled={save.isPending}
+                onClick={cancelEditing}
+              >
+                Cancel editing
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={save.isPending || lookingUp}
+              >
+                {save.isPending
+                  ? "Saving…"
+                  : savedRecord
+                    ? "Save changes"
+                    : "Save headcount"}
+              </Button>
+            </div>
+          )}
         </div>
       </ValidatedForm>
     );
@@ -515,19 +708,19 @@ export function GeneralAttendancePanel({
     >
       <CardHeader className="px-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <CardTitle className="text-sm">
+          <CardTitle className="text-lg">
             {inline
               ? "Reported headcount"
               : entryMode === "hidden"
                 ? "Reported headcount records"
-                : "General Attendance"}
+                : "Headcount"}
           </CardTitle>
           <div className="flex gap-2">
             {canRead && showRecords && (
               <ExportDropdown
                 columns={columns}
                 data={rows.map((row) => ({ ...row }))}
-                title="General Attendance"
+                title="Headcount"
                 filename="general-attendance"
                 disabled={!rows.length}
                 fetchAllRows={async () => {
@@ -544,12 +737,12 @@ export function GeneralAttendancePanel({
             )}
             {canCreate && entryMode === "dialog" && (
               <Button size="sm" onClick={() => begin()}>
-                Record general attendance
+                Record headcount
               </Button>
             )}
           </div>
         </div>
-        <CardDescription className="text-xs leading-relaxed">
+        <CardDescription className="text-sm leading-relaxed">
           {inline
             ? controlled
               ? "Report totals separately from named check-ins. The headcount follows the date chosen above."
@@ -557,42 +750,158 @@ export function GeneralAttendancePanel({
             : "Reported meeting totals, separate from named check-ins. A dash means a breakdown was not supplied."}
         </CardDescription>
       </CardHeader>
-      {inline && canCreate && (
+      {inline && (canCreate || canRead) && (
         <CardContent className="px-4">{renderForm(true)}</CardContent>
       )}
       {canRead && showRecords && (
         <CardContent className="space-y-3 px-4">
-          <div className="flex flex-wrap gap-3">
-            <div>
-              <Label htmlFor={`general-start-${target?.id ?? "all"}`}>
-                From
-              </Label>
-              <Input
-                picker="native"
-                id={`general-start-${target?.id ?? "all"}`}
-                type="date"
-                value={params.startDate ?? ""}
-                disabled={!!filters.startDate}
-                onChange={(e) => {
-                  setStartDate(e.target.value);
-                  setPage(1);
+          <div
+            className="flex flex-wrap items-center gap-3"
+            role="group"
+            aria-label="Headcount record filters"
+          >
+            <Popover
+              open={dateFilterOpen}
+              onOpenChange={(value) => {
+                if (value) {
+                  setDateDraft({
+                    from: params.startDate ?? "",
+                    to: params.endDate ?? "",
+                  });
+                  restoreDateFocus.current = false;
+                }
+                setDateFilterOpen(value);
+              }}
+            >
+              <PopoverTrigger asChild>
+                <Button
+                  ref={dateTriggerRef}
+                  disableTooltip
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  aria-label={
+                    params.startDate || params.endDate
+                      ? `Date range, ${params.startDate || "any start"} to ${params.endDate || "any end"}`
+                      : "Date range"
+                  }
+                  className={cn(
+                    "h-9 max-w-full gap-2 rounded-full border-line bg-card text-sm",
+                    (params.startDate || params.endDate) &&
+                      "bg-brand/10 text-brand",
+                  )}
+                >
+                  <CalendarDays className="size-3.5" />
+                  <span className="min-w-0 truncate">{params.startDate || params.endDate
+                    ? `${params.startDate || "Any start"} → ${params.endDate || "Any end"}`
+                    : "Date range"}</span>
+                  <ChevronDown className="size-3" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                align="start"
+                aria-label="Filter headcount dates"
+                className="space-y-4"
+                onEscapeKeyDown={() => {
+                  restoreDateFocus.current = true;
                 }}
-              />
-            </div>
-            <div>
-              <Label htmlFor={`general-end-${target?.id ?? "all"}`}>To</Label>
-              <Input
-                picker="native"
-                id={`general-end-${target?.id ?? "all"}`}
-                type="date"
-                value={params.endDate ?? ""}
-                disabled={!!filters.endDate}
-                onChange={(e) => {
-                  setEndDate(e.target.value);
-                  setPage(1);
+                onCloseAutoFocus={(event) => {
+                  if (restoreDateFocus.current) {
+                    event.preventDefault();
+                    dateTriggerRef.current?.focus();
+                    restoreDateFocus.current = false;
+                  }
                 }}
-              />
-            </div>
+              >
+                <p className="text-sm font-medium">Headcount date range</p>
+                <div className="space-y-2">
+                  <Label htmlFor={`headcount-filter-${fieldId}-from`}>
+                    From date
+                  </Label>
+                  <Input
+                    id={`headcount-filter-${fieldId}-from`}
+                    picker="native"
+                    type="date"
+                    value={dateDraft.from}
+                    max={dateDraft.to || undefined}
+                    disabled={!!filters.startDate}
+                    onChange={(event) =>
+                      setDateDraft((previous) => ({
+                        ...previous,
+                        from: event.target.value,
+                      }))
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor={`headcount-filter-${fieldId}-to`}>
+                    To date
+                  </Label>
+                  <Input
+                    id={`headcount-filter-${fieldId}-to`}
+                    picker="native"
+                    type="date"
+                    value={dateDraft.to}
+                    min={dateDraft.from || undefined}
+                    disabled={!!filters.endDate}
+                    aria-invalid={invalidDateRange || undefined}
+                    aria-describedby={
+                      invalidDateRange
+                        ? `headcount-filter-${fieldId}-error`
+                        : undefined
+                    }
+                    onChange={(event) =>
+                      setDateDraft((previous) => ({
+                        ...previous,
+                        to: event.target.value,
+                      }))
+                    }
+                  />
+                </div>
+                {invalidDateRange && (
+                  <p
+                    id={`headcount-filter-${fieldId}-error`}
+                    role="alert"
+                    className="text-sm text-destructive"
+                  >
+                    To date must be on or after From date.
+                  </p>
+                )}
+                <div className="flex justify-between gap-2 border-t border-line pt-3">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    disabled={datesLocked}
+                    onClick={() => {
+                      setStartDate("");
+                      setEndDate("");
+                      setDateDraft({
+                        from: filters.startDate ?? "",
+                        to: filters.endDate ?? "",
+                      });
+                      setPage(1);
+                      setDateFilterOpen(false);
+                    }}
+                  >
+                    Clear dates
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    disabled={invalidDateRange || datesLocked}
+                    onClick={() => {
+                      setStartDate(filters.startDate ? "" : dateDraft.from);
+                      setEndDate(filters.endDate ? "" : dateDraft.to);
+                      setPage(1);
+                      setDateFilterOpen(false);
+                    }}
+                  >
+                    Apply dates
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
             {!filters.branchId && (
               <div className="self-end">
                 <BranchFilter
@@ -614,7 +923,7 @@ export function GeneralAttendancePanel({
               action={
                 <Button
                   variant="outline"
-                  className="h-8 rounded-full text-xs"
+                  className="h-8 rounded-full text-sm"
                   onClick={() => query.refetch()}
                 >
                   Retry
@@ -641,7 +950,7 @@ export function GeneralAttendancePanel({
                 startDate || endDate || branchId ? (
                   <Button
                     variant="outline"
-                    className="h-8 rounded-full text-xs"
+                    className="h-8 rounded-full text-sm"
                     onClick={() => {
                       setStartDate("");
                       setEndDate("");
@@ -654,7 +963,7 @@ export function GeneralAttendancePanel({
                 ) : canCreate && entryMode !== "hidden" ? (
                   <Button
                     variant="outline"
-                    className="h-8 rounded-full text-xs"
+                    className="h-8 rounded-full text-sm"
                     onClick={() => begin()}
                   >
                     Record first headcount
@@ -695,28 +1004,29 @@ export function GeneralAttendancePanel({
                       <div
                         key={row.id}
                         className={cn(
-                          "group grid items-center gap-3 px-2 py-2.5 text-xs transition-colors hover:bg-muted/40",
+                          "group grid items-center gap-3 px-2 py-2.5 text-sm transition-colors hover:bg-muted/40",
                           canUpdate
                             ? "grid-cols-[minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1fr)_repeat(5,minmax(0,0.7fr))_auto]"
                             : "grid-cols-[minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1fr)_repeat(5,minmax(0,0.7fr))]",
                         )}
                       >
-                        <span className="num text-[11px]">
+                        <span className="num text-sm">
                           {row.attendanceDate}
                         </span>
                         <span className="min-w-0 truncate font-medium">
                           {row.contextName ?? "Not available"}
                         </span>
-                        <span className="min-w-0 truncate text-[11px] text-ink-soft">
+                        <span className="min-w-0 truncate text-sm text-ink-soft">
                           {row.branchName ?? "Not available"}
                         </span>
                         {countFields.map(([key]) => (
                           <span
                             key={key}
-                            className="num text-right tabular-nums text-[11px]"
+                            className="num text-right tabular-nums text-sm"
                           >
                             {String(
-                              row[key as keyof GeneralAttendanceRecord] ?? "Not available",
+                              row[key as keyof GeneralAttendanceRecord] ??
+                                "Not available",
                             )}
                           </span>
                         ))}
@@ -751,13 +1061,21 @@ export function GeneralAttendancePanel({
           )}
         </CardContent>
       )}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className={presentationClassName}>
+      <Dialog
+        open={open}
+        onOpenChange={(value) => {
+          if (!save.isPending) setOpen(value);
+        }}
+      >
+        <DialogContent
+          className={cn(
+            "max-h-[90dvh] overflow-y-auto sm:max-w-3xl",
+            presentationClassName,
+          )}
+        >
           <DialogHeader>
             <DialogTitle>
-              {editing
-                ? "Edit general attendance"
-                : "Record general attendance"}
+              {editing ? "Edit headcount" : "Record headcount"}
             </DialogTitle>
             <DialogDescription>
               {editing?.contextName ?? editing?.serviceName ?? target?.name}.

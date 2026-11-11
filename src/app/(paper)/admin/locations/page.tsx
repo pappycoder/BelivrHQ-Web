@@ -97,7 +97,7 @@ export default function AdminBranchesPage() {
         description="Manage each campus and meeting place, with members, services and reports linked to their branch."
         actions={
           canCreate ? (
-            <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setFormTarget({ open: true, branch: null })}>
+            <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setFormTarget({ open: true, branch: null })}>
               <Plus className="size-3.5" /> Add branch
             </Button>
           ) : null
@@ -133,7 +133,7 @@ export default function AdminBranchesPage() {
           icon={<Building2 />}
           title={archivedView ? "No archived branches" : "One church, no branches yet"}
           description="A branch is a room people gather in. Add one when the second Sunday service starts."
-          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => setFormTarget({ open: true, branch: null })}>Add the first branch</Button> : undefined}
+          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => setFormTarget({ open: true, branch: null })}>Add the first branch</Button> : undefined}
         />
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
@@ -148,7 +148,7 @@ export default function AdminBranchesPage() {
               </div>
               <div className="divide-y divide-line/70">
                 {rows.map((branch) => (
-                  <div key={branch.branchId} className="group grid grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)_0.9fr_0.9fr_auto] items-center gap-3 px-5 py-3.5 text-xs transition-colors hover:bg-muted/40">
+                  <div key={branch.branchId} className="group grid grid-cols-[minmax(0,1.6fr)_minmax(0,1.2fr)_0.9fr_0.9fr_auto] items-center gap-3 px-5 py-3.5 text-sm transition-colors hover:bg-muted/40">
                     <button type="button" onClick={() => router.push(`/admin/locations/${branch.branchId}`)} className="flex min-w-0 items-center gap-3 text-left">
                       <PersonAvatar name={branch.name} size="sm" />
                       <span className="min-w-0">
@@ -159,12 +159,12 @@ export default function AdminBranchesPage() {
                         </span>
                       </span>
                     </button>
-                    <span className="flex min-w-0 items-center gap-1.5 text-[11px] text-ink-faint">
+                    <span className="flex min-w-0 items-center gap-1.5 text-sm text-ink-faint">
                       <MapPin className="size-2.5 shrink-0" />
                       <span className="truncate">{[branch.city, branch.state].filter(Boolean).join(", ") || "No address on file"}</span>
                     </span>
-                    <span className="num text-[11px] text-ink-soft">{number(branch.memberCount ?? 0)}</span>
-                    <span className="text-[10px] text-ink-faint">{formatDate(branch.createdAt)}</span>
+                    <span className="num text-sm text-ink-soft">{number(branch.memberCount ?? 0)}</span>
+                    <span className="text-xs text-ink-faint">{formatDate(branch.createdAt)}</span>
                     <div className="flex justify-end">
                       <RowActions actions={manageActions(branch)} />
                     </div>
@@ -184,11 +184,11 @@ export default function AdminBranchesPage() {
                     <PersonAvatar name={branch.name} size="md" />
                     <span className="min-w-0">
                       <span className="flex items-center gap-2">
-                        <span className="truncate text-xs font-semibold">{branch.name}</span>
+                        <span className="truncate text-sm font-semibold">{branch.name}</span>
                         {branch.isHeadquarters ? <Tag tone="gold">HQ</Tag> : null}
                         {branch.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
                       </span>
-                      <span className="mt-0.5 flex items-center gap-1.5 text-[10px] text-ink-faint">
+                      <span className="mt-0.5 flex items-center gap-1.5 text-xs text-ink-faint">
                         <MapPin className="size-2.5" />
                         <span className="truncate">{[branch.city, branch.state].filter(Boolean).join(", ") || "No address on file"}</span>
                       </span>
@@ -196,7 +196,7 @@ export default function AdminBranchesPage() {
                   </button>
                   <RowActions reveal={false} actions={manageActions(branch)} />
                 </div>
-                <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
+                <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
                   <span className="num">{number(branch.memberCount ?? 0)} members</span>
                   <span>added {formatDate(branch.createdAt)}</span>
                 </div>
@@ -218,8 +218,8 @@ export default function AdminBranchesPage() {
         />
       </div>
 
-      <div className="rounded-2xl border border-dashed border-line p-5 text-[11px] leading-relaxed text-ink-soft">
-        <p className="mb-1 font-display text-xs font-semibold text-ink">Branch scope is real</p>
+      <div className="rounded-2xl border border-dashed border-line p-5 text-sm leading-relaxed text-ink-soft">
+        <p className="mb-1 font-display text-sm font-semibold text-ink">Branch scope is real</p>
         Staff see their branch&apos;s people and numbers; Admin HQ reads across all of them. Archiving keeps the
         history intact. Deleting forever only works once no members are still assigned.
       </div>

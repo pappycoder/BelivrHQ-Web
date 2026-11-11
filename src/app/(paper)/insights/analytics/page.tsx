@@ -83,7 +83,7 @@ export default function AnalyticsOverviewPage() {
         title="The story the numbers tell."
         description="Review your church&apos;s activity and trends in one place."
         actions={
-          <Button variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs" asChild>
+          <Button variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-sm" asChild>
             <Link href="/insights/reports">
               <BarChartBig className="size-3.5" /> Report studio
             </Link>
@@ -95,7 +95,7 @@ export default function AnalyticsOverviewPage() {
         {PERIODS.map((item, index) => (
           <FilterChip key={item.label} active={period === index} onClick={() => setPeriod(index)}>{item.label}</FilterChip>
         ))}
-        <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-[11px] outline-none" aria-label="Branch filter">
+        <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Branch filter">
           <option value="">All branches</option>
           {(branches.data?.data ?? []).map((branch) => <option key={branch.branchId} value={branch.branchId}>{branch.name}</option>)}
         </select>
@@ -104,7 +104,7 @@ export default function AnalyticsOverviewPage() {
       {dashboard.isLoading ? (
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-28 rounded-2xl" />)}</div>
       ) : dashboard.isError || !d ? (
-        <EmptyState icon={<BarChartBig />} title="Couldn&apos;t load the overview" action={<Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => dashboard.refetch()}>Retry</Button>} />
+        <EmptyState icon={<BarChartBig />} title="Couldn&apos;t load the overview" action={<Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => dashboard.refetch()}>Retry</Button>} />
       ) : (
         <>
           <StaggerGroup className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -119,7 +119,7 @@ export default function AnalyticsOverviewPage() {
               {givingRows.length ? (
                 <TrendChart data={givingRows} series={[{ key: "total", label: "Giving", color: "var(--chart-1)" }]} height={220} formatter={(v) => formatNaira(Number(v))} />
               ) : (
-                <p className="py-10 text-center text-[11px] text-ink-faint">No giving recorded in this period.</p>
+                <p className="py-10 text-center text-sm text-ink-faint">No giving recorded in this period.</p>
               )}
             </SectionCard>
 
@@ -127,11 +127,11 @@ export default function AnalyticsOverviewPage() {
               {engagementData.length ? (
                 <DonutChart data={engagementData} centerValue={number(d.activeMembers)} centerLabel="active" height={180} formatter={(v) => `${v} people`} />
               ) : (
-                <p className="py-10 text-center text-[11px] text-ink-faint">Engagement data needs a little more history.</p>
+                <p className="py-10 text-center text-sm text-ink-faint">Engagement data needs a little more history.</p>
               )}
               <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
                 {engagementData.slice(0, 6).map((entry) => (
-                  <div key={entry.name} className="flex items-center gap-1.5 text-[10px]">
+                  <div key={entry.name} className="flex items-center gap-1.5 text-xs">
                     <span className="size-1.5 rounded-full" style={{ background: entry.color }} />
                     <span className="truncate text-ink-soft">{entry.name}</span>
                     <span className="num ml-auto text-ink-faint">{number(entry.value)}</span>
@@ -152,7 +152,7 @@ export default function AnalyticsOverviewPage() {
                   formatter={(v) => number(Number(v))}
                 />
               ) : (
-                <p className="py-10 text-center text-[11px] text-ink-faint">No attendance counted in this period.</p>
+                <p className="py-10 text-center text-sm text-ink-faint">No attendance counted in this period.</p>
               )}
             </SectionCard>
 
@@ -160,7 +160,7 @@ export default function AnalyticsOverviewPage() {
               {growthRows.length ? (
                 <TrendChart data={growthRows} series={[{ key: "members", label: "Members", color: "var(--chart-2)" }]} height={200} formatter={(v) => number(Number(v))} />
               ) : (
-                <p className="py-10 text-center text-[11px] text-ink-faint">Growth appears after the first records.</p>
+                <p className="py-10 text-center text-sm text-ink-faint">Growth appears after the first records.</p>
               )}
             </SectionCard>
           </div>
@@ -175,13 +175,13 @@ export default function AnalyticsOverviewPage() {
                 <Link href={insight.href} className="paper-card lift flex h-full flex-col rounded-2xl p-5">
                   <Tag tone={insight.tone} dot>{insight.title}</Tag>
                   <p className="mt-3 flex-1 font-display text-sm leading-snug">{insight.line}</p>
-                  <span className="mt-3 flex items-center gap-1 text-[11px] text-brand">{insight.cta} <ArrowRight className="size-3" /></span>
+                  <span className="mt-3 flex items-center gap-1 text-sm text-brand">{insight.cta} <ArrowRight className="size-3" /></span>
                 </Link>
               </StaggerItem>
             ))}
           </StaggerGroup>
 
-          <div className="grid grid-cols-2 gap-3 text-[11px] lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 text-sm lg:grid-cols-4">
             <div className="paper-card flex items-center gap-3 rounded-2xl px-4 py-3">
               <Inbox className="size-4 text-gold" />
               <span><span className="num font-display text-sm font-semibold">{number(d.pendingSubmissions)}</span><span className="block text-ink-faint">answers waiting review</span></span>
@@ -200,7 +200,7 @@ export default function AnalyticsOverviewPage() {
             </Link>
           </div>
 
-          <div className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-line p-4 text-[11px] text-ink-soft">
+          <div className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-line p-4 text-sm text-ink-soft">
             Numbers describe the field; they don&apos;t replace the shepherding.{" "}
             <Link href="/insights/reports" className="text-brand underline">Compose a board-ready report</Link>
           </div>

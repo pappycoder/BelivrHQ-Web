@@ -114,7 +114,7 @@ export default function AdminRolesPage() {
             <Button
               asChild
               variant="outline"
-              className="h-9 gap-1.5 rounded-full border-line bg-card text-xs"
+              className="h-9 gap-1.5 rounded-full border-line bg-card text-sm"
             >
               <Link href="/admin/team">
                 <ShieldCheck className="size-3.5" /> Team
@@ -122,7 +122,7 @@ export default function AdminRolesPage() {
             </Button>
             {canCreateRole ? (
               <Button
-                className="h-9 gap-1.5 rounded-full text-xs"
+                className="h-9 gap-1.5 rounded-full text-sm"
                 onClick={() => setCreateOpen(true)}
               >
                 <Plus className="size-3.5" /> Add role
@@ -212,7 +212,7 @@ export default function AdminRolesPage() {
                   return (
                     <div
                       key={role.roleName}
-                      className="group grid grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_1fr_auto] items-center gap-3 px-5 py-3.5 text-xs transition-colors hover:bg-muted/40"
+                      className="group grid grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_1fr_auto] items-center gap-3 px-5 py-3.5 text-sm transition-colors hover:bg-muted/40"
                     >
                       <button
                         type="button"
@@ -233,12 +233,12 @@ export default function AdminRolesPage() {
                           <span className="block truncate font-semibold">
                             {label}
                           </span>
-                          <span className="block truncate text-[11px] text-ink-faint">
+                          <span className="block truncate text-sm text-ink-faint">
                             {role.description || "No description yet."}
                           </span>
                         </span>
                       </button>
-                      <span className="num text-[11px] text-ink-soft">
+                      <span className="num text-sm text-ink-soft">
                         {number(role.permissions.length)}
                         <span className="text-ink-faint">
                           {" "}
@@ -299,10 +299,10 @@ export default function AdminRolesPage() {
                         )}
                       </span>
                       <span className="min-w-0">
-                        <span className="block truncate text-xs font-semibold">
+                        <span className="block truncate text-sm font-semibold">
                           {label}
                         </span>
-                        <span className="block truncate text-[11px] text-ink-faint">
+                        <span className="block truncate text-sm text-ink-faint">
                           {role.description || "No description yet."}
                         </span>
                       </span>
@@ -322,7 +322,7 @@ export default function AdminRolesPage() {
                       ]}
                     />
                   </div>
-                  <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
+                  <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
                     <span className="flex items-center gap-1.5">
                       {statusBadge(role)}
                       {!inOrder ? <Tag tone="neutral">new-style</Tag> : null}
@@ -354,8 +354,8 @@ export default function AdminRolesPage() {
         />
       </div>
 
-      <div className="rounded-2xl border border-dashed border-line p-5 text-[11px] leading-relaxed text-ink-soft">
-        <p className="mb-1 font-display text-xs font-semibold text-ink">
+      <div className="rounded-2xl border border-dashed border-line p-5 text-sm leading-relaxed text-ink-soft">
+        <p className="mb-1 font-display text-sm font-semibold text-ink">
           How editing works
         </p>
         Template roles are additive. Ticks grant extras for this church; global

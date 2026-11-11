@@ -18,7 +18,6 @@ import { Loader2, CheckCheck } from "lucide-react";
 import {
   useNotificationsList,
   useNotificationsUnread,
-  useMarkAsRead,
   useMarkAllAsRead,
   NOTIFICATION_TYPE_LABELS,
   NOTIFICATIONS_LIST_LIMIT,
@@ -52,7 +51,6 @@ export function NotificationBell({ compact = false }: NotificationBellProps) {
     { page: 1, limit: NOTIFICATIONS_LIST_LIMIT, read: "all" },
     { enabled: previewOpen }
   );
-  const markAsRead = useMarkAsRead();
   const markAllAsRead = useMarkAllAsRead();
 
   const unreadCount = unread.data?.count ?? 0;
@@ -66,7 +64,6 @@ export function NotificationBell({ compact = false }: NotificationBellProps) {
   }, [unreadCount, queryClient]);
 
   const handleOpenNotification = (n: Notification) => {
-    if (!n.readAt) markAsRead.mutate(n.id);
     setSelected(n);
   };
 
@@ -84,7 +81,7 @@ export function NotificationBell({ compact = false }: NotificationBellProps) {
             <Button variant="ghost" size="icon" className="relative" id="notification_popup" aria-label="Notifications" disableTooltip>
               <Bell className="size-4" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-semibold flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-destructive text-destructive-foreground text-xs font-semibold flex items-center justify-center">
                   {unreadCount > 99 ? "99+" : unreadCount}
                 </span>
               )}
@@ -100,7 +97,7 @@ export function NotificationBell({ compact = false }: NotificationBellProps) {
                   type="button"
                   onClick={handleMarkAllRead}
                   disabled={markAllAsRead.isPending}
-                  className="text-xs text-primary inline-flex items-center gap-1 disabled:opacity-50"
+                  className="text-sm text-primary inline-flex items-center gap-1 disabled:opacity-50"
                 >
                   {markAllAsRead.isPending ? (
                     <Loader2 className="h-3 w-3 animate-spin" />
@@ -143,7 +140,7 @@ export function NotificationBell({ compact = false }: NotificationBellProps) {
                       <span className="block text-sm text-muted-foreground line-clamp-2">
                         {n.body}
                       </span>
-                      <span className="mt-1 block text-xs text-muted-foreground">
+                      <span className="mt-1 block text-sm text-muted-foreground">
                         {NOTIFICATION_TYPE_LABELS[n.type as NotificationType] ?? n.type} ·{" "}
                         {formatRelativeTime(n.createdAt)}
                       </span>

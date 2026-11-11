@@ -29,7 +29,7 @@ export default function EditSermonPage({
       <EmptyState
         title="Editing sermons needs the update grant"
         description="Your role can listen but not amend the archive."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/library/sermons">Back to the archive</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/library/sermons">Back to the archive</Link></Button>}
       />
     );
   }
@@ -48,7 +48,7 @@ export default function EditSermonPage({
       <EmptyState
         title="We couldn&apos;t open this sermon"
         description="It may have been deleted, or the link is old."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/library/sermons">Back to the archive</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/library/sermons">Back to the archive</Link></Button>}
       />
     );
   }
@@ -76,7 +76,7 @@ export default function EditSermonPage({
         title="Amend the record."
         description="Details, audio and video each save on their own. A failed upload never loses the sermon."
         actions={
-          <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-xs">
+          <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-sm">
             <Link href={`/library/sermons/${sermonId}`}>Back to the message</Link>
           </Button>
         }

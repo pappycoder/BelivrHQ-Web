@@ -12,7 +12,9 @@ export default function ChurchSettingsPage() {
         title="The church&apos;s own details."
         description="Manage the church name, contact details, location and preferences used on exports and receipts."
       />
-      <GeneralSettingsTab />
+      <div className="paper-card rounded-2xl p-5 md:p-6">
+        <GeneralSettingsTab />
+      </div>
     </div>
   );
 }

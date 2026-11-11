@@ -26,7 +26,7 @@ export const CHART_COLORS = [
 ];
 
 const axisStyle = {
-  fontSize: 10,
+  fontSize: 12,
   fill: "var(--ink-faint)",
   fontFamily: "var(--font-inter-tight), sans-serif",
 } as const;
@@ -46,13 +46,13 @@ function PaperTooltip({
   return (
     <div className="rounded-lg border border-line bg-popover px-3 py-2 shadow-lg">
       {label !== undefined ? (
-        <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-faint">
+        <p className="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-ink-faint">
           {label}
         </p>
       ) : null}
       <div className="space-y-0.5">
         {payload.map((entry, i) => (
-          <div key={i} className="flex items-center gap-2 text-xs">
+          <div key={i} className="flex items-center gap-2 text-sm">
             <span
               className="size-1.5 rounded-full"
               style={{ background: entry.color }}
@@ -290,7 +290,7 @@ export function DonutChart({
               {centerValue}
             </div>
             {centerLabel ? (
-              <div className="mt-1 text-[10px] uppercase tracking-[0.14em] text-ink-faint">
+              <div className="mt-1 text-xs uppercase tracking-[0.14em] text-ink-faint">
                 {centerLabel}
               </div>
             ) : null}

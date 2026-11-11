@@ -119,7 +119,7 @@ export function MeetingAttendanceTable({
             >
               <SelectTrigger
                 aria-label={`${title} attendee type`}
-                className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none"
+                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -139,7 +139,7 @@ export function MeetingAttendanceTable({
             >
               <SelectTrigger
                 aria-label={`${title} status`}
-                className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none"
+                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -162,7 +162,7 @@ export function MeetingAttendanceTable({
               <SelectTrigger
                 aria-label={`Sort ${title.toLowerCase()}`}
                 data-prefix-icon="none"
-                className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none"
+                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
               >
                 <ArrowUpDown className="size-3" />
                 <SelectValue />
@@ -184,7 +184,7 @@ export function MeetingAttendanceTable({
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <label className="flex items-center gap-2 text-[10px] text-ink-faint">
+          <label className="flex items-center gap-2 text-xs text-ink-faint">
             Meeting date
             <Input
               picker="native"
@@ -195,13 +195,13 @@ export function MeetingAttendanceTable({
                 onDateChange(event.target.value);
                 setPage(1);
               }}
-              className="h-8 w-[155px] rounded-full border-line bg-card px-3 text-[11px] shadow-none"
+              className="h-8 w-[155px] rounded-full border-line bg-card px-3 text-sm shadow-none"
             />
           </label>
           {(date || search || status !== "all" || type !== "all") && (
             <Button
               variant="link"
-              className="h-8 text-xs text-ink-soft"
+              className="h-8 text-sm text-ink-soft"
               onClick={() => {
                 onDateChange("");
                 setSearch("");
@@ -255,7 +255,7 @@ export function MeetingAttendanceTable({
             date || search || status !== "all" || type !== "all" ? (
               <Button
                 variant="outline"
-                className="h-8 rounded-full text-xs"
+                className="h-8 rounded-full text-sm"
                 onClick={() => {
                   onDateChange("");
                   setSearch("");
@@ -289,7 +289,7 @@ export function MeetingAttendanceTable({
             {paged.map((row) => (
               <div
                 key={row.id}
-                className="grid grid-cols-[1.5fr_0.7fr_1fr_0.8fr_1.2fr] items-center gap-3 border-b border-line/70 px-5 py-3 text-xs"
+                className="grid grid-cols-[1.5fr_0.7fr_1fr_0.8fr_1.2fr] items-center gap-3 border-b border-line/70 px-5 py-3 text-sm"
               >
                 <div className="flex min-w-0 items-center gap-2">
                   <PersonAvatar name={row.attendee} size="xs" />

@@ -21,6 +21,9 @@ export const EVENT_TYPES: { value: EventType; label: string }[] = [
   { value: "social", label: "Social" },
 ];
 
+/** Legacy service events remain readable/filterable but cannot be created. */
+export const EVENT_CREATION_TYPES = EVENT_TYPES.filter((item) => item.value !== "service");
+
 export const EVENT_TYPE_MAP: Record<EventType, string> = {
   service: "Service",
   conference: "Conference",

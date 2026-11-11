@@ -158,7 +158,7 @@ select:has(option[value=""]:checked), option[value=""] { font-style: italic; }
 .wheel-columns { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .5rem; }
 .wheel-time-columns { grid-template-columns: repeat(auto-fit,minmax(0,1fr)); }
 .wheel-column { min-width: 0; text-align: center; }
-.wheel-column-label { display: block; margin-bottom: .375rem; color: var(--muted-foreground); font-size: .625rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+.wheel-column-label { display: block; margin-bottom: .375rem; color: var(--muted-foreground); font-size: .75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
 .wheel-ruler { position: relative; overflow: hidden; border: 0; border-radius: 0; background: linear-gradient(to bottom,transparent,color-mix(in srgb,var(--muted) 55%,transparent) 20%,color-mix(in srgb,var(--card) 80%,transparent) 50%,color-mix(in srgb,var(--muted) 55%,transparent) 80%,transparent); }
 .wheel-scroll { position: relative; height: 160px; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; overflow-anchor: none; padding-block: 60px; scrollbar-width: none; outline: none; mask-image: linear-gradient(to bottom,transparent,#000 30%,#000 70%,transparent); }
 .wheel-scroll::-webkit-scrollbar { display: none; }

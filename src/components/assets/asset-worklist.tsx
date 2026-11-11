@@ -254,7 +254,7 @@ export function AssetWorklist({ kind }: { kind: "loans" | "maintenance" }) {
                       ) : (
                         record.assetName
                       )}
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-sm text-muted-foreground">
                         {record.assetTag}
                         {record.assetArchived ? " · Archived asset" : ""}
                       </p>
@@ -262,7 +262,7 @@ export function AssetWorklist({ kind }: { kind: "loans" | "maintenance" }) {
                     <TableCell>
                       {loan?.borrowerName ?? job?.type ?? "Not available"}
                       {job?.performedBy && (
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-sm text-muted-foreground">
                           {job.performedBy}
                         </p>
                       )}
@@ -286,7 +286,7 @@ export function AssetWorklist({ kind }: { kind: "loans" | "maintenance" }) {
                           : record.status.replaceAll("_", " ")}
                       </span>
                       {loan?.actualReturnDate && (
-                        <p className="text-xs">
+                        <p className="text-sm">
                           Returned {date(loan.actualReturnDate)}
                         </p>
                       )}

@@ -160,7 +160,7 @@ function LogoTile({ church }: { church: ChurchProfile }) {
       </div>
       <div className="min-w-0">
         <h4 className="mb-1 text-sm font-medium">Church Logo</h4>
-        <p className="mb-2 text-xs text-muted-foreground">
+        <p className="mb-2 text-sm text-muted-foreground">
           Recommended image size is 160px x 160px · PNG or JPG, up to 5 MB.
         </p>
         {canManage && (
@@ -235,7 +235,7 @@ function ChurchSection({ church }: { church: ChurchProfile }) {
       <LogoTile church={church} />
       <Form {...form}>
         <ValidatedForm schemaValidation onSubmit={form.handleSubmit(handleSave)}>
-          <p className="-mt-1 mb-4 text-xs text-muted-foreground">
+          <p className="-mt-1 mb-4 text-sm text-muted-foreground">
             The church name and denomination are set at registration; contact
             and location details are editable below.
           </p>
@@ -374,7 +374,7 @@ function EmailSection({ church }: { church: ChurchProfile }) {
             <h4 className="text-sm font-medium break-all">
               {church.email || "No email set yet"}
             </h4>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               One email for your sign-in, your profile and the church
               contact.
             </p>

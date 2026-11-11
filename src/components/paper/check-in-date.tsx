@@ -85,7 +85,7 @@ export function CheckInDatePicker({
             variant="outline"
             disabled={disabled}
             aria-label={`${label}: ${format(selected, "EEEE d MMMM yyyy")}`}
-            className="h-9 gap-2 rounded-full border-line bg-card px-3.5 text-xs font-medium"
+            className="h-9 gap-2 rounded-full border-line bg-card px-3.5 text-sm font-medium"
           >
             <CalendarDays className="size-3.5 text-ink-faint" />
             <span>{format(selected, "EEE d MMM")}</span>
@@ -105,7 +105,7 @@ export function CheckInDatePicker({
             }}
           />
           <div className="flex items-center justify-between gap-3 border-t border-line px-3 py-2">
-            <span className="text-[10px] text-ink-faint">
+            <span className="text-xs text-ink-faint">
               Only valid dates are selectable
             </span>
             <Button
@@ -118,7 +118,7 @@ export function CheckInDatePicker({
                 onChange(todayTarget);
                 setOpen(false);
               }}
-              className="rounded-full text-[11px]"
+              className="rounded-full text-sm"
             >
               Jump to today
             </Button>

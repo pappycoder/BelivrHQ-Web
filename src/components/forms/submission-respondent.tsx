@@ -12,9 +12,9 @@ export function SubmissionRespondent({ submission, fields, size = "xs" }: {
     <span className="flex min-w-0 items-center gap-2.5 text-left">
       <PersonAvatar name={respondent.name} size={size} />
       <span className="min-w-0">
-        <span className="block truncate text-xs font-medium" title={respondent.name}>{respondent.name}</span>
-        {respondent.contact && <span className="block truncate text-[10px] text-ink-soft" title={respondent.contact}>{respondent.contact}</span>}
-        {respondent.name !== respondent.reference && <span className="num block text-[10px] text-ink-faint" title={submission.id}>{respondent.reference}</span>}
+        <span className="block truncate text-sm font-medium" title={respondent.name}>{respondent.name}</span>
+        {respondent.contact && <span className="block truncate text-xs text-ink-soft" title={respondent.contact}>{respondent.contact}</span>}
+        {respondent.name !== respondent.reference && <span className="num block text-xs text-ink-faint" title={submission.id}>{respondent.reference}</span>}
       </span>
     </span>
   );

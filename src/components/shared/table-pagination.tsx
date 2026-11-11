@@ -41,13 +41,13 @@ export function TablePagination({
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border/70 pt-4 mt-4">
-      <p aria-live="polite" className="text-xs text-muted-foreground">
+      <p aria-live="polite" className="text-sm text-muted-foreground">
         Showing {from}–{to} of {total} {itemName}
       </p>
       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         {onPerPageChange && (
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground whitespace-nowrap">
+            <span className="text-sm text-muted-foreground whitespace-nowrap">
               Rows per page
             </span>
             <Select
@@ -71,7 +71,7 @@ export function TablePagination({
           </div>
         )}
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground whitespace-nowrap">
+          <span className="text-sm text-muted-foreground whitespace-nowrap">
             Page {page} of {totalPages}
           </span>
           <Button

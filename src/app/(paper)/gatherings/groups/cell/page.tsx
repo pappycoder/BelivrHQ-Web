@@ -158,14 +158,14 @@ export default function CellGroupsPage() {
             <p className="truncate font-display text-sm font-semibold">
               {group.name}
             </p>
-            <p className="mt-0.5 flex items-center gap-1.5 text-[10px] text-ink-faint">
+            <p className="mt-0.5 flex items-center gap-1.5 text-xs text-ink-faint">
               <MapPin className="size-2.5" />
               {group.address ?? group.branchName ?? "Where two or three gather"}
             </p>
           </div>
           <RowActions reveal={false} actions={groupActions(group)} />
         </div>
-        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-ink-soft">
+        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-soft">
           {group.meetingDay ? (
             <span className="flex items-center gap-1.5">
               <CalendarClock className="size-3 text-ink-faint" />
@@ -175,12 +175,12 @@ export default function CellGroupsPage() {
                 : ""}
             </span>
           ) : null}
-          <span className="ml-auto flex items-center gap-1.5 text-[10px] text-ink-faint">
+          <span className="ml-auto flex items-center gap-1.5 text-xs text-ink-faint">
             <Users className="size-3" />{" "}
             {group.meetingDay ? "meets weekly" : "rhythm TBD"}
           </span>
         </div>
-        <div className="mt-auto flex items-center justify-between border-t border-line/70 pt-3 text-[11px]">
+        <div className="mt-auto flex items-center justify-between border-t border-line/70 pt-3 text-sm">
           {leader ? (
             <span className="flex min-w-0 items-center gap-2">
               <PersonAvatar name={leader} size="xs" />
@@ -190,7 +190,7 @@ export default function CellGroupsPage() {
             <span className="text-ink-faint">Seeking a host</span>
           )}
           {group.branchName ? (
-            <span className="shrink-0 text-[10px] text-ink-faint">
+            <span className="shrink-0 text-xs text-ink-faint">
               {group.branchName}
             </span>
           ) : null}
@@ -199,7 +199,7 @@ export default function CellGroupsPage() {
           asChild
           variant="ghost"
           size="sm"
-          className="mt-2 h-8 justify-between rounded-lg text-[11px] text-brand"
+          className="mt-2 h-8 justify-between rounded-lg text-sm text-brand"
         >
           <Link href={`/gatherings/groups/cell/${group.id}`}>
             Roster &amp; attendance{" "}
@@ -230,7 +230,7 @@ export default function CellGroupsPage() {
         actions={
           canCreate && !isCellLeader ? (
             <Button
-              className="h-9 gap-1.5 rounded-full text-xs"
+              className="h-9 gap-1.5 rounded-full text-sm"
               onClick={() => {
                 setEditing(null);
                 setFormOpen(true);
@@ -311,7 +311,7 @@ export default function CellGroupsPage() {
               <Button
                 size="sm"
                 variant="outline"
-                className="rounded-full border-line text-xs"
+                className="rounded-full border-line text-sm"
                 onClick={() => {
                   setEditing(null);
                   setFormOpen(true);
@@ -341,7 +341,7 @@ export default function CellGroupsPage() {
             {paged.map((group) => (
               <div
                 key={group.id}
-                className="group grid grid-cols-[1.5fr_1fr_1fr_1fr_auto] items-center gap-3 border-b border-line/70 px-5 py-3 text-xs"
+                className="group grid grid-cols-[1.5fr_1fr_1fr_1fr_auto] items-center gap-3 border-b border-line/70 px-5 py-3 text-sm"
               >
                 <Link
                   href={`/gatherings/groups/cell/${group.id}`}

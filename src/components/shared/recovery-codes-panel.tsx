@@ -28,7 +28,7 @@ export function RecoveryCodesPanel({ codes, onDone }: { codes: string[]; onDone:
     <section aria-label="Recovery codes" className="space-y-4 rounded-2xl border bg-muted/30 p-4 sm:p-5">
       <div className="flex items-center gap-2 font-medium"><ShieldCheck className="size-5 text-primary" />Save your recovery codes</div>
       <p className="text-sm text-muted-foreground">Each code can sign you in once if you lose your authenticator. These codes will not be shown again. Save them in a password manager or another secure place.</p>
-      <div className="grid gap-2 sm:grid-cols-2">{codes.map(code => <code key={code} className="select-all break-all rounded-lg border bg-background p-2 font-mono text-xs">{code}</code>)}</div>
+      <div className="grid gap-2 sm:grid-cols-2">{codes.map(code => <code key={code} className="select-all break-all rounded-lg border bg-background p-2 font-mono text-sm">{code}</code>)}</div>
       <Button type="button" variant="outline" onClick={download}><Download />Download codes</Button>
       <div className="flex items-start gap-2"><Checkbox id={checkboxId} checked={saved} onCheckedChange={value => setSaved(value === true)} /><Label htmlFor={checkboxId} className="leading-5">I have saved these codes securely.</Label></div>
       <Button type="button" disabled={!saved || finishing} loading={finishing} onClick={() => void finish()}>Continue</Button>

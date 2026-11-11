@@ -150,13 +150,13 @@ function MediaInner() {
         description="Pictures, recordings and documents, organised by what the team actually reaches for."
         actions={
           <>
-            <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
+            <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-sm">
               <Link href="/library/media/folders">
                 <FolderOpen className="size-3.5" /> Folders
               </Link>
             </Button>
             {canUpload ? (
-              <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setUploadOpen(true)}>
+              <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setUploadOpen(true)}>
                 <UploadCloud className="size-3.5" /> Upload
               </Button>
             ) : null}
@@ -179,18 +179,18 @@ function MediaInner() {
         {KIND_TABS.map((t) => (
           <FilterChip key={t.value} active={kind === t.value} onClick={() => { setKind(t.value); setPage(1); }}>{t.label}</FilterChip>
         ))}
-        <select value={folder} onChange={(e) => { setFolder(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-3 text-[11px] outline-none">
+        <select value={folder} onChange={(e) => { setFolder(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-3 text-sm outline-none">
           <option value="all">All folders</option>
           {folderList.map((f) => <option key={f.folder} value={f.folder}>{f.folder}</option>)}
         </select>
-        <select value={permissions} onChange={(e) => { setPermissions(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-3 text-[11px] outline-none" aria-label="Visibility filter">
+        <select value={permissions} onChange={(e) => { setPermissions(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Visibility filter">
           <option value="">Any visibility</option>
           <option value="public">Public</option>
           <option value="members">Members</option>
           <option value="leadership">Leadership</option>
         </select>
         <ViewToggle value={view} onChange={setView} options={[{ value: "table", label: "List view", icon: <Rows3 /> }, { value: "cards", label: "Card view", icon: <LayoutGrid /> }]} />
-        <span className="ml-auto flex items-center gap-1 text-[10px] text-ink-faint"><ShieldCheck className="size-3" /> signed-in members only, per badge</span>
+        <span className="ml-auto flex items-center gap-1 text-xs text-ink-faint"><ShieldCheck className="size-3" /> signed-in members only, per badge</span>
       </div>
 
       {list.isError ? (
@@ -213,7 +213,7 @@ function MediaInner() {
               {rows.map(asset => {
                 const kindOf = classifyMime(asset.mimeType);
                 const Icon = KIND_ICON[kindOf];
-                return <div key={asset.assetId} className="group grid grid-cols-[minmax(0,2fr)_0.7fr_1fr_0.7fr_1fr_1fr_auto] items-center gap-3 border-b border-line/70 px-5 py-4 text-xs">
+                return <div key={asset.assetId} className="group grid grid-cols-[minmax(0,2fr)_0.7fr_1fr_0.7fr_1fr_1fr_auto] items-center gap-3 border-b border-line/70 px-5 py-4 text-sm">
                   <div className="flex min-w-0 items-center gap-3"><span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-lg bg-muted text-ink-soft"><Icon className="size-4" /></span><span className="truncate font-medium">{asset.filename}</span></div>
                   <span className="capitalize text-ink-soft">{kindOf}</span><span className="truncate text-ink-soft">{asset.folder || "Not available"}</span><span className="num text-ink-soft">{formatBytes(asset.sizeBytes)}</span>
                   <span><Tag tone={PERM_TONES[asset.permissions]}>{MEDIA_PERMISSION_LABELS[asset.permissions]}</Tag></span><span className="text-ink-faint">{formatDate(asset.createdAt)}</span>
@@ -244,10 +244,10 @@ function MediaInner() {
                       </span>
                     )}
                     <span className="block px-3 pb-2 pt-2">
-                      <span className="block truncate text-[11px] font-medium">{asset.filename}</span>
+                      <span className="block truncate text-sm font-medium">{asset.filename}</span>
                       <span className="mt-1 flex items-center justify-between">
                         <Tag tone={PERM_TONES[asset.permissions]}>{MEDIA_PERMISSION_LABELS[asset.permissions]}</Tag>
-                        <span className="num text-[9px] text-ink-faint">{formatBytes(asset.sizeBytes)} · {formatDate(asset.createdAt)}</span>
+                        <span className="num text-xs text-ink-faint">{formatBytes(asset.sizeBytes)} · {formatDate(asset.createdAt)}</span>
                       </span>
                     </span>
                   </button>
@@ -276,27 +276,27 @@ function MediaInner() {
             <>
               <DialogHeader>
                 <DialogTitle className="font-display text-base">{preview.filename}</DialogTitle>
-                <DialogDescription className="text-xs">
+                <DialogDescription className="text-sm">
                   {preview.folder} · {formatBytes(preview.sizeBytes)} · {MEDIA_PERMISSION_LABELS[preview.permissions]} · {formatDate(preview.createdAt)}
                 </DialogDescription>
               </DialogHeader>
               <MediaPreviewBody asset={preview} />
               <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" onClick={() => { navigator.clipboard?.writeText(preview.url).catch(() => undefined); toast("Link copied."); }}>
+                <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm" onClick={() => { navigator.clipboard?.writeText(preview.url).catch(() => undefined); toast("Link copied."); }}>
                   <Link2 className="size-3.5" /> Copy link
                 </Button>
                 <a href={preview.url} target="_blank" rel="noreferrer">
-                  <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" asChild>
+                  <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm" asChild>
                     <span><Archive className="size-3.5" /> Open original</span>
                   </Button>
                 </a>
                 {canUpdate ? (
-                  <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" onClick={() => { setPermTarget(preview); setPermValue(preview.permissions); }}>
+                  <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm" onClick={() => { setPermTarget(preview); setPermValue(preview.permissions); }}>
                     <ShieldCheck className="size-3.5" /> Visibility
                   </Button>
                 ) : null}
                 {canDelete ? (
-                  <Button size="sm" variant="outline" className="h-8 rounded-full border-line bg-card text-xs text-destructive" onClick={() => { setDeleteTarget(preview); setPreview(null); }}>
+                  <Button size="sm" variant="outline" className="h-8 rounded-full border-line bg-card text-sm text-destructive" onClick={() => { setDeleteTarget(preview); setPreview(null); }}>
                     Delete
                   </Button>
                 ) : null}
@@ -310,7 +310,7 @@ function MediaInner() {
         <DialogContent className="rounded-2xl border-line bg-card">
           <DialogHeader>
             <DialogTitle className="font-display">Who can see {permTarget?.filename}</DialogTitle>
-            <DialogDescription className="text-xs">Public links work anywhere; members and leadership need a signed-in session.</DialogDescription>
+            <DialogDescription className="text-sm">Public links work anywhere; members and leadership need a signed-in session.</DialogDescription>
           </DialogHeader>
           <div className="flex flex-wrap gap-2">
             {(["public", "members", "leadership"] as const).map((p) => (
@@ -354,7 +354,7 @@ function MediaInner() {
         }}
       />
 
-      <p className="text-center text-[10px] text-ink-faint">
+      <p className="text-center text-xs text-ink-faint">
         Files are church-owned and branch-scoped where assigned. <button type="button" onClick={() => router.push("/library/media/folders")} className="text-brand hover:underline">Manage folders</button>.
       </p>
     </div>
@@ -372,7 +372,7 @@ function MediaPreviewBody({ asset }: { asset: MediaAsset }) {
   return (
     <div className="flex flex-col items-center gap-2 rounded-xl border border-dashed border-line py-10">
       <FileText className="size-6 text-ink-faint" />
-      <a href={asset.url} target="_blank" rel="noreferrer" className="text-xs text-brand hover:underline">Open document</a>
+      <a href={asset.url} target="_blank" rel="noreferrer" className="text-sm text-brand hover:underline">Open document</a>
     </div>
   );
 }
@@ -420,14 +420,14 @@ function UploadDialog({ open, onOpenChange, folders }: { open: boolean; onOpenCh
       <DialogContent className="rounded-2xl border-line bg-card">
         <DialogHeader>
           <DialogTitle className="font-display">Upload to the library</DialogTitle>
-          <DialogDescription className="text-xs">Images are optimised automatically; audio, video and documents go straight to the folder&apos;s store.</DialogDescription>
+          <DialogDescription className="text-sm">Images are optimised automatically; audio, video and documents go straight to the folder&apos;s store.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <RequiredFieldsNotice />
           <label className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed border-line bg-muted/20 py-8 text-center transition-colors hover:border-brand/40">
             <UploadCloud className="size-6 text-ink-faint" />
-            <span className="text-xs font-medium">Choose files <RequiredIndicator /></span>
-            <span className="text-[10px] text-ink-faint">JPG/PNG → WebP · audio/video/docs up to 50 MB</span>
+            <span className="text-sm font-medium">Choose files <RequiredIndicator /></span>
+            <span className="text-xs text-ink-faint">JPG/PNG → WebP · audio/video/docs up to 50 MB</span>
             <input
               type="file"
               multiple
@@ -437,7 +437,7 @@ function UploadDialog({ open, onOpenChange, folders }: { open: boolean; onOpenCh
             />
           </label>
           {files.length ? (
-            <div className="max-h-32 space-y-1 overflow-y-auto rounded-lg border border-line p-2 text-[11px]">
+            <div className="max-h-32 space-y-1 overflow-y-auto rounded-lg border border-line p-2 text-sm">
               {files.map((f) => (
                 <p key={f.name} className="flex items-center justify-between">
                   <span className="truncate">{f.name}</span>
@@ -448,18 +448,18 @@ function UploadDialog({ open, onOpenChange, folders }: { open: boolean; onOpenCh
           ) : null}
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label className="text-xs">Folder</Label>
-              <select value={folder} onChange={(e) => setFolder(e.target.value)} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+              <Label className="text-sm">Folder</Label>
+              <select value={folder} onChange={(e) => setFolder(e.target.value)} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                 {Array.from(new Set(["uploads", ...folders])).map((f) => <option key={f} value={f}>{f}</option>)}
               </select>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">…or new folder</Label>
-              <Input value={newFolder} onChange={(e) => setNewFolder(e.target.value)} placeholder="Advent 2026" className="h-10 rounded-lg border-line bg-background text-xs shadow-none" />
+              <Label className="text-sm">…or new folder</Label>
+              <Input value={newFolder} onChange={(e) => setNewFolder(e.target.value)} placeholder="Advent 2026" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
           </div>
           <div>
-            {upload.isPending ? <p className="num mb-1 text-[10px] text-ink-faint">{done}/{files.length} uploaded…</p> : null}
+            {upload.isPending ? <p className="num mb-1 text-xs text-ink-faint">{done}/{files.length} uploaded…</p> : null}
             <Button className="h-10 w-full gap-2 rounded-lg text-sm" onClick={submit} disabled={upload.isPending}>
               <UploadCloud className="size-4" /> Upload {files.length ? `${files.length} file${files.length === 1 ? "" : "s"}` : ""}
             </Button>

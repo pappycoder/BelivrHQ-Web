@@ -35,13 +35,16 @@ export function Reveal({
 export function StaggerGroup({
   children,
   className,
+  style,
 }: {
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
     <motion.div
       className={className}
+      style={style}
       initial="hidden"
       animate="show"
       variants={staggerContainer}
@@ -54,12 +57,14 @@ export function StaggerGroup({
 export function StaggerItem({
   children,
   className,
+  style,
 }: {
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
-    <motion.div className={className} variants={listItem}>
+    <motion.div className={className} style={style} variants={listItem}>
       {children}
     </motion.div>
   );

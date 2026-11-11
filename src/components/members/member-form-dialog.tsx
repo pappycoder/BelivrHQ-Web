@@ -457,7 +457,7 @@ export function MemberFormDialog({
 
               <div className="space-y-2">
                 <p className="text-sm font-medium">Custom Fields</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   Track anything specific to your church (occupation, baptism
                   date...). Removing all rows clears saved fields.
                 </p>

@@ -5,14 +5,13 @@ import { ValidatedForm } from "@/components/ui/validated-form";
 import * as React from "react";
 import Link from "next/link";
 import {
-  CheckCheck,
   ScanLine,
   UserPlus,
   Users,
 } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader, SectionCard } from "@/components/paper/section";
-import { StatCard, Tag } from "@/components/paper/stat";
+import { StatCard } from "@/components/paper/stat";
 import { CheckInDatePicker } from "@/components/paper/check-in-date";
 import {
   EmptyState,
@@ -23,8 +22,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TabsContent } from "@/components/ui/tabs";
+import { AttendanceWorkspace } from "@/components/attendance/attendance-workspace";
+import { AttendanceRosterTable, AttendanceEditToggle } from "@/components/attendance/attendance-roster-table";
+import { AttendanceSelectionBar } from "@/components/attendance/attendance-selection-bar";
 import { GeneralAttendancePanel } from "@/components/attendance/general-attendance-panel";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useCanViewGeneralAttendance } from "@/hooks/use-attendance";
@@ -43,7 +44,6 @@ import {
   todayKey,
   type EventSchedule,
 } from "@/lib/schedule-occurrence";
-import { cn } from "@/lib/utils";
 
 type TabRoute = "roster" | "walkin";
 
@@ -53,9 +53,13 @@ export default function EventCheckInPage() {
 
   const [eventId, setEventId] = React.useState("");
   const [tab, setTab] = React.useState<TabRoute>("roster");
+  const [headcountDirty, setHeadcountDirty] = React.useState(false);
+  const [headcountBusy, setHeadcountBusy] = React.useState(false);
   const canSeeReported = useCanViewGeneralAttendance("event");
   const [query, setQuery] = React.useState("");
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
+  const [editable, setEditable] = React.useState(false);
+  const [savingRoster, setSavingRoster] = React.useState(false);
   const [walkIn, setWalkIn] = React.useState({ firstName: "", lastName: "", phone: "", email: "", gender: "" });
 
   const events = useEventsList(
@@ -85,6 +89,11 @@ export default function EventCheckInPage() {
       (a, b) => distance(a) - distance(b),
     );
   }, [events.data]);
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const requested = params.get("event") ?? params.get("eventId");
+    if (requested) setEventId(requested);
+  }, []);
   const activeId = eventId || eventList[0]?.eventId || "";
   const activeEvent = eventList.find((e) => e.eventId === activeId);
 
@@ -124,6 +133,7 @@ export default function EventCheckInPage() {
 
   React.useEffect(() => {
     setSelected(new Set());
+    setEditable(false);
   }, [activeId, attendanceDate]);
 
   const rows = React.useMemo(() => {
@@ -145,22 +155,32 @@ export default function EventCheckInPage() {
       return next;
     });
 
-  const doBulk = () => {
-    if (!selected.size) return;
-    bulkCheckIn.mutate(
-      { memberIds: [...selected], attendanceDate },
-      {
-        onSuccess: (result) => {
-          toast.success(`${result.checkedIn} checked in${result.skipped ? `, ${result.skipped} already inside` : ""}.`);
-          setSelected(new Set());
-        },
-        onError: (e) => toast.error(getToastErrorMessage(e, "Check-in didn't complete.")),
-      },
-    );
+  const doBulk = async () => {
+    if (!activeEvent || !attendanceDate || !selected.size || !editable || savingRoster) return;
+    setSavingRoster(true);
+    let recorded = 0, skipped = 0;
+    try {
+      const ids = [...selected];
+      for (let start = 0; start < ids.length; start += 200) {
+        const batch = ids.slice(start, start + 200);
+        const result = await bulkCheckIn.mutateAsync({ memberIds: batch, attendanceDate });
+        recorded += result.checkedIn;
+        skipped += result.skipped ?? 0;
+        setSelected(previous => new Set([...previous].filter(id => !batch.includes(id))));
+      }
+      setEditable(false);
+      toast.success(`${recorded} checked in${skipped ? `, ${skipped} already recorded` : ""}.`);
+    } catch (error) {
+      toast.error("Check-in could not be completed", { description: `${recorded} saved. Remaining people stay selected. ${getToastErrorMessage(error, "Please retry.")}` });
+    } finally {
+      setSavingRoster(false);
+    }
   };
 
   const doWalkIn = (event: React.FormEvent) => {
     event.preventDefault();
+    if (!editable) return;
+    if (!activeEvent || !attendanceDate || walkInCheckIn.isPending) return;
     const w = walkIn;
     if (!w.firstName.trim() || !w.lastName.trim()) { toast.error("A first and last name, please."); return; }
     if (!w.phone.trim()) { toast.error("A phone number so we remember them next time."); return; }
@@ -175,6 +195,7 @@ export default function EventCheckInPage() {
       },
       {
         onSuccess: (record) => {
+          setEditable(false);
           toast.success(`${record.visitorName ?? w.firstName} walked in and is counted.`);
           setWalkIn({ firstName: "", lastName: "", phone: "", email: "", gender: "" });
         },
@@ -183,13 +204,24 @@ export default function EventCheckInPage() {
     );
   };
 
+  const saving = savingRoster || headcountBusy || bulkCheckIn.isPending || walkInCheckIn.isPending;
+  const changeContext = (change: () => void) => {
+    if (saving) return;
+    const hasDraft = selected.size > 0 || headcountDirty || Object.values(walkIn).some((value) => value.trim());
+    if (hasDraft && !window.confirm("Discard unsaved attendance selections and form entries before changing the gathering or date?")) return;
+    setSelected(new Set());
+    setWalkIn({ firstName: "", lastName: "", phone: "", email: "", gender: "" });
+    setHeadcountDirty(false);
+    change();
+  };
+
   if (!canCheckIn) {
     return (
       <EmptyState
         icon={<ScanLine />}
         title="Check-in is a staff task"
         description="Your role can view events but not check people in."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/gatherings/events">Back to events</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/gatherings/events">Back to events</Link></Button>}
       />
     );
   }
@@ -198,21 +230,22 @@ export default function EventCheckInPage() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Gatherings · Events"
-        title="The door desk."
-        description="Tap faces as they walk in. Warmth first, admin second."
+        title="Event attendance"
+        description="Choose an event and date, then check in registrants, welcome visitors or record a headcount."
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <CheckInDatePicker
               value={attendanceDate}
-              onChange={setAttendanceDate}
+              onChange={(date) => changeContext(() => setAttendanceDate(date))}
               occursOn={occursOn}
               label="Event date"
-              disabled={!activeEvent}
+              disabled={!activeEvent || saving}
             />
             <select
               value={activeId}
-              onChange={(event) => setEventId(event.target.value)}
-              className="h-9 w-full min-w-[220px] rounded-full border border-line bg-card px-3 text-xs outline-none"
+              disabled={saving}
+              onChange={(event) => changeContext(() => setEventId(event.target.value))}
+              className="h-9 w-full min-w-[220px] rounded-full border border-line bg-card px-3 text-sm outline-none"
               aria-label="Choose event"
             >
               {eventList.map((event) => (
@@ -226,8 +259,11 @@ export default function EventCheckInPage() {
         }
       />
 
+      <AttendanceWorkspace name={activeEvent?.title ?? "Choose a gathering"} scope="Event" canSeeHeadcount={canSeeReported} busy={saving}>
+        <TabsContent value="individual" forceMount className="data-[state=inactive]:hidden">
+          <div className="space-y-4">
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatCard label="In the room" value={attendedCount} tone="moss" icon={<Users className="size-4" />} deltaLabel={attendanceDate === todayKey() ? "right now" : "selected day"} />
+        <StatCard label="Named check-ins" value={attendedCount} tone="moss" icon={<Users className="size-4" />} deltaLabel={attendanceDate === todayKey() ? "right now" : "selected day"} />
         <StatCard label="Expected" value={registeredCount} tone="brand" deltaLabel="registered" />
         <StatCard label="Selected" value={selected.size} tone="gold" deltaLabel={selected.size ? "ready to check in" : "tap to select"} />
         <div className="paper-card flex flex-col justify-between gap-4 rounded-2xl p-5">
@@ -236,23 +272,10 @@ export default function EventCheckInPage() {
         </div>
       </div>
 
-      <Tabs defaultValue="individual" className="min-w-0">
-        {canSeeReported ? (
-          <TabsList className="h-9 w-fit rounded-full border border-line bg-card p-0.5">
-            <TabsTrigger value="individual" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
-              Individual check-in
-            </TabsTrigger>
-            <TabsTrigger value="general" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
-              General attendance
-            </TabsTrigger>
-          </TabsList>
-        ) : null}
 
-        <TabsContent value="individual" className={canSeeReported ? "mt-4" : undefined}>
-          <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <FilterChip active={tab === "roster"} onClick={() => setTab("roster")}>Roster</FilterChip>
-        <FilterChip active={tab === "walkin"} onClick={() => setTab("walkin")}>Walk-in</FilterChip>
+        <FilterChip active={tab === "roster"} onClick={() => setTab("roster")}>Registered people</FilterChip>
+        <FilterChip active={tab === "walkin"} onClick={() => setTab("walkin")}>Visitors</FilterChip>
         {tab === "roster" ? (
           <SearchField value={query} onChange={setQuery} placeholder="Search a name or ticket code…" className="ml-auto w-full max-w-xs" />
         ) : null}
@@ -260,115 +283,79 @@ export default function EventCheckInPage() {
 
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         {tab === "roster" ? (
-          <div className="paper-card overflow-hidden rounded-2xl">
-            {selected.size ? (
-              <div className="flex items-center justify-between gap-3 bg-ink px-4 py-2.5 text-paper">
-                <span className="num text-xs font-medium">{selected.size} selected</span>
-                <div className="flex gap-2">
-                  <Button size="xs" className="gap-1.5 rounded-full bg-paper text-ink hover:bg-paper/90" disabled={bulkCheckIn.isPending} onClick={doBulk}>
-                    <CheckCheck className="size-3" /> {bulkCheckIn.isPending ? "Checking…" : "Check in"}
-                  </Button>
-                  <Button size="xs" variant="ghost" className="rounded-full text-[11px] text-paper/70 hover:bg-paper/10 hover:text-paper" onClick={() => setSelected(new Set())}>
-                    Clear
-                  </Button>
-                </div>
-              </div>
-            ) : null}
-            <div className="divide-y divide-line/70">
-              {registrations.isLoading ? (
-                Array.from({ length: 6 }).map((_, i) => <div key={i} className="px-4 py-3"><Skeleton className="h-10 rounded-lg" /></div>)
-              ) : rows.length ? (
-                rows.map((reg) => (
-                  <button
-                    key={reg.registrationId}
-                    type="button"
-                    disabled={reg.checkedIn}
-                    onClick={() => toggle(reg.memberId)}
-                    className={cn(
-                      "flex w-full items-center gap-3 px-4 py-3 text-left transition-colors",
-                      reg.checkedIn ? "opacity-50" : "hover:bg-muted/40",
-                    )}
-                  >
-                    <span className={cn(
-                      "grid size-5 shrink-0 place-items-center rounded-md border",
-                      selected.has(reg.memberId) ? "border-moss bg-moss text-paper" : "border-line",
-                    )}
-                    >
-                      {selected.has(reg.memberId) ? <CheckCheck className="size-3" /> : null}
-                    </span>
-                    <PersonAvatar name={reg.memberName ?? "Guest"} size="xs" />
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-xs font-medium">{reg.memberName ?? reg.memberId.slice(0, 10)}</span>
-                      <span className="block text-[10px] text-ink-faint">
-                        {reg.tierName ? `${reg.tierName} · ` : ""}×{reg.quantity}
-                        {reg.ticketCode ? ` · ${reg.ticketCode}` : ""}
-                      </span>
-                    </span>
-                    {reg.checkedIn ? <Tag tone="moss" dot>Checked in</Tag> : <Tag tone="neutral">Awaiting</Tag>}
-                  </button>
-                ))
-              ) : (
-                <p className="px-5 py-12 text-center text-xs text-ink-soft">
-                  {registrations.isError ? "Couldn't load the roster. Please retry shortly." : "Nobody registered for this one yet."}
-                </p>
-              )}
-            </div>
+          <div className="paper-card rounded-2xl">
+
+            {registrations.isError ? <div role="alert" className="p-4 text-sm">The roster could not be loaded. <Button type="button" variant="outline" onClick={() => registrations.refetch()}>Retry roster</Button></div> : registrations.isLoading ? <p role="status" className="p-4 text-sm">Loading roster…</p> : (
+              <AttendanceRosterTable
+                rows={rows.map(reg => ({ id: reg.memberId, name: reg.memberName ?? reg.memberId, detail: `${reg.tierName ? `${reg.tierName} · ` : ""}×${reg.quantity}${reg.ticketCode ? ` · ${reg.ticketCode}` : ""}`, recorded: reg.checkedIn, status: "Awaiting" }))}
+                selected={selected}
+                editable={editable}
+                busy={savingRoster}
+                onEdit={() => setEditable(true)}
+                onCancel={() => { setSelected(new Set()); setEditable(false); }}
+                onToggle={toggle}
+                onSelectAll={(ids, checked) => setSelected(previous => { const next = new Set(previous); ids.forEach(id => checked ? next.add(id) : next.delete(id)); return next; })}
+              />
+            )}
+            <AttendanceSelectionBar editable={editable} count={selected.size} busy={savingRoster} disabled={!activeEvent} onSave={doBulk} onClear={() => setSelected(new Set())} />
           </div>
         ) : (
-          <SectionCard eyebrow="No ticket? No problem" title="Walk someone in" bodyClassName="p-5">
+          <SectionCard eyebrow="No ticket? No problem" title="Walk someone in" bodyClassName="p-5" actions={<AttendanceEditToggle editable={editable} busy={saving} onEdit={() => setEditable(true)} onCancel={() => { setEditable(false); setSelected(new Set()); setWalkIn({ firstName: "", lastName: "", phone: "", email: "", gender: "" }); }} />}>
             <ValidatedForm onSubmit={doWalkIn} className="space-y-4">
+              <fieldset disabled={!editable || saving} className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label required className="text-xs">First name</Label>
+                  <Label required className="text-sm">First name</Label>
                   <Input required value={walkIn.firstName} onChange={(e) => setWalkIn((w) => ({ ...w, firstName: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label required className="text-xs">Last name</Label>
+                  <Label required className="text-sm">Last name</Label>
                   <Input required value={walkIn.lastName} onChange={(e) => setWalkIn((w) => ({ ...w, lastName: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label required className="text-xs">Phone</Label>
+                  <Label required className="text-sm">Phone</Label>
                   <Input required value={walkIn.phone} onChange={(e) => setWalkIn((w) => ({ ...w, phone: e.target.value }))} placeholder="+1 415 555 0100" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Email (optional)</Label>
+                  <Label className="text-sm">Email (optional)</Label>
                   <Input value={walkIn.email} onChange={(e) => setWalkIn((w) => ({ ...w, email: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5 sm:col-span-2">
-                  <Label className="text-xs">Gender (optional)</Label>
-                  <select value={walkIn.gender} onChange={(e) => setWalkIn((w) => ({ ...w, gender: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+                  <Label className="text-sm">Gender (optional)</Label>
+                  <select value={walkIn.gender} onChange={(e) => setWalkIn((w) => ({ ...w, gender: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                     <option value="">Not said</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                   </select>
                 </div>
               </div>
-              <Button type="submit" disabled={walkInCheckIn.isPending} className="h-10 w-full gap-2 rounded-lg text-sm">
+              <Button type="submit" disabled={!activeEvent || walkInCheckIn.isPending} className="h-10 w-full gap-2 rounded-lg text-sm">
                 <UserPlus className="size-4" /> {walkInCheckIn.isPending ? "Checking in…" : "Check in as guest"}
               </Button>
-              <p className="text-center text-[10px] text-ink-faint">
+              <p className="text-center text-xs text-ink-faint">
                 Walk-ins become visitor records. The follow-up desk will pick them up tomorrow.
               </p>
+              </fieldset>
             </ValidatedForm>
           </SectionCard>
         )}
 
         <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
-          <SectionCard eyebrow="Arrivals" title="On this day" bodyClassName="p-0">
+          <SectionCard eyebrow="Arrivals" title="Confirmed arrivals" bodyClassName="p-0">
             <div className="divide-y divide-line/70">
               {attendanceForDay.slice(0, 8).map((record) => (
                 <div key={record.attendanceId} className="flex items-center gap-2.5 px-4 py-2.5">
                   <PersonAvatar name={record.memberName ?? record.visitorName ?? "Guest"} size="xs" />
-                  <span className="min-w-0 flex-1 truncate text-[11px] font-medium">{record.memberName ?? record.visitorName ?? "Guest"}</span>
-                  <span className="text-[9px] text-ink-faint">
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium">{record.memberName ?? record.visitorName ?? "Guest"}</span>
+                  <span className="text-xs text-ink-faint">
                     {new Date(record.checkInAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </div>
               ))}
-              {!attendanceForDay.length ? <p className="px-4 py-8 text-center text-[11px] text-ink-faint">Doors haven&apos;t opened yet.</p> : null}
+              {!attendanceForDay.length ? <p className="px-4 py-8 text-center text-sm text-ink-faint">Doors haven&apos;t opened yet.</p> : null}
             </div>
           </SectionCard>
-          <div className="rounded-2xl border border-dashed border-line p-4 text-[11px] leading-relaxed text-ink-soft">
+          <div className="rounded-2xl border border-dashed border-line p-4 text-sm leading-relaxed text-ink-soft">
             Volunteers run this screen on the door tablet. Anything missed can be
             reconciled from the event page afterwards.
           </div>
@@ -378,9 +365,12 @@ export default function EventCheckInPage() {
         </TabsContent>
 
         {canSeeReported ? (
-          <TabsContent value="general" className="mt-4">
+          <TabsContent value="general" forceMount className="data-[state=inactive]:hidden">
             {activeEvent ? (
               <GeneralAttendancePanel
+                key={`${activeId}:${attendanceDate}`}
+                onDirtyChange={setHeadcountDirty}
+                onBusyChange={setHeadcountBusy}
                 context={{
                   type: "event",
                   id: activeEvent.eventId,
@@ -394,13 +384,13 @@ export default function EventCheckInPage() {
                 occursOn={occursOn}
               />
             ) : (
-              <p className="px-4 py-8 text-center text-xs text-ink-faint">
+              <p className="px-4 py-8 text-center text-sm text-ink-faint">
                 Pick an event above to report its headcount.
               </p>
             )}
           </TabsContent>
         ) : null}
-      </Tabs>
+      </AttendanceWorkspace>
     </div>
   );
 }

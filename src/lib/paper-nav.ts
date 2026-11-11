@@ -327,7 +327,6 @@ export const PAPER_AREAS: PaperArea[] = [
         children: [
           { title: "Your profile", href: "/settings/profile", description: "Name, photo, phone", live: true, planPath: "/profile" },
           { title: "Security", href: "/settings/security", description: "Password & two-factor", live: true, planPath: "/profile" },
-          { title: "Notifications", href: "/settings/notifications", description: "What reaches you", live: true, planPath: "/notifications" },
           { title: "Appearance", href: "/settings/appearance", description: "Light, dark, rhythm", live: true, planPath: "/profile" },
           { title: "Billing", href: "/settings/billing", description: "Plan & payments", permission: "billing:read", live: true, planPath: "/subscription" },
           { title: "Support", href: "/support", description: "The human desk", live: true, planPath: "/support" },

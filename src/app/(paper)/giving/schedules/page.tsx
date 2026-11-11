@@ -72,7 +72,7 @@ export default function GivingSchedulesPage() {
         description="Manage scheduled gifts, pause them when needed and follow up on failed payments."
         actions={
           canCreate ? (
-            <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setDialogOpen(true)}>
+            <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setDialogOpen(true)}>
               <Repeat className="size-3.5" /> New schedule
             </Button>
           ) : null
@@ -90,7 +90,7 @@ export default function GivingSchedulesPage() {
         <FilterChip active={activeFilter === ""} onClick={() => { setActiveFilter(""); setPage(1); }}>All</FilterChip>
         <FilterChip active={activeFilter === "true"} onClick={() => { setActiveFilter("true"); setPage(1); }}>Active</FilterChip>
         <FilterChip active={activeFilter === "false"} onClick={() => { setActiveFilter("false"); setPage(1); }}>Paused & ended</FilterChip>
-        <span className="ml-auto text-[10px] text-ink-faint">New recurring gifts are set up online by the giver.</span>
+        <span className="ml-auto text-xs text-ink-faint">New recurring gifts are set up online by the giver.</span>
       </div>
 
       {recurring.isLoading ? (
@@ -118,19 +118,19 @@ export default function GivingSchedulesPage() {
                   <PersonAvatar name={schedule.memberName ?? "A giver"} size="xs" />
                   <span className="min-w-0">
                     <span className="flex items-center gap-2">
-                      <span className="truncate text-xs font-medium">{schedule.memberName ?? `Member ${schedule.memberId.slice(0, 6)}`}</span>
+                      <span className="truncate text-sm font-medium">{schedule.memberName ?? `Member ${schedule.memberId.slice(0, 6)}`}</span>
                       <Tag tone={schedule.isActive ? "moss" : "neutral"} dot>{schedule.isActive ? "Active" : "Paused"}</Tag>
                       {schedule.failedAttemptCount > 0 ? <Tag tone="rose">{schedule.failedAttemptCount} failed</Tag> : null}
                     </span>
-                    <span className="block truncate text-[10px] text-ink-faint">
+                    <span className="block truncate text-xs text-ink-faint">
                       {schedule.lastChargeDate ? `last charged ${formatDate(schedule.lastChargeDate)}` : "not yet charged"}
                     </span>
                   </span>
                 </span>
-                <span className="truncate text-[11px] text-ink-soft">{schedule.categoryName}</span>
-                <span className="num text-right text-xs font-semibold">{formatNaira(schedule.amount)}</span>
-                <span className="text-[11px] text-ink-soft">{FREQUENCY_LABELS[schedule.frequency] ?? schedule.frequency}</span>
-                <span className="num text-[11px] text-ink-soft">{schedule.nextChargeDate ? formatDate(schedule.nextChargeDate) : "Not available"}</span>
+                <span className="truncate text-sm text-ink-soft">{schedule.categoryName}</span>
+                <span className="num text-right text-sm font-semibold">{formatNaira(schedule.amount)}</span>
+                <span className="text-sm text-ink-soft">{FREQUENCY_LABELS[schedule.frequency] ?? schedule.frequency}</span>
+                <span className="num text-sm text-ink-soft">{schedule.nextChargeDate ? formatDate(schedule.nextChargeDate) : "Not available"}</span>
                 <RowActions
                   actions={[
                     canManage && schedule.isActive && {

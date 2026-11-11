@@ -24,6 +24,7 @@ import { CellGroupMemberDialog } from "@/components/departments/cell-group-membe
 import { CellGroupAttendanceDialog } from "@/components/departments/cell-group-attendance-dialog";
 import { MeetingAttendanceTable } from "@/components/departments/meeting-attendance-table";
 import { CellGroupGivingPanel } from "@/components/giving/cell-group-giving-panel";
+import { AttendanceWorkspace } from "@/components/attendance/attendance-workspace";
 import { GeneralAttendancePanel } from "@/components/attendance/general-attendance-panel";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useCurrentProfile } from "@/hooks/use-profile";
@@ -106,7 +107,7 @@ export default function CellGroupDetailPage({
             asChild
             variant="outline"
             size="sm"
-            className="rounded-full border-line text-xs"
+            className="rounded-full border-line text-sm"
           >
             <Link href="/gatherings/groups/cell">Back to groups</Link>
           </Button>
@@ -123,8 +124,7 @@ export default function CellGroupDetailPage({
   const tabs = [
     "overview",
     "members",
-    ...(canSeeDetails ? ["attendance"] : []),
-    ...(canSeeReported ? ["reported"] : []),
+    ...(canSeeDetails || canSeeReported ? ["attendance"] : []),
     "giving",
   ];
   return (
@@ -138,7 +138,7 @@ export default function CellGroupDetailPage({
             <Button
               asChild
               variant="outline"
-              className="h-9 rounded-full text-xs"
+              className="h-9 rounded-full text-sm"
             >
               <Link href="/gatherings/groups/cell">
                 <ArrowLeft className="size-3.5" /> Cell groups
@@ -147,7 +147,7 @@ export default function CellGroupDetailPage({
             {canEdit && !g.archivedAt && (
               <Button
                 variant="outline"
-                className="h-9 rounded-full text-xs"
+                className="h-9 rounded-full text-sm"
                 onClick={() => setEditOpen(true)}
               >
                 <PencilLine className="size-3.5" /> Edit group
@@ -181,7 +181,7 @@ export default function CellGroupDetailPage({
             </>
           ) : summary.isError ? (
             <div className="paper-card col-span-2 rounded-2xl p-5">
-              <p className="text-xs text-ink-soft">
+              <p className="text-sm text-ink-soft">
                 Attendance summary unavailable.
               </p>
               <Button variant="link" onClick={() => summary.refetch()}>
@@ -205,7 +205,7 @@ export default function CellGroupDetailPage({
           )}
         </div>
       )}
-      <UrlTabs defaultValue="overview" values={tabs}>
+      <UrlTabs defaultValue="overview" values={tabs} aliases={{ reported: "attendance" }}>
         {(activeTab) => (
           <>
             <TabsList
@@ -216,7 +216,7 @@ export default function CellGroupDetailPage({
                 <TabsTrigger
                   key={tab}
                   value={tab}
-                  className="h-9 flex-none rounded-full px-4 py-2 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper"
+                  className="h-9 flex-none rounded-full px-4 py-2 text-sm data-[state=active]:bg-ink data-[state=active]:text-paper"
                 >
                   {
                     {
@@ -277,16 +277,16 @@ export default function CellGroupDetailPage({
                             className="flex items-center gap-3 px-5 py-2.5 transition-colors hover:bg-muted/40"
                           >
                             <Navigation className="size-3.5 shrink-0 text-ink-faint" />
-                            <span className="min-w-0 flex-1 truncate text-xs font-medium">
+                            <span className="min-w-0 flex-1 truncate text-sm font-medium">
                               {neighbour.name}
                             </span>
-                            <span className="num shrink-0 text-[10px] text-ink-faint">
+                            <span className="num shrink-0 text-xs text-ink-faint">
                               {neighbour.distanceKm.toFixed(1)} km
                             </span>
                           </Link>
                         ))}
                       </div>
-                      <p className="border-t border-line px-5 py-2 text-[10px] text-ink-faint">
+                      <p className="border-t border-line px-5 py-2 text-xs text-ink-faint">
                         Coverage gaps are invitations, not reports.
                       </p>
                     </SectionCard>
@@ -308,7 +308,7 @@ export default function CellGroupDetailPage({
                     action={
                       canManageMembers && !g.archivedAt ? (
                         <Button
-                          className="h-8 rounded-full text-xs"
+                          className="h-8 rounded-full text-sm"
                           onClick={() => setMemberDialogOpen(true)}
                         >
                           <UserPlus className="size-3.5" /> Add member
@@ -337,9 +337,10 @@ export default function CellGroupDetailPage({
                 )}
               </TabsContent>
             )}
-            {canSeeDetails && activeTab === "attendance" && (
+            {(canSeeDetails || canSeeReported) && activeTab === "attendance" && (
               <TabsContent value="attendance" className="mt-5">
-                {" "}
+                <AttendanceWorkspace name={g.name} scope="Cell group" canSeePeople={canSeeDetails} canSeeHeadcount={canSeeReported}>
+                  {canSeeDetails && <TabsContent value="individual" forceMount className="data-[state=inactive]:hidden">
                 <MeetingAttendanceTable
                   records={records}
                   loading={attendance.isLoading}
@@ -352,7 +353,7 @@ export default function CellGroupDetailPage({
                     canManageMembers && !g.archivedAt ? (
                       <Button
                         size="sm"
-                        className="h-8 gap-1.5 rounded-full text-xs"
+                        className="h-8 gap-1.5 rounded-full text-sm"
                         onClick={() => setAttendanceDialogOpen(true)}
                       >
                         <CalendarPlus className="size-3.5" /> Record Attendance
@@ -360,11 +361,8 @@ export default function CellGroupDetailPage({
                     ) : null
                   }
                 />
-              </TabsContent>
-            )}
-            {canSeeReported && activeTab === "reported" && (
-              <TabsContent value="reported" className="mt-5">
-                {" "}
+                  </TabsContent>}
+                  {canSeeReported && <TabsContent value="general" forceMount className="data-[state=inactive]:hidden">
                 <GeneralAttendancePanel
                   context={{
                     type: "cell_group",
@@ -375,6 +373,8 @@ export default function CellGroupDetailPage({
                   }}
                   canManage={!isCellLeader || isOwnGroup}
                 />
+                  </TabsContent>}
+                </AttendanceWorkspace>
               </TabsContent>
             )}
             {activeTab === "giving" && (
@@ -421,6 +421,7 @@ export default function CellGroupDetailPage({
         onOpenChange={setAttendanceDialogOpen}
         groupId={g.id}
         groupName={g.name}
+        attendanceDate={meetingDate}
         members={memberRows}
         loadingMembers={members.isLoading}
         membersError={members.isError}

@@ -8,6 +8,7 @@ import Image from "next/image";
 import {
   ArrowDown,
   ArrowRight,
+  ArrowUpRight,
   Check,
   CheckCheck,
   ChevronDown,
@@ -43,11 +44,11 @@ export function LandingMotion({ children }: { children: React.ReactNode }) {
     const animations = new Set<Animation>();
     const selectors = [
       `.${styles.heroCopy} > *`, `.${styles.heroScribble}`, `.${styles.productStage}`,
-      `.${styles.platformStrip}`, `.${styles.sectionIntro}`, `.${styles.featureBento} > article`,
+      `.${styles.platformStrip}`, `.${styles.sectionIntro}`,
       `.${styles.enterpriseCopy}`, `.${styles.networkIllustration}`, `.${styles.securityStrip}`,
       `.${styles.integrationsSection} > div:first-child`, `.${styles.providerGrid} > article`,
       `.${styles.sectionHeading}`, `.${styles.planCard}`, `.${styles.faqSection} > div:first-child`,
-      `.${styles.faqList} > details`, `.${styles.finalCta} > *`, "h1 em", "h2 em",
+      `.${styles.faqDesk}`, `.${styles.finalCta} > *`, "h1 em", "h2 em",
     ];
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {
@@ -56,7 +57,8 @@ export function LandingMotion({ children }: { children: React.ReactNode }) {
         if (preference.matches) continue;
         const cursive = entry.target.tagName === "EM";
         const siblings = Array.from(entry.target.parentElement?.children ?? []);
-        const delay = cursive ? 160 : Math.min(siblings.indexOf(entry.target), 3) * 65;
+        const planCard = entry.target.classList.contains(styles.planCard);
+        const delay = cursive ? 160 : Math.min(siblings.indexOf(entry.target), 3) * (planCard ? 110 : 65);
         const animation = entry.target.animate(
           cursive
             ? [{ opacity: 0, transform: "translateY(12px) rotate(-3deg)", clipPath: "inset(0 100% 0 0)" },
@@ -76,7 +78,7 @@ export function LandingMotion({ children }: { children: React.ReactNode }) {
       }
     }, { threshold: 0.12 });
     const ambientTargets = element.querySelectorAll([
-      `.${styles.featureBento} > article`, `.${styles.providerGrid} > article`,
+      `.${styles.providerGrid} > article`,
       `.${styles.planCard}`, `.${styles.heroScribble}`,
     ].join(","));
     ambientTargets.forEach((target) => ambientObserver.observe(target));
@@ -97,6 +99,179 @@ export function LandingMotion({ children }: { children: React.ReactNode }) {
     };
   }, []);
   return <div ref={root} className={styles.landing}>{children}</div>;
+}
+
+const featureNames = ["People & care", "Attendance", "Giving & records", "Communication", "Teams & groups"];
+
+export function FeatureCarousel({ children }: { children: React.ReactNode }) {
+  const cards = React.Children.toArray(children);
+  const [selected, setSelected] = React.useState(0);
+  const [ready, setReady] = React.useState(false);
+  const [visible, setVisible] = React.useState(false);
+  const [motionAllowed, setMotionAllowed] = React.useState(false);
+  const [hovered, setHovered] = React.useState(false);
+  const [focused, setFocused] = React.useState(false);
+  const root = React.useRef<HTMLDivElement>(null);
+  const touchStart = React.useRef<number | null>(null);
+  const move = (step: number) => setSelected(index => (index + step + cards.length) % cards.length);
+
+  React.useEffect(() => {
+    setReady(true);
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setMotionAllowed(!preference.matches);
+    sync();
+    preference.addEventListener("change", sync);
+    const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: 0.2 });
+    if (root.current) observer.observe(root.current);
+    return () => { observer.disconnect(); preference.removeEventListener("change", sync); };
+  }, []);
+
+  React.useEffect(() => {
+    if (!visible || !motionAllowed || hovered || focused) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const schedule = () => {
+      clearTimeout(timer);
+      if (!document.hidden) timer = setTimeout(() => setSelected(index => (index + 1) % cards.length), 3000);
+    };
+    schedule();
+    document.addEventListener("visibilitychange", schedule);
+    return () => { clearTimeout(timer); document.removeEventListener("visibilitychange", schedule); };
+  }, [selected, visible, motionAllowed, hovered, focused, cards.length]);
+
+  return (
+    <div
+      ref={root}
+      className={styles.featureCarousel}
+      data-ready={ready}
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="Explore church features"
+      tabIndex={0}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocusCapture={() => setFocused(true)}
+      onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}
+      onKeyDown={event => {
+        if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+          event.preventDefault();
+          move(event.key === "ArrowRight" ? 1 : -1);
+        }
+      }}
+    >
+      <div
+        className={`${styles.featureBento} ${styles.featureArc}`}
+        onPointerDown={event => { if (event.pointerType === "touch") touchStart.current = event.clientX; }}
+        onPointerUp={event => {
+          if (touchStart.current === null) return;
+          const distance = event.clientX - touchStart.current;
+          touchStart.current = null;
+          if (Math.abs(distance) > 45) move(distance < 0 ? 1 : -1);
+        }}
+        onPointerCancel={() => { touchStart.current = null; }}
+      >
+        {cards.map((card, index) => {
+          const offset = (index - selected + cards.length + Math.floor(cards.length / 2)) % cards.length - Math.floor(cards.length / 2);
+          const active = index === selected;
+          return (
+            <div key={index} className={styles.featureSlide} data-position={offset} data-active={active}
+              role="group" aria-roledescription="slide" aria-label={`${featureNames[index]}, ${index + 1} of ${cards.length}`}
+              aria-hidden={ready && Math.abs(offset) > 1 ? true : undefined}>
+              <div className={styles.featureCardContent} inert={ready && !active} aria-hidden={ready && !active ? true : undefined}>
+                {card}
+              </div>
+              {ready && !active && Math.abs(offset) === 1 && (
+                <button type="button" className={styles.featureSelect} tabIndex={-1}
+                  aria-label={`View ${featureNames[index]}`} onClick={event => { event.currentTarget.blur(); setSelected(index); }} />
+              )}
+            </div>
+          );
+        })}
+      </div>
+      <div className={styles.featureCarouselControls}>
+        <div className={styles.featureDots} role="group" aria-label="Choose a feature">
+          {cards.map((_, index) => <button type="button" key={index} aria-label={`Show ${featureNames[index]}`}
+            aria-pressed={selected === index} onClick={() => setSelected(index)}><span /></button>)}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const faqTopics = ["Finding your fit", "Branches", "Your records", "Providers", "Financial access", "Getting started"];
+
+export function FaqSection({ questions }: { questions: readonly (readonly [string, string])[] }) {
+  const [selected, setSelected] = React.useState(0);
+  const [enhanced, setEnhanced] = React.useState(false);
+  const tabs = React.useRef<(HTMLButtonElement | null)[]>([]);
+  React.useEffect(() => setEnhanced(true), []);
+  function navigate(event: React.KeyboardEvent, index: number) {
+    let next = index;
+    if (event.key === "ArrowDown" || event.key === "ArrowRight") next = (index + 1) % questions.length;
+    else if (event.key === "ArrowUp" || event.key === "ArrowLeft") next = (index - 1 + questions.length) % questions.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = questions.length - 1;
+    else return;
+    event.preventDefault();
+    setSelected(next);
+    tabs.current[next]?.focus();
+  }
+  return (
+    <section id="questions" className={styles.faqSection} aria-labelledby="faq-title">
+      <div className={styles.faqIntro}>
+        <div>
+          <span className={styles.eyebrow}>A FEW THINGS YOU MIGHT BE WONDERING</span>
+          <h2 id="faq-title">Good questions.<br /><em>Straight answers.</em></h2>
+        </div>
+        <p>Choosing a home for your church&apos;s work matters. Here&apos;s a little clarity before you begin.</p>
+      </div>
+      <div className={styles.faqDesk} hidden={!enhanced}>
+        <div className={styles.faqDeskHeader}>
+          <span><CircleHelp size={16} /> THE BELIVRHQ GUIDE</span>
+          <span>{String(questions.length).padStart(2, "0")} QUESTIONS, EXPLAINED</span>
+        </div>
+        <div className={styles.faqQuestionRail}>
+          <span className={styles.faqRailLabel}>CHOOSE A TOPIC</span>
+          <div className={styles.faqTopics} role="tablist" aria-label="Frequently asked questions" aria-orientation="vertical">
+            {questions.map(([question], index) => (
+              <button type="button" key={question} role="tab" id={`faq-question-${index}`}
+                ref={node => { tabs.current[index] = node; }}
+                aria-label={question} aria-selected={selected === index} aria-controls={`faq-answer-${index}`}
+                tabIndex={selected === index ? 0 : -1} onClick={() => setSelected(index)} onKeyDown={event => navigate(event, index)}>
+                <span className={styles.faqQuestionNumber}>{String(index + 1).padStart(2, "0")}</span>
+                <span className={styles.faqQuestionText}>
+                  <span className={styles.faqTopicName}>{faqTopics[index]}</span>
+                  <span className={styles.faqQuestionLabel}>{question}</span>
+                </span>
+                <ArrowUpRight size={16} aria-hidden="true" />
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className={styles.faqAnswerPanel} role="tabpanel" id={`faq-answer-${selected}`} aria-labelledby={`faq-question-${selected}`} tabIndex={0}>
+          <div key={selected} className={styles.faqAnswerContent}>
+            <div className={styles.faqAnswerMeta}>
+              <span>ANSWER {String(selected + 1).padStart(2, "0")}</span>
+              <span>{faqTopics[selected]}</span>
+            </div>
+            <span className={styles.faqAnswerNumber} aria-hidden="true">{String(selected + 1).padStart(2, "0")}</span>
+            <h3>{questions[selected][0]}</h3>
+            <p>{questions[selected][1]}</p>
+          </div>
+          <div className={styles.faqPanelFooter}>
+            <a href="#pricing">Explore the plans <ArrowUpRight size={17} /></a>
+            <span>{String(selected + 1).padStart(2, "0")} / {String(questions.length).padStart(2, "0")}</span>
+          </div>
+        </div>
+      </div>
+      <div className={`${styles.faqList} ${styles.faqFallback}`} hidden={enhanced}>
+        {questions.map(([question, answer], index) => (
+          <details key={question} open={index === 0}>
+            <summary>{question}<span><span /><span /></span></summary><p>{answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  );
 }
 
 export function MarketingNavigation() {
@@ -213,7 +388,46 @@ const views = [
 ];
 export function ProductPreview() {
   const [selected, setSelected] = React.useState(0);
+  const [hovered, setHovered] = React.useState(false);
+  const [focused, setFocused] = React.useState(false);
+  const [visible, setVisible] = React.useState(false);
+  const [motionAllowed, setMotionAllowed] = React.useState(false);
+  const stage = React.useRef<HTMLDivElement>(null);
   const view = views[selected];
+
+  React.useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncPreference = () => setMotionAllowed(!preference.matches);
+    syncPreference();
+    preference.addEventListener("change", syncPreference);
+    const element = stage.current;
+    const observer = new IntersectionObserver(([entry]) => {
+      setVisible(entry.isIntersecting);
+    }, { threshold: 0.15 });
+    if (element) observer.observe(element);
+    return () => {
+      preference.removeEventListener("change", syncPreference);
+      observer.disconnect();
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (hovered || focused || !visible || !motionAllowed) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const schedule = () => {
+      clearTimeout(timer);
+      if (!document.hidden) {
+        timer = setTimeout(() => setSelected((index) => (index + 1) % views.length), 5000);
+      }
+    };
+    schedule();
+    document.addEventListener("visibilitychange", schedule);
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener("visibilitychange", schedule);
+    };
+  }, [hovered, focused, visible, motionAllowed, selected]);
+
   const tabs = React.useRef<(HTMLButtonElement | null)[]>([]);
   function moveTab(event: React.KeyboardEvent, index: number) {
     let next = index;
@@ -228,12 +442,25 @@ export function ProductPreview() {
     tabs.current[next]?.focus();
   }
   return (
-    <div className={styles.productStage}>
+    <div
+      ref={stage}
+      className={styles.productStage}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onFocusCapture={() => setFocused(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setFocused(false);
+        }
+      }}
+    >
       <div
         className={styles.previewTabs}
+        style={{ "--preview-index": selected } as React.CSSProperties}
         role="tablist"
         aria-label="Explore the platform"
       >
+        <span className={styles.previewTabGlass} aria-hidden="true" />
         {views.map((item, index) => (
           <button
             ref={(node) => {
@@ -293,7 +520,7 @@ export function ProductPreview() {
               <span className={styles.miniAvatar}>GO</span>
             </div>
           </div>
-          <div className={styles.mockBody}>
+          <div key={view.id} className={`${styles.mockBody} ${styles.previewSlide}`}>
             <div className={styles.mockHeading}>
               <div>
                 <span className={styles.mockEyebrow}>
@@ -450,6 +677,16 @@ export function PricingSection() {
             <article
               key={item.id}
               className={`${styles.planCard} ${"featured" in item && item.featured ? styles.featuredPlan : ""}`}
+              onPointerMove={event => {
+                if (event.pointerType !== "mouse") return;
+                const rect = event.currentTarget.getBoundingClientRect();
+                event.currentTarget.style.setProperty("--spot-x", `${event.clientX - rect.left}px`);
+                event.currentTarget.style.setProperty("--spot-y", `${event.clientY - rect.top}px`);
+              }}
+              onPointerLeave={event => {
+                event.currentTarget.style.removeProperty("--spot-x");
+                event.currentTarget.style.removeProperty("--spot-y");
+              }}
             >
               {"featured" in item && item.featured && (
                 <div className={styles.popularBadge}>
@@ -461,7 +698,10 @@ export function PricingSection() {
               </span>
               <h3>{item.name}</h3>
               <p className={styles.planDescription}>{item.description}</p>
-              <div className={styles.planPrice}>
+              <div
+                key={item.id === "enterprise" ? item.id : `${pricing.currency}-${annual}-${pricing.price(item.id, annual ? "annual" : "monthly")}`}
+                className={`${styles.planPrice} ${item.id !== "enterprise" ? styles.priceTransition : ""}`}
+              >
                 {item.id === "enterprise" ? (
                   <strong>Let’s talk</strong>
                 ) : (

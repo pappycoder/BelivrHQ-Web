@@ -7,7 +7,7 @@ export function RequiredIndicator() {
 
 export function RequiredFieldsNotice({ className }: { className?: string }) {
   return (
-    <p className={cn("text-xs text-muted-foreground", className)}>
+    <p className={cn("text-sm text-muted-foreground", className)}>
       <RequiredIndicator /> Fields marked with an asterisk are required.
     </p>
   );

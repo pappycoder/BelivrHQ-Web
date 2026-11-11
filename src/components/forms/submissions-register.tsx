@@ -198,7 +198,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
     >
       <SelectTrigger
         aria-label={label}
-        className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none"
+        className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
       >
         <SelectValue />
       </SelectTrigger>
@@ -228,7 +228,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="font-display text-lg font-semibold">Submissions</h2>
-          <p className="mt-1 text-xs text-ink-soft">
+          <p className="mt-1 text-sm text-ink-soft">
             {total} matching responses · {form.title}
           </p>
         </div>
@@ -318,7 +318,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
             <button
               type="button"
               onClick={clear}
-              className="text-xs text-ink-soft underline underline-offset-4"
+              className="text-sm text-ink-soft underline underline-offset-4"
             >
               Clear filters
             </button>
@@ -387,7 +387,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
             return (
               <div
                 key={row.id}
-                className="group grid grid-cols-[minmax(0,1.5fr)_minmax(0,2fr)_1fr_0.8fr_1fr_0.7fr_auto] items-center gap-3 border-b border-line/70 px-5 py-4 text-xs"
+                className="group grid grid-cols-[minmax(0,1.5fr)_minmax(0,2fr)_1fr_0.8fr_1fr_0.7fr_auto] items-center gap-3 border-b border-line/70 px-5 py-4 text-sm"
               >
                 <div className="flex min-w-0 items-center gap-2">
                   <PersonAvatar name={person.name} size="xs" />
@@ -395,7 +395,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
                     <span className="block truncate font-semibold">
                       {person.name}
                     </span>
-                    <span className="block truncate text-[10px] text-ink-faint">
+                    <span className="block truncate text-xs text-ink-faint">
                       {person.contact || person.reference}
                     </span>
                   </span>
@@ -439,7 +439,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
               className="paper-card flex flex-col gap-3 rounded-2xl p-5"
             >
               <SubmissionRespondent submission={row} fields={form.fields} />
-              <p className="line-clamp-3 text-xs leading-relaxed text-ink-soft">
+              <p className="line-clamp-3 text-sm leading-relaxed text-ink-soft">
                 {answers(row, form)}
               </p>
               <div className="flex flex-wrap items-center gap-2">
@@ -454,7 +454,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
                 >
                   {SUBMISSION_STATUS_LABELS[row.status]}
                 </Tag>
-                <span className="text-xs text-ink-faint">
+                <span className="text-sm text-ink-faint">
                   {formatDate(row.createdAt)}
                 </span>
               </div>

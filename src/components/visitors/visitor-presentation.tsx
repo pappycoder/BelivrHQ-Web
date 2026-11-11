@@ -46,7 +46,7 @@ export function VisitorStatusBadge({ status }: { status: FollowUpStatus }) {
     <Badge
       variant="outline"
       className={cn(
-        "gap-1.5 rounded-full text-[11px] font-medium",
+        "gap-1.5 rounded-full text-sm font-medium",
         visitorStatusTones[status],
       )}
     >

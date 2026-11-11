@@ -180,11 +180,11 @@ export function IntegrationSettingsTab() {
         role="alert"
         className="paper-card flex flex-wrap items-center justify-between gap-3 rounded-2xl p-5"
       >
-        <p className="text-xs text-ink-soft">Unable to load integrations.</p>
+        <p className="text-sm text-ink-soft">Unable to load integrations.</p>
         <Button
           variant="outline"
           size="sm"
-          className="h-8 rounded-full border-line text-xs"
+          className="h-8 rounded-full border-line text-sm"
           onClick={() => void query.refetch()}
         >
           Retry
@@ -244,13 +244,13 @@ export function IntegrationSettingsTab() {
         >
           <TabsTrigger
             value="accounts"
-            className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper"
+            className="rounded-full px-3.5 text-sm data-[state=active]:bg-ink data-[state=active]:text-paper"
           >
             Provider accounts
           </TabsTrigger>
           <TabsTrigger
             value="services"
-            className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper"
+            className="rounded-full px-3.5 text-sm data-[state=active]:bg-ink data-[state=active]:text-paper"
           >
             Service routing
           </TabsTrigger>
@@ -318,8 +318,8 @@ function ServiceRouting({
             >
               <Icon aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
               <span className="min-w-0">
-                <span className="block text-xs font-semibold">{label}</span>
-                <span className="mt-1 block text-[10px] text-ink-faint">
+                <span className="block text-sm font-semibold">{label}</span>
+                <span className="mt-1 block text-xs text-ink-faint">
                   {status.label}
                 </span>
               </span>
@@ -458,7 +458,7 @@ function ProviderAccounts({
         </div>
         {canManage && (
           <Button
-            className="h-9 gap-2 rounded-full text-xs"
+            className="h-9 gap-2 rounded-full text-sm"
             disabled={busy || !data.providers.length}
             onClick={() => {
               setNotice("");
@@ -494,7 +494,7 @@ function ProviderAccounts({
       {!data.providers.length && canManage && (
         <p
           role="status"
-          className="rounded-xl border border-line p-4 text-xs text-ink-soft"
+          className="rounded-xl border border-line p-4 text-sm text-ink-soft"
         >
           No providers are available right now. Refresh the page or contact your
           administrator.
@@ -514,12 +514,12 @@ function ProviderAccounts({
               <div className="min-w-0">
                 <p className="break-words font-display text-base font-semibold">
                   {account.label}
-                  <span className="mt-1 block font-sans text-xs font-normal text-ink-soft">
+                  <span className="mt-1 block font-sans text-sm font-normal text-ink-soft">
                     {data.providers.find((item) => item.id === account.provider)
                       ?.label ?? account.provider}
                   </span>
                 </p>
-                <p className="mt-0.5 text-[10px] text-ink-faint">
+                <p className="mt-0.5 text-xs text-ink-faint">
                   {account.verified_at
                     ? `Last checked ${new Date(account.verified_at).toLocaleString()}`
                     : "Not checked yet."}
@@ -542,7 +542,7 @@ function ProviderAccounts({
                     ))}
                 </div>
                 {["termii", "twilio", "meta"].includes(account.provider) && (
-                  <details className="mt-3 text-xs text-ink-soft">
+                  <details className="mt-3 text-sm text-ink-soft">
                     <summary className="cursor-pointer">Callback setup</summary>
                     <p className="mt-2 break-all rounded-lg bg-muted/40 p-3">
                       Messaging callback path:
@@ -621,7 +621,7 @@ function ProviderAccounts({
           }
         />
       )}
-      <div className="flex items-start gap-3 rounded-xl bg-brand-soft/35 px-4 py-3 text-xs leading-relaxed text-ink-soft">
+      <div className="flex items-start gap-3 rounded-xl bg-brand-soft/35 px-4 py-3 text-sm leading-relaxed text-ink-soft">
         <LockKeyhole className="mt-0.5 size-4 shrink-0 text-brand" />
         <p>
           Credentials are encrypted and hidden after saving. To replace a key,
@@ -669,7 +669,7 @@ function ProviderAccounts({
               <fieldset disabled={busy} className="space-y-4">
                 <legend className="sr-only">New account</legend>
                 <div className="space-y-1.5">
-                  <Label htmlFor="integration-provider" className="text-xs">
+                  <Label htmlFor="integration-provider" className="text-sm">
                     Provider
                   </Label>
                   <select
@@ -696,11 +696,11 @@ function ProviderAccounts({
                     ))}
                   </select>
                 </div>
-                <p className="text-[11px] leading-relaxed text-ink-soft">
+                <p className="text-sm leading-relaxed text-ink-soft">
                   {provider.help}
                 </p>
                 <div className="space-y-1.5">
-                  <Label required htmlFor="account-label" className="text-xs">
+                  <Label required htmlFor="account-label" className="text-sm">
                     Account name
                   </Label>
                   <Input
@@ -716,7 +716,7 @@ function ProviderAccounts({
                   <div className="space-y-1.5" key={field.key}>
                     <Label required={!field.optional}
                       htmlFor={`credential-${field.key}`}
-                      className="text-xs"
+                      className="text-sm"
                     >
                       {field.label}
                       {field.optional ? " (optional)" : ""}
@@ -764,7 +764,7 @@ function ProviderAccounts({
                   </Button>
                   <Button
                     type="submit"
-                    className="h-9 rounded-full text-xs"
+                    className="h-9 rounded-full text-sm"
                     loading={busy}
                   >
                     Save provider account
@@ -799,7 +799,7 @@ function ProviderAccounts({
         }}
       />
       {notice && !addOpen && (
-        <p role="status" className="text-[11px] text-ink-soft">
+        <p role="status" className="text-sm text-ink-soft">
           {notice}
         </p>
       )}
@@ -941,7 +941,7 @@ function ChannelSettings({
           </span>
           <div>
             <h3 className="font-display text-lg font-semibold">{label}</h3>
-            <p className="mt-0.5 text-xs text-ink-soft">
+            <p className="mt-0.5 text-sm text-ink-soft">
               {saved?.mode === "custom"
                 ? (data.accounts.find(
                     (account) => account.id === saved.account_id,
@@ -955,21 +955,21 @@ function ChannelSettings({
         </Tag>
       </div>
       {dirty && (
-        <p role="status" className="text-xs font-medium text-gold">
+        <p role="status" className="text-sm font-medium text-gold">
           Unsaved changes
         </p>
       )}
       {routeStatus.label === "Needs attention" && (
         <p
           role="alert"
-          className="rounded-lg bg-rose-soft/50 p-3 text-xs leading-relaxed text-rose"
+          className="rounded-lg bg-rose-soft/50 p-3 text-sm leading-relaxed text-rose"
         >
           The saved account is unavailable or needs a credential check. Choose
           an eligible account before using this service.
         </p>
       )}
       {channel === "voice" && (
-        <p className="text-xs leading-relaxed text-ink-soft">
+        <p className="text-sm leading-relaxed text-ink-soft">
           Calls ring your saved staff phone first, then connect the member.
           Calls are limited to ten minutes.
         </p>
@@ -985,7 +985,7 @@ function ChannelSettings({
       >
         <fieldset disabled={!canManage || busy} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor={`${channel}-mode`} className="text-xs">
+            <Label htmlFor={`${channel}-mode`} className="text-sm">
               Account source
             </Label>
             <select
@@ -1001,7 +1001,7 @@ function ChannelSettings({
           {mode === "custom" && (
             <>
               <div className="space-y-1.5">
-                <Label required htmlFor={`${channel}-account`} className="text-xs">
+                <Label required htmlFor={`${channel}-account`} className="text-sm">
                   Provider account
                 </Label>
                 <select
@@ -1029,13 +1029,13 @@ function ChannelSettings({
                 </select>
               </div>
               {!accounts.length && (
-                <p className="rounded-lg bg-muted/50 p-3 text-xs text-ink-soft">
+                <p className="rounded-lg bg-muted/50 p-3 text-sm text-ink-soft">
                   Add a compatible provider account in Provider accounts, then
                   check its credentials before connecting this service.
                 </p>
               )}
               {selected?.verification_status === "limited" && (
-                <p className="text-[11px] leading-relaxed text-ink-soft">
+                <p className="text-sm leading-relaxed text-ink-soft">
                   Account inspection was limited. Save this service and send a
                   controlled test to confirm that the credentials and sender
                   work.
@@ -1059,7 +1059,7 @@ function ChannelSettings({
                     <div className="space-y-1.5" key={field.key}>
                       <Label required={field.required}
                         htmlFor={`${channel}-${field.key}`}
-                        className="text-xs"
+                        className="text-sm"
                       >
                         {field.label}
                       </Label>
@@ -1083,7 +1083,7 @@ function ChannelSettings({
               {["sms", "voice", "whatsapp"].includes(channel) &&
                 provider !== "meta" && (
                   <div className="space-y-1.5" key={accountId}>
-                    <Label required htmlFor={`${channel}-from`} className="text-xs">
+                    <Label required htmlFor={`${channel}-from`} className="text-sm">
                       {provider === "termii"
                         ? channel === "sms"
                           ? "Approved SMS sender ID"
@@ -1105,7 +1105,7 @@ function ChannelSettings({
                   </div>
                 )}
               {channel === "payment" && (
-                <p className="text-[11px] leading-relaxed text-ink-soft">
+                <p className="text-sm leading-relaxed text-ink-soft">
                   The selected gateway becomes the church default for giving and
                   paid event tickets. Card authorizations cannot move to another
                   merchant account; recurring donors must authorize that account
@@ -1117,7 +1117,7 @@ function ChannelSettings({
           {canManage && (
             <Button
               type="submit"
-              className="h-9 rounded-full text-xs"
+              className="h-9 rounded-full text-sm"
               loading={busy}
               disabled={
                 !dirty ||
@@ -1134,7 +1134,7 @@ function ChannelSettings({
         </fieldset>
       </ValidatedForm>
       {channel === "payment" && (
-        <p className="break-all text-[11px] leading-relaxed text-ink-soft">
+        <p className="break-all text-sm leading-relaxed text-ink-soft">
           Configure the payment account webhook on your backend at{" "}
           <code>
             /api/v1/integrations/payments/webhook/{provider ?? "PROVIDER"}
@@ -1167,18 +1167,18 @@ function ChannelSettings({
           >
             <p className="rule-label">Test this connection</p>
             {dirty && (
-              <p className="text-xs text-ink-soft">
+              <p className="text-sm text-ink-soft">
                 Save your changes before testing.
               </p>
             )}
-            <p className="text-[11px] leading-relaxed text-ink-soft">
+            <p className="text-sm leading-relaxed text-ink-soft">
               Tests use saved settings and send a real message or connect a live
               call. Provider charges may apply. WhatsApp text tests need an open
               conversation window. Sender/domain approval remains the provider’s
               responsibility.
             </p>
             <div className="space-y-1.5">
-              <Label required htmlFor={`${channel}-recipient`} className="text-xs">
+              <Label required htmlFor={`${channel}-recipient`} className="text-sm">
                 {channel === "email"
                   ? "Test email recipient"
                   : channel === "voice"
@@ -1197,7 +1197,7 @@ function ChannelSettings({
             <Button
               type="submit"
               variant="outline"
-              className="h-9 rounded-full border-line text-xs"
+              className="h-9 rounded-full border-line text-sm"
               disabled={busy || !recipient.trim() || dirty}
             >
               {channel === "voice" ? "Connect test call" : "Send test message"}
@@ -1205,7 +1205,7 @@ function ChannelSettings({
           </ValidatedForm>
         )}
       {notice && (
-        <p role="status" className="text-[11px] text-ink-soft">
+        <p role="status" className="text-sm text-ink-soft">
           {notice}
         </p>
       )}

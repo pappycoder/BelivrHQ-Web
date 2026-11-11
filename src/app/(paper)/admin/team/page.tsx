@@ -142,7 +142,7 @@ export default function AdminTeamPage() {
         description="Everyone who can sign in to this workspace, including staff, leads, and trusted volunteers."
         actions={
           <>
-            <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
+            <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-sm">
               <Link href="/admin/permissions">
                 <ShieldCheck className="size-3.5" /> Roles
               </Link>
@@ -157,7 +157,7 @@ export default function AdminTeamPage() {
               fetchAllRows={fetchAllExport}
             />
             {canInvite ? (
-              <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setInviteOpen(true)}>
+              <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setInviteOpen(true)}>
                 <UserPlus className="size-3.5" /> Invite someone
               </Button>
             ) : null}
@@ -196,7 +196,7 @@ export default function AdminTeamPage() {
           icon={<Users />}
           title="Nobody has a seat yet"
           description="Invite the first team member. Roles decide what they can reach."
-          action={canInvite ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => setInviteOpen(true)}>Send the first invite</Button> : undefined}
+          action={canInvite ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => setInviteOpen(true)}>Send the first invite</Button> : undefined}
         />
       ) : (
         <>
@@ -214,23 +214,23 @@ export default function AdminTeamPage() {
                   </div>
                   <div className="divide-y divide-line/70">
                     {rows.map((member) => (
-                      <div key={member.profileId} className="group grid grid-cols-[minmax(0,1.8fr)_minmax(0,1.1fr)_1fr_0.9fr_0.9fr_auto] items-center gap-3 px-5 py-3 text-xs transition-colors hover:bg-muted/40">
+                      <div key={member.profileId} className="group grid grid-cols-[minmax(0,1.8fr)_minmax(0,1.1fr)_1fr_0.9fr_0.9fr_auto] items-center gap-3 px-5 py-3 text-sm transition-colors hover:bg-muted/40">
                         <button type="button" onClick={() => router.push(`/admin/team/${member.profileId}`)} className="flex min-w-0 items-center gap-3 text-left">
                           <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.avatarUrl} size="sm" />
                           <span className="min-w-0">
                             <span className="block truncate font-semibold">{member.firstName} {member.lastName}</span>
-                            <span className="block truncate text-[10px] text-ink-faint">{member.email ?? "No email on file"}</span>
+                            <span className="block truncate text-xs text-ink-faint">{member.email ?? "No email on file"}</span>
                           </span>
                         </button>
-                        <span className="truncate text-[11px] text-ink-soft">
+                        <span className="truncate text-sm text-ink-soft">
                           {member.role.map((r) => resolveRoleLabel(r, labelMap)).join(" · ") || "No role assigned"}
                         </span>
-                        <span className="truncate text-[11px] text-ink-soft">{member.branch?.name ?? "Not available"}</span>
+                        <span className="truncate text-sm text-ink-soft">{member.branch?.name ?? "Not available"}</span>
                         <span>
                           <Tag tone={member.status === "active" ? "moss" : "rose"} dot>{member.status === "active" ? "Active" : "Paused"}</Tag>
                           {member.isAdminHq ? <Tag tone="sky" className="ml-1">HQ</Tag> : null}
                         </span>
-                        <span className="num text-[10px] text-ink-faint">
+                        <span className="num text-xs text-ink-faint">
                           {member.lastSignInAt ? new Date(member.lastSignInAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "never"}
                         </span>
                         <div className="flex justify-end">
@@ -251,14 +251,14 @@ export default function AdminTeamPage() {
                       <button type="button" onClick={() => router.push(`/admin/team/${member.profileId}`)} className="flex min-w-0 items-center gap-3 text-left">
                         <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.avatarUrl} size="md" />
                         <div className="min-w-0">
-                          <p className="truncate text-xs font-semibold">{member.firstName} {member.lastName}</p>
-                          <p className="truncate text-[11px] text-ink-faint">{member.role.map((r) => resolveRoleLabel(r, labelMap)).join(" · ") || "No role assigned"}</p>
+                          <p className="truncate text-sm font-semibold">{member.firstName} {member.lastName}</p>
+                          <p className="truncate text-sm text-ink-faint">{member.role.map((r) => resolveRoleLabel(r, labelMap)).join(" · ") || "No role assigned"}</p>
                         </div>
                       </button>
                       <RowActions reveal={false} actions={manageActions(member)} />
                     </div>
-                    <p className="mt-2 truncate text-[10px] text-ink-faint">{member.email ?? "No email on file"}</p>
-                    <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
+                    <p className="mt-2 truncate text-xs text-ink-faint">{member.email ?? "No email on file"}</p>
+                    <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
                       <span className="flex items-center gap-1.5">
                         <Tag tone={member.status === "active" ? "moss" : "rose"} dot>{member.status === "active" ? "Active" : "Paused"}</Tag>
                         {member.isAdminHq ? <Tag tone="sky">HQ</Tag> : null}
@@ -295,7 +295,7 @@ export default function AdminTeamPage() {
         mode={deleteState?.mode ?? "deactivate"}
       />
 
-      <p className="flex items-center justify-center gap-1.5 text-[10px] text-ink-faint">
+      <p className="flex items-center justify-center gap-1.5 text-xs text-ink-faint">
         <Mail className="size-3" /> Invitations arrive by email; recipients choose their own password before their first sign-in.
       </p>
     </div>

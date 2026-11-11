@@ -17,7 +17,6 @@ import {
   type Path,
 } from "react-hook-form";
 import { Country, State } from "country-state-city";
-import { cn } from "@/lib/utils";
 import {
   FormField,
   FormItem,
@@ -60,12 +59,8 @@ type Variant = "default" | "info";
 
 function itemClassName(variant: Variant): string {
   return variant === "info"
-    ? "grid items-start gap-1.5 md:grid-cols-[150px_1fr] md:gap-3 [&+&]:mt-3"
+    ? "grid items-start gap-2 [&+&]:mt-5"
     : "space-y-2";
-}
-
-function labelClassName(variant: Variant): string {
-  return variant === "info" ? "md:pt-2" : "";
 }
 
 interface BaseFieldProps<T extends FieldValues> {
@@ -74,7 +69,7 @@ interface BaseFieldProps<T extends FieldValues> {
   label?: string;
   placeholder?: string;
   disabled?: boolean;
-  /** Matches the SmartHR settings-row grammar instead of stacked labels. */
+  /** Matches the stacked spacing used by settings fields. */
   variant?: Variant;
 }
 
@@ -92,7 +87,7 @@ export function CountrySelectField<T extends FieldValues>({
       name={name}
       render={({ field }) => (
         <FormItem className={itemClassName(variant)}>
-          <FormLabel className={labelClassName(variant)}>{label}</FormLabel>
+          <FormLabel>{label}</FormLabel>
           <div className="min-w-0">
             <Select
               value={field.value || undefined}
@@ -163,7 +158,7 @@ export function StateSelectField<T extends FieldValues>({
       name={name}
       render={({ field }) => (
         <FormItem className={itemClassName(variant)}>
-          <FormLabel className={cn(labelClassName(variant))}>{label}</FormLabel>
+          <FormLabel>{label}</FormLabel>
           <div className="min-w-0">
             <Select
               value={field.value || undefined}

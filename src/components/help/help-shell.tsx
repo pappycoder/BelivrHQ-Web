@@ -42,7 +42,7 @@ function TopicNavigation() {
                     <Link
                       href={`/help/${item.slug}`}
                       aria-current={item.slug === article.slug ? "page" : undefined}
-                      className={`block rounded-lg px-2 py-1.5 text-[13px] leading-relaxed transition-colors ${
+                      className={`block rounded-lg px-2 py-1.5 text-sm leading-relaxed transition-colors ${
                         item.slug === article.slug
                           ? "bg-brand-soft/60 font-medium text-ink"
                           : "text-ink-faint hover:bg-muted hover:text-ink"

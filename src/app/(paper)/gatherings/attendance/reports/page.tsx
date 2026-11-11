@@ -101,7 +101,7 @@ export default function AttendanceReportsPage() {
         {PERIODS.map((item) => (
           <FilterChip key={item} active={period === item} onClick={() => setPeriod(item)}>{item}</FilterChip>
         ))}
-        <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-[11px] outline-none" aria-label="Branch filter">
+        <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Branch filter">
           <option value="">All branches</option>
           {(branches.data?.data ?? []).map((b) => <option key={b.branchId} value={b.branchId}>{b.name}</option>)}
         </select>
@@ -135,13 +135,13 @@ export default function AttendanceReportsPage() {
                 formatter={(v) => number(Number(v))}
               />
             ) : (
-              <p className="py-14 text-center text-[11px] text-ink-faint">No counted days in this window.</p>
+              <p className="py-14 text-center text-sm text-ink-faint">No counted days in this window.</p>
             )
           ) : (
-            <p className="py-14 text-center text-[11px] text-ink-faint">The trend series needs the reports grant. The totals above still read.</p>
+            <p className="py-14 text-center text-sm text-ink-faint">The trend series needs the reports grant. The totals above still read.</p>
           )}
           {s?.bySource && Object.keys(s.bySource).length ? (
-            <div className="mt-4 flex flex-wrap gap-1.5 border-t border-line/70 pt-3 text-[10px] text-ink-faint">
+            <div className="mt-4 flex flex-wrap gap-1.5 border-t border-line/70 pt-3 text-xs text-ink-faint">
               {Object.entries(s.bySource).map(([source, count]) => (
                 <span key={source} className="rounded-full bg-muted px-2 py-0.5">{source} · <span className="num">{number(count)}</span></span>
               ))}
@@ -159,18 +159,18 @@ export default function AttendanceReportsPage() {
               {serviceRows.map((svc) => (
                 <div key={svc.label} className="flex items-center gap-2.5 rounded-xl border border-line bg-muted/20 px-3 py-2.5">
                   <Users className="size-3.5 shrink-0 text-ink-faint" />
-                  <span className="min-w-0 flex-1 truncate text-[11px] font-medium">{svc.label}</span>
-                  <span className="num text-xs font-semibold">{number(svc.count)}</span>
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium">{svc.label}</span>
+                  <span className="num text-sm font-semibold">{number(svc.count)}</span>
                 </div>
               ))}
             </div>
           ) : (
-            <EmptyState icon={<BarChart3 />} title="No services listed" description="Create a service first. Reports need something to count." action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/gatherings/attendance/services">Add services</Link></Button>} />
+            <EmptyState icon={<BarChart3 />} title="No services listed" description="Create a service first. Reports need something to count." action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/gatherings/attendance/services">Add services</Link></Button>} />
           )}
         </SectionCard>
       </div>
 
-      <p className="text-center text-[10px] text-ink-faint">
+      <p className="text-center text-xs text-ink-faint">
         Named check-ins come from the desk; reported counts come from who was watching the door. The gap between them is worth noticing.
       </p>
     </div>

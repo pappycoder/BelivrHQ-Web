@@ -63,7 +63,7 @@ export default function GivingOverviewPage() {
             <Button
               asChild
               variant="outline"
-              className="h-9 gap-1.5 rounded-full border-line bg-card text-xs"
+              className="h-9 gap-1.5 rounded-full border-line bg-card text-sm"
             >
               <Link href="/giving/statements">
                 <HeartHandshake className="size-3.5" /> Statements
@@ -71,7 +71,7 @@ export default function GivingOverviewPage() {
             </Button>
             {canRecord ? (
               <Button
-                className="h-9 gap-1.5 rounded-full text-xs"
+                className="h-9 gap-1.5 rounded-full text-sm"
                 onClick={() => setRecordOpen(true)}
               >
                 <HandCoins className="size-3.5" /> Record a gift
@@ -91,7 +91,7 @@ export default function GivingOverviewPage() {
           <Skeleton className="h-72 rounded-2xl" />
         </div>
       ) : summary.isError || !s ? (
-        <div className="paper-card rounded-2xl p-8 text-center text-xs text-ink-faint">
+        <div className="paper-card rounded-2xl p-8 text-center text-sm text-ink-faint">
           Viewing giving totals requires access to the giving dashboard.
         </div>
       ) : (
@@ -153,7 +153,7 @@ export default function GivingOverviewPage() {
                   formatter={(v) => formatNaira(Number(v))}
                 />
               ) : (
-                <p className="py-14 text-center text-[11px] text-ink-faint">
+                <p className="py-14 text-center text-sm text-ink-faint">
                   No gifts recorded in this period.
                 </p>
               )}
@@ -174,7 +174,7 @@ export default function GivingOverviewPage() {
                     asChild
                     variant="ghost"
                     size="sm"
-                    className="h-7 gap-1 rounded-full text-[11px] text-ink-faint"
+                    className="h-7 gap-1 rounded-full text-sm text-ink-faint"
                   >
                     <Link href="/giving/donations">
                       All giving records <ArrowRight className="size-3" />
@@ -188,7 +188,7 @@ export default function GivingOverviewPage() {
             ) : null}
           </div>
 
-          <div className="flex flex-wrap gap-4 text-[11px]">
+          <div className="flex flex-wrap gap-4 text-sm">
             <Link
               href="/giving/donations"
               className="text-brand hover:underline"
@@ -238,7 +238,7 @@ function RecentGifts() {
   }
   if (!rows.length) {
     return (
-      <p className="px-5 py-10 text-center text-[11px] text-ink-faint">
+      <p className="px-5 py-10 text-center text-sm text-ink-faint">
         No giving records yet.
       </p>
     );
@@ -251,7 +251,7 @@ function RecentGifts() {
           className="flex items-center gap-3 px-5 py-2.5"
         >
           <GivingSourceIdentity transaction={tx}>
-            <span className="block truncate text-[10px] text-ink-faint">
+            <span className="block truncate text-xs text-ink-faint">
               {tx.categoryName}
               {tx.serviceName ? ` · ${tx.serviceName}` : ""}
               {tx.eventName ? ` · ${tx.eventName}` : ""} ·{" "}
@@ -270,7 +270,7 @@ function RecentGifts() {
           >
             {tx.status}
           </Tag>
-          <span className="num w-28 text-right text-xs font-semibold">
+          <span className="num w-28 text-right text-sm font-semibold">
             {formatNaira(tx.amount)}
           </span>
         </div>
@@ -291,7 +291,7 @@ function FundsRail() {
       actions={
         <Link
           href="/giving/funds"
-          className="text-[11px] text-brand hover:underline"
+          className="text-sm text-brand hover:underline"
         >
           Manage
         </Link>
@@ -300,14 +300,14 @@ function FundsRail() {
     >
       <div className="divide-y divide-line/70">
         {(categories.data?.data ?? []).length === 0 ? (
-          <p className="px-5 py-8 text-center text-[11px] text-ink-faint">
+          <p className="px-5 py-8 text-center text-sm text-ink-faint">
             No giving categories defined yet.
           </p>
         ) : (
           active.map((category) => (
             <div
               key={category.categoryId}
-              className="flex items-center justify-between px-5 py-2.5 text-[11px]"
+              className="flex items-center justify-between px-5 py-2.5 text-sm"
             >
               <span className="min-w-0 truncate font-medium">
                 {category.name}
@@ -315,7 +315,7 @@ function FundsRail() {
               {category.isRecurring ? (
                 <Tag tone="sky">recurring</Tag>
               ) : (
-                <span className="num text-[10px] text-ink-faint">
+                <span className="num text-xs text-ink-faint">
                   one-off gifts
                 </span>
               )}
@@ -348,7 +348,7 @@ function RecurringRail() {
       actions={
         <Link
           href="/giving/schedules"
-          className="text-[11px] text-brand hover:underline"
+          className="text-sm text-brand hover:underline"
         >
           Schedules
         </Link>
@@ -361,18 +361,18 @@ function RecurringRail() {
         <div className="min-w-0">
           <p className="num font-display text-lg font-semibold leading-tight">
             {formatNaira(monthly)}
-            <span className="text-[10px] font-normal text-ink-faint">
+            <span className="text-xs font-normal text-ink-faint">
               {" "}
               / month projected
             </span>
           </p>
-          <p className="text-[10px] text-ink-faint">
+          <p className="text-xs text-ink-faint">
             {number(active.length)} active schedules ·{" "}
             {number(rows.length - active.length)} paused or ended
           </p>
         </div>
       </div>
-      <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+      <p className="mt-3 text-xs leading-relaxed text-ink-faint">
         Follow up on paused recurring gifts to help keep giving consistent.
       </p>
     </SectionCard>

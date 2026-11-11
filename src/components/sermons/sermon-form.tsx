@@ -283,7 +283,7 @@ export function SermonForm({
                 3. Video
               </TabsTrigger>
             </TabsList>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               Save each section separately. Audio and video are optional.
               {!sermon && " Save details first to add recordings."}
             </p>
@@ -401,7 +401,7 @@ export function SermonForm({
                         {tags.map((t) => (
                           <span
                             key={t}
-                            className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary"
+                            className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-sm font-medium text-primary"
                           >
                             {t}
                             <ActionTooltip label={`Remove ${t}`}>

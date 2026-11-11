@@ -126,7 +126,7 @@ export function AssetImageField({ value, onChange }: AssetImageFieldProps) {
         {canUpload && (
           <button
             type="button"
-            className={`flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 rounded px-2.5 py-1 text-sm font-medium transition-colors ${
               effectiveMode === "upload"
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:text-foreground"
@@ -139,7 +139,7 @@ export function AssetImageField({ value, onChange }: AssetImageFieldProps) {
         )}
         <button
           type="button"
-          className={`flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+          className={`flex items-center gap-1.5 rounded px-2.5 py-1 text-sm font-medium transition-colors ${
             effectiveMode === "url"
               ? "bg-primary text-primary-foreground"
               : "text-muted-foreground hover:text-foreground"
@@ -165,7 +165,7 @@ export function AssetImageField({ value, onChange }: AssetImageFieldProps) {
               <div className="flex items-center gap-2 rounded-md border bg-muted/50 px-3 py-2">
                 <ImageIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <span className="flex-1 truncate text-sm">{selectedFile.name}</span>
-                <span className="shrink-0 text-xs text-muted-foreground">
+                <span className="shrink-0 text-sm text-muted-foreground">
                   {formatSize(selectedFile.size)}
                 </span>
                 <Button

@@ -23,7 +23,7 @@ export default function NewSermonPage() {
       <EmptyState
         title="Publishing needs the sermon grant"
         description="Your role can listen but not add to the archive."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/library/sermons">Back to the archive</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/library/sermons">Back to the archive</Link></Button>}
       />
     );
   }
@@ -51,7 +51,7 @@ export default function NewSermonPage() {
         title="Publish this week&apos;s message."
         description="Creation saves the details first, then opens the editor where audio and video each save independently. A failed upload never loses the sermon."
         actions={
-          <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-xs">
+          <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-sm">
             <Link href="/library/sermons">Cancel</Link>
           </Button>
         }

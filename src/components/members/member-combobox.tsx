@@ -118,7 +118,7 @@ export function MemberCombobox({
                       {member.firstName} {member.lastName}
                     </span>
                     {member.email && (
-                      <span className="ml-auto text-xs text-muted-foreground truncate max-w-[140px]">
+                      <span className="ml-auto text-sm text-muted-foreground truncate max-w-[140px]">
                         {member.email}
                       </span>
                     )}

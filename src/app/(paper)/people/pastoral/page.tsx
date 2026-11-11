@@ -76,7 +76,7 @@ export default function PastoralNotesPage() {
             description="Keep pastoral conversations private and share them only with the people providing care."
             actions={
               canCreate ? (
-                <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => { setEditTarget(null); setFormOpen(true); }}>
+                <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => { setEditTarget(null); setFormOpen(true); }}>
                   <Plus className="size-3.5" /> Add note
                 </Button>
               ) : null
@@ -100,7 +100,7 @@ export default function PastoralNotesPage() {
               icon={<Search />}
               title="Couldn&apos;t reach the care log"
               description="Notes will appear as soon as the server answers."
-              action={<Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => notes.refetch()}>Retry</Button>}
+              action={<Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => notes.refetch()}>Retry</Button>}
             />
           ) : notes.isLoading ? (
             <div className="space-y-3">
@@ -122,25 +122,25 @@ export default function PastoralNotesPage() {
                         {CONFIDENTIALITY_LABELS[note.confidentiality]}
                       </Tag>
                       {note.confidentiality !== "standard" ? (
-                        <span className="flex items-center gap-1 text-[10px] text-ink-faint">
+                        <span className="flex items-center gap-1 text-xs text-ink-faint">
                           <Lock className="size-2.5" /> limited audience
                         </span>
                       ) : null}
-                      <span className="ml-auto text-[10px] text-ink-faint">{formatDate(note.createdAt)}</span>
+                      <span className="ml-auto text-xs text-ink-faint">{formatDate(note.createdAt)}</span>
                     </div>
-                    <p className="mt-3 whitespace-pre-line text-xs leading-relaxed text-ink-soft">
+                    <p className="mt-3 whitespace-pre-line text-sm leading-relaxed text-ink-soft">
                       {note.content.length > 320 ? `${note.content.slice(0, 320)}…` : note.content}
                     </p>
                     {note.tags.length ? (
                       <div className="mt-3 flex flex-wrap gap-1.5">
                         {note.tags.map((tag) => (
-                          <span key={tag} className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-ink-soft">
+                          <span key={tag} className="rounded-full bg-muted px-2 py-0.5 text-xs text-ink-soft">
                             {tag}
                           </span>
                         ))}
                       </div>
                     ) : null}
-                    <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[11px]">
+                    <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-sm">
                       <Link href={`/people/members/${note.memberId}`} className="flex min-w-0 items-center gap-2 hover:text-brand">
                         <PersonAvatar name={`${note.memberFirstName} ${note.memberLastName}`} size="xs" />
                         <span className="truncate font-medium">{note.memberFirstName} {note.memberLastName}</span>
@@ -188,22 +188,22 @@ export default function PastoralNotesPage() {
             <div className="space-y-3">
               <StatCard label="Notes on file" value={total} tone="brand" icon={<HeartHandshake className="size-4" />} />
             </div>
-            <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+            <p className="mt-3 text-xs leading-relaxed text-ink-faint">
               {CONFIDENTIALITY_LABELS.confidential} and {CONFIDENTIALITY_LABELS.restricted} notes stay with the
               people carrying them; presence beats paperwork.
             </p>
           </SectionCard>
-          <div className="rounded-2xl border border-dashed border-line p-4 text-[11px] leading-relaxed text-ink-soft">
-            <p className="mb-1 font-display text-xs font-semibold text-ink">A note on notes</p>
+          <div className="rounded-2xl border border-dashed border-line p-4 text-sm leading-relaxed text-ink-soft">
+            <p className="mb-1 font-display text-sm font-semibold text-ink">A note on notes</p>
             Record what was said, not what you concluded. Pastoral notes outlive the moment. Write the way you&apos;d want your own story written.
           </div>
           <SectionCard eyebrow="Coming in this wave" title="More of People" bodyClassName="p-3">
-            <ul className="space-y-1.5 text-[11px] text-ink-soft">
+            <ul className="space-y-1.5 text-sm text-ink-soft">
               <li>· Care calendar &amp; risk radar</li>
               <li>· Life events &amp; engagement</li>
               <li>· Visitor follow-up board</li>
             </ul>
-            <p className="mt-2 text-[10px] text-ink-faint">The existing pages remain available as these features are updated.</p>
+            <p className="mt-2 text-xs text-ink-faint">The existing pages remain available as these features are updated.</p>
           </SectionCard>
         </aside>
       </div>

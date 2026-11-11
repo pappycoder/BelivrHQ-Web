@@ -215,7 +215,7 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
               </strong>{" "}
               required
             </span>
-            <span className="rounded-full bg-brand-soft px-3 py-1 text-xs font-medium text-brand">
+            <span className="rounded-full bg-brand-soft px-3 py-1 text-sm font-medium text-brand">
               {settingsValues.status === "published"
                 ? "Published"
                 : settingsValues.status === "closed"

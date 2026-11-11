@@ -203,15 +203,15 @@ export default function FamiliesPage() {
                   className="flex items-center gap-2.5 rounded-lg border border-line bg-card px-3 py-2 transition-colors hover:border-ink/20"
                 >
                   <PersonAvatar name={`${member.firstName} ${member.lastName}`} size="xs" />
-                  <span className="min-w-0 flex-1 truncate text-[11px] font-medium">
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium">
                     {member.firstName} {member.lastName}
                   </span>
                   {member.isHead ? (
-                    <span className="flex items-center gap-1 text-[9px] text-gold">
+                    <span className="flex items-center gap-1 text-xs text-gold">
                       <Crown className="size-2.5" /> head
                     </span>
                   ) : (
-                    <span className="text-[9px] capitalize text-ink-faint">{member.relationship}</span>
+                    <span className="text-xs capitalize text-ink-faint">{member.relationship}</span>
                   )}
                 </Link>
               ))}
@@ -222,14 +222,14 @@ export default function FamiliesPage() {
             {family.archivedAt ? <FieldRow label="Archived">{family.archivedAt.slice(0, 10)}</FieldRow> : null}
           </DataList>
           <div className="grid grid-cols-2 gap-2">
-            <Button asChild size="sm" className="h-9 rounded-lg text-xs">
+            <Button asChild size="sm" className="h-9 rounded-lg text-sm">
               <Link href={`/people/families/${family.familyId}`}>Full household</Link>
             </Button>
             {canUpdate ? (
               <Button
                 variant="outline"
                 size="sm"
-                className="h-9 gap-1.5 rounded-lg border-line text-xs"
+                className="h-9 gap-1.5 rounded-lg border-line text-sm"
                 onClick={() => {
                   close();
                   setAddMemberTarget(family);
@@ -242,7 +242,7 @@ export default function FamiliesPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-9 gap-1.5 rounded-lg border-line text-xs"
+                className="h-9 gap-1.5 rounded-lg border-line text-sm"
                 onClick={() => {
                   close();
                   setEditTarget(family);
@@ -256,7 +256,7 @@ export default function FamiliesPage() {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-9 rounded-lg border-line text-xs"
+                className="h-9 rounded-lg border-line text-sm"
                 onClick={() => toggleArchive(family)}
               >
                 {family.archivedAt ? "Unarchive" : "Archive"}
@@ -267,7 +267,7 @@ export default function FamiliesPage() {
             <Button
               variant="outline"
               size="sm"
-              className="w-full rounded-lg border-line text-xs text-destructive"
+              className="w-full rounded-lg border-line text-sm text-destructive"
               onClick={() => {
                 close();
                 setDeleteTarget([family]);
@@ -305,7 +305,7 @@ export default function FamiliesPage() {
               fetchAllRows={canDelete || canUpdate ? fetchAllExportRows : undefined}
             />
             {canCreate ? (
-              <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => { setEditTarget(null); setFormOpen(true); }}>
+              <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => { setEditTarget(null); setFormOpen(true); }}>
                 <UserRoundPlus className="size-3.5" /> New household
               </Button>
             ) : null}
@@ -328,7 +328,7 @@ export default function FamiliesPage() {
         <div className="ml-auto flex flex-wrap items-center gap-2">
           {isHq ? (
             <Select value={branchId} onValueChange={(value) => { setBranchId(value); setPage(1); }}>
-              <SelectTrigger className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none">
+              <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
                 <SelectValue placeholder="All branches" />
               </SelectTrigger>
               <SelectContent>
@@ -342,7 +342,7 @@ export default function FamiliesPage() {
             </Select>
           ) : null}
           <Select value={sortBy} onValueChange={(value) => { setSortBy(value as typeof sortBy); setPage(1); }}>
-            <SelectTrigger className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none">
+            <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -364,7 +364,7 @@ export default function FamiliesPage() {
       </div>
 
       {list.isError ? (
-        <EmptyState icon={<Home />} title="Couldn't load the households" description="The register didn't answer." action={<Button variant="outline" size="sm" className="rounded-full border-line text-xs" onClick={() => list.refetch()}>Retry</Button>} />
+        <EmptyState icon={<Home />} title="Couldn't load the households" description="The register didn't answer." action={<Button variant="outline" size="sm" className="rounded-full border-line text-sm" onClick={() => list.refetch()}>Retry</Button>} />
       ) : list.isLoading ? (
         view === "cards" ? (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -378,7 +378,7 @@ export default function FamiliesPage() {
           icon={<Home />}
           title="No households yet"
           description="Families link people who share a home, so care and giving read better together."
-          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => { setEditTarget(null); setFormOpen(true); }}>Start one</Button> : undefined}
+          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => { setEditTarget(null); setFormOpen(true); }}>Start one</Button> : undefined}
         />
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
@@ -398,18 +398,18 @@ export default function FamiliesPage() {
                       <button type="button" onClick={() => peek(family)} className="flex min-w-0 items-center gap-3 text-left">
                         <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-muted text-ink-faint"><Home className="size-3.5" /></span>
                         <span className="min-w-0">
-                          <span className="block truncate text-xs font-semibold">{family.name}</span>
-                          <span className="block truncate text-[11px] text-ink-faint">
+                          <span className="block truncate text-sm font-semibold">{family.name}</span>
+                          <span className="block truncate text-sm text-ink-faint">
                             {head ? `${head.firstName} ${head.lastName}` : "No head assigned"}
                           </span>
                         </span>
                       </button>
                       <span className="flex items-center gap-2">
                         <AvatarStack people={family.members.map((m) => ({ name: `${m.firstName} ${m.lastName}` }))} size="xs" max={4} />
-                        <span className="num text-[11px] text-ink-soft">{family.members.length}</span>
+                        <span className="num text-sm text-ink-soft">{family.members.length}</span>
                         {family.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
                       </span>
-                      <span className="num text-[11px] text-ink-soft">{family.createdAt?.slice(0, 10) ?? "Not available"}</span>
+                      <span className="num text-sm text-ink-soft">{family.createdAt?.slice(0, 10) ?? "Not available"}</span>
                       <RowActions actions={manageActions(family)} />
                     </div>
                   );
@@ -440,17 +440,17 @@ export default function FamiliesPage() {
                         <div className="min-w-0">
                           <p className="truncate font-display text-sm font-semibold">{family.name}</p>
                           {head ? (
-                            <p className="mt-0.5 flex items-center gap-1.5 truncate text-[11px] text-ink-faint">
+                            <p className="mt-0.5 flex items-center gap-1.5 truncate text-sm text-ink-faint">
                               <Crown className="size-3 shrink-0 text-gold" /> {head.firstName} {head.lastName}
                             </p>
                           ) : (
-                            <p className="mt-0.5 text-[11px] text-ink-faint">No head assigned</p>
+                            <p className="mt-0.5 text-sm text-ink-faint">No head assigned</p>
                           )}
                         </div>
                       </button>
                       <RowActions reveal={false} actions={manageActions(family)} />
                     </div>
-                    <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[11px]">
+                    <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-sm">
                       <span className="flex items-center gap-2">
                         <AvatarStack people={family.members.map((m) => ({ name: `${m.firstName} ${m.lastName}` }))} size="xs" max={4} />
                         <span className="text-ink-soft">{family.members.length} people</span>

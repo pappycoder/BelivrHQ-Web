@@ -4,11 +4,15 @@ import { useManageConfirmation } from "@/components/shared/manage-confirmation";
 
 import { ListTable } from "@/components/shared/list-table";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 import * as React from "react";
 import { givingSource } from "@/lib/giving-source";
 import { GivingSourceIdentity } from "@/components/giving/giving-source-identity";
 import {
+  CalendarDays,
+  ChevronDown,
   Download,
   FileDown,
   HandCoins,
@@ -167,7 +171,7 @@ function ReceiptActions({ transaction }: { transaction: GivingTransaction }) {
         </ActionTooltip>
         <DropdownMenuContent align="end" className="w-52">
           <DropdownMenuItem
-            className="gap-2 text-xs"
+            className="gap-2 text-sm"
             disabled={busy}
             onClick={download}
           >
@@ -176,14 +180,14 @@ function ReceiptActions({ transaction }: { transaction: GivingTransaction }) {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            className="gap-2 text-xs"
+            className="gap-2 text-sm"
             disabled={send.isPending}
             onClick={() => sendTo("whatsapp")}
           >
             <Send className="size-3.5" /> Send via WhatsApp
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="gap-2 text-xs"
+            className="gap-2 text-sm"
             disabled={send.isPending}
             onClick={() => sendTo("email")}
           >
@@ -206,6 +210,9 @@ export default function GivingDonationsPage() {
   const [categoryId, setCategoryId] = React.useState("");
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
+  const [dateOpen, setDateOpen] = React.useState(false);
+  const [dateDraft, setDateDraft] = React.useState({ from: "", to: "" });
+  const invalidRange = !!dateDraft.from && !!dateDraft.to && dateDraft.from > dateDraft.to;
   const [recordOpen, setRecordOpen] = React.useState(false);
 
   const params = React.useMemo(
@@ -273,7 +280,7 @@ export default function GivingDonationsPage() {
             />
             {canRecord ? (
               <Button
-                className="h-9 gap-1.5 rounded-full text-xs"
+                className="h-9 gap-1.5 rounded-full text-sm"
                 onClick={() => setRecordOpen(true)}
               >
                 <HandCoins className="size-3.5" /> Record Giving
@@ -333,7 +340,7 @@ export default function GivingDonationsPage() {
             setType(e.target.value);
             setPage(1);
           }}
-          className="h-8 rounded-full border border-line bg-card px-3 text-[11px] outline-none"
+          className="h-8 rounded-full border border-line bg-card px-3 text-sm outline-none"
           aria-label="Method filter"
         >
           <option value="">Any method</option>
@@ -347,7 +354,7 @@ export default function GivingDonationsPage() {
             setCategoryId(e.target.value);
             setPage(1);
           }}
-          className="h-8 rounded-full border border-line bg-card px-3 text-[11px] outline-none"
+          className="h-8 rounded-full border border-line bg-card px-3 text-sm outline-none"
           aria-label="Category filter"
         >
           <option value="">All categories</option>
@@ -357,31 +364,44 @@ export default function GivingDonationsPage() {
             </option>
           ))}
         </select>
-        <span className="flex flex-wrap items-center gap-1.5 text-[11px] text-ink-faint">
-          <Input
-            picker="native"
-            type="date"
-            value={startDate}
-            onChange={(e) => {
-              setStartDate(e.target.value);
-              setPage(1);
-            }}
-            className="h-8 rounded-full border border-line bg-card px-2.5 text-[11px] outline-none"
-            aria-label="From date"
-          />
-          →
-          <Input
-            picker="native"
-            type="date"
-            value={endDate}
-            onChange={(e) => {
-              setEndDate(e.target.value);
-              setPage(1);
-            }}
-            className="h-8 rounded-full border border-line bg-card px-2.5 text-[11px] outline-none"
-            aria-label="To date"
-          />
-        </span>
+        <Popover open={dateOpen} onOpenChange={open => {
+          if (open) setDateDraft({ from: startDate, to: endDate });
+          setDateOpen(open);
+        }}>
+          <PopoverTrigger asChild>
+            <Button type="button" variant="outline" size="sm" aria-label={startDate || endDate ? `Date range, ${startDate || "any start"} to ${endDate || "any end"}` : "Date range"}
+              className={`h-9 max-w-full gap-2 rounded-full border-line text-sm ${startDate || endDate ? "bg-brand/10 text-brand" : "bg-card"}`}>
+              <CalendarDays className="size-3.5" />
+              <span className="min-w-0 truncate">{startDate || endDate ? `${startDate || "Any start"} → ${endDate || "Any end"}` : "Date range"}</span>
+              <ChevronDown className="size-3" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="start" aria-label="Filter giving dates" className="space-y-4">
+            <p className="text-sm font-medium">Giving date range</p>
+            <div className="space-y-2">
+              <Label htmlFor="giving-date-from">From date</Label>
+              <Input id="giving-date-from" name="fromDate" picker="native" type="date"
+                value={dateDraft.from} max={dateDraft.to || undefined}
+                onChange={event => setDateDraft(value => ({ ...value, from: event.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="giving-date-to">To date</Label>
+              <Input id="giving-date-to" name="toDate" picker="native" type="date"
+                value={dateDraft.to} min={dateDraft.from || undefined}
+                aria-invalid={invalidRange || undefined} aria-describedby={invalidRange ? "giving-date-error" : undefined}
+                onChange={event => setDateDraft(value => ({ ...value, to: event.target.value }))} />
+            </div>
+            {invalidRange && <p id="giving-date-error" role="alert" className="text-sm text-destructive">To date must be on or after From date.</p>}
+            <div className="flex justify-between gap-2 border-t border-line pt-3">
+              <Button type="button" variant="ghost" size="sm" onClick={() => {
+                setStartDate(""); setEndDate(""); setDateDraft({ from: "", to: "" }); setPage(1); setDateOpen(false);
+              }}>Clear dates</Button>
+              <Button type="button" size="sm" disabled={invalidRange} onClick={() => {
+                setStartDate(dateDraft.from); setEndDate(dateDraft.to); setPage(1); setDateOpen(false);
+              }}>Apply dates</Button>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
 
       {transactions.isLoading ? (
@@ -398,7 +418,7 @@ export default function GivingDonationsPage() {
             <Button
               size="sm"
               variant="outline"
-              className="rounded-full border-line text-xs"
+              className="rounded-full border-line text-sm"
               onClick={() => transactions.refetch()}
             >
               Retry
@@ -435,11 +455,11 @@ export default function GivingDonationsPage() {
             {rows.map((tx) => (
               <StaggerItem key={tx.transactionId}>
                 <div className="group grid grid-cols-[0.9fr_minmax(0,1.6fr)_1fr_0.9fr_1fr_auto] items-center gap-3 px-5 py-3">
-                  <span className="num text-[11px] text-ink-soft">
+                  <span className="num text-sm text-ink-soft">
                     {formatDate(tx.givingDate ?? tx.createdAt)}
                   </span>
                   <GivingSourceIdentity transaction={tx}>
-                    <span className="flex items-center gap-1.5 truncate text-[10px] text-ink-faint">
+                    <span className="flex items-center gap-1.5 truncate text-xs text-ink-faint">
                       {givingSource(tx).kind !== "member" ? (
                         <Tag
                           tone={
@@ -464,25 +484,25 @@ export default function GivingDonationsPage() {
                       ) : null}
                     </span>
                   </GivingSourceIdentity>
-                  <span className="truncate text-[11px] text-ink-soft">
+                  <span className="truncate text-sm text-ink-soft">
                     {tx.categoryName}
                   </span>
                   <span className="flex items-center gap-2">
-                    <span className="text-[11px]">
+                    <span className="text-sm">
                       {TYPE_LABELS[tx.type] ?? tx.type}
                     </span>
                     <Tag tone={STATUS_TONES[tx.status]} dot>
                       {tx.status}
                     </Tag>
                   </span>
-                  <span className="num text-right text-xs font-semibold">
+                  <span className="num text-right text-sm font-semibold">
                     {formatNaira(tx.amount)}
                   </span>
                   <span className="flex justify-end">
                     {tx.status === "success" ? (
                       <ReceiptActions transaction={tx} />
                     ) : (
-                      <span className="num text-[9px] text-ink-faint">
+                      <span className="num text-xs text-ink-faint">
                         {tx.receiptNumber ?? "Not available"}
                       </span>
                     )}
@@ -503,7 +523,7 @@ export default function GivingDonationsPage() {
         </ListTable>
       )}
 
-      <p className="flex items-center justify-center gap-1.5 text-[10px] text-ink-faint">
+      <p className="flex items-center justify-center gap-1.5 text-xs text-ink-faint">
         <Download className="size-3" /> Receipts carry the church branding;
         sending them honours the configured provider channels.
       </p>

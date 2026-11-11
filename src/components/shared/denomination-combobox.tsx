@@ -156,7 +156,7 @@ export function DenominationCombobox({
           {/* Inline custom input panel */}
           {customMode && (
             <div className="border-t p-3">
-              <p className="text-xs text-muted-foreground mb-2">
+              <p className="text-sm text-muted-foreground mb-2">
                 Enter your denomination (auto-capitalized):
               </p>
               <div className="flex gap-2">
@@ -194,7 +194,7 @@ export function DenominationCombobox({
                   setCustomMode(false);
                   setCustomInput("");
                 }}
-                className="mt-2 text-xs text-muted-foreground hover:text-foreground"
+                className="mt-2 text-sm text-muted-foreground hover:text-foreground"
               >
                 Cancel
               </button>

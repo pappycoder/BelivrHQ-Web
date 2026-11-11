@@ -215,7 +215,7 @@ export function UserAdminHqCell({ isAdminHq }: { isAdminHq: boolean }) {
     <Badge
       variant="secondary"
       className={
-        isAdminHq ? "text-[11px] font-medium" : "text-[11px] opacity-70"
+        isAdminHq ? "text-sm font-medium" : "text-sm opacity-70"
       }
     >
       {isAdminHq ? "Admin HQ" : "Branch-scoped"}

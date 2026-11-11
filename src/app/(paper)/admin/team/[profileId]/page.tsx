@@ -20,7 +20,7 @@ export default function UserDetailPage({
 
   return (
     <div className="space-y-4">
-      <Link href="/admin/team" className="inline-flex items-center gap-1.5 text-[11px] text-ink-faint hover:text-ink">
+      <Link href="/admin/team" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
         <ArrowLeft className="size-3" /> Admin · Team
       </Link>
       {user.isLoading ? (
@@ -32,7 +32,7 @@ export default function UserDetailPage({
         <EmptyState
           title="We couldn&apos;t find this seat"
           description="The profile may have been removed, or the link is old."
-          action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/admin/team">Back to the team</Link></Button>}
+          action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/admin/team">Back to the team</Link></Button>}
         />
       ) : (
         <div className="grid items-start gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">

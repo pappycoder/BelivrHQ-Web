@@ -75,7 +75,7 @@ export default function BranchDetailPage({
         icon={<Building2 />}
         title="We couldn&apos;t find this branch"
         description="It may have been deleted forever, or the link is old."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/admin/locations">Back to locations</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/admin/locations">Back to locations</Link></Button>}
       />
     );
   }
@@ -85,13 +85,13 @@ export default function BranchDetailPage({
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <Link href="/admin/locations" className="inline-flex items-center gap-1.5 text-[11px] text-ink-faint hover:text-ink">
+        <Link href="/admin/locations" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
           <ArrowLeft className="size-3" /> Admin · Locations
         </Link>
         {canUpdate || canDelete ? (
           <div className="flex gap-2">
             {canUpdate ? (
-              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" onClick={() => setEditOpen(true)}>
+              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm" onClick={() => setEditOpen(true)}>
                 <PencilLine className="size-3.5" /> Edit
               </Button>
             ) : null}
@@ -105,13 +105,13 @@ export default function BranchDetailPage({
               </ActionTooltip>
               <DropdownMenuContent align="end" className="w-44">
                 {!branch.archivedAt && canDelete ? (
-                  <DropdownMenuItem className="text-xs" onClick={() => setArchiveState("archive")}>Archive branch</DropdownMenuItem>
+                  <DropdownMenuItem className="text-sm" onClick={() => setArchiveState("archive")}>Archive branch</DropdownMenuItem>
                 ) : null}
                 {branch.archivedAt && canUpdate ? (
-                  <DropdownMenuItem className="text-xs" onClick={() => setArchiveState("restore")}>Restore branch</DropdownMenuItem>
+                  <DropdownMenuItem className="text-sm" onClick={() => setArchiveState("restore")}>Restore branch</DropdownMenuItem>
                 ) : null}
                 {branch.archivedAt && canDelete ? (
-                  <DropdownMenuItem className="text-xs text-rose" onClick={() => setArchiveState("purge")}>Delete forever</DropdownMenuItem>
+                  <DropdownMenuItem className="text-sm text-rose" onClick={() => setArchiveState("purge")}>Delete forever</DropdownMenuItem>
                 ) : null}
               </DropdownMenuContent>
             </DropdownMenu>
@@ -128,14 +128,14 @@ export default function BranchDetailPage({
               {branch.isHeadquarters ? <Tag tone="gold">Headquarters</Tag> : null}
               {branch.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
             </div>
-            <p className="flex items-center gap-1.5 text-[11px] text-ink-soft">
+            <p className="flex items-center gap-1.5 text-sm text-ink-soft">
               <MapPin className="size-3" />
               {[branch.address, branch.city, branch.state, branch.country].filter(Boolean).join(", ") || "No address on file"}
             </p>
           </div>
           <div className="num rounded-xl bg-muted/40 px-5 py-3 text-center">
             <p className="font-display text-xl font-semibold">{number(branch.memberCount ?? 0)}</p>
-            <p className="text-[9px] uppercase tracking-wider text-ink-faint">members</p>
+            <p className="text-xs uppercase tracking-wider text-ink-faint">members</p>
           </div>
         </div>
       </div>
@@ -158,7 +158,7 @@ export default function BranchDetailPage({
             <FieldRow label="Opened">{formatDate(branch.createdAt)}</FieldRow>
             <FieldRow label="Last changed">{formatDate(branch.updatedAt)}</FieldRow>
           </DataList>
-          <p className="mt-3 flex items-start gap-1.5 text-[10px] leading-relaxed text-ink-faint">
+          <p className="mt-3 flex items-start gap-1.5 text-xs leading-relaxed text-ink-faint">
             <Phone className="mt-0.5 size-3 shrink-0" />
             Branch scope is enforced everywhere. Staff see their branch&apos;s people, Admin HQ reads across all of them.
           </p>

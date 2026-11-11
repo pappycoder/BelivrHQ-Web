@@ -89,7 +89,7 @@ function TicketsInner() {
         description="Assign, print and track tickets to keep event entry running smoothly."
         actions={
           canAssign && eventId ? (
-            <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setAssignOpen(true)}>
+            <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setAssignOpen(true)}>
               <UserPlus className="size-3.5" /> Assign ticket
             </Button>
           ) : null
@@ -100,7 +100,7 @@ function TicketsInner() {
         <select
           value={eventId}
           onChange={(e) => { setEventId(e.target.value); setPage(1); router.replace(`/gatherings/events/tickets${e.target.value ? `?event=${e.target.value}` : ""}`); }}
-          className="h-9 rounded-full border border-line bg-card px-3 text-[11px] outline-none"
+          className="h-9 rounded-full border border-line bg-card px-3 text-sm outline-none"
           aria-label="Event selector"
         >
           <option value="">Choose an event…</option>
@@ -111,13 +111,13 @@ function TicketsInner() {
           ))}
         </select>
         {selected ? (
-          <span className="flex items-center gap-1.5 text-[10px] text-ink-faint">
+          <span className="flex items-center gap-1.5 text-xs text-ink-faint">
             {paidEvent ? <Tag tone="gold">paid</Tag> : <Tag tone="moss">free</Tag>}
             {(tiers.data ?? []).length ? <span>{(tiers.data ?? []).length} tiers</span> : paidEvent ? <span>no tiers (flat price)</span> : null}
           </span>
         ) : null}
         {eventId ? (
-          <Link href={`/gatherings/events/tiers?event=${encodeURIComponent(eventId)}`} className="ml-auto text-[11px] text-brand hover:underline">
+          <Link href={`/gatherings/events/tiers?event=${encodeURIComponent(eventId)}`} className="ml-auto text-sm text-brand hover:underline">
             Manage tiers →
           </Link>
         ) : null}
@@ -139,7 +139,7 @@ function TicketsInner() {
               icon={<Users />}
               title="No passes yet"
               description={paidEvent ? "Sales appear here automatically; you can also seat someone by hand." : "Free events still track attendance at the desk. Claim happens member-side."}
-              action={canAssign ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => setAssignOpen(true)}>Assign the first</Button> : undefined}
+              action={canAssign ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => setAssignOpen(true)}>Assign the first</Button> : undefined}
             />
           ) : (
             <ListTable className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="gatherings-events-tickets-1" records={rows ?? []} recordKey="ticketId">
@@ -156,23 +156,23 @@ function TicketsInner() {
                   <span className="flex min-w-0 items-center gap-2.5">
                     <PersonAvatar name={ticket.memberName ?? ticket.visitorName ?? "Unassigned"} size="xs" />
                     <span className="min-w-0">
-                      <span className="block truncate text-xs font-medium">{ticket.memberName ?? ticket.visitorName ?? "Unassigned"}</span>
-                      {ticket.visitorId ? <span className="block text-[9px] text-ink-faint">visitor</span> : null}
+                      <span className="block truncate text-sm font-medium">{ticket.memberName ?? ticket.visitorName ?? "Unassigned"}</span>
+                      {ticket.visitorId ? <span className="block text-xs text-ink-faint">visitor</span> : null}
                     </span>
                   </span>
-                  <span className="truncate font-mono text-[10px] text-ink-faint">{ticket.code}</span>
-                  <span className="truncate text-[11px] text-ink-soft">{ticket.tierName ?? "General"}</span>
+                  <span className="truncate font-mono text-xs text-ink-faint">{ticket.code}</span>
+                  <span className="truncate text-sm text-ink-soft">{ticket.tierName ?? "General"}</span>
                   <span className="flex items-center gap-1.5">
                     <Tag tone={ticket.usedAt ? "moss" : ticket.status === "cancelled" || ticket.status === "refunded" ? "rose" : "gold"} dot>
                       {ticket.usedAt ? "used" : ticket.status}
                     </Tag>
-                    {ticket.pricePaid ? <span className="num text-[10px] text-ink-faint">{formatNaira(ticket.pricePaid)}</span> : null}
+                    {ticket.pricePaid ? <span className="num text-xs text-ink-faint">{formatNaira(ticket.pricePaid)}</span> : null}
                   </span>
-                  <span className="num text-right text-[10px] text-ink-faint">{formatDate(ticket.createdAt)}</span>
+                  <span className="num text-right text-xs text-ink-faint">{formatDate(ticket.createdAt)}</span>
                   <Button
                     size="xs"
                     variant="ghost"
-                    className="ml-auto h-7 gap-1 rounded-full text-[10px]"
+                    className="ml-auto h-7 gap-1 rounded-full text-xs"
                     disabled={pdfBusy === ticket.ticketId}
                     onClick={() => download(ticket)}
                   >
@@ -204,11 +204,11 @@ function TicketsInner() {
         <DialogContent className="rounded-2xl border-line bg-card">
           <DialogHeader>
             <DialogTitle className="font-display">Seat someone by hand</DialogTitle>
-            <DialogDescription className="text-xs">Create a named pass to help attendees get through the queue.</DialogDescription>
+            <DialogDescription className="text-sm">Create a named pass to help attendees get through the queue.</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1.5">
-              <p className="text-xs font-medium">Member</p>
+              <p className="text-sm font-medium">Member</p>
               <MemberCombobox
                 value={assignMember?.id ?? ""}
                 onChange={(id, member) => setAssignMember(id ? { id, name: `${member?.firstName ?? ""} ${member?.lastName ?? ""}`.trim() || "the member" } : null)}
@@ -217,8 +217,8 @@ function TicketsInner() {
             </div>
             {paidEvent && (tiers.data ?? []).length ? (
               <div className="space-y-1.5">
-                <p className="text-xs font-medium">Tier</p>
-                <select value={assignTier} onChange={(e) => setAssignTier(e.target.value)} className="h-10 w-full rounded-lg border border-line bg-card px-2 text-xs outline-none" aria-label="Tier">
+                <p className="text-sm font-medium">Tier</p>
+                <select value={assignTier} onChange={(e) => setAssignTier(e.target.value)} className="h-10 w-full rounded-lg border border-line bg-card px-2 text-sm outline-none" aria-label="Tier">
                   <option value="">General (no tier)</option>
                   {(tiers.data ?? []).map((t) => <option key={t.id} value={t.id}>{t.name} · {formatNaira(t.price)}</option>)}
                 </select>

@@ -36,7 +36,7 @@ export function SermonMediaBadges({
       {audioUrl && (
         <Badge
           variant="outline"
-          className="gap-1 rounded-full border-blue-500/20 bg-blue-500/8 text-[10px] font-medium text-blue-700 dark:text-blue-200"
+          className="gap-1 rounded-full border-blue-500/20 bg-blue-500/8 text-xs font-medium text-blue-700 dark:text-blue-200"
         >
           <FileAudio className="size-3" aria-hidden="true" />
           Audio attached
@@ -45,7 +45,7 @@ export function SermonMediaBadges({
       {videoUrl && (
         <Badge
           variant="outline"
-          className="gap-1 rounded-full border-violet-500/20 bg-violet-500/8 text-[10px] font-medium text-violet-700 dark:text-violet-200"
+          className="gap-1 rounded-full border-violet-500/20 bg-violet-500/8 text-xs font-medium text-violet-700 dark:text-violet-200"
         >
           <FileVideo className="size-3" aria-hidden="true" />
           Video attached

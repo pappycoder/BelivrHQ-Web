@@ -25,7 +25,7 @@ export function SupportContact({
     >
       <header className="space-y-4">
         <BrandLogo variant="mark" emblemClassName="!size-10" />
-        <p className="text-xs font-semibold tracking-widest text-primary">
+        <p className="text-sm font-semibold tracking-widest text-primary">
           HERE TO HELP
         </p>
         <h1

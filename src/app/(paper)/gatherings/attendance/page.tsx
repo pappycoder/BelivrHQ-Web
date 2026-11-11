@@ -60,12 +60,12 @@ export default function AttendanceDashboardPage() {
         description="Track attendance over time and notice when someone may need a check-in."
         actions={
           <>
-            <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
+            <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-sm">
               <Link href="/gatherings/attendance/records">
                 <CalendarCheck className="size-3.5" /> Records
               </Link>
             </Button>
-            <Button asChild className="h-9 gap-1.5 rounded-full text-xs">
+            <Button asChild className="h-9 gap-1.5 rounded-full text-sm">
               <Link href="/gatherings/attendance/check-in">
                 <ScanLine className="size-3.5" /> Live check-in
               </Link>
@@ -119,7 +119,7 @@ export default function AttendanceDashboardPage() {
                   {Object.entries(data.bySource ?? {}).length ? (
                     Object.entries(data.bySource).map(([key, value]) => (
                       <div key={key} className="mb-2">
-                        <div className="flex justify-between text-[11px]">
+                        <div className="flex justify-between text-sm">
                           <span className="text-ink-soft capitalize">{key.replace(/[_-]/g, " ")}</span>
                           <span className="num font-medium">{value}</span>
                         </div>
@@ -128,7 +128,7 @@ export default function AttendanceDashboardPage() {
                         </div>
                       </div>
                     ))
-                  ) : <p className="text-[11px] text-ink-faint">No arrivals recorded yet.</p>}
+                  ) : <p className="text-sm text-ink-faint">No arrivals recorded yet.</p>}
                 </div>
                 <div>
                   <p className="rule-label mb-2">Age split</p>
@@ -140,7 +140,7 @@ export default function AttendanceDashboardPage() {
                         </Tag>
                       ))}
                     </div>
-                  ) : <p className="text-[11px] text-ink-faint">Nothing to split yet.</p>}
+                  ) : <p className="text-sm text-ink-faint">Nothing to split yet.</p>}
                 </div>
               </div>
             ) : (
@@ -154,7 +154,7 @@ export default function AttendanceDashboardPage() {
               eyebrow="Last in"
               title="Most recent check-ins"
               actions={
-                <Button asChild variant="ghost" size="sm" className="h-7 rounded-full text-[11px] text-ink-faint">
+                <Button asChild variant="ghost" size="sm" className="h-7 rounded-full text-sm text-ink-faint">
                   <Link href="/gatherings/attendance/records">All records</Link>
                 </Button>
               }
@@ -162,19 +162,19 @@ export default function AttendanceDashboardPage() {
             >
               <div className="divide-y divide-line/70">
                 {(recent.data?.data ?? []).map((record) => (
-                  <div key={record.attendanceId} className="flex items-center gap-3 px-5 py-3 text-xs">
+                  <div key={record.attendanceId} className="flex items-center gap-3 px-5 py-3 text-sm">
                     <PersonAvatar name={record.memberName ?? record.visitorName ?? "Guest"} size="xs" />
                     <span className="min-w-0 flex-1 truncate font-medium">
                       {record.memberName ?? record.visitorName ?? "Guest"}
-                      {!record.memberId && record.visitorName ? <span className="ml-1.5 text-[9px] text-gold">visitor</span> : null}
+                      {!record.memberId && record.visitorName ? <span className="ml-1.5 text-xs text-gold">visitor</span> : null}
                     </span>
-                    <span className="hidden min-w-0 max-w-[180px] truncate text-[10px] text-ink-faint sm:block">
+                    <span className="hidden min-w-0 max-w-[180px] truncate text-xs text-ink-faint sm:block">
                       {record.serviceName ?? record.eventName ?? "Not available"}
                     </span>
-                    <span className="num w-28 shrink-0 text-right text-[10px] text-ink-faint">{stamp(record.checkInAt)}</span>
+                    <span className="num w-28 shrink-0 text-right text-xs text-ink-faint">{stamp(record.checkInAt)}</span>
                   </div>
                 ))}
-                {!recent.data?.data?.length ? <p className="px-5 py-8 text-center text-xs text-ink-faint">Nothing recorded yet.</p> : null}
+                {!recent.data?.data?.length ? <p className="px-5 py-8 text-center text-sm text-ink-faint">Nothing recorded yet.</p> : null}
               </div>
             </SectionCard>
           ) : null}
@@ -191,18 +191,18 @@ export default function AttendanceDashboardPage() {
                     <UserRoundPlus className="size-3.5" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-xs font-medium">{service.name}</span>
-                    <span className="block text-[10px] capitalize text-ink-faint">
+                    <span className="block truncate text-sm font-medium">{service.name}</span>
+                    <span className="block text-xs capitalize text-ink-faint">
                       {service.category ?? "mixed"} · {service.startTime ?? "time not set"}
                     </span>
                   </span>
-                  <span className="num text-[11px] text-ink-soft">{service.attendanceCount ?? 0} all-time</span>
+                  <span className="num text-sm text-ink-soft">{service.attendanceCount ?? 0} all-time</span>
                 </Link>
               ))}
-              {!services.data?.data?.length ? <p className="px-5 py-8 text-center text-xs text-ink-faint">No active services yet.</p> : null}
+              {!services.data?.data?.length ? <p className="px-5 py-8 text-center text-sm text-ink-faint">No active services yet.</p> : null}
             </div>
             <div className="border-t border-line px-5 py-2.5">
-              <Button asChild variant="ghost" size="sm" className="w-full justify-between rounded-lg text-[11px] text-brand">
+              <Button asChild variant="ghost" size="sm" className="w-full justify-between rounded-lg text-sm text-brand">
                 <Link href="/gatherings/attendance/services">Manage services</Link>
               </Button>
             </div>

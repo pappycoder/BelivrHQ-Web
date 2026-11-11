@@ -116,7 +116,7 @@ export default function RoleMatrixPage({
       <EmptyState
         title="Roles need the roles grant"
         description="Your role cannot read or change permission sets."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/admin/permissions">Back to roles</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/admin/permissions">Back to roles</Link></Button>}
       />
     );
   }
@@ -136,7 +136,7 @@ export default function RoleMatrixPage({
         icon={<ShieldCheck />}
         title="We couldn&apos;t open that role"
         description="It may have been removed, or the link is old."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/admin/permissions">Back to roles</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/admin/permissions">Back to roles</Link></Button>}
       />
     );
   }
@@ -146,7 +146,7 @@ export default function RoleMatrixPage({
   return (
     <div className="space-y-6 pb-24">
       <div>
-        <Link href="/admin/permissions" className="inline-flex items-center gap-1.5 text-[11px] text-ink-faint hover:text-ink">
+        <Link href="/admin/permissions" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
           <ArrowLeft className="size-3" /> Admin · Roles
         </Link>
         <div className="mt-1 flex flex-wrap items-center gap-2">
@@ -154,7 +154,7 @@ export default function RoleMatrixPage({
           {locked ? <Tag tone="neutral">Locked</Tag> : null}
           {isOwned ? <Tag tone="sky">Custom</Tag> : role.data.isCustomized ? <Tag tone="gold">Customized</Tag> : <Tag tone="moss">Default</Tag>}
         </div>
-        <p className="mt-1 text-xs text-ink-soft">{role.data.description || "No description."}</p>
+        <p className="mt-1 text-sm text-ink-soft">{role.data.description || "No description."}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -167,7 +167,7 @@ export default function RoleMatrixPage({
       <div className="paper-card rounded-2xl p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
           <p className="rule-label">Permission matrix</p>
-          <p className="text-[10px] text-ink-faint">
+          <p className="text-xs text-ink-faint">
             {locked
               ? "The platform admin holds everything. This view is read-only."
               : !canManage
@@ -190,8 +190,8 @@ export default function RoleMatrixPage({
       {canManage && !locked && role.data.isCustomized && !isDirty ? (
         <div className="paper-card flex flex-wrap items-center justify-between gap-3 rounded-2xl p-5">
           <div>
-            <p className="text-xs font-semibold">Reset to the global defaults?</p>
-            <p className="text-[10px] text-ink-faint">Deletes this church&apos;s overrides and returns the role returns to the template.</p>
+            <p className="text-sm font-semibold">Reset to the global defaults?</p>
+            <p className="text-xs text-ink-faint">Deletes this church&apos;s overrides and returns the role returns to the template.</p>
           </div>
           <ResetInline onConfirmed={() => undefined} reset={reset} roleName={roleName} />
         </div>
@@ -199,17 +199,17 @@ export default function RoleMatrixPage({
 
       {isDirty && !locked ? (
         <div className="fixed inset-x-4 bottom-4 z-50 mx-auto flex max-w-2xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-card px-5 py-3 shadow-[0_24px_64px_-24px_rgb(38_32_26_/_0.38)]">
-          <p className="text-xs">
+          <p className="text-sm">
             <span className="num font-semibold text-moss">+{addedCount}</span>
             <span className="text-ink-faint"> · </span>
             <span className="num font-semibold text-rose">−{removedCount}</span>
             <span className="ml-2 text-ink-faint">unsaved</span>
           </p>
           <div className="flex gap-2">
-            <Button size="sm" variant="ghost" className="h-8 gap-1.5 rounded-full text-xs" onClick={cancel}>
+            <Button size="sm" variant="ghost" className="h-8 gap-1.5 rounded-full text-sm" onClick={cancel}>
               <X className="size-3" /> Discard
             </Button>
-            <Button size="sm" className="h-8 gap-1.5 rounded-full text-xs" disabled={setPermissions.isPending} onClick={save}>
+            <Button size="sm" className="h-8 gap-1.5 rounded-full text-sm" disabled={setPermissions.isPending} onClick={save}>
               {setPermissions.isPending ? <Save className="size-3 animate-pulse" /> : <Check className="size-3" />} Save permissions
             </Button>
           </div>
@@ -223,7 +223,7 @@ function ResetInline({ reset, roleName }: { reset: ReturnType<typeof useResetRol
   const [open, setOpen] = React.useState(false);
   return (
     <>
-      <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs" onClick={() => setOpen(true)}>
+      <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-sm" onClick={() => setOpen(true)}>
         <RotateCcw className="size-3" /> Reset to defaults
       </Button>
       <ResetRoleDialog

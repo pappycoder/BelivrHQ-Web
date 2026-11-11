@@ -54,7 +54,7 @@ export default function SettingsBillingPage() {
         icon={<CreditCard />}
         title="Billing stays with the church admins"
         description="Plan, payments and usage are visible to those who hold the billing grant. Your role keeps the register running. This ledger isn't yours to carry."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/settings/profile">Back to your profile</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/settings/profile">Back to your profile</Link></Button>}
       />
     );
   }
@@ -103,28 +103,28 @@ export default function SettingsBillingPage() {
               <Sparkles className="size-4" />
             </span>
             <div>
-              <p className="text-xs text-ink-faint">Current plan</p>
+              <p className="text-sm text-ink-faint">Current plan</p>
               <p className="font-display text-lg font-semibold leading-tight">{planName(sub?.plan)}</p>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Tag tone={d.active ? "moss" : "rose"} dot>{d.active ? "Active" : "Lapsed"}</Tag>
             {sub?.paid_until ? (
-              <span className="text-[11px] text-ink-soft">
+              <span className="text-sm text-ink-soft">
                 Renews {new Date(sub.paid_until).toLocaleDateString("en-GB", { month: "short", day: "numeric" })}
               </span>
             ) : null}
             {sub && monthly ? (
               <span className="num text-sm font-semibold">
                 {monthly}
-                <span className="text-[10px] font-normal text-ink-faint">/{sub.cycle === "annual" ? "yr" : "mo"}</span>
+                <span className="text-xs font-normal text-ink-faint">/{sub.cycle === "annual" ? "yr" : "mo"}</span>
               </span>
             ) : null}
             {sub?.scheduled_plan && sub.scheduled_plan !== sub.plan ? (
               <Tag tone="gold">Next: {planName(sub.scheduled_plan)}</Tag>
             ) : null}
             {status.canPay ? (
-              <Button asChild className="h-8 gap-1.5 rounded-full text-xs">
+              <Button asChild className="h-8 gap-1.5 rounded-full text-sm">
                 <Link href="/subscription">
                   <CreditCard className="size-3.5" /> Open checkout
                 </Link>
@@ -135,8 +135,8 @@ export default function SettingsBillingPage() {
         <div className="grid grid-cols-2 gap-px bg-line/60 sm:grid-cols-4">
           {usageCells.map((cell) => (
             <div key={cell.label} className="bg-card px-4 py-3">
-              <p className="text-[9px] uppercase tracking-wider text-ink-faint">{cell.label}</p>
-              <p className="num mt-0.5 text-xs font-semibold">{cell.value}</p>
+              <p className="text-xs uppercase tracking-wider text-ink-faint">{cell.label}</p>
+              <p className="num mt-0.5 text-sm font-semibold">{cell.value}</p>
               <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-brand" style={{ width: `${Math.min(100, cell.pct)}%` }} />
               </div>
@@ -161,21 +161,21 @@ export default function SettingsBillingPage() {
                       current ? "border-brand/50 bg-brand-soft/40" : "border-line",
                     )}
                   >
-                    <p className="flex items-center justify-between text-xs font-semibold">
+                    <p className="flex items-center justify-between text-sm font-semibold">
                       {entry.name}
                       {current ? <Tag tone="brand">Current</Tag> : null}
                     </p>
                     <p className="num mt-2 font-display text-2xl font-semibold">
                       {subscriptionMoney(entry.monthly, d.baseCurrency)}
-                      <span className="text-[10px] font-normal text-ink-faint">/mo</span>
+                      <span className="text-xs font-normal text-ink-faint">/mo</span>
                     </p>
-                    <p className="mt-1 text-[10px] text-ink-faint">
+                    <p className="mt-1 text-xs text-ink-faint">
                       {entry.limits.members > 0 ? number(entry.limits.members) : "Unlimited"} people ·{" "}
                       {entry.limits.locations > 0 ? `${number(entry.limits.locations)} branch${entry.limits.locations === 1 ? "" : "es"}` : "unlimited branches"} ·{" "}
                       {entry.limits.staff > 0 ? `${number(entry.limits.staff)} staff seats` : "unlimited staff"}
                     </p>
                     {!current && status.canPay ? (
-                      <Button asChild size="sm" variant="outline" className="mt-3 h-8 w-full rounded-full border-line text-[11px]">
+                      <Button asChild size="sm" variant="outline" className="mt-3 h-8 w-full rounded-full border-line text-sm">
                         <Link href="/subscription">Choose {entry.name}</Link>
                       </Button>
                     ) : null}
@@ -183,20 +183,20 @@ export default function SettingsBillingPage() {
                 );
               })}
               <div className="rounded-xl border border-line p-4">
-                <p className="flex items-center justify-between text-xs font-semibold">
+                <p className="flex items-center justify-between text-sm font-semibold">
                   Enterprise
                   <Tag tone="gold">By agreement</Tag>
                 </p>
                 <p className="num mt-2 font-display text-2xl font-semibold">Negotiated</p>
-                <p className="mt-1 text-[10px] text-ink-faint">
+                <p className="mt-1 text-xs text-ink-faint">
                   Everything in Network, plus custom terms, onboarding and support agreements.
                 </p>
-                <Button asChild size="sm" variant="outline" className="mt-3 h-8 w-full rounded-full border-line text-[11px]">
+                <Button asChild size="sm" variant="outline" className="mt-3 h-8 w-full rounded-full border-line text-sm">
                   <Link href="/help/contact-support">Talk to sales</Link>
                 </Button>
               </div>
             </div>
-            <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+            <p className="mt-3 text-xs leading-relaxed text-ink-faint">
               Switching runs through the secure checkout. Quotes are priced in your display currency and verified
               before anything changes. Renewals are manual by design; nothing charges silently.
             </p>
@@ -206,10 +206,10 @@ export default function SettingsBillingPage() {
           <div className="paper-card overflow-hidden rounded-2xl">
             <div className="flex items-center justify-between border-b border-line px-5 py-3.5">
               <p className="font-display text-sm font-semibold">Payment history</p>
-              <span className="text-[10px] text-ink-faint">Every invoice is church-business receipts-ready.</span>
+              <span className="text-xs text-ink-faint">Every invoice is church-business receipts-ready.</span>
             </div>
             {d.payments.length === 0 ? (
-              <div className="px-5 py-10 text-center text-[11px] text-ink-faint">
+              <div className="px-5 py-10 text-center text-sm text-ink-faint">
                 No payments recorded yet.
               </div>
             ) : (
@@ -223,20 +223,20 @@ export default function SettingsBillingPage() {
                 </div>
                 {d.payments.slice(0, 12).map((p) => (
                   <StaggerItem key={p.reference}>
-                    <div className="grid grid-cols-[1.2fr_1fr_0.8fr_1fr_0.9fr] items-center gap-3 px-5 py-3 text-xs">
-                      <span className="truncate font-mono text-[10px] text-ink-faint">{p.reference.slice(0, 16)}</span>
+                    <div className="grid grid-cols-[1.2fr_1fr_0.8fr_1fr_0.9fr] items-center gap-3 px-5 py-3 text-sm">
+                      <span className="truncate font-mono text-xs text-ink-faint">{p.reference.slice(0, 16)}</span>
                       <span className="text-ink-soft">
                         {new Date(p.created_at).toLocaleDateString("en-GB", { month: "short", day: "numeric", year: "numeric" })}
                       </span>
                       <span>{planName(p.plan)}</span>
-                      <span className="flex items-center gap-1.5 text-[11px]">
+                      <span className="flex items-center gap-1.5 text-sm">
                         <Tag tone={PAYMENT_TONES[p.status] ?? "neutral"} dot>{p.status}</Tag>
                       </span>
                       <span className="num text-right font-semibold">{subscriptionMoney(p.amount, p.currency)}</span>
                     </div>
                   </StaggerItem>
                 ))}
-                <div className="bg-muted/20 px-5 py-2.5 text-[10px] text-ink-faint">
+                <div className="bg-muted/20 px-5 py-2.5 text-xs text-ink-faint">
                   <Link href="/help" className="flex items-center gap-1 text-brand hover:underline">
                     <Download className="size-3" /> Guide to billing &amp; renewals
                   </Link>
@@ -249,14 +249,14 @@ export default function SettingsBillingPage() {
         <aside className="space-y-4">
           <div className="paper-card rounded-2xl p-5">
             <p className="rule-label mb-3">What the plan unlocks</p>
-            <ul className="space-y-1.5 text-[11px] leading-relaxed text-ink-soft">
+            <ul className="space-y-1.5 text-sm leading-relaxed text-ink-soft">
               {(d.features.slice(0, 10)).map((f) => (
                 <li key={f} className="flex items-start gap-1.5">
                   <Check className="mt-0.5 size-3 shrink-0 text-moss" /> {f.replace(/_/g, " ")}
                 </li>
               ))}
               {d.features.length > 10 ? (
-                <li className="text-[10px] text-ink-faint">+ {number(d.features.length - 10)} more feature surfaces</li>
+                <li className="text-xs text-ink-faint">+ {number(d.features.length - 10)} more feature surfaces</li>
               ) : null}
             </ul>
           </div>
@@ -266,16 +266,16 @@ export default function SettingsBillingPage() {
               <p className="num font-display text-lg font-semibold">
                 {subscriptionMoney(d.latestPayment.amount, d.latestPayment.currency)}
               </p>
-              <p className="mt-0.5 text-[10px] text-ink-faint">
+              <p className="mt-0.5 text-xs text-ink-faint">
                 via {d.latestPayment.gateway} · exact reference {d.latestPayment.reference.slice(0, 10)}…
               </p>
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-line p-5 text-[10px] leading-relaxed text-ink-faint">
+            <div className="rounded-2xl border border-dashed border-line p-5 text-xs leading-relaxed text-ink-faint">
               No payment charges yet. Choose a plan above to get started.
             </div>
           )}
-          <div className="rounded-2xl border border-dashed border-line p-5 text-[10px] leading-relaxed text-ink-faint">
+          <div className="rounded-2xl border border-dashed border-line p-5 text-xs leading-relaxed text-ink-faint">
             Board packs hide donor names by default to protect their privacy.
           </div>
         </aside>

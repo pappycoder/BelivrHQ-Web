@@ -98,7 +98,7 @@ export function FamilyCombobox({
                       )}
                     />
                     <span>{family.name}</span>
-                    <span className="ml-auto text-xs text-muted-foreground">
+                    <span className="ml-auto text-sm text-muted-foreground">
                       {family.members.length} member(s)
                     </span>
                   </CommandItem>

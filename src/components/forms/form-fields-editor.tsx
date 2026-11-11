@@ -107,7 +107,7 @@ export function FormFieldsEditor({
                 aria-controls={`${prefix}-editor`}
                 onClick={() => setActive(active === index ? -1 : index)}
               >
-                <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-xs font-semibold text-brand">
+                <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-sm font-semibold text-brand">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <span className="min-w-0 flex-1 break-words font-medium">
@@ -115,7 +115,7 @@ export function FormFieldsEditor({
                 </span>
                 <ChevronDown className="size-4 shrink-0" />
               </button>
-              <span className="rounded-full bg-background px-2.5 py-1 text-xs text-ink-soft">
+              <span className="rounded-full bg-background px-2.5 py-1 text-sm text-ink-soft">
                 {FIELD_TYPE_LABELS[field.type]}
                 {field.required ? " · Required" : ""}
               </span>
@@ -255,7 +255,7 @@ export function FormFieldsEditor({
                         update(index, { key: event.target.value })
                       }
                     />
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       Used to identify saved answers. Keep existing identifiers
                       unchanged when editing a live form.
                     </p>

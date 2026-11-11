@@ -230,13 +230,13 @@ export default function ReportsStudioPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <Link href="/insights/analytics" className="flex items-center gap-1.5 text-[11px] text-ink-faint hover:text-ink">
+          <Link href="/insights/analytics" className="flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
             <ArrowLeft className="size-3" /> Insights
           </Link>
           <h1 className="mt-1 font-display text-[clamp(1.65rem,2.4vw,2.15rem)] font-semibold tracking-tight">Report studio</h1>
           <p className="text-sm text-ink-soft">Prepare a report using your church&apos;s recorded figures.</p>
         </div>
-        <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={handleGenerate} disabled={exporting || loadingBlocks}>
+        <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={handleGenerate} disabled={exporting || loadingBlocks}>
           {exporting ? <Loader2 className="size-3.5 animate-spin" /> : <Download className="size-3.5" />} Export {format}
         </Button>
       </div>
@@ -260,8 +260,8 @@ export default function ReportsStudioPage() {
                   <block.icon className="size-3.5" />
                 </span>
                 <span className="min-w-0">
-                  <span className="block truncate text-[11px] font-medium">{block.title}</span>
-                  <span className="hidden truncate text-[10px] text-ink-faint sm:block">{block.description}</span>
+                  <span className="block truncate text-sm font-medium">{block.title}</span>
+                  <span className="hidden truncate text-xs text-ink-faint sm:block">{block.description}</span>
                 </span>
                 <Plus className="ml-auto hidden size-3 text-ink-faint xl:block" />
               </button>
@@ -269,9 +269,9 @@ export default function ReportsStudioPage() {
           </div>
           <div className="mt-4 border-t border-line pt-3">
             <p className="rule-label mb-2">Also worth checking</p>
-            <Link href="/insights/analytics/giving" className="block truncate rounded-lg px-2 py-1.5 text-[11px] text-ink-soft hover:bg-muted hover:text-ink">Giving analysis</Link>
-            <Link href="/insights/analytics/attendance" className="block truncate rounded-lg px-2 py-1.5 text-[11px] text-ink-soft hover:bg-muted hover:text-ink">Attendance analysis</Link>
-            <Link href="/insights/analytics/members" className="block truncate rounded-lg px-2 py-1.5 text-[11px] text-ink-soft hover:bg-muted hover:text-ink">Membership analysis</Link>
+            <Link href="/insights/analytics/giving" className="block truncate rounded-lg px-2 py-1.5 text-sm text-ink-soft hover:bg-muted hover:text-ink">Giving analysis</Link>
+            <Link href="/insights/analytics/attendance" className="block truncate rounded-lg px-2 py-1.5 text-sm text-ink-soft hover:bg-muted hover:text-ink">Attendance analysis</Link>
+            <Link href="/insights/analytics/members" className="block truncate rounded-lg px-2 py-1.5 text-sm text-ink-soft hover:bg-muted hover:text-ink">Membership analysis</Link>
           </div>
         </aside>
 
@@ -286,12 +286,12 @@ export default function ReportsStudioPage() {
                   </span>
                   <div>
                     <p className="font-display text-sm font-semibold">Ministry report</p>
-                    <p className="text-[10px] text-ink-faint">{branchLabel}</p>
+                    <p className="text-xs text-ink-faint">{branchLabel}</p>
                   </div>
                 </div>
                 <CalendarClock className="size-4 text-ink-faint" />
               </div>
-              <p className="mt-2 text-xs text-ink-soft">{rangeLabel}</p>
+              <p className="mt-2 text-sm text-ink-soft">{rangeLabel}</p>
             </header>
 
             <div className="mt-6 grid grid-cols-2 gap-3">
@@ -317,7 +317,7 @@ export default function ReportsStudioPage() {
                 return (
                   <section key={id} className="relative rounded-xl border border-line p-4">
                     <div className="absolute -top-2.5 left-3">
-                      <span className="rounded-full bg-card px-2 text-[9px] font-semibold uppercase tracking-wider text-ink-faint ring-1 ring-line">
+                      <span className="rounded-full bg-card px-2 text-xs font-semibold uppercase tracking-wider text-ink-faint ring-1 ring-line">
                         {index + 1} · {block.title}
                       </span>
                     </div>
@@ -341,7 +341,7 @@ export default function ReportsStudioPage() {
                             height={150}
                             formatter={(v) => formatNaira(Number(v))}
                           />
-                          <p className="mt-2 text-[11px] leading-relaxed text-ink-soft">
+                          <p className="mt-2 text-sm leading-relaxed text-ink-soft">
                             {formatNaira(fin.grandTotal)} given across {number(fin.transactionCount)} transactions
                             {fin.byCategory.length
                               ? `; ${fin.byCategory[0].name} leads at ${percent(fin.byCategory[0].total, fin.grandTotal)}% of the total.`
@@ -357,7 +357,7 @@ export default function ReportsStudioPage() {
                             height={150}
                             formatter={(v) => number(Number(v))}
                           />
-                          <p className="mt-2 text-[11px] leading-relaxed text-ink-soft">
+                          <p className="mt-2 text-sm leading-relaxed text-ink-soft">
                             Average {number(Math.round(att.averagePerService))} in the room across {number(att.serviceCount)} services
                             {att.byService.length ? `; ${att.byService[0].name} carries the house.` : "."}
                           </p>
@@ -371,7 +371,7 @@ export default function ReportsStudioPage() {
                             height={150}
                             formatter={(v) => number(Number(v))}
                           />
-                          <p className="mt-2 text-[11px] leading-relaxed text-ink-soft">
+                          <p className="mt-2 text-sm leading-relaxed text-ink-soft">
                             {number(mem.totalMembers)} members, {number(mem.newMembersInPeriod)} new in the period, {number(mem.activeMembers)} active.
                           </p>
                         </>
@@ -381,13 +381,13 @@ export default function ReportsStudioPage() {
                 );
               })}
               {!blocks.length || (!fin && !att && !mem && !loadingBlocks && !anyError) ? (
-                <p className="rounded-xl border border-dashed border-line py-10 text-center text-xs text-ink-faint">
+                <p className="rounded-xl border border-dashed border-line py-10 text-center text-sm text-ink-faint">
                   Add blocks from the left to assemble the report.
                 </p>
               ) : null}
             </div>
 
-            <footer className="mt-8 border-t border-dashed border-line pt-4 text-[10px] text-ink-faint">
+            <footer className="mt-8 border-t border-dashed border-line pt-4 text-xs text-ink-faint">
               Generated {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })} · {rangeLabel} · {branchLabel} · donor names withheld
             </footer>
           </div>
@@ -399,29 +399,29 @@ export default function ReportsStudioPage() {
             <p className="rule-label mb-3">Report settings</p>
             <div className="space-y-3">
               <div className="space-y-1.5">
-                <span className="text-[10px] text-ink-faint">Period</span>
-                <select value={range} onChange={(e) => setRange(e.target.value as (typeof RANGES)[number])} className="h-9 w-full rounded-lg border border-line bg-card px-2 text-xs outline-none">
+                <span className="text-xs text-ink-faint">Period</span>
+                <select value={range} onChange={(e) => setRange(e.target.value as (typeof RANGES)[number])} className="h-9 w-full rounded-lg border border-line bg-card px-2 text-sm outline-none">
                   {RANGES.map((item) => <option key={item} value={item}>{item}</option>)}
                 </select>
               </div>
               <div className="space-y-1.5">
-                <span className="text-[10px] text-ink-faint">Branch</span>
-                <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="h-9 w-full rounded-lg border border-line bg-card px-2 text-xs outline-none">
+                <span className="text-xs text-ink-faint">Branch</span>
+                <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="h-9 w-full rounded-lg border border-line bg-card px-2 text-sm outline-none">
                   <option value="">All branches</option>
                   {(branches.data?.data ?? []).map((branch) => <option key={branch.branchId} value={branch.branchId}>{branch.name}</option>)}
                 </select>
               </div>
               <div className="space-y-1.5">
-                <span className="text-[10px] text-ink-faint">Format</span>
+                <span className="text-xs text-ink-faint">Format</span>
                 <div className="grid grid-cols-3 gap-1.5">
                   {(["PDF", "XLSX", "CSV"] as const).map((item) => (
-                    <button key={item} type="button" onClick={() => setFormat(item)} className={cn("rounded-lg border px-2 py-1.5 text-[10px] transition-colors", format === item ? "border-ink/20 bg-ink text-paper" : "border-line bg-card text-ink-soft")}>
+                    <button key={item} type="button" onClick={() => setFormat(item)} className={cn("rounded-lg border px-2 py-1.5 text-xs transition-colors", format === item ? "border-ink/20 bg-ink text-paper" : "border-line bg-card text-ink-soft")}>
                       {item}
                     </button>
                   ))}
                 </div>
               </div>
-              <p className="text-[10px] leading-relaxed text-ink-faint">
+              <p className="text-xs leading-relaxed text-ink-faint">
                 Board packs hide names by default to protect donor privacy.
               </p>
             </div>

@@ -22,6 +22,8 @@ import {
   Wallet,
 } from "lucide-react";
 import {
+  FeatureCarousel,
+  FaqSection,
   LandingMotion,
   MarketingNavigation,
   PricingSection,
@@ -54,7 +56,7 @@ const questions = [
     "Can we subscribe to these plans today?",
     "Choose Essentials, Community or Network during registration, then sign in and complete secure checkout to activate your workspace. Yearly billing saves 10%. Renewals are manual. Enterprise pricing and onboarding scope are agreed with BelivrHQ before payment.",
   ],
-];
+] as const;
 
 export function LandingPage() {
   return (
@@ -156,7 +158,7 @@ export function LandingPage() {
               shuffle.
             </p>
           </div>
-          <div className={styles.featureBento}>
+          <FeatureCarousel>
             <article className={styles.peopleFeature}>
               <span className={styles.featureIcon}>
                 <Users size={23} />
@@ -271,7 +273,33 @@ export function LandingPage() {
                 </div>
               </div>
             </article>
-          </div>
+            <article className={styles.communicationFeature}>
+              <span className={styles.featureIcon}><MessageCircle size={23} /></span>
+              <h3>A thoughtful word.<br />At the right time.</h3>
+              <p>Bring your email, SMS and WhatsApp conversations into the work of welcoming, reminding and staying close.</p>
+              <div className={styles.featureTags}>
+                <span>Email</span><span>SMS</span><span>WhatsApp</span>
+              </div>
+              <div className={styles.messageIllustration} aria-hidden="true">
+                <span><MessageCircle size={15} /> A little encouragement</span>
+                <p>We’re glad you’re part of the family. See you on Sunday!</p>
+                <small><Check size={13} /> Keep the conversation going</small>
+              </div>
+            </article>
+            <article className={styles.teamFeature}>
+              <span className={styles.featureIcon}><Network size={23} /></span>
+              <h3>Many helping hands.<br />One shared purpose.</h3>
+              <p>Connect departments, teams and cell groups. Give each person a clearer place in the work you do together.</p>
+              <div className={styles.featureTags}>
+                <span>Departments</span><span>Teams</span><span>Cell groups</span>
+              </div>
+              <div className={styles.teamIllustration} aria-hidden="true">
+                <span><Heart size={18} /> A place to serve</span>
+                <div><span>Welcome</span><span>Worship</span><span>Care</span></div>
+                <small>Different gifts. Connected people.</small>
+              </div>
+            </article>
+          </FeatureCarousel>
         </section>
 
         <section
@@ -431,41 +459,7 @@ export function LandingPage() {
 
         <PricingSection />
 
-        <section
-          id="questions"
-          className={styles.faqSection}
-          aria-labelledby="faq-title"
-        >
-          <div>
-            <span className={styles.eyebrow}>
-              A FEW THINGS YOU MIGHT BE WONDERING
-            </span>
-            <h2 id="faq-title">
-              Good questions.
-              <br />
-              <em>Straight answers.</em>
-            </h2>
-            <p>
-              Choosing a home for your church&apos;s work matters.
-              <br />
-              Here&apos;s a little clarity before you begin.
-            </p>
-          </div>
-          <div className={styles.faqList}>
-            {questions.map(([question, answer]) => (
-              <details key={question}>
-                <summary>
-                  {question}
-                  <span>
-                    <span />
-                    <span />
-                  </span>
-                </summary>
-                <p>{answer}</p>
-              </details>
-            ))}
-          </div>
-        </section>
+        <FaqSection questions={questions} />
         <section className={styles.finalCta}>
           <div className={styles.ctaMark} aria-hidden="true">
             <Heart size={30} />

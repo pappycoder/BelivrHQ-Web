@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   Archive,
@@ -8,6 +8,7 @@ import {
   ArrowUpDown,
   ArrowUpRight,
   CalendarDays,
+  ChevronDown,
   PencilLine,
   Plus,
   Rows3,
@@ -28,6 +29,8 @@ import {
 import { ListTable } from "@/components/shared/list-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -84,6 +87,11 @@ export default function EventsListPage() {
   const [archived, setArchived] = useState(false);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [dateOpen, setDateOpen] = useState(false);
+  const dateTriggerRef = useRef<HTMLButtonElement>(null);
+  const restoreDateFocus = useRef(false);
+  const [dateDraft, setDateDraft] = useState({ from: "", to: "" });
+  const invalidRange = !!dateDraft.from && !!dateDraft.to && dateDraft.from > dateDraft.to;
   const [sortBy, setSortBy] =
     useState<NonNullable<ListEventsParams["sortBy"]>>("startDate");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -148,6 +156,7 @@ export default function EventsListPage() {
     setArchived(false);
     setFromDate("");
     setToDate("");
+    setDateDraft({ from: "", to: "" });
     setPage(1);
   }
   const manageActions = (event: EventItem): (RowAction | false)[] => [
@@ -245,7 +254,7 @@ export default function EventsListPage() {
               <Button
                 asChild
                 variant="outline"
-                className="h-9 rounded-full border-line bg-card text-xs"
+                className="h-9 rounded-full border-line bg-card text-sm"
               >
                 <Link href="/gatherings/events">
                   <CalendarDays className="size-3.5" /> Calendar
@@ -253,7 +262,7 @@ export default function EventsListPage() {
               </Button>
             )}
             {canCreate && (
-              <Button asChild className="h-9 rounded-full text-xs">
+              <Button asChild className="h-9 rounded-full text-sm">
                 <Link href="/gatherings/events/new">
                   <Plus className="size-3.5" /> New event
                 </Link>
@@ -339,7 +348,7 @@ export default function EventsListPage() {
             >
               <SelectTrigger
                 aria-label="Event type"
-                className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none"
+                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -364,7 +373,7 @@ export default function EventsListPage() {
                   aria-label="Event branch"
                   data-prefix-icon="building"
                   disabled={branches.isLoading || branches.isError}
-                  className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none"
+                  className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
                 >
                   <SelectValue placeholder="All branches" />
                 </SelectTrigger>
@@ -388,7 +397,7 @@ export default function EventsListPage() {
               <SelectTrigger
                 aria-label="Sort events"
                 data-prefix-icon="none"
-                className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none"
+                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
               >
                 <ArrowUpDown className="size-3" />
                 <SelectValue />
@@ -414,42 +423,62 @@ export default function EventsListPage() {
             />
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-3 text-[11px] text-ink-faint">
-          <label className="flex items-center gap-2">
-            From
-            <Input
-              picker="native"
-              type="date"
-              aria-label="From date"
-              value={fromDate}
-              max={toDate || undefined}
-              onChange={(event) => {
-                setFromDate(event.target.value);
-                setPage(1);
-              }}
-              className="h-8 w-[156px] rounded-full border-line bg-card text-[11px] shadow-none"
-            />
-          </label>
-          <label className="flex items-center gap-2">
-            To
-            <Input
-              picker="native"
-              type="date"
-              aria-label="To date"
-              value={toDate}
-              min={fromDate || undefined}
-              onChange={(event) => {
-                setToDate(event.target.value);
-                setPage(1);
-              }}
-              className="h-8 w-[156px] rounded-full border-line bg-card text-[11px] shadow-none"
-            />
-          </label>
+        <div className="flex flex-wrap items-center gap-3 text-sm text-ink-faint">
+          <Popover open={dateOpen} onOpenChange={open => {
+            if (open) {
+              restoreDateFocus.current = false;
+              setDateDraft({ from: fromDate, to: toDate });
+            }
+            setDateOpen(open);
+          }}>
+            <PopoverTrigger asChild>
+              <Button ref={dateTriggerRef} disableTooltip type="button" variant="outline" size="sm" aria-label={fromDate || toDate ? `Date range, ${fromDate || "any start"} to ${toDate || "any end"}` : "Date range"}
+                className={`h-9 max-w-full gap-2 rounded-full border-line text-sm ${fromDate || toDate ? "bg-brand/10 text-brand" : "bg-card"}`}>
+                <CalendarDays className="size-3.5" />
+                <span className="min-w-0 truncate">{fromDate || toDate ? `${fromDate || "Any start"} → ${toDate || "Any end"}` : "Date range"}</span>
+                <ChevronDown className="size-3" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="start" aria-label="Filter event dates" className="space-y-4"
+              onEscapeKeyDown={() => { restoreDateFocus.current = true; }}
+              onCloseAutoFocus={event => {
+                if (restoreDateFocus.current) {
+                  event.preventDefault();
+                  dateTriggerRef.current?.focus();
+                  restoreDateFocus.current = false;
+                }
+              }}>
+
+              <p className="text-sm font-medium">Event date range</p>
+              <div className="space-y-2">
+                <Label htmlFor="event-date-from">From date</Label>
+                <Input id="event-date-from" name="fromDate" picker="native" type="date"
+                  value={dateDraft.from} max={dateDraft.to || undefined}
+                  onChange={event => setDateDraft(value => ({ ...value, from: event.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="event-date-to">To date</Label>
+                <Input id="event-date-to" name="toDate" picker="native" type="date"
+                  value={dateDraft.to} min={dateDraft.from || undefined}
+                  aria-invalid={invalidRange || undefined} aria-describedby={invalidRange ? "event-date-error" : undefined}
+                  onChange={event => setDateDraft(value => ({ ...value, to: event.target.value }))} />
+              </div>
+              {invalidRange && <p id="event-date-error" role="alert" className="text-sm text-destructive">To date must be on or after From date.</p>}
+              <div className="flex justify-between gap-2 border-t border-line pt-3">
+                <Button type="button" variant="ghost" size="sm" onClick={() => {
+                  setFromDate(""); setToDate(""); setDateDraft({ from: "", to: "" }); setPage(1); setDateOpen(false);
+                }}>Clear dates</Button>
+                <Button type="button" size="sm" disabled={invalidRange} onClick={() => {
+                  setFromDate(dateDraft.from); setToDate(dateDraft.to); setPage(1); setDateOpen(false);
+                }}>Apply dates</Button>
+              </div>
+            </PopoverContent>
+          </Popover>
           {hasFilters && (
             <Button
               size="sm"
               variant="ghost"
-              className="h-8 rounded-full text-[11px]"
+              className="h-8 rounded-full text-sm"
               onClick={clearFilters}
             >
               Clear filters
@@ -506,22 +535,22 @@ export default function EventsListPage() {
                     href={`/gatherings/events/${event.eventId}`}
                     className="min-w-0"
                   >
-                    <span className="block truncate text-xs font-semibold">
+                    <span className="block truncate text-sm font-semibold">
                       {event.title}
                     </span>
-                    <span className="block truncate text-[10px] text-ink-faint">
+                    <span className="block truncate text-xs text-ink-faint">
                       {event.location ?? "Location to follow"}
                     </span>
                     {event.archivedAt && <Tag tone="neutral">Archived</Tag>}
                   </Link>
-                  <span className="text-[11px] text-ink-soft">
+                  <span className="text-sm text-ink-soft">
                     {EVENT_TYPE_MAP[event.type]}
                   </span>
-                  <span className="min-w-0 text-[11px] text-ink-soft">
+                  <span className="min-w-0 text-sm text-ink-soft">
                     <span className="block truncate">
                       {dateLabel(event.startDate)}
                     </span>
-                    <span className="block truncate text-[10px] text-ink-faint">
+                    <span className="block truncate text-xs text-ink-faint">
                       {event.recurrence === "weekly"
                         ? "Weekly"
                         : event.recurrence === "multi_day"
@@ -529,10 +558,10 @@ export default function EventsListPage() {
                           : "One-time"}
                     </span>
                   </span>
-                  <span className="truncate text-[11px] text-ink-soft">
+                  <span className="truncate text-sm text-ink-soft">
                     {event.branchName ?? profile?.branch?.name ?? "Not available"}
                   </span>
-                  <span className="num text-[11px]">
+                  <span className="num text-sm">
                     {event.registrationCount}
                   </span>
                   <RowActions actions={manageActions(event)} />

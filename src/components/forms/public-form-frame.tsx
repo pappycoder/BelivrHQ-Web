@@ -60,7 +60,7 @@ export function PublicFormFrame({
         ) : (
           <span>Community forms</span>
         )}
-        <span className="flex shrink-0 items-center gap-2 rounded-full border border-current/10 bg-white/60 px-3 py-2 text-xs dark:bg-card">
+        <span className="flex shrink-0 items-center gap-2 rounded-full border border-current/10 bg-white/60 px-3 py-2 text-sm dark:bg-card">
           <ClipboardList className="size-3.5" />
           Community forms
         </span>
@@ -84,7 +84,7 @@ export function PublicFormFrame({
             className="pointer-events-none absolute -right-28 -top-28 size-80 rounded-full border-[40px] border-white/5"
           />
           <div className="relative lg:sticky lg:top-10">
-            <p className="text-xs font-semibold uppercase tracking-[.2em] text-[#d6e5ba]">
+            <p className="text-sm font-semibold uppercase tracking-[.2em] text-[#d6e5ba]">
               {eyebrow}
             </p>
             {loading ? (
@@ -116,7 +116,7 @@ export function PublicFormFrame({
                 {aside}
               </>
             )}
-            <p className="mt-8 flex gap-2 border-t border-white/15 pt-5 text-xs leading-6 text-white/70">
+            <p className="mt-8 flex gap-2 border-t border-white/15 pt-5 text-sm leading-6 text-white/70">
               <LockKeyhole className="mt-1 size-4 shrink-0" />
               Your response goes to the church team that shared this form.
             </p>

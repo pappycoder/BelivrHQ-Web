@@ -104,7 +104,7 @@ export function GroupRegisterControls({
       <SelectTrigger
         aria-label={label}
         data-prefix-icon={sort ? "none" : undefined}
-        className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none"
+        className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
       >
         {sort && <ArrowUpDown className="size-3" />}
         <SelectValue />
@@ -206,7 +206,7 @@ export function GroupRegisterControls({
           c.day !== "all" ||
           archived) && (
           <button
-            className="text-xs text-ink-soft underline underline-offset-4"
+            className="text-sm text-ink-soft underline underline-offset-4"
             onClick={() => {
               c.setSearch("");
               c.setBranch("all");
