@@ -273,6 +273,62 @@ test("pricing switches billing periods and reviews a plan without buying anythin
   }
 });
 
+for (const width of [320, 900, 1440]) {
+  test(`pricing cards share comparison rows and fit ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/#pricing");
+    const cards = page.locator('#pricing article');
+    await expect(cards).toHaveCount(4);
+    const geometry = await cards.evaluateAll(elements => elements.map(card => ({
+      top: card.getBoundingClientRect().top,
+      button: card.querySelector('button')!.getBoundingClientRect().top,
+      features: Array.from(card.querySelectorAll('li')).map(item => item.getBoundingClientRect().top),
+      overflow: card.scrollWidth - card.clientWidth,
+    })));
+    const columns = width > 1100 ? 4 : width > 640 ? 2 : 1;
+    for (let group = 0; group < 4; group += columns) {
+      for (let index = group; index < group + columns; index++) {
+        expect(Math.abs(geometry[index].button - geometry[group].button)).toBeLessThan(1);
+        for (let feature = 0; feature < 6; feature++) {
+          expect(Math.abs(geometry[index].features[feature] - geometry[group].features[feature])).toBeLessThan(1);
+        }
+        expect(geometry[index].overflow).toBeLessThanOrEqual(1);
+      }
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await expect(cards.filter({ has: page.getByRole("heading", { name: "Network", exact: true }) })).toHaveCSS("background-image", /linear-gradient/);
+    if (width === 320) {
+      await cards.nth(2).screenshot({ path: "/tmp/belivrhq-pricing-featured-mobile.png", style: "header { visibility: hidden !important; }" });
+    } else {
+      await page.locator('[class*="pricingGrid"]').screenshot({ path: `/tmp/belivrhq-pricing-cards-${width}.png`, style: "header { visibility: hidden !important; }" });
+    }
+  });
+}
+
+test("pricing hover, featured border and price transitions respect motion preferences", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/#pricing");
+  const card = page.locator('#pricing article').filter({ has: page.getByRole("heading", { name: "Network", exact: true }) });
+  await card.hover({ position: { x: 60, y: 100 } });
+  await expect(card).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -6)");
+  await expect.poll(() => card.evaluate(el => getComputedStyle(el, '::before').opacity)).toBe("1");
+  expect(await card.evaluate(el => el.style.getPropertyValue('--spot-x'))).not.toBe("");
+  await expect.poll(() => card.evaluate(el => getComputedStyle(el, '::after').animationPlayState)).toBe("running");
+  await page.mouse.move(0, 0);
+  await expect.poll(() => card.evaluate(el => el.style.getPropertyValue('--spot-x'))).toBe("");
+  await page.getByRole("button", { name: /Yearly Save 10%/ }).click();
+  const price = card.locator('[class*="priceTransition"]');
+  await expect(price).toContainText("USD 432");
+  await expect(price).toHaveCSS("animation-duration", "0.44s");
+  await expect(price).toHaveCSS("animation-name", /pricingAmountIn/);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(price).toHaveCSS("animation-name", "none");
+  expect(await card.evaluate(el => getComputedStyle(el, '::after').animationName)).toBe("none");
+  await card.hover();
+  await expect(card).toHaveCSS("transform", "none");
+});
+
 test("Enterprise has negotiated pricing without an amount or checkout in either billing period", async ({
   page,
 }) => {

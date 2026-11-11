@@ -2490,10 +2490,10 @@
 .footerBottom > a { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; min-height: 44px; }
 
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .providerGrid > article, .planCard {
+  .providerGrid > article {
     transition: transform 220ms ease, box-shadow 220ms ease;
   }
-  .providerGrid > article:hover, .planCard:hover {
+  .providerGrid > article:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 28px rgb(24 59 64 / 7%);
   }
@@ -2574,14 +2574,13 @@
 /* Long quiet intervals between small pulses keep reading and controls steady.
    Individual transforms compose with the entrance and hover transforms. */
 @media (prefers-reduced-motion: no-preference) {
-  .providerGrid > article, .planCard {
+  .providerGrid > article {
     animation: cardBreathe 8s ease-in-out infinite;
     animation-play-state: paused;
     transform-origin: center;
   }
-  .providerGrid > article:nth-child(2), .planCard:nth-child(2) { animation-delay: 1.2s; }
-  .providerGrid > article:nth-child(3), .planCard:nth-child(3) { animation-delay: 2.4s; }
-  .planCard:nth-child(4) { animation-delay: 3.6s; }
+  .providerGrid > article:nth-child(2) { animation-delay: 1.2s; }
+  .providerGrid > article:nth-child(3) { animation-delay: 2.4s; }
   .heroScribble {
     animation: scribbleFloat 6s ease-in-out infinite;
     animation-play-state: paused;
@@ -2599,7 +2598,7 @@
   .heroScribble[data-motion-visible="true"] > svg:first-child,
   .heroScribble[data-motion-visible="true"] > svg:last-child path { animation-play-state: running; }
   .landing[data-motion-paused="true"] *,
-  .providerGrid > article:focus-within, .planCard:focus-within { animation-play-state: paused; }
+  .providerGrid > article:focus-within { animation-play-state: paused; }
 }
 @keyframes cardBreathe {
   0%, 12%, 38%, 100% { scale: 1; translate: 0 0; }
@@ -2793,4 +2792,89 @@
   .featureCarousel[data-ready="true"] .featureSlide { height: 650px; }
   .featureCarousel[data-ready="true"] .featureArc { height: 680px; }
   .featureArc article { min-height: 650px; }
+}
+
+
+/* Shared tracks align plan headers and all ten feature rows without fixed text heights. */
+.pricingGrid { column-gap: 18px; row-gap: 0; }
+.planCard {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 17;
+  row-gap: 0;
+  min-width: 0;
+  isolation: isolate;
+  border-radius: 16px;
+  margin-bottom: 28px;
+  box-shadow: 0 8px 24px -18px rgb(24 59 64 / 18%);
+  transition: border-color 260ms ease, box-shadow 350ms ease;
+}
+.planCard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(240px circle at var(--spot-x, 50%) var(--spot-y, 24%), rgb(205 226 161 / 32%), transparent 80%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 350ms ease;
+}
+.planCard:focus-within { border-color: #9bb67b; box-shadow: 0 14px 35px -16px rgb(24 59 64 / 22%); }
+.planCard:focus-within::before { opacity: 1; }
+.planCard .planDescription, .planCard .planCapacity, .planCard .billingNote { min-height: 0; }
+.planCard .planPrice { align-content: start; font-variant-numeric: tabular-nums; }
+.planCard .planButton { align-self: start; min-height: 44px; }
+.planCard ul {
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-row: span 10;
+  gap: 0;
+  align-content: start;
+}
+.planCard li { padding: 9px 0; border-bottom: 1px solid rgb(24 59 64 / 6%); }
+.planCard li:last-child { border-bottom-color: transparent; }
+.planCard li > svg { margin-top: 2px; }
+.featuredPlan {
+  background: linear-gradient(145deg, #f4f8e9, #e6efd4);
+  border-color: #aec68a;
+  box-shadow: 0 12px 35px -18px rgb(86 117 47 / 25%);
+}
+.featuredPlan::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(from var(--pricing-angle, 0deg), #b7cb94, #71944c 15%, #edf5d9 30%, #b7cb94 60%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.featuredPlan .popularBadge { z-index: 1; background: #d6e8ae; border-color: #b9d28b; border-radius: 7px; padding: 7px 10px; top: -15px; }
+@property --pricing-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+@media (hover: hover) and (pointer: fine) {
+  .planCard:hover { border-color: #a6bd8e; box-shadow: 0 20px 42px -20px rgb(24 59 64 / 28%); }
+  .planCard:hover::before { opacity: 1; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .priceTransition { animation: pricingAmountIn 440ms cubic-bezier(.22, 1, .36, 1) both; }
+  .featuredPlan::after { animation: pricingBorderTurn 9s linear infinite; animation-play-state: paused; }
+  .featuredPlan[data-motion-visible="true"]::after { animation-play-state: running; }
+  .featuredPlan:focus-within::after,
+  .landing[data-motion-paused="true"] .featuredPlan::after { animation-play-state: paused; }
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .planCard { transition: transform 350ms cubic-bezier(.22, 1, .36, 1), border-color 260ms ease, box-shadow 350ms ease; }
+  .planCard:hover, .planCard:focus-within { transform: translateY(-6px); }
+}
+@keyframes pricingAmountIn {
+  from { opacity: .25; transform: translateY(10px); filter: blur(2px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@keyframes pricingBorderTurn { to { --pricing-angle: 360deg; } }
+@media (max-width: 640px) {
+  .planCard { margin-bottom: 25px; }
+  .planCard li { padding-block: 10px; }
 }

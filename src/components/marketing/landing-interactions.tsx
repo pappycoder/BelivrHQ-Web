@@ -56,7 +56,8 @@ export function LandingMotion({ children }: { children: React.ReactNode }) {
         if (preference.matches) continue;
         const cursive = entry.target.tagName === "EM";
         const siblings = Array.from(entry.target.parentElement?.children ?? []);
-        const delay = cursive ? 160 : Math.min(siblings.indexOf(entry.target), 3) * 65;
+        const planCard = entry.target.classList.contains(styles.planCard);
+        const delay = cursive ? 160 : Math.min(siblings.indexOf(entry.target), 3) * (planCard ? 110 : 65);
         const animation = entry.target.animate(
           cursive
             ? [{ opacity: 0, transform: "translateY(12px) rotate(-3deg)", clipPath: "inset(0 100% 0 0)" },
@@ -598,6 +599,16 @@ export function PricingSection() {
             <article
               key={item.id}
               className={`${styles.planCard} ${"featured" in item && item.featured ? styles.featuredPlan : ""}`}
+              onPointerMove={event => {
+                if (event.pointerType !== "mouse") return;
+                const rect = event.currentTarget.getBoundingClientRect();
+                event.currentTarget.style.setProperty("--spot-x", `${event.clientX - rect.left}px`);
+                event.currentTarget.style.setProperty("--spot-y", `${event.clientY - rect.top}px`);
+              }}
+              onPointerLeave={event => {
+                event.currentTarget.style.removeProperty("--spot-x");
+                event.currentTarget.style.removeProperty("--spot-y");
+              }}
             >
               {"featured" in item && item.featured && (
                 <div className={styles.popularBadge}>
@@ -609,7 +620,10 @@ export function PricingSection() {
               </span>
               <h3>{item.name}</h3>
               <p className={styles.planDescription}>{item.description}</p>
-              <div className={styles.planPrice}>
+              <div
+                key={item.id === "enterprise" ? item.id : `${pricing.currency}-${annual}-${pricing.price(item.id, annual ? "annual" : "monthly")}`}
+                className={`${styles.planPrice} ${item.id !== "enterprise" ? styles.priceTransition : ""}`}
+              >
                 {item.id === "enterprise" ? (
                   <strong>Let’s talk</strong>
                 ) : (
