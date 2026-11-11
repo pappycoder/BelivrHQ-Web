@@ -78,7 +78,7 @@ export function NavRail({
             href="/home"
             aria-label="BelivrHQ home"
             title="BelivrHQ"
-            className="mb-1 grid size-9 place-items-center rounded-[14px] bg-ink text-paper"
+            className="mb-1 grid size-9 place-items-center rounded-[14px] bg-ink text-paper dark:bg-paper dark:ring-1 dark:ring-line"
           >
             <BrandLogo variant="mark" emblemClassName="size-[22px] brightness-0 invert" />
           </Link>
