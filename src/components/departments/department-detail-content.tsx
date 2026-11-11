@@ -158,7 +158,7 @@ export function DepartmentDetailContent({
             <Button
               asChild
               variant="outline"
-              className="h-9 rounded-full text-xs"
+              className="h-9 rounded-full text-sm"
             >
               <Link href="/gatherings/groups">
                 <ArrowLeft className="size-3.5" /> Departments
@@ -167,7 +167,7 @@ export function DepartmentDetailContent({
             {canManage && (
               <Button
                 variant="outline"
-                className="h-9 rounded-full text-xs"
+                className="h-9 rounded-full text-sm"
                 onClick={() => setEditing(true)}
               >
                 <PencilLine className="size-3.5" /> Edit department
@@ -215,7 +215,7 @@ export function DepartmentDetailContent({
             <TabsTrigger
               key={tab}
               value={tab}
-              className="h-9 flex-none rounded-full px-4 py-2 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper"
+              className="h-9 flex-none rounded-full px-4 py-2 text-sm data-[state=active]:bg-ink data-[state=active]:text-paper"
             >
               {
                 {
@@ -268,7 +268,7 @@ export function DepartmentDetailContent({
                 <Dialog open={addOpen} onOpenChange={setAddOpen}>
                   <DialogTrigger asChild>
                     <Button
-                      className="h-8 rounded-full text-xs"
+                      className="h-8 rounded-full text-sm"
                       variant="outline"
                     >
                       <UserPlus className="size-4" />

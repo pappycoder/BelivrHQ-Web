@@ -77,7 +77,7 @@ export function RegistrationCheckout(props: Props) {
       <div className="space-y-5" data-registration-checkout>
         <ol
           aria-label="Workspace setup progress"
-          className="flex items-center gap-3 text-xs text-muted-foreground"
+          className="flex items-center gap-3 text-sm text-muted-foreground"
         >
           <li className="flex items-center gap-1.5">
             <Check className="size-3.5 text-primary" /> Account created
@@ -107,7 +107,7 @@ export function RegistrationCheckout(props: Props) {
                     : "Waiting for Flutterwave to confirm your payment."}
             </p>
             {!reviewing && outcome !== "applied" && outcome !== "closed" && (
-              <p className="text-xs leading-relaxed text-muted-foreground">
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 Complete payment in the separate window and keep this page open.
                 Once confirmed, you’ll return here to sign in.
                 {props.verificationError &&
@@ -116,7 +116,7 @@ export function RegistrationCheckout(props: Props) {
                   " The latest attempt was unsuccessful. You can retry checkout."}
               </p>
             )}
-            <p className="break-all font-mono text-[11px] text-muted-foreground">
+            <p className="break-all font-mono text-sm text-muted-foreground">
               {reference}
             </p>
           </div>
@@ -175,7 +175,7 @@ export function RegistrationCheckout(props: Props) {
                     <span className="block text-sm font-semibold">
                       {item.name}
                     </span>
-                    <span className="mt-0.5 block text-xs leading-relaxed text-muted-foreground">
+                    <span className="mt-0.5 block text-sm leading-relaxed text-muted-foreground">
                       {limits
                         ? `${limits.members.toLocaleString()} members · ${limits.locations} ${limits.locations === 1 ? "location" : "locations"} · ${limits.staff} staff`
                         : item.capacity}
@@ -242,7 +242,7 @@ export function RegistrationCheckout(props: Props) {
               <h2 className="text-sm font-semibold">
                 {pending ? "Your pending payment" : "Your subscription"}
               </h2>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-sm text-muted-foreground">
                 {selected?.name} ·{" "}
                 {(pending?.cycle || cycle) === "annual" ? "Yearly" : "Monthly"}
               </p>
@@ -253,14 +253,14 @@ export function RegistrationCheckout(props: Props) {
                   <p className="font-display text-2xl font-semibold tracking-tight">
                     {subscriptionMoney(total.amount, total.currency)}
                   </p>
-                  <p className="text-xs text-muted-foreground">due today</p>
+                  <p className="text-sm text-muted-foreground">due today</p>
                 </>
               ) : !props.currencies.length || !data.gateways.length ? (
-                <p role="status" className="text-xs text-muted-foreground">
+                <p role="status" className="text-sm text-muted-foreground">
                   Checkout is being configured. Contact BelivrHQ.
                 </p>
               ) : props.quoteError ? (
-                <p role="alert" className="text-xs text-destructive">
+                <p role="alert" className="text-sm text-destructive">
                   {props.quoteError}{" "}
                   <button
                     type="button"
@@ -279,13 +279,13 @@ export function RegistrationCheckout(props: Props) {
             </div>
           </div>
           {pending && (pending.plan !== plan || pending.cycle !== cycle) && (
-            <p className="text-xs leading-relaxed text-muted-foreground">
+            <p className="text-sm leading-relaxed text-muted-foreground">
               This pending payment keeps its original plan, period and amount.
               Close checkout below to pay for a different selection.
             </p>
           )}
           {quote && !pending && !props.quoteError && (
-            <p className="text-xs leading-relaxed text-muted-foreground">
+            <p className="text-sm leading-relaxed text-muted-foreground">
               Price locked until{" "}
               {new Date(quote.expiresAt).toLocaleTimeString("en-NG", {
                 timeZone: "Africa/Lagos",
@@ -307,7 +307,7 @@ export function RegistrationCheckout(props: Props) {
               )}
             </p>
           )}
-          <p className="flex gap-2 text-xs leading-relaxed text-muted-foreground">
+          <p className="flex gap-2 text-sm leading-relaxed text-muted-foreground">
             <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />
             Secure checkout with Flutterwave. No automatic renewal charges.
           </p>
@@ -331,7 +331,7 @@ export function RegistrationCheckout(props: Props) {
                 ? "Resume secure checkout"
                 : "Continue to payment"}
           </Button>
-          <p className="text-center text-xs leading-relaxed text-muted-foreground">
+          <p className="text-center text-sm leading-relaxed text-muted-foreground">
             Payment opens in a separate window. After confirmation, you’ll be
             taken to sign in.
           </p>
@@ -350,20 +350,20 @@ export function RegistrationCheckout(props: Props) {
             <div className="space-y-2">
               <button
                 type="button"
-                className="w-full text-center text-xs font-medium text-primary underline-offset-4 hover:underline disabled:opacity-50"
+                className="w-full text-center text-sm font-medium text-primary underline-offset-4 hover:underline disabled:opacity-50"
                 onClick={props.onClose}
                 disabled={busy}
               >
                 Close checkout and change plan
               </button>
-              <p className="text-center text-xs leading-relaxed text-muted-foreground">
+              <p className="text-center text-sm leading-relaxed text-muted-foreground">
                 Closing does not refund a payment already sent. Late payments go
                 to BelivrHQ for review.
               </p>
             </div>
           )}
         </div>
-        <p className="text-center text-xs text-muted-foreground">
+        <p className="text-center text-sm text-muted-foreground">
           Need more capacity?{" "}
           <Link
             href="/help/contact-support"
@@ -372,7 +372,7 @@ export function RegistrationCheckout(props: Props) {
             Talk to us about Enterprise
           </Link>
         </p>
-        <details className="text-xs leading-relaxed text-muted-foreground">
+        <details className="text-sm leading-relaxed text-muted-foreground">
           <summary className="cursor-pointer">Payment and refund terms</summary>
           <p className="pt-2">
             Before paying, review the exact amount, currency and period. The

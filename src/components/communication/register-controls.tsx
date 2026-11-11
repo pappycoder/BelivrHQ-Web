@@ -36,7 +36,7 @@ export function CommunicationRegisterControls({ controls: c, kind, channels, sta
 }) {
   const select = (label: string, value: string, onChange: (value: string) => void, choices: Choice[], sort = false) => (
     <Select value={value} onValueChange={value => { onChange(value); c.setPage(1); }}>
-      <SelectTrigger aria-label={label} data-prefix-icon={sort ? "none" : undefined} className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none">
+      <SelectTrigger aria-label={label} data-prefix-icon={sort ? "none" : undefined} className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
         {sort && <ArrowUpDown className="size-3" />}<SelectValue />
       </SelectTrigger>
       <SelectContent>{choices.map(choice => <SelectItem key={choice.value} value={choice.value}>{choice.label}</SelectItem>)}</SelectContent>
@@ -52,7 +52,7 @@ export function CommunicationRegisterControls({ controls: c, kind, channels, sta
         {select(`Sort ${kind.toLowerCase()}`, c.sort, c.setSort, sorts, true)}
         <SortDirectionToggle ascending={c.ascending} onToggle={() => { c.setAscending(value => !value); c.setPage(1); }} />
         <ViewToggle value={c.view} onChange={c.setView} options={[{ value: "table", label: "List view", icon: <Rows3 /> }, { value: "cards", label: "Card view", icon: <LayoutGrid /> }]} />
-        {(c.query || c.channel !== "all" || c.status !== "all" || c.branch !== "all") && <button type="button" className="text-xs text-ink-soft underline underline-offset-4" onClick={c.reset}>Clear filters</button>}
+        {(c.query || c.channel !== "all" || c.status !== "all" || c.branch !== "all") && <button type="button" className="text-sm text-ink-soft underline underline-offset-4" onClick={c.reset}>Clear filters</button>}
       </div>
     </div>
   );

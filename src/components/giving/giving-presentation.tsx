@@ -56,7 +56,7 @@ export function GivingStatusBadge({ status }: { status: string }) {
   return (
     <Badge
       variant="outline"
-      className={`rounded-full text-[11px] font-medium capitalize ${statusColors[status] ?? statusColors.inactive}`}
+      className={`rounded-full text-sm font-medium capitalize ${statusColors[status] ?? statusColors.inactive}`}
     >
       {status.charAt(0).toUpperCase() + status.slice(1)}
     </Badge>

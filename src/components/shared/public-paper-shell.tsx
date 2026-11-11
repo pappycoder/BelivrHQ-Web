@@ -20,11 +20,11 @@ export function PublicPaperShell({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-7">
           <span className="flex items-center gap-2.5">
             <BrandLogo variant="mark" emblemClassName="size-8" />
-            <span className="text-[10px] uppercase tracking-wider text-ink-faint">
+            <span className="text-xs uppercase tracking-wider text-ink-faint">
               BelivrHQ church management
             </span>
           </span>
-          <span className="flex items-center gap-4 text-[11px]">
+          <span className="flex items-center gap-4 text-sm">
             <Link href="/help" className="text-ink-soft hover:text-ink">Help centre</Link>
             <Link href="/help/contact-support" className="text-ink-soft hover:text-ink">Contact support</Link>
             <Link href="/" className="text-ink-soft hover:text-ink">Home</Link>

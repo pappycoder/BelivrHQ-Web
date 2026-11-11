@@ -97,7 +97,7 @@ export default function CareCalendarPage() {
                   slot.isToday ? "bg-brand-soft/70" : "hover:bg-muted/50",
                 )}
               >
-                <p className={cn("text-[10px] uppercase tracking-wider", slot.isToday ? "font-semibold text-brand" : "text-ink-faint")}>
+                <p className={cn("text-xs uppercase tracking-wider", slot.isToday ? "font-semibold text-brand" : "text-ink-faint")}>
                   {slot.day}
                 </p>
                 <p className="num mt-0.5 text-sm font-semibold">{slot.number}</p>
@@ -117,7 +117,7 @@ export default function CareCalendarPage() {
                     />
                   ))}
                   {slot.events.length > 2 ? (
-                    <span className="num text-[9px] text-ink-faint">+{slot.events.length - 2}</span>
+                    <span className="num text-xs text-ink-faint">+{slot.events.length - 2}</span>
                   ) : null}
                 </p>
               </div>
@@ -147,14 +147,14 @@ export default function CareCalendarPage() {
                       </span>
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <p className="truncate text-xs font-semibold capitalize">
+                          <p className="truncate text-sm font-semibold capitalize">
                             {event.type.replace(/[_-]/g, " ")} · {event.memberFirstName} {event.memberLastName}
                           </p>
                           {event.notified ? <Tag tone="moss">Acknowledged</Tag> : null}
                         </div>
                         <Link
                           href={`/people/members/${event.memberId}`}
-                          className="mt-0.5 flex items-center gap-1.5 text-[10px] text-ink-faint hover:text-brand"
+                          className="mt-0.5 flex items-center gap-1.5 text-xs text-ink-faint hover:text-brand"
                         >
                           <PersonAvatar name={`${event.memberFirstName} ${event.memberLastName}`} size="xs" />
                           {label(event.date)}
@@ -163,7 +163,7 @@ export default function CareCalendarPage() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="h-8 shrink-0 gap-1.5 rounded-full border-line bg-card text-xs"
+                        className="h-8 shrink-0 gap-1.5 rounded-full border-line bg-card text-sm"
                         onClick={() => toast(`Care prompt drafted for ${event.memberFirstName}.`)}
                       >
                         <PhoneCall className="size-3.5" /> Reach out
@@ -181,7 +181,7 @@ export default function CareCalendarPage() {
             title="Nothing on the care horizon"
             description="Life events recorded on the notes hub will surface here as they approach."
             action={
-              <Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs">
+              <Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm">
                 <Link href="/people/pastoral/life-events">Record a milestone</Link>
               </Button>
             }

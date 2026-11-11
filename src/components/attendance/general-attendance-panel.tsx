@@ -441,7 +441,7 @@ export function GeneralAttendancePanel({
         <Label
           required={key === "total"}
           htmlFor={id(key)}
-          className="text-xs text-ink-muted"
+          className="text-sm text-ink-muted"
         >
           {label}
         </Label>
@@ -488,7 +488,7 @@ export function GeneralAttendancePanel({
       >
         <div className="flex flex-wrap items-start justify-between gap-3 rounded-xl border border-line bg-muted/20 p-4">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-ink-faint">
+            <p className="text-xs font-semibold uppercase tracking-widest text-ink-faint">
               {savedRecord ? "Saved headcount" : "New headcount"}
             </p>
             <p className="mt-1 text-sm font-semibold">
@@ -497,7 +497,7 @@ export function GeneralAttendancePanel({
                 savedRecord?.serviceName ??
                 "Meeting attendance"}
             </p>
-            <p className="mt-1 text-xs text-ink-muted">
+            <p className="mt-1 text-sm text-ink-muted">
               {entryEditable
                 ? "Edit mode. Review the counts before saving."
                 : savedRecord
@@ -517,7 +517,7 @@ export function GeneralAttendancePanel({
           )}
         </div>
         {lookingUp && (
-          <p role="status" className="text-xs text-ink-muted">
+          <p role="status" className="text-sm text-ink-muted">
             Checking saved attendance for this date…
           </p>
         )}
@@ -540,14 +540,14 @@ export function GeneralAttendancePanel({
         <div className="grid items-start gap-5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           <div className="rounded-xl border border-brand/20 bg-brand/5 p-4">
             {countInput("total", "Total attendance")}
-            <p className="mt-2 text-xs leading-relaxed text-ink-muted">
+            <p className="mt-2 text-sm leading-relaxed text-ink-muted">
               The number of people present. Named check-ins are recorded
               separately.
             </p>
           </div>
           <div className="space-y-4 rounded-xl border border-line p-4">
             <div className="space-y-2">
-              <Label required htmlFor={id("date")} className="text-xs">
+              <Label required htmlFor={id("date")} className="text-sm">
                 Attendance date
               </Label>
               {controlled || !!editing ? (
@@ -581,7 +581,7 @@ export function GeneralAttendancePanel({
             </div>
             {!editing && !target?.branchId && profile?.isAdminHq && (
               <fieldset disabled={save.isPending || !!editing}>
-                <Label required className="text-xs">
+                <Label required className="text-sm">
                   Branch
                 </Label>
                 <BranchFilter
@@ -600,7 +600,7 @@ export function GeneralAttendancePanel({
                 />
               </fieldset>
             )}
-            <p className="text-xs leading-relaxed text-ink-muted">
+            <p className="text-sm leading-relaxed text-ink-muted">
               Only the total is required. Add age or gender breakdowns when
               available.
             </p>
@@ -613,7 +613,7 @@ export function GeneralAttendancePanel({
           >
             <div>
               <h3 className="text-sm font-semibold">Age breakdown</h3>
-              <p className="mt-1 text-xs text-ink-muted">
+              <p className="mt-1 text-sm text-ink-muted">
                 Optional counts within the total.
               </p>
             </div>
@@ -628,7 +628,7 @@ export function GeneralAttendancePanel({
           >
             <div>
               <h3 className="text-sm font-semibold">Gender breakdown</h3>
-              <p className="mt-1 text-xs text-ink-muted">
+              <p className="mt-1 text-sm text-ink-muted">
                 Another breakdown of the same total.
               </p>
             </div>
@@ -664,7 +664,7 @@ export function GeneralAttendancePanel({
           </div>
         )}
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
-          <p className="text-xs text-ink-muted">
+          <p className="text-sm text-ink-muted">
             {lookingUp
               ? "Checking saved attendance…"
               : entryEditable
@@ -708,7 +708,7 @@ export function GeneralAttendancePanel({
     >
       <CardHeader className="px-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <CardTitle className="text-sm">
+          <CardTitle className="text-lg">
             {inline
               ? "Reported headcount"
               : entryMode === "hidden"
@@ -742,7 +742,7 @@ export function GeneralAttendancePanel({
             )}
           </div>
         </div>
-        <CardDescription className="text-xs leading-relaxed">
+        <CardDescription className="text-sm leading-relaxed">
           {inline
             ? controlled
               ? "Report totals separately from named check-ins. The headcount follows the date chosen above."
@@ -786,15 +786,15 @@ export function GeneralAttendancePanel({
                       : "Date range"
                   }
                   className={cn(
-                    "h-8 gap-2 rounded-full border-line bg-card text-[11px]",
+                    "h-9 max-w-full gap-2 rounded-full border-line bg-card text-sm",
                     (params.startDate || params.endDate) &&
                       "bg-brand/10 text-brand",
                   )}
                 >
                   <CalendarDays className="size-3.5" />
-                  {params.startDate || params.endDate
+                  <span className="min-w-0 truncate">{params.startDate || params.endDate
                     ? `${params.startDate || "Any start"} → ${params.endDate || "Any end"}`
-                    : "Date range"}
+                    : "Date range"}</span>
                   <ChevronDown className="size-3" />
                 </Button>
               </PopoverTrigger>
@@ -862,7 +862,7 @@ export function GeneralAttendancePanel({
                   <p
                     id={`headcount-filter-${fieldId}-error`}
                     role="alert"
-                    className="text-xs text-destructive"
+                    className="text-sm text-destructive"
                   >
                     To date must be on or after From date.
                   </p>
@@ -923,7 +923,7 @@ export function GeneralAttendancePanel({
               action={
                 <Button
                   variant="outline"
-                  className="h-8 rounded-full text-xs"
+                  className="h-8 rounded-full text-sm"
                   onClick={() => query.refetch()}
                 >
                   Retry
@@ -950,7 +950,7 @@ export function GeneralAttendancePanel({
                 startDate || endDate || branchId ? (
                   <Button
                     variant="outline"
-                    className="h-8 rounded-full text-xs"
+                    className="h-8 rounded-full text-sm"
                     onClick={() => {
                       setStartDate("");
                       setEndDate("");
@@ -963,7 +963,7 @@ export function GeneralAttendancePanel({
                 ) : canCreate && entryMode !== "hidden" ? (
                   <Button
                     variant="outline"
-                    className="h-8 rounded-full text-xs"
+                    className="h-8 rounded-full text-sm"
                     onClick={() => begin()}
                   >
                     Record first headcount
@@ -1004,25 +1004,25 @@ export function GeneralAttendancePanel({
                       <div
                         key={row.id}
                         className={cn(
-                          "group grid items-center gap-3 px-2 py-2.5 text-xs transition-colors hover:bg-muted/40",
+                          "group grid items-center gap-3 px-2 py-2.5 text-sm transition-colors hover:bg-muted/40",
                           canUpdate
                             ? "grid-cols-[minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1fr)_repeat(5,minmax(0,0.7fr))_auto]"
                             : "grid-cols-[minmax(0,1.1fr)_minmax(0,1.3fr)_minmax(0,1fr)_repeat(5,minmax(0,0.7fr))]",
                         )}
                       >
-                        <span className="num text-[11px]">
+                        <span className="num text-sm">
                           {row.attendanceDate}
                         </span>
                         <span className="min-w-0 truncate font-medium">
                           {row.contextName ?? "Not available"}
                         </span>
-                        <span className="min-w-0 truncate text-[11px] text-ink-soft">
+                        <span className="min-w-0 truncate text-sm text-ink-soft">
                           {row.branchName ?? "Not available"}
                         </span>
                         {countFields.map(([key]) => (
                           <span
                             key={key}
-                            className="num text-right tabular-nums text-[11px]"
+                            className="num text-right tabular-nums text-sm"
                           >
                             {String(
                               row[key as keyof GeneralAttendanceRecord] ??

@@ -103,7 +103,7 @@ export default function DepartmentsPage() {
             <p className="truncate font-display text-sm font-semibold">
               {dept.name}
             </p>
-            <p className="mt-0.5 text-[10px] text-ink-faint">
+            <p className="mt-0.5 text-xs text-ink-faint">
               {dept.branchName ?? "Church-wide"} ·{" "}
               {number(dept.members?.length ?? dept.memberCount ?? 0)} serving
             </p>
@@ -169,18 +169,18 @@ export default function DepartmentsPage() {
           />
         </div>
         {dept.description ? (
-          <p className="mt-2 line-clamp-2 text-[11px] leading-relaxed text-ink-soft">
+          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ink-soft">
             {dept.description}
           </p>
         ) : null}
         <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3">
           {head ? (
-            <span className="flex min-w-0 items-center gap-2 text-[11px] text-ink-soft">
+            <span className="flex min-w-0 items-center gap-2 text-sm text-ink-soft">
               <PersonAvatar name={head} size="xs" />{" "}
               <span className="truncate">{head}</span>
             </span>
           ) : (
-            <span className="text-[10px] text-ink-faint">No head assigned</span>
+            <span className="text-xs text-ink-faint">No head assigned</span>
           )}
           <AvatarStack
             people={(dept.members ?? [])
@@ -194,7 +194,7 @@ export default function DepartmentsPage() {
           asChild
           variant="ghost"
           size="sm"
-          className="mt-2 h-8 justify-between rounded-lg text-[11px] text-brand"
+          className="mt-2 h-8 justify-between rounded-lg text-sm text-brand"
         >
           <Link href={`/gatherings/groups/${dept.id}`}>
             Roster &amp; meeting attendance <CalendarPlus className="size-3" />
@@ -213,7 +213,7 @@ export default function DepartmentsPage() {
         actions={
           canCreate && !isDepartmentHead ? (
             <Button
-              className="h-9 gap-1.5 rounded-full text-xs"
+              className="h-9 gap-1.5 rounded-full text-sm"
               onClick={() => {
                 setEditing(null);
                 setFormOpen(true);
@@ -293,7 +293,7 @@ export default function DepartmentsPage() {
               <Button
                 size="sm"
                 variant="outline"
-                className="rounded-full border-line text-xs"
+                className="rounded-full border-line text-sm"
                 onClick={() => {
                   setEditing(null);
                   setFormOpen(true);
@@ -338,21 +338,21 @@ export default function DepartmentsPage() {
                     <Layers className="size-3.5" />
                   </span>
                   <div className="min-w-0">
-                    <p className="truncate text-xs font-semibold">
+                    <p className="truncate text-sm font-semibold">
                       {dept.name}
                     </p>
                     {dept.description ? (
-                      <p className="truncate text-[10px] text-ink-faint">
+                      <p className="truncate text-xs text-ink-faint">
                         {dept.description}
                       </p>
                     ) : null}
                   </div>
                   {dept.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
                 </div>
-                <span className="truncate text-[11px] text-ink-soft">
+                <span className="truncate text-sm text-ink-soft">
                   {dept.branchName ?? "Church-wide"}
                 </span>
-                <span className="flex min-w-0 items-center gap-1.5 text-[11px] text-ink-soft">
+                <span className="flex min-w-0 items-center gap-1.5 text-sm text-ink-soft">
                   {head ? (
                     <>
                       <PersonAvatar name={head} size="xs" />{" "}
@@ -362,7 +362,7 @@ export default function DepartmentsPage() {
                     <span className="text-ink-faint">Unheaded</span>
                   )}
                 </span>
-                <span className="num text-right text-[11px]">
+                <span className="num text-right text-sm">
                   {number(dept.members?.length ?? dept.memberCount ?? 0)}
                 </span>
                 <RowActions

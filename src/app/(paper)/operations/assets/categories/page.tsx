@@ -60,7 +60,7 @@ export default function AssetCategoriesPage() {
         description="Sound, transport and furniture: group assets the way the team already thinks about them."
         actions={
           canCreate ? (
-            <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setFormTarget({ open: true, category: null })}>
+            <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setFormTarget({ open: true, category: null })}>
               <Plus className="size-3.5" /> New category
             </Button>
           ) : null
@@ -85,7 +85,7 @@ export default function AssetCategoriesPage() {
           icon={<Plus />}
           title={archivedView ? "No archived categories" : "No categories yet"}
           description="Categories keep the register readable. Make the first one now."
-          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => setFormTarget({ open: true, category: null })}>Add a category</Button> : undefined}
+          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => setFormTarget({ open: true, category: null })}>Add a category</Button> : undefined}
         />
       ) : (
         <StaggerGroup className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl">
@@ -96,8 +96,8 @@ export default function AssetCategoriesPage() {
                   {category.name.slice(0, 1).toUpperCase()}
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-xs font-semibold">{category.name}</span>
-                  <span className="block truncate text-[10px] text-ink-faint">{category.description || `Created ${formatDate(category.createdAt)}`}</span>
+                  <span className="block truncate text-sm font-semibold">{category.name}</span>
+                  <span className="block truncate text-xs text-ink-faint">{category.description || `Created ${formatDate(category.createdAt)}`}</span>
                 </span>
                 {category.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
                 <div className="flex shrink-0 items-center gap-1">
@@ -119,16 +119,16 @@ export default function AssetCategoriesPage() {
                       </ActionTooltip>
                       <DropdownMenuContent align="end" className="w-40">
                         {category.archivedAt ? (
-                          <DropdownMenuItem className="text-xs" onClick={() => confirm({ title: "Restore category?", subject: category.name, onConfirm: () => restore.mutateAsync(category.id, { onSuccess: () => toast("Category restored."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't restore it.")) }) })}>
+                          <DropdownMenuItem className="text-sm" onClick={() => confirm({ title: "Restore category?", subject: category.name, onConfirm: () => restore.mutateAsync(category.id, { onSuccess: () => toast("Category restored."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't restore it.")) }) })}>
                             Restore
                           </DropdownMenuItem>
                         ) : (
-                          <DropdownMenuItem className="text-xs" onClick={() => confirm({ title: "Archive category?", subject: category.name, onConfirm: () => archive.mutateAsync(category.id, { onSuccess: () => toast("Category archived."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't archive it.")) }) })}>
+                          <DropdownMenuItem className="text-sm" onClick={() => confirm({ title: "Archive category?", subject: category.name, onConfirm: () => archive.mutateAsync(category.id, { onSuccess: () => toast("Category archived."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't archive it.")) }) })}>
                             Archive
                           </DropdownMenuItem>
                         )}
                         {!category.archivedAt ? (
-                          <DropdownMenuItem className="text-xs text-rose" onClick={() => setDeleteTarget(category)}>Delete</DropdownMenuItem>
+                          <DropdownMenuItem className="text-sm text-rose" onClick={() => setDeleteTarget(category)}>Delete</DropdownMenuItem>
                         ) : null}
                       </DropdownMenuContent>
                     </DropdownMenu>

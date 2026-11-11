@@ -100,7 +100,7 @@ export default function RiskRadarPage() {
           canRecalculate ? (
             <Button
               variant="outline"
-              className="h-9 gap-1.5 rounded-full border-line bg-card text-xs"
+              className="h-9 gap-1.5 rounded-full border-line bg-card text-sm"
               disabled={recalculate.isPending}
               onClick={() =>
                 recalculate.mutate(undefined, {
@@ -153,15 +153,15 @@ export default function RiskRadarPage() {
                     <button type="button" onClick={() => setScoring(row)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
                       <PersonAvatar name={name} size="md" />
                       <div className="min-w-0">
-                        <p className="truncate text-xs font-semibold">{name}</p>
-                        <p className="truncate text-[10px] text-ink-faint">
+                        <p className="truncate text-sm font-semibold">{name}</p>
+                        <p className="truncate text-xs text-ink-faint">
                           {row.memberStatus ?? "member"} · last calculated {formatDate(row.calculatedAt)}
                         </p>
                       </div>
                     </button>
                     <div className="flex w-48 shrink-0 items-center gap-2">
                       <div className="flex-1">
-                        <div className="flex justify-between text-[10px]">
+                        <div className="flex justify-between text-xs">
                           <span className={cn("num font-semibold", row.level === "critical" || row.level === "high" ? "text-rose" : row.level === "medium" ? "text-gold" : "text-moss")}>
                             {row.score}
                           </span>
@@ -180,12 +180,12 @@ export default function RiskRadarPage() {
                       <Tag tone={LEVEL_TONES[row.level]} dot>{RISK_LEVEL_LABELS[row.level]}</Tag>
                     </div>
                     <div className="hidden shrink-0 gap-2 md:flex">
-                      <Button size="sm" variant="outline" className="h-8 rounded-full border-line text-xs" onClick={() => setScoring(row)}>
+                      <Button size="sm" variant="outline" className="h-8 rounded-full border-line text-sm" onClick={() => setScoring(row)}>
                         Why
                       </Button>
                       <Button
                         size="sm"
-                        className="h-8 gap-1.5 rounded-full text-xs"
+                        className="h-8 gap-1.5 rounded-full text-sm"
                         onClick={() => toast(`Suggested: a ten-minute walk with ${row.memberFirstName}, no agenda.`)}
                       >
                         <PhoneCall className="size-3.5" /> Reach out
@@ -198,7 +198,7 @@ export default function RiskRadarPage() {
                         .filter(([, value]) => Number(value) > 0)
                         .slice(0, 5)
                         .map(([key, value]) => (
-                          <span key={key} className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-ink-soft">
+                          <span key={key} className="rounded-full bg-muted px-2 py-0.5 text-xs text-ink-soft">
                             {RISK_FACTOR_LABELS[key] ?? key}
                             <span className="num ml-1 text-ink-faint">+{Math.round(Number(value))}</span>
                           </span>
@@ -212,7 +212,7 @@ export default function RiskRadarPage() {
         </StaggerGroup>
       )}
 
-      <p className="mx-auto flex max-w-2xl items-start gap-2 rounded-xl border border-dashed border-line p-4 text-[11px] leading-relaxed text-ink-soft">
+      <p className="mx-auto flex max-w-2xl items-start gap-2 rounded-xl border border-dashed border-line p-4 text-sm leading-relaxed text-ink-soft">
         <Sparkles className="mt-0.5 size-3.5 shrink-0 text-brand" />
         This radar is a prompt for presence, not prediction. Scores are heuristic signals; the real discernment is yours. Nobody should ever be
         contacted because a number said so, only because a person cared.

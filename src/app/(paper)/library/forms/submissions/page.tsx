@@ -66,7 +66,7 @@ export default function FormsSubmissionsPage() {
           <Select value={formId} onValueChange={setFormId}>
             <SelectTrigger
               aria-label="Form picker"
-              className="h-9 w-72 max-w-full rounded-full border-line bg-card text-xs"
+              className="h-9 w-72 max-w-full rounded-full border-line bg-card text-sm"
             >
               <SelectValue placeholder="Choose a form…" />
             </SelectTrigger>
@@ -83,7 +83,7 @@ export default function FormsSubmissionsPage() {
           {selected && (
             <Link
               href={`/library/forms/${selected.id}`}
-              className="text-xs text-brand hover:underline"
+              className="text-sm text-brand hover:underline"
             >
               Form details →
             </Link>

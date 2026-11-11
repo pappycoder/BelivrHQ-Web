@@ -313,9 +313,9 @@ function PermissionMatrix({
         <caption className="sr-only">Resources and the actions this user is allowed to perform</caption>
         <thead>
           <tr className="border-b">
-            <th scope="col" className="sticky left-0 z-10 min-w-48 bg-card px-3 py-3 text-left text-xs font-medium text-muted-foreground">Resource</th>
+            <th scope="col" className="sticky left-0 z-10 min-w-48 bg-card px-3 py-3 text-left text-sm font-medium text-muted-foreground">Resource</th>
             {actions.map(action => (
-              <th key={action} scope="col" className="min-w-14 px-2 py-3 text-center text-xs font-medium capitalize text-muted-foreground">{action}</th>
+              <th key={action} scope="col" className="min-w-14 px-2 py-3 text-center text-sm font-medium capitalize text-muted-foreground">{action}</th>
             ))}
           </tr>
         </thead>
@@ -481,7 +481,7 @@ function RolePermissionsTab({ user }: RolePermissionsTabProps) {
                 <Badge
                   key={role.value}
                   variant={active ? "default" : "outline"}
-                  className={canManageRoles ? "text-xs cursor-pointer select-none" : "text-xs"}
+                  className={canManageRoles ? "text-sm cursor-pointer select-none" : "text-sm"}
                   onClick={() => toggleRole(role.value)}
                 >
                   {role.label}
@@ -497,7 +497,7 @@ function RolePermissionsTab({ user }: RolePermissionsTabProps) {
                 <p className="text-sm text-muted-foreground mb-1.5">Current roles</p>
                 <div className="flex flex-wrap gap-1.5">
                   {[...selected].map((role) => (
-                    <Badge key={role} variant="secondary" className="text-xs">
+                    <Badge key={role} variant="secondary" className="text-sm">
                       {resolveRoleLabel(role, roleLabels)}
                     </Badge>
                   ))}
@@ -524,7 +524,7 @@ function RolePermissionsTab({ user }: RolePermissionsTabProps) {
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <p className="text-sm font-medium">Admin HQ (cross-branch access)</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Enabled by default for church admins; keep off for branch-scoped staff.
               </p>
             </div>

@@ -128,7 +128,7 @@ export default function AssetsPage() {
               fetchAllRows={fetchAllExport}
             />
             {canCreate ? (
-              <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => router.push("/operations/assets/new")}>
+              <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => router.push("/operations/assets/new")}>
                 <Plus className="size-3.5" /> Add asset
               </Button>
             ) : null}
@@ -149,7 +149,7 @@ export default function AssetsPage() {
         {(Object.keys(ASSET_STATUS_LABELS) as AssetStatus[]).map((s) => (
           <FilterChip key={s} active={status === s} onClick={() => { setStatus(s); setPage(1); }}>{ASSET_STATUS_LABELS[s]}</FilterChip>
         ))}
-        <select value={categoryId} onChange={(e) => { setCategoryId(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-3 text-[11px] outline-none" aria-label="Category filter">
+        <select value={categoryId} onChange={(e) => { setCategoryId(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Category filter">
           <option value="">All categories</option>
           {(categories.data ?? []).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
@@ -163,7 +163,7 @@ export default function AssetsPage() {
           icon={<Boxes />}
           title={archivedView ? "Nothing archived" : "The register is empty"}
           description="Every sound system, bus and chair can be tracked. Start with the things that walk out the door."
-          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => router.push("/operations/assets/new")}>Register the first asset</Button> : undefined}
+          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => router.push("/operations/assets/new")}>Register the first asset</Button> : undefined}
         />
       ) : (
         <div className="paper-card overflow-hidden rounded-2xl">
@@ -190,19 +190,19 @@ export default function AssetsPage() {
                           <QrCode className="size-3.5" />
                         </span>
                         <span className="min-w-0">
-                          <span className="block truncate text-xs font-medium">{asset.name}</span>
-                          <span className="block font-mono text-[9px] text-ink-faint">{asset.assetTag}{asset.serialNumber ? ` · ${asset.serialNumber}` : ""}</span>
+                          <span className="block truncate text-sm font-medium">{asset.name}</span>
+                          <span className="block font-mono text-xs text-ink-faint">{asset.assetTag}{asset.serialNumber ? ` · ${asset.serialNumber}` : ""}</span>
                         </span>
                       </button>
-                      <span className="truncate text-[11px] text-ink-soft">{asset.categoryName ?? "Not available"}</span>
+                      <span className="truncate text-sm text-ink-soft">{asset.categoryName ?? "Not available"}</span>
                       <span>
                         <Tag tone={asset.archivedAt ? "neutral" : STATUS_TONES[asset.status]} dot>
                           {asset.archivedAt ? "Archived" : ASSET_STATUS_LABELS[asset.status]}
                         </Tag>
                       </span>
-                      <span className="truncate text-[11px] text-ink-soft">{asset.custodianName ?? asset.location ?? "Unassigned"}</span>
-                      <span className="text-right text-[11px] text-ink-faint">{ASSET_CONDITION_LABELS[asset.condition]}</span>
-                      <span className="num text-right text-xs font-semibold">{asset.currentValue ? formatNaira(asset.currentValue) : "Not available"}</span>
+                      <span className="truncate text-sm text-ink-soft">{asset.custodianName ?? asset.location ?? "Unassigned"}</span>
+                      <span className="text-right text-sm text-ink-faint">{ASSET_CONDITION_LABELS[asset.condition]}</span>
+                      <span className="num text-right text-sm font-semibold">{asset.currentValue ? formatNaira(asset.currentValue) : "Not available"}</span>
                     <RowActions actions={[
  { label: "View asset", icon: <ArrowUpRight />, onSelect: () => setDrawerAssetId(asset.id) },
  canUpdate && { label: asset.archivedAt ? "Restore asset" : "Archive asset", confirmation: { subject: asset.name }, icon: asset.archivedAt ? <ArchiveRestore /> : <Archive />,
@@ -226,7 +226,7 @@ export default function AssetsPage() {
         </div>
       )}
 
-      <div className="flex flex-wrap gap-4 text-[11px]">
+      <div className="flex flex-wrap gap-4 text-sm">
         <Link href="/operations/assets/categories" className="flex items-center gap-1.5 text-brand hover:underline"><Boxes className="size-3" /> Categories</Link>
         <Link href="/operations/assets/maintenance" className="text-brand hover:underline">Maintenance schedule</Link>
         <Link href="/operations/assets/loans" className="text-brand hover:underline">Loans &amp; checkouts</Link>

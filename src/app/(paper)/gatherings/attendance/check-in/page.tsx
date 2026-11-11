@@ -327,7 +327,7 @@ export default function AttendanceCheckInPage() {
             asChild
             variant="outline"
             size="sm"
-            className="rounded-full border-line text-xs"
+            className="rounded-full border-line text-sm"
           >
             <Link href="/gatherings/attendance">Back to attendance</Link>
           </Button>
@@ -356,7 +356,7 @@ export default function AttendanceCheckInPage() {
               onChange={(event) =>
                 changeContext(() => setServiceId(event.target.value))
               }
-              className="h-9 min-w-[200px] rounded-full border border-line bg-card px-3 text-xs outline-none"
+              className="h-9 min-w-[200px] rounded-full border border-line bg-card px-3 text-sm outline-none"
               aria-label="Choose service"
             >
               {serviceList.map((service) => (
@@ -430,7 +430,7 @@ export default function AttendanceCheckInPage() {
               className="flex flex-wrap items-center gap-2"
               aria-label="Check-in category"
             >
-              <span className="text-xs font-medium text-ink-muted">
+              <span className="text-sm font-medium text-ink-muted">
                 Attendance category
               </span>
               {ATTENDANCE_CATEGORIES.map((item) => (
@@ -550,7 +550,7 @@ export default function AttendanceCheckInPage() {
                     >
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-1.5">
-                          <Label required className="text-xs">
+                          <Label required className="text-sm">
                             First name
                           </Label>
                           <Input
@@ -566,7 +566,7 @@ export default function AttendanceCheckInPage() {
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <Label required className="text-xs">
+                          <Label required className="text-sm">
                             Last name
                           </Label>
                           <Input
@@ -582,7 +582,7 @@ export default function AttendanceCheckInPage() {
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <Label className="text-xs">Phone</Label>
+                          <Label className="text-sm">Phone</Label>
                           <Input
                             value={walkIn.phone}
                             onChange={(e) =>
@@ -596,7 +596,7 @@ export default function AttendanceCheckInPage() {
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <Label className="text-xs">Email</Label>
+                          <Label className="text-sm">Email</Label>
                           <Input
                             value={walkIn.email}
                             onChange={(e) =>
@@ -623,7 +623,7 @@ export default function AttendanceCheckInPage() {
                           ? "Welcoming…"
                           : "Check in as visitor"}
                       </Button>
-                      <p className="text-center text-[10px] text-ink-faint">
+                      <p className="text-center text-xs text-ink-faint">
                         Category is {attendanceCategoryLabel(category)}; change
                         it with the chips above before submitting.
                       </p>
@@ -661,25 +661,25 @@ export default function AttendanceCheckInPage() {
                           }
                           size="xs"
                         />
-                        <span className="min-w-0 flex-1 truncate text-[11px] font-medium">
+                        <span className="min-w-0 flex-1 truncate text-sm font-medium">
                           {record.memberName ?? record.visitorName ?? "Guest"}
                         </span>
-                        <span className="text-[9px] uppercase text-ink-faint">
+                        <span className="text-xs uppercase text-ink-faint">
                           {attendanceCategoryLabel(record.category) ??
                             "Not available"}
                         </span>
                       </div>
                     ))}
                     {recent.isError ? (
-                      <p role="alert" className="p-4 text-xs text-destructive">
+                      <p role="alert" className="p-4 text-sm text-destructive">
                         Arrivals could not be loaded. Refresh to try again.
                       </p>
                     ) : recent.isLoading ? (
-                      <p role="status" className="p-4 text-xs text-ink-muted">
+                      <p role="status" className="p-4 text-sm text-ink-muted">
                         Loading arrivals…
                       </p>
                     ) : !recent.data?.data?.length ? (
-                      <p className="px-4 py-8 text-center text-[11px] text-ink-faint">
+                      <p className="px-4 py-8 text-center text-sm text-ink-faint">
                         The first one through the door starts the list.
                       </p>
                     ) : null}
@@ -687,10 +687,10 @@ export default function AttendanceCheckInPage() {
                 </SectionCard>
                 {activeService ? (
                   <div className="paper-card rounded-2xl p-4">
-                    <p className="text-xs font-semibold">
+                    <p className="text-sm font-semibold">
                       {activeService.name}
                     </p>
-                    <p className="mt-1 flex flex-wrap gap-1.5 text-[10px] text-ink-faint">
+                    <p className="mt-1 flex flex-wrap gap-1.5 text-xs text-ink-faint">
                       {SERVICE_CATEGORIES.map((c) => (
                         <Tag
                           key={c.value}
@@ -730,7 +730,7 @@ export default function AttendanceCheckInPage() {
                 occursOn={occursOn}
               />
             ) : (
-              <p className="px-4 py-8 text-center text-xs text-ink-faint">
+              <p className="px-4 py-8 text-center text-sm text-ink-faint">
                 Create a service first. Headcount is reported per service.
               </p>
             )}

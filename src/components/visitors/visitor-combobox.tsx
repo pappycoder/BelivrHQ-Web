@@ -102,7 +102,7 @@ export function VisitorCombobox({
                       {visitor.firstName} {visitor.lastName}
                     </span>
                     {visitor.phone && (
-                      <span className="ml-auto text-xs text-muted-foreground truncate max-w-[140px]">
+                      <span className="ml-auto text-sm text-muted-foreground truncate max-w-[140px]">
                         {visitor.phone}
                       </span>
                     )}

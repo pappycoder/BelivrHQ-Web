@@ -216,7 +216,7 @@ export default function AttendanceServicesPage() {
         actions={
           canCreate ? (
             <Button
-              className="h-9 gap-1.5 rounded-full text-xs"
+              className="h-9 gap-1.5 rounded-full text-sm"
               onClick={openCreate}
             >
               <Plus className="size-3.5" /> Add service
@@ -296,7 +296,7 @@ export default function AttendanceServicesPage() {
             >
               <SelectTrigger
                 aria-label="Service category"
-                className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none"
+                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -321,7 +321,7 @@ export default function AttendanceServicesPage() {
                   aria-label="Service branch"
                   data-prefix-icon="building"
                   disabled={branches.isLoading || branches.isError}
-                  className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none"
+                  className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -345,7 +345,7 @@ export default function AttendanceServicesPage() {
               <SelectTrigger
                 aria-label="Sort services"
                 data-prefix-icon="none"
-                className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none"
+                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
               >
                 <ArrowUpDown className="size-3" />
                 <SelectValue />
@@ -375,7 +375,7 @@ export default function AttendanceServicesPage() {
           >
             <SelectTrigger
               aria-label="Service weekday"
-              className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none"
+              className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
             >
               <SelectValue />
             </SelectTrigger>
@@ -393,7 +393,7 @@ export default function AttendanceServicesPage() {
               type="button"
               size="sm"
               variant="ghost"
-              className="h-8 rounded-full text-[11px]"
+              className="h-8 rounded-full text-sm"
               onClick={clearFilters}
             >
               Clear filters
@@ -402,7 +402,7 @@ export default function AttendanceServicesPage() {
         </div>
         {isHq && branches.isError && (
           <button
-            className="w-full text-left text-xs text-ink-soft underline"
+            className="w-full text-left text-sm text-ink-soft underline"
             onClick={() => branches.refetch()}
           >
             Couldn’t load branches. Retry
@@ -457,23 +457,23 @@ export default function AttendanceServicesPage() {
                     href={`/gatherings/attendance/services/${service.serviceId}`}
                     className="min-w-0"
                   >
-                    <span className="block truncate text-xs font-semibold">
+                    <span className="block truncate text-sm font-semibold">
                       {service.name}
                     </span>
                   </Link>
-                  <span className="text-[11px] text-ink-soft">
+                  <span className="text-sm text-ink-soft">
                     {SERVICE_CATEGORIES.find(
                       (item) => item.value === service.category,
                     )?.label ?? "Not specified"}
                   </span>
                   <span
-                    className="min-w-0 text-[11px] text-ink-soft"
+                    className="min-w-0 text-sm text-ink-soft"
                     title={scheduleSummary(service)}
                   >
                     <span className="block truncate">
                       {scheduleSummary(service)}
                     </span>
-                    <span className="mt-0.5 block text-[10px] text-ink-faint">
+                    <span className="mt-0.5 block text-xs text-ink-faint">
                       {service.recurrence === "one_time"
                         ? "One-time"
                         : service.recurrence === "multi_day"
@@ -481,7 +481,7 @@ export default function AttendanceServicesPage() {
                           : "Weekly"}
                     </span>
                   </span>
-                  <span className="truncate text-[11px] text-ink-soft">
+                  <span className="truncate text-sm text-ink-soft">
                     {service.branchId
                       ? branchNames.get(service.branchId) || "Not available"
                       : "Church-wide"}
@@ -503,7 +503,7 @@ export default function AttendanceServicesPage() {
                           : "Paused"}
                     </Tag>
                   </span>
-                  <span className="num text-right text-[11px]">
+                  <span className="num text-right text-sm">
                     {service.attendanceCount ?? 0}
                   </span>
                   <ServiceActions

@@ -121,18 +121,18 @@ export default function SharedInboxPage() {
           <h1 className="mt-2 font-display text-[clamp(1.75rem,3vw,2.5rem)] font-semibold tracking-tight">A place to stay connected.</h1>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-soft">Conversations, updates and a little encouragement. Keep your church team in the loop.</p>
         </div>
-        {canAnswer && <Button className="h-10 gap-2 rounded-full px-5 text-xs" onClick={compose}><PenSquare className="size-4" /> Compose message</Button>}
+        {canAnswer && <Button className="h-10 gap-2 rounded-full px-5 text-sm" onClick={compose}><PenSquare className="size-4" /> Compose message</Button>}
       </header>
 
       <section aria-label="Mailbox" className="overflow-hidden rounded-2xl border border-line bg-card shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-muted/25 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-2" aria-label="Mailbox folders">
             <FilterChip active={box === "inbox"} onClick={() => { setBox("inbox"); setSelectedId(null); }}>
-              <InboxIcon className="mr-1.5 size-3.5" /> Inbox {unread > 0 && <span className="num ml-2 rounded-full bg-brand px-1.5 text-[10px] text-paper">{unread}</span>}
+              <InboxIcon className="mr-1.5 size-3.5" /> Inbox {unread > 0 && <span className="num ml-2 rounded-full bg-brand px-1.5 text-xs text-paper">{unread}</span>}
             </FilterChip>
             <FilterChip active={box === "sent"} onClick={() => { setBox("sent"); setSelectedId(null); }}><Send className="mr-1.5 size-3.5" /> Sent</FilterChip>
           </div>
-          <span className="flex items-center gap-1.5 text-xs text-ink-soft"><Mail className="size-3.5" />{emails.isError ? "Mailbox unavailable" : listLoading ? "Loading messages…" : `${emails.data?.total ?? 0} message${emails.data?.total === 1 ? "" : "s"}`}</span>
+          <span className="flex items-center gap-1.5 text-sm text-ink-soft"><Mail className="size-3.5" />{emails.isError ? "Mailbox unavailable" : listLoading ? "Loading messages…" : `${emails.data?.total ?? 0} message${emails.data?.total === 1 ? "" : "s"}`}</span>
         </div>
         {emails.isError ? (
           <div role="alert" className="flex min-h-80 flex-col items-center justify-center px-6 py-12 text-center">
@@ -157,14 +157,14 @@ export default function SharedInboxPage() {
               {canAnswer && <Button className="mt-6 gap-2 rounded-full px-6" onClick={compose}><PenSquare className="size-4" /> Start a conversation</Button>}
             </div>
             <div className="mx-auto mt-10 grid max-w-2xl gap-3 border-t border-line pt-6 sm:grid-cols-2">
-              <div className="flex gap-3 rounded-xl bg-muted/35 p-4"><Users className="mt-0.5 size-4 shrink-0 text-brand" /><div><p className="text-xs font-semibold">Your church, in reach</p><p className="mt-1 text-xs leading-relaxed text-ink-soft">Keep internal updates and team conversations together.</p></div></div>
-              <div className="flex gap-3 rounded-xl bg-muted/35 p-4"><MessageSquare className="mt-0.5 size-4 shrink-0 text-brand" /><div><p className="text-xs font-semibold">A little care goes a long way</p><p className="mt-1 text-xs leading-relaxed text-ink-soft">A quick check-in can make someone’s day.</p></div></div>
+              <div className="flex gap-3 rounded-xl bg-muted/35 p-4"><Users className="mt-0.5 size-4 shrink-0 text-brand" /><div><p className="text-sm font-semibold">Your church, in reach</p><p className="mt-1 text-sm leading-relaxed text-ink-soft">Keep internal updates and team conversations together.</p></div></div>
+              <div className="flex gap-3 rounded-xl bg-muted/35 p-4"><MessageSquare className="mt-0.5 size-4 shrink-0 text-brand" /><div><p className="text-sm font-semibold">A little care goes a long way</p><p className="mt-1 text-sm leading-relaxed text-ink-soft">A quick check-in can make someone’s day.</p></div></div>
             </div>
           </div>
         ) : (
       <div className="grid min-h-[60vh] md:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
         <div className={cn("max-h-[75vh] overflow-y-auto border-line md:border-r", hasSelection && "hidden md:block")}>
-          <div className="flex items-center justify-between border-b border-line px-5 py-4"><h2 className="text-sm font-semibold">{mailboxTitle}</h2><span className="text-[11px] text-ink-faint">Most recent first</span></div>
+          <div className="flex items-center justify-between border-b border-line px-5 py-4"><h2 className="text-sm font-semibold">{mailboxTitle}</h2><span className="text-sm text-ink-faint">Most recent first</span></div>
           {listLoading ? (
             <div className="space-y-2 p-3">{Array.from({ length: 7 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-xl" />)}</div>
           ) : (
@@ -183,17 +183,17 @@ export default function SharedInboxPage() {
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2">
                     <span className={cn(
-                      "min-w-0 flex-1 truncate text-xs",
+                      "min-w-0 flex-1 truncate text-sm",
                       box === "inbox" && !email.readAt ? "font-semibold text-ink" : "text-ink-soft",
                     )}
                     >
                       {box === "inbox" ? email.senderName ?? "Member" : email.recipientName}
                     </span>
                     {box === "inbox" && !email.readAt ? <span className="size-1.5 shrink-0 rounded-full bg-brand" /> : null}
-                    <span className="shrink-0 text-[9px] text-ink-faint">{stamp(email.createdAt)}</span>
+                    <span className="shrink-0 text-xs text-ink-faint">{stamp(email.createdAt)}</span>
                   </span>
                   <span className="mt-1 block truncate text-sm font-medium">{email.subject}</span>
-                  <span className="mt-1 block truncate text-xs text-ink-faint">{email.preview}</span>
+                  <span className="mt-1 block truncate text-sm text-ink-faint">{email.preview}</span>
                 </span>
               </button>
             ))
@@ -217,7 +217,7 @@ export default function SharedInboxPage() {
               <div className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-4">
                 <div className="min-w-0">
                   <h2 className="break-words font-display text-xl font-semibold">{active.subject}</h2>
-                  <p className="mt-0.5 truncate text-[11px] text-ink-faint">
+                  <p className="mt-0.5 truncate text-sm text-ink-faint">
                     {box === "inbox" ? `From ${active.senderName ?? "someone"}` : `To ${active.recipientIds.length} recipient${active.recipientIds.length === 1 ? "" : "s"}`}
                     {" · "}{stamp(active.createdAt)}
                     {active.readAt ? " · read" : ""}
@@ -225,26 +225,26 @@ export default function SharedInboxPage() {
                 </div>
                 <div className="flex shrink-0 flex-wrap gap-1.5">
                   {canAnswer ? (
-                    <Button size="sm" className="h-8 gap-1.5 rounded-full text-xs" onClick={startReply}>
+                    <Button size="sm" className="h-8 gap-1.5 rounded-full text-sm" onClick={startReply}>
                       <Send className="size-3.5" /> Reply
                     </Button>
                   ) : null}
                   {canReadMail && box === "inbox" && active.readAt && !active.deletedAt ? (
-                    <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs" onClick={() => confirm({ title: "Mark message unread?", subject: active.subject, onConfirm: markBackUnread })}>
+                    <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-sm" onClick={() => confirm({ title: "Mark message unread?", subject: active.subject, onConfirm: markBackUnread })}>
                       <Mail className="size-3.5" /> Mark unread
                     </Button>
                   ) : null}
                   {canAnswer && box === "inbox" ? (
-                    <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs" onClick={() => confirm({ title: "Archive message?", subject: active.subject, onConfirm: () => trash.mutateAsync(active.id, { onSuccess: () => { setSelectedId(null); toast("Archived."); }, onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't archive this message.")) }) })}>
+                    <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-sm" onClick={() => confirm({ title: "Archive message?", subject: active.subject, onConfirm: () => trash.mutateAsync(active.id, { onSuccess: () => { setSelectedId(null); toast("Archived."); }, onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't archive this message.")) }) })}>
                       <Archive className="size-3.5" /> Archive
                     </Button>
                   ) : null}
                   {active.deletedAt ? (
                     <>
-                      <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs" onClick={() => confirm({ title: "Restore message?", subject: active.subject, onConfirm: () => restore.mutateAsync(active.id, { onSuccess: () => toast("Back in the inbox."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't restore it.")) }) })}>
+                      <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-sm" onClick={() => confirm({ title: "Restore message?", subject: active.subject, onConfirm: () => restore.mutateAsync(active.id, { onSuccess: () => toast("Back in the inbox."), onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't restore it.")) }) })}>
                         <ArchiveRestore className="size-3.5" /> Restore
                       </Button>
-                      <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-xs text-destructive" onClick={() => confirm({ title: "Delete message forever?", subject: active.subject, destructive: true, description: "This permanently deletes the message and cannot be undone.", onConfirm: () => purge.mutateAsync(active.id, { onSuccess: () => { setSelectedId(null); toast("Deleted for good."); }, onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't delete it.")) }) })}>
+                      <Button size="sm" variant="outline" className="h-8 gap-1.5 rounded-full border-line text-sm text-destructive" onClick={() => confirm({ title: "Delete message forever?", subject: active.subject, destructive: true, description: "This permanently deletes the message and cannot be undone.", onConfirm: () => purge.mutateAsync(active.id, { onSuccess: () => { setSelectedId(null); toast("Deleted for good."); }, onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't delete it.")) }) })}>
                         <Trash2 className="size-3.5" /> Delete forever
                       </Button>
                     </>
@@ -253,12 +253,12 @@ export default function SharedInboxPage() {
               </div>
               <div className="flex-1 overflow-y-auto px-5 py-5">
                 {detail.isError ? (
-                  <p className="text-xs text-ink-soft">This message couldn&apos;t be opened. Please try again.</p>
+                  <p className="text-sm text-ink-soft">This message couldn&apos;t be opened. Please try again.</p>
                 ) : (
                   <p className="whitespace-pre-line text-sm leading-relaxed text-ink-soft">{active.body}</p>
                 )}
               </div>
-              <button type="button" className="border-t border-line px-5 py-2.5 text-left text-[11px] text-ink-faint hover:bg-muted/40" onClick={() => { setSelectedId(null); }}>
+              <button type="button" className="border-t border-line px-5 py-2.5 text-left text-sm text-ink-faint hover:bg-muted/40" onClick={() => { setSelectedId(null); }}>
                 ← back to the list
               </button>
             </>

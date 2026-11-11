@@ -67,7 +67,7 @@ function PersonRow({
       </Avatar>
       <div className="min-w-0">
         <p className="truncate text-sm font-medium">{name || "Not available"}</p>
-        <p className="truncate text-xs text-muted-foreground">
+        <p className="truncate text-sm text-muted-foreground">
           {role && !isVisitor && (ROLE_LABEL[role] ?? role)}
           {isPastor ? " · Pastor" : ""}
           {isVisitor ? `${role ? " · " : ""}Visitor` : ""}
@@ -115,7 +115,7 @@ export function AppointmentDetailDialog({
             {/* People */}
             <div className="space-y-3">
               <div>
-                <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <p className="mb-1 text-sm font-medium uppercase tracking-wide text-muted-foreground">
                   With
                 </p>
                 <PersonRow
@@ -126,7 +126,7 @@ export function AppointmentDetailDialog({
                 />
               </div>
               <div>
-                <p className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <p className="mb-1 text-sm font-medium uppercase tracking-wide text-muted-foreground">
                   Who
                 </p>
                 <PersonRow

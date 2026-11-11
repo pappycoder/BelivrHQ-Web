@@ -105,7 +105,7 @@ export default function AppointmentsPage() {
         description="Pastoral meetings, baptism chats, and wedding planning, with room to breathe between them."
         actions={
           canCreate ? (
-            <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => { setTarget(null); setFormOpen(true); }}>
+            <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => { setTarget(null); setFormOpen(true); }}>
               <Plus className="size-3.5" /> Book a time
             </Button>
           ) : null
@@ -155,19 +155,19 @@ export default function AppointmentsPage() {
                         className="flex w-full items-center gap-4 px-5 py-3.5 text-left transition-colors hover:bg-muted/40"
                       >
                         <div className="w-14 shrink-0 text-right">
-                          <p className="num text-xs font-semibold">{timeOf(appointment.scheduledAt)}</p>
+                          <p className="num text-sm font-semibold">{timeOf(appointment.scheduledAt)}</p>
                         </div>
                         <span className="h-8 w-px bg-line" />
                         <PersonAvatar name={who} size="sm" />
                         <div className="min-w-0 flex-1">
                           <p className="flex flex-wrap items-center gap-2">
-                            <span className="truncate text-xs font-semibold">{appointment.title}</span>
+                            <span className="truncate text-sm font-semibold">{appointment.title}</span>
                             {appointment.whoKind === "visitor" ? <Tag tone="gold">visitor</Tag> : null}
                             {appointment.location?.toLowerCase().includes("video") || appointment.location?.toLowerCase().includes("zoom") ? (
-                              <span className="flex items-center gap-1 text-[9px] text-sky"><Video className="size-2.5" /> remote</span>
+                              <span className="flex items-center gap-1 text-xs text-sky"><Video className="size-2.5" /> remote</span>
                             ) : null}
                           </p>
-                          <p className="truncate text-[11px] text-ink-soft">
+                          <p className="truncate text-sm text-ink-soft">
                             {who} · with {appointment.pastorName ?? "unassigned"}
                             {appointment.location ? ` · ${appointment.location}` : ""}
                           </p>
@@ -176,7 +176,7 @@ export default function AppointmentsPage() {
                           {APPOINTMENT_STATUS_LABELS[appointment.status as keyof typeof APPOINTMENT_STATUS_LABELS] ?? appointment.status}
                         </Tag>
                         {canUpdate && !appointment.archivedAt ? (
-                          <span className="shrink-0 rounded-full px-2 py-1 text-[10px] text-brand opacity-0 transition-opacity [.paper-card:hover_&]:opacity-100 hover:underline">
+                          <span className="shrink-0 rounded-full px-2 py-1 text-xs text-brand opacity-0 transition-opacity [.paper-card:hover_&]:opacity-100 hover:underline">
                             Manage
                           </span>
                         ) : null}
@@ -193,7 +193,7 @@ export default function AppointmentsPage() {
       <AppointmentFormDialog open={formOpen} onOpenChange={setFormOpen} appointment={target} />
       <AppointmentDetailDialog open={detailOpen} onOpenChange={setDetailOpen} appointment={target} />
 
-      <p className="text-center text-[10px] text-ink-faint">
+      <p className="text-center text-xs text-ink-faint">
         Fifteen quiet minutes after each hard conversation is not inefficiency; it&apos;s how you carry the next one well.
       </p>
     </div>

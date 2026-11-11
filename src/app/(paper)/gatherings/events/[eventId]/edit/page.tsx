@@ -101,7 +101,7 @@ export default function EditEventPage({
       <EmptyState
         title="Editing events needs the events grant"
         description="Your role can view the calendar but not amend it."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/gatherings/events">Back to the calendar</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/gatherings/events">Back to the calendar</Link></Button>}
       />
     );
   }
@@ -120,7 +120,7 @@ export default function EditEventPage({
       <EmptyState
         title="We couldn&apos;t open this event"
         description="It may have been deleted, or the link is old."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/gatherings/events">Back to the calendar</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/gatherings/events">Back to the calendar</Link></Button>}
       />
     );
   }
@@ -182,20 +182,20 @@ export default function EditEventPage({
           <SectionCard eyebrow="Details" title="What is it?">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5 sm:col-span-2">
-                <Label required className="text-xs">Title</Label>
+                <Label required className="text-sm">Title</Label>
                 <Input required value={form.title} onChange={(e) => set("title", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
               </div>
               <div className="space-y-1.5 sm:col-span-2">
-                <Label className="text-xs">Type</Label>
+                <Label className="text-sm">Type</Label>
                 <div className="flex flex-wrap gap-1.5">
-                  {form.type === "service" && <span className="rounded-full border border-line px-3 py-1.5 text-[11px] text-ink-muted">Service (existing record)</span>}
+                  {form.type === "service" && <span className="rounded-full border border-line px-3 py-1.5 text-sm text-ink-muted">Service (existing record)</span>}
                   {EVENT_CREATION_TYPES.map((item) => (
                     <button
                       key={item.value}
                       type="button"
                       onClick={() => set("type", item.value)}
                       className={cn(
-                        "rounded-full border px-3 py-1.5 text-[11px] transition-colors",
+                        "rounded-full border px-3 py-1.5 text-sm transition-colors",
                         form.type === item.value ? "border-ink/20 bg-ink text-paper" : "border-line bg-card text-ink-soft hover:border-ink/20",
                       )}
                     >
@@ -205,8 +205,8 @@ export default function EditEventPage({
                 </div>
               </div>
               <div className="space-y-1.5 sm:col-span-2">
-                <Label className="text-xs">Description</Label>
-                <Textarea rows={3} value={form.description} onChange={(e) => set("description", e.target.value)} className="resize-none rounded-lg border-line bg-card text-xs shadow-none" />
+                <Label className="text-sm">Description</Label>
+                <Textarea rows={3} value={form.description} onChange={(e) => set("description", e.target.value)} className="resize-none rounded-lg border-line bg-card text-sm shadow-none" />
               </div>
             </div>
           </SectionCard>
@@ -214,7 +214,7 @@ export default function EditEventPage({
           <SectionCard eyebrow="When & where" title="On the calendar">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5 sm:col-span-2">
-                <Label className="text-xs">Repeats</Label>
+                <Label className="text-sm">Repeats</Label>
                 <div className="flex flex-wrap gap-1.5">
                   {EVENT_RECURRENCES.map((item) => (
                     <button
@@ -222,7 +222,7 @@ export default function EditEventPage({
                       type="button"
                       onClick={() => set("recurrence", item)}
                       className={cn(
-                        "rounded-full border px-3 py-1.5 text-[11px] transition-colors",
+                        "rounded-full border px-3 py-1.5 text-sm transition-colors",
                         form.recurrence === item ? "border-ink/20 bg-ink text-paper" : "border-line bg-card text-ink-soft hover:border-ink/20",
                       )}
                     >
@@ -230,7 +230,7 @@ export default function EditEventPage({
                     </button>
                   ))}
                 </div>
-                <p className="text-[10px] leading-relaxed text-ink-faint">
+                <p className="text-xs leading-relaxed text-ink-faint">
                   {form.recurrence === "weekly"
                     ? form.start
                       ? `Repeats every ${new Date(form.start).toLocaleDateString("en-GB", { weekday: "long" })} from the start date until the end date (or indefinitely).`
@@ -241,11 +241,11 @@ export default function EditEventPage({
                 </p>
               </div>
               <div className="space-y-1.5">
-                <Label required className="text-xs">Starts</Label>
+                <Label required className="text-sm">Starts</Label>
                 <Input required picker="wheel" type="datetime-local" value={form.start} onChange={(e) => set("start", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label required={form.recurrence === "multi_day"} className="text-xs">
+                <Label required={form.recurrence === "multi_day"} className="text-sm">
                   {form.recurrence === "one_time"
                     ? "Ends (same day)"
                     : form.recurrence === "multi_day"
@@ -255,11 +255,11 @@ export default function EditEventPage({
                 <Input required={form.recurrence === "multi_day"} picker="wheel" type="datetime-local" value={form.end} onChange={(e) => set("end", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Location</Label>
+                <Label className="text-sm">Location</Label>
                 <Input value={form.location} onChange={(e) => set("location", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Capacity</Label>
+                <Label className="text-sm">Capacity</Label>
                 <Input disabled={!canCreatePaidEvents} inputMode="numeric" value={form.capacity} onChange={(e) => set("capacity", e.target.value.replace(/[^\d]/g, ""))} className="num h-10 rounded-lg border-line bg-card text-sm shadow-none" />
               </div>
             </div>
@@ -269,22 +269,22 @@ export default function EditEventPage({
         <aside className="space-y-4">
           <SectionCard eyebrow="Access" title="Free or ticketed">
             <label className="flex items-center justify-between gap-3 rounded-lg border border-line px-3 py-2.5">
-              <span className="text-xs">Free entry</span>
+              <span className="text-sm">Free entry</span>
               <Switch disabled={!canCreatePaidEvents} checked={form.isFree} onCheckedChange={(v) => set("isFree", !!v)} />
             </label>
-            {!canCreatePaidEvents && <p className="mt-3 text-xs leading-relaxed text-ink-muted">Your plan includes free events. Paid event pricing requires Network or Enterprise.</p>}
+            {!canCreatePaidEvents && <p className="mt-3 text-sm leading-relaxed text-ink-muted">Your plan includes free events. Paid event pricing requires Network or Enterprise.</p>}
             {!form.isFree ? (
               <div className="mt-3 space-y-1.5">
-                <Label className="text-xs">Ticket price (₦)</Label>
+                <Label className="text-sm">Ticket price (₦)</Label>
                 <Input disabled={!canCreatePaidEvents} inputMode="numeric" value={form.price} onChange={(e) => set("price", e.target.value.replace(/[^\d]/g, ""))} className="num h-10 rounded-lg border-line bg-card text-sm shadow-none" />
-                <p className="text-[10px] leading-relaxed text-ink-faint">Tiers per ticket type are managed on the Tiers page.</p>
+                <p className="text-xs leading-relaxed text-ink-faint">Tiers per ticket type are managed on the Tiers page.</p>
               </div>
             ) : null}
           </SectionCard>
 
           {isHq ? (
             <SectionCard eyebrow="Home" title={<span>Branch <RequiredIndicator /></span>}>
-              <select required value={form.branchId} onChange={(e) => set("branchId", e.target.value)} className="h-10 w-full rounded-lg border border-line bg-card px-2 text-xs outline-none" aria-label="Branch">
+              <select required value={form.branchId} onChange={(e) => set("branchId", e.target.value)} className="h-10 w-full rounded-lg border border-line bg-card px-2 text-sm outline-none" aria-label="Branch">
                 <option value="">Select a branch</option>
                 {(branches.data?.data ?? []).map((b) => <option key={b.branchId} value={b.branchId}>{b.name}</option>)}
               </select>

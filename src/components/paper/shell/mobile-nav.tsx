@@ -67,9 +67,9 @@ function AreaSubmenu({
                 )}
               >
                 <span className="min-w-0">
-                  <span className="block text-xs font-semibold">{leaf.title}</span>
+                  <span className="block text-sm font-semibold">{leaf.title}</span>
                   {leaf.description ? (
-                    <span className="mt-0.5 block text-[10px] leading-relaxed text-ink-faint">
+                    <span className="mt-0.5 block text-xs leading-relaxed text-ink-faint">
                       {leaf.description}
                     </span>
                   ) : null}
@@ -125,7 +125,7 @@ export function MobileNav({ areas }: { areas: PaperArea[] }) {
               aria-label={`${area.label}: show sections`}
               aria-expanded={expanded}
               className={cn(
-                "relative flex min-w-0 flex-1 flex-col items-center gap-1 py-2.5 text-[10px] transition-colors",
+                "relative flex min-w-0 flex-1 flex-col items-center gap-1 py-2.5 text-xs transition-colors",
                 active || expanded ? "text-brand" : "text-ink-faint",
               )}
             >
@@ -143,7 +143,7 @@ export function MobileNav({ areas }: { areas: PaperArea[] }) {
             <SheetTrigger asChild>
               <button
                 type="button"
-                className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1 py-2.5 text-[10px] text-ink-faint"
+                className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1 py-2.5 text-xs text-ink-faint"
                 aria-label="All areas"
               >
                 <LayoutGrid className="size-[18px]" strokeWidth={1.8} />
@@ -168,8 +168,8 @@ export function MobileNav({ areas }: { areas: PaperArea[] }) {
                         <area.icon className="size-3.5" />
                       </span>
                       <span className="min-w-0">
-                        <span className="block text-xs font-semibold">{area.label}</span>
-                        <span className="block truncate text-[10px] text-ink-faint">
+                        <span className="block text-sm font-semibold">{area.label}</span>
+                        <span className="block truncate text-xs text-ink-faint">
                           {area.blurb}
                         </span>
                       </span>

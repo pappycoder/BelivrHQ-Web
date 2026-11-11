@@ -216,25 +216,25 @@ export default function EventsCalendarPage() {
         description="Plan services, conferences and dinners in one shared calendar."
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            {ready && can("events:all", "read") && can("events:list", "read") && <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-xs"><Link href="/gatherings/events/list">View events</Link></Button>}
+            {ready && can("events:all", "read") && can("events:list", "read") && <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-sm"><Link href="/gatherings/events/list">View events</Link></Button>}
             {canCreateService ? (
               <Button
                 variant="outline"
-                className="h-9 gap-1.5 rounded-full border-line bg-card text-xs"
+                className="h-9 gap-1.5 rounded-full border-line bg-card text-sm"
                 onClick={() => setServiceFormOpen(true)}
               >
                 <Plus className="size-3.5" /> Add service
               </Button>
             ) : null}
             {canReadEvents && can("events:tickets", "read") ? (
-              <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
+              <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-sm">
                 <Link href="/gatherings/events/tickets">
                   <Tickets className="size-3.5" /> Tickets
                 </Link>
               </Button>
             ) : null}
             {canCreateEvent ? (
-              <Button asChild className="h-9 gap-1.5 rounded-full text-xs">
+              <Button asChild className="h-9 gap-1.5 rounded-full text-sm">
                 <Link href="/gatherings/events/new">
                   <Plus className="size-3.5" /> New event
                 </Link>
@@ -284,7 +284,7 @@ export default function EventsCalendarPage() {
           <select
             value={branchId}
             onChange={(event) => setBranchId(event.target.value)}
-            className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-[11px] outline-none"
+            className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-sm outline-none"
           >
             <option value="all">All branches</option>
             {(branches.data?.data ?? []).map((b) => (
@@ -292,7 +292,7 @@ export default function EventsCalendarPage() {
             ))}
           </select>
         ) : (
-          <span className="ml-auto text-[10px] text-ink-faint">{profile?.branch?.name ?? "Your branch"} scope</span>
+          <span className="ml-auto text-xs text-ink-faint">{profile?.branch?.name ?? "Your branch"} scope</span>
         )}
       </div>
 
@@ -305,7 +305,7 @@ export default function EventsCalendarPage() {
               <p className="sr-only" aria-live="polite" data-calendar-period>{monthLabel}</p>
               <div className="flex items-center gap-2">
                 <Select value={String(month.getMonth())} onValueChange={(value) => chooseCalendar(month.getFullYear(), Number(value))}>
-                  <SelectTrigger aria-label="Calendar month" data-prefix-icon="none" className="h-8 w-32 rounded-full border-line bg-card font-display text-sm font-semibold shadow-none"><SelectValue /></SelectTrigger>
+                  <SelectTrigger aria-label="Calendar month" data-prefix-icon="none" className="h-9 w-40 rounded-full border-line bg-card font-display text-sm font-semibold shadow-none"><SelectValue /></SelectTrigger>
                   <SelectContent>{MONTHS.map((name, index) => <SelectItem key={name} value={String(index)}>{name}</SelectItem>)}</SelectContent>
                 </Select>
                 <Select value={String(month.getFullYear())} onValueChange={(value) => chooseCalendar(Number(value), month.getMonth())}>
@@ -325,7 +325,7 @@ export default function EventsCalendarPage() {
                 <button
                   type="button"
                   onClick={() => { setMonth(new Date(today.getFullYear(), today.getMonth(), 1)); setSelected(today); }}
-                  className="rounded-full px-3 py-1 text-[11px] text-ink-soft hover:bg-muted hover:text-ink"
+                  className="rounded-full px-3 py-1 text-sm text-ink-soft hover:bg-muted hover:text-ink"
                 >
                   Today
                 </button>
@@ -365,7 +365,7 @@ export default function EventsCalendarPage() {
                       )}
                     >
                       <span className={cn(
-                        "num inline-grid size-5 place-items-center rounded-full text-[10px]",
+                        "num inline-grid size-5 place-items-center rounded-full text-xs",
                         isToday && "bg-brand font-semibold text-paper",
                         !isToday && inMonth && "text-ink",
                         !isToday && !inMonth && "text-ink-faint",
@@ -381,13 +381,13 @@ export default function EventsCalendarPage() {
                             ) : (
                               <span className="size-1.5 shrink-0 rounded-full border border-ink/60" />
                             )}
-                            <span className={cn("truncate text-[9px] font-medium", entry.kind === "service" && "text-ink-soft")}>
+                            <span className={cn("truncate text-xs font-medium", entry.kind === "service" && "text-ink-soft")}>
                               {entry.title}
                             </span>
                           </span>
                         ))}
                         {entries.length > 2 ? (
-                          <span className="pl-2.5 text-[8px] text-ink-faint">+{entries.length - 2} more</span>
+                          <span className="pl-2.5 text-xs text-ink-faint">+{entries.length - 2} more</span>
                         ) : null}
                       </span>
                     </button>
@@ -423,8 +423,8 @@ export default function EventsCalendarPage() {
                         <span className="mt-1 size-2 shrink-0 rounded-full border-2 border-ink/60" />
                       )}
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-xs font-semibold">{entry.title}</span>
-                        <span className="block truncate text-[10px] text-ink-faint">
+                        <span className="block truncate text-sm font-semibold">{entry.title}</span>
+                        <span className="block truncate text-xs text-ink-faint">
                           {entry.at.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
                           {entry.kind === "event" && entry.event.location ? ` · ${entry.event.location}` : ""}
                           {entry.kind === "event" && entry.event.branchName ? ` · ${entry.event.branchName}` : ""}
@@ -448,7 +448,7 @@ export default function EventsCalendarPage() {
                     </button>
                   ))
                 ) : (
-                  <p className="px-4 py-8 text-center text-[11px] text-ink-faint">
+                  <p className="px-4 py-8 text-center text-sm text-ink-faint">
                     Nothing scheduled for this day.
                   </p>
                 )}
@@ -471,8 +471,8 @@ export default function EventsCalendarPage() {
                     >
                       <MapPin className="size-3 shrink-0 text-ink-faint" />
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[11px] font-medium">{item.title}</span>
-                        <span className="num block text-[10px] text-ink-faint">
+                        <span className="block truncate text-sm font-medium">{item.title}</span>
+                        <span className="num block text-xs text-ink-faint">
                           {new Date(`${item.day}T00:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
                           {item.kind === "service" ? " · meets" : ` · ${item.registrations ?? 0} in`}
                         </span>
@@ -481,7 +481,7 @@ export default function EventsCalendarPage() {
                   </StaggerItem>
                 ))}
                 {!upcoming.length && !showSkeleton ? (
-                  <p className="flex items-center gap-2 text-[11px] text-ink-faint">
+                  <p className="flex items-center gap-2 text-sm text-ink-faint">
                     <Search className="size-3" /> Nothing scheduled ahead.
                   </p>
                 ) : null}
@@ -490,15 +490,15 @@ export default function EventsCalendarPage() {
 
             <div className="flex flex-col gap-1.5">
               {canReadEvents ? (
-                <Button asChild variant="outline" size="sm" className="h-8 justify-start gap-2 rounded-full border-line bg-card text-[11px]">
+                <Button asChild variant="outline" size="sm" className="h-8 justify-start gap-2 rounded-full border-line bg-card text-sm">
                   <Link href="/gatherings/events/check-in">Door check-in</Link>
                 </Button>
               ) : null}
-              <Button asChild variant="outline" size="sm" className="h-8 justify-start gap-2 rounded-full border-line bg-card text-[11px]">
+              <Button asChild variant="outline" size="sm" className="h-8 justify-start gap-2 rounded-full border-line bg-card text-sm">
                 <Link href="/gatherings/attendance">Attendance &amp; reports</Link>
               </Button>
               {canReadEvents ? (
-                <Button asChild variant="outline" size="sm" className="h-8 justify-start gap-2 rounded-full border-line bg-card text-[11px]">
+                <Button asChild variant="outline" size="sm" className="h-8 justify-start gap-2 rounded-full border-line bg-card text-sm">
                   <Link href="/gatherings/events/registrations">All registrations</Link>
                 </Button>
               ) : null}

@@ -69,7 +69,7 @@ export default function AttendanceAnalyticsPage() {
         title="Attendance, in depth."
         description="Who gathers, when, and how guests become family."
         actions={
-          <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
+          <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-sm">
             <Link href="/gatherings/attendance">
               <UserRoundPlus className="size-3.5" /> Attendance workspace
             </Link>
@@ -81,7 +81,7 @@ export default function AttendanceAnalyticsPage() {
         {PERIODS.map((item, index) => (
           <FilterChip key={item.label} active={period === index} onClick={() => setPeriod(index)}>{item.label}</FilterChip>
         ))}
-        <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-[11px] outline-none" aria-label="Branch filter">
+        <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Branch filter">
           <option value="">All branches</option>
           {(branches.data?.data ?? []).map((branch) => <option key={branch.branchId} value={branch.branchId}>{branch.name}</option>)}
         </select>
@@ -93,7 +93,7 @@ export default function AttendanceAnalyticsPage() {
           <Skeleton className="h-72 rounded-2xl" />
         </div>
       ) : attendance.isError || !a ? (
-        <EmptyState icon={<CalendarCheck />} title="Couldn&apos;t load the attendance analysis" action={<Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => attendance.refetch()}>Retry</Button>} />
+        <EmptyState icon={<CalendarCheck />} title="Couldn&apos;t load the attendance analysis" action={<Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => attendance.refetch()}>Retry</Button>} />
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -116,7 +116,7 @@ export default function AttendanceAnalyticsPage() {
                   formatter={(v) => number(Number(v))}
                 />
               ) : (
-                <p className="py-12 text-center text-[11px] text-ink-faint">Nothing counted in this period.</p>
+                <p className="py-12 text-center text-sm text-ink-faint">Nothing counted in this period.</p>
               )}
             </SectionCard>
 
@@ -124,11 +124,11 @@ export default function AttendanceAnalyticsPage() {
               {sourceData.length ? (
                 <DonutChart data={sourceData} centerValue={number(a.total)} centerLabel="counted" height={170} formatter={(v) => `${number(Number(v))} visits`} />
               ) : (
-                <p className="py-12 text-center text-[11px] text-ink-faint">Sources appear with the first check-ins.</p>
+                <p className="py-12 text-center text-sm text-ink-faint">Sources appear with the first check-ins.</p>
               )}
               <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
                 {sourceData.map((entry) => (
-                  <div key={entry.name} className="flex items-center gap-1.5 text-[10px]">
+                  <div key={entry.name} className="flex items-center gap-1.5 text-xs">
                     <span className="size-1.5 rounded-full" style={{ background: entry.color }} />
                     <span className="truncate text-ink-soft">{entry.name}</span>
                     <span className="num ml-auto">{number(entry.value)}</span>
@@ -141,7 +141,7 @@ export default function AttendanceAnalyticsPage() {
               {serviceRows.length ? (
                 <BarSeries data={serviceRows} series={[{ key: "total", label: "Attendance", color: "var(--chart-1)" }]} horizontal height={200} formatter={(v) => number(Number(v))} />
               ) : (
-                <p className="py-12 text-center text-[11px] text-ink-faint">No services in this period.</p>
+                <p className="py-12 text-center text-sm text-ink-faint">No services in this period.</p>
               )}
             </SectionCard>
 
@@ -150,7 +150,7 @@ export default function AttendanceAnalyticsPage() {
                 <div className="space-y-3">
                   {branchRows.map((branch) => (
                     <div key={branch.label}>
-                      <div className="flex items-center justify-between text-[11px]">
+                      <div className="flex items-center justify-between text-sm">
                         <span className="truncate font-medium">{branch.label}</span>
                         <span className="num text-ink-soft">{number(branch.total)}</span>
                       </div>
@@ -161,9 +161,9 @@ export default function AttendanceAnalyticsPage() {
                   ))}
                 </div>
               ) : (
-                <p className="py-12 text-center text-[11px] text-ink-faint">Branch splits arrive once services are tagged.</p>
+                <p className="py-12 text-center text-sm text-ink-faint">Branch splits arrive once services are tagged.</p>
               )}
-              <p className="mt-4 flex items-center gap-1.5 text-[10px] text-ink-faint">
+              <p className="mt-4 flex items-center gap-1.5 text-xs text-ink-faint">
                 <Tag tone="gold" dot>Guests</Tag> follow them up at <Link href="/people/visitors" className="text-brand hover:underline">the visitor board</Link>
               </p>
             </SectionCard>

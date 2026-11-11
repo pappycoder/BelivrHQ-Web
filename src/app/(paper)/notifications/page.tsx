@@ -176,7 +176,7 @@ export default function PaperNotificationsPage() {
         actions={
           <Button
             variant="outline"
-            className="h-9 gap-1.5 rounded-full border-line bg-card text-xs"
+            className="h-9 gap-1.5 rounded-full border-line bg-card text-sm"
             disabled={!list.data?.unreadCount || markAll.isPending}
             onClick={() =>
               confirm({ title: "Mark all notifications read?", subject: "All unread notifications", onConfirm: () => markAll.mutateAsync(undefined, {
@@ -219,7 +219,7 @@ export default function PaperNotificationsPage() {
         <div className="paper-card overflow-hidden rounded-2xl">
           <div
             className={cn(
-              "flex items-center gap-3 px-4 py-2.5 text-xs",
+              "flex items-center gap-3 px-4 py-2.5 text-sm",
               selectedIds.length
                 ? "bg-ink text-paper"
                 : "border-b border-line text-ink-faint",
@@ -271,7 +271,7 @@ export default function PaperNotificationsPage() {
                   <Button
                     size="xs"
                     variant="ghost"
-                    className="rounded-full text-[11px] text-paper/70 hover:bg-paper/10 hover:text-paper"
+                    className="rounded-full text-sm text-paper/70 hover:bg-paper/10 hover:text-paper"
                     onClick={() => setSelected(new Set())}
                   >
                     Clear
@@ -318,14 +318,14 @@ export default function PaperNotificationsPage() {
                       {!item.readAt ? <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-brand" /> : null}
                       <span className="break-words">{item.title}</span>
                     </span>
-                    <span id={`notification-preview-${item.id}`} className="whitespace-pre-line break-words text-xs leading-relaxed text-ink-soft line-clamp-3">{item.body}</span>
-                    <span className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-ink-faint">
+                    <span id={`notification-preview-${item.id}`} className="whitespace-pre-line break-words text-sm leading-relaxed text-ink-soft line-clamp-3">{item.body}</span>
+                    <span className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-ink-faint">
                       <span>{NOTIFICATION_TYPE_LABELS[item.type] ?? notificationLabel(item.type)}</span>
                       <span className="sm:hidden">{formatRelativeTime(item.createdAt)}</span>
                       <span className="text-brand">View details</span>
                     </span>
                   </button>
-                  <span className="hidden w-24 shrink-0 text-right text-[10px] text-ink-faint sm:block">
+                  <span className="hidden w-24 shrink-0 text-right text-xs text-ink-faint sm:block">
                     {formatRelativeTime(item.createdAt)}
                   </span>
                   <RowActions

@@ -63,7 +63,7 @@ export default function FormDetailPage({
         icon={<Inbox />}
         title="We couldn&apos;t find that form"
         description="It may have been deleted, or the link is old."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/library/forms">Back to forms</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/library/forms">Back to forms</Link></Button>}
       />
     );
   }
@@ -80,7 +80,7 @@ export default function FormDetailPage({
   return (
     <div className="space-y-6">
       {dialog}
-      <Link href="/library/forms" className="inline-flex items-center gap-1.5 text-[11px] text-ink-faint hover:text-ink">
+      <Link href="/library/forms" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
         <ArrowLeft className="size-3" /> Library · Forms
       </Link>
 
@@ -94,37 +94,37 @@ export default function FormDetailPage({
               {f.branchName ? <Tag tone="sky">{f.branchName}</Tag> : null}
             </div>
             <h1 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight">{f.title}</h1>
-            {f.description ? <p className="max-w-2xl text-xs leading-relaxed text-ink-soft">{f.description}</p> : null}
+            {f.description ? <p className="max-w-2xl text-sm leading-relaxed text-ink-soft">{f.description}</p> : null}
           </div>
           <div className="flex flex-wrap gap-2">
             {shareUrl ? (
               <>
-                <Button size="sm" className="h-8 gap-1.5 rounded-full text-xs" onClick={copyLink}>
+                <Button size="sm" className="h-8 gap-1.5 rounded-full text-sm" onClick={copyLink}>
                   <Link2 className="size-3.5" /> Copy public link
                 </Button>
-                <Button asChild variant="outline" size="sm" className="h-8 rounded-full border-line bg-card text-xs">
+                <Button asChild variant="outline" size="sm" className="h-8 rounded-full border-line bg-card text-sm">
                   <a href={shareUrl} target="_blank" rel="noreferrer">Open live form</a>
                 </Button>
                 {canUpdate ? (
-                  <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" onClick={copyLink}>
+                  <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm" onClick={copyLink}>
                     <Copy className="size-3.5" /> Share
                   </Button>
                 ) : null}
               </>
             ) : null}
-            {canUpdate && !f.archivedAt && <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" onClick={() => setStatusOpen(true)}><SlidersHorizontal className="size-3.5" /> Change form status</Button>}
+            {canUpdate && !f.archivedAt && <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm" onClick={() => setStatusOpen(true)}><SlidersHorizontal className="size-3.5" /> Change form status</Button>}
             {canUpdate && f.isPublic ? (
-              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" disabled={regenerate.isPending} onClick={() => confirm({ title: "Replace public link?", subject: f.title, description: "The current public link will stop working. Share the replacement link with respondents.", destructive: true, onConfirm: () => regenerate.mutateAsync(f.id, { onSuccess: () => toast("New link issued. The old link no longer works."), onError: () => toast.error("Couldn't regenerate.") }) })}>
+              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm" disabled={regenerate.isPending} onClick={() => confirm({ title: "Replace public link?", subject: f.title, description: "The current public link will stop working. Share the replacement link with respondents.", destructive: true, onConfirm: () => regenerate.mutateAsync(f.id, { onSuccess: () => toast("New link issued. The old link no longer works."), onError: () => toast.error("Couldn't regenerate.") }) })}>
                 <RefreshCcw className="size-3.5" /> New link
               </Button>
             ) : null}
             {f.status === "published" && ready && can("forms:list", "read") ? (
-              <Button asChild variant="outline" size="sm" className="h-8 rounded-full border-line bg-card text-xs">
+              <Button asChild variant="outline" size="sm" className="h-8 rounded-full border-line bg-card text-sm">
                 <Link href={`/library/forms/${f.id}/fill`}>Open and fill as a member</Link>
               </Button>
             ) : null}
             {canUpdate ? (
-              <Button asChild variant="outline" size="sm" className="h-8 rounded-full border-line bg-card text-xs">
+              <Button asChild variant="outline" size="sm" className="h-8 rounded-full border-line bg-card text-sm">
                 <Link href={`/library/forms/${f.id}/edit`}>Edit in builder</Link>
               </Button>
             ) : null}
@@ -155,7 +155,7 @@ export default function FormDetailPage({
           <SectionCard eyebrow="Questions" title={`${f.fields?.length ?? 0} fields`} bodyClassName="p-0">
             <div className="divide-y divide-line/70">
               {(f.fields ?? []).map((field) => (
-                <div key={field.key} className="flex items-center justify-between gap-2 px-4 py-2.5 text-[11px]">
+                <div key={field.key} className="flex items-center justify-between gap-2 px-4 py-2.5 text-sm">
                   <span className="min-w-0 truncate font-medium">{field.label}</span>
                   <span className="shrink-0 text-ink-faint">
                     {FIELD_TYPE_LABELS[field.type] ?? field.type}

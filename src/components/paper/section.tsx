@@ -79,12 +79,12 @@ export function SectionCard({
           <div className="min-w-0 space-y-0.5">
             {eyebrow ? <div className="rule-label">{eyebrow}</div> : null}
             {title ? (
-              <h2 className="font-display text-[15px] font-semibold leading-tight">
+              <h2 className="font-display text-lg font-semibold leading-tight">
                 {title}
               </h2>
             ) : null}
             {description ? (
-              <p className="text-xs text-ink-soft">{description}</p>
+              <p className="text-sm text-ink-soft">{description}</p>
             ) : null}
           </div>
           {actions ? (

@@ -197,7 +197,7 @@ function RegistrationsInner() {
             resetPage();
             router.replace(`/gatherings/events/registrations${e.target.value ? `?event=${e.target.value}` : ""}`);
           }}
-          className="h-9 max-w-[300px] truncate rounded-full border border-line bg-card px-3 text-[11px] outline-none"
+          className="h-9 max-w-[300px] truncate rounded-full border border-line bg-card px-3 text-sm outline-none"
           aria-label="Event selector"
         >
           <option value="">Choose an event…</option>
@@ -224,7 +224,7 @@ function RegistrationsInner() {
               <FilterChip active={door === "in"} onClick={() => { setDoor((d) => (d === "in" ? "all" : "in")); resetPage(); }}>Checked in</FilterChip>
               <FilterChip active={door === "out"} onClick={() => { setDoor((d) => (d === "out" ? "all" : "out")); resetPage(); }}>Still out</FilterChip>
             </div>
-            <span className="ml-auto flex flex-wrap items-center gap-1.5 text-[10px] text-ink-faint">
+            <span className="ml-auto flex flex-wrap items-center gap-1.5 text-xs text-ink-faint">
               {selected?.isFree ? <Tag tone="moss">free event</Tag> : <Tag tone="gold">tickets</Tag>}
               {selected?.capacity ? <span className="num">capacity {number(selected.capacity)}</span> : null}
             </span>
@@ -243,7 +243,7 @@ function RegistrationsInner() {
 
           <div className="flex flex-wrap items-center gap-2">
             <Select value={sortBy} onValueChange={(value) => { setSortBy(value as SortValue); resetPage(); }}>
-              <SelectTrigger className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none">
+              <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
                 <ArrowUpDownIcon /> <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -298,21 +298,21 @@ function RegistrationsInner() {
                         <span className="flex min-w-0 items-center gap-2.5">
                           <PersonAvatar name={registration.memberName ?? "A member"} size="xs" />
                           <span className="min-w-0">
-                            <span className="block truncate text-xs font-medium">{displayName(registration)}</span>
-                            <span className="block truncate text-[10px] text-ink-faint">{formatDate(registration.createdAt)}</span>
+                            <span className="block truncate text-sm font-medium">{displayName(registration)}</span>
+                            <span className="block truncate text-xs text-ink-faint">{formatDate(registration.createdAt)}</span>
                           </span>
                         </span>
-                        <span className="truncate text-[11px] text-ink-soft">{registration.tierName ?? "General"}</span>
-                        <span className="num text-right text-[11px]">{registration.quantity ?? 1}</span>
+                        <span className="truncate text-sm text-ink-soft">{registration.tierName ?? "General"}</span>
+                        <span className="num text-right text-sm">{registration.quantity ?? 1}</span>
                         <span>
                           <Tag tone={STATUS_TONES[registration.paymentStatus ?? "pending"] ?? "neutral"} dot>
                             {registration.paymentStatus ?? "pending"}
                           </Tag>
                         </span>
-                        <span className="text-[10px] text-ink-faint">
+                        <span className="text-xs text-ink-faint">
                           {registration.checkedIn ? <Tag tone="moss" dot>In</Tag> : "not yet"}
                         </span>
-                        <span className="truncate text-right font-mono text-[9px] text-ink-faint">{registration.ticketCode ?? "Not available"}</span>
+                        <span className="truncate text-right font-mono text-xs text-ink-faint">{registration.ticketCode ?? "Not available"}</span>
                         <div className="flex justify-end">
                           <RowActions actions={manageActions(registration)} />
                         </div>
@@ -342,15 +342,15 @@ function RegistrationsInner() {
                         <span className="flex min-w-0 items-center gap-2.5">
                           <PersonAvatar name={registration.memberName ?? "A member"} size="md" />
                           <span className="min-w-0">
-                            <span className="block truncate text-xs font-semibold">{displayName(registration)}</span>
-                            <span className="num block text-[10px] text-ink-faint">
+                            <span className="block truncate text-sm font-semibold">{displayName(registration)}</span>
+                            <span className="num block text-xs text-ink-faint">
                               {registration.tierName ?? "General"} · ×{registration.quantity ?? 1}
                             </span>
                           </span>
                         </span>
                         <RowActions reveal={false} actions={manageActions(registration)} />
                       </div>
-                      <p className="mt-2 flex-1 text-[11px] text-ink-soft">
+                      <p className="mt-2 flex-1 text-sm text-ink-soft">
                         Registered {formatDate(registration.createdAt)}
                       </p>
                       <div className="mt-3 flex items-center justify-between gap-2 border-t border-line/70 pt-3">
@@ -360,7 +360,7 @@ function RegistrationsInner() {
                           </Tag>
                           {registration.checkedIn ? <Tag tone="sky" dot>Checked in</Tag> : null}
                         </span>
-                        <span className="truncate font-mono text-[9px] text-ink-faint">{registration.ticketCode ?? "Not available"}</span>
+                        <span className="truncate font-mono text-xs text-ink-faint">{registration.ticketCode ?? "Not available"}</span>
                       </div>
                     </div>
                   </StaggerItem>
@@ -379,7 +379,7 @@ function RegistrationsInner() {
             </>
           )}
 
-          <div className="flex flex-wrap items-center justify-center gap-4 text-[11px]">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
             <button type="button" onClick={() => router.push(`/gatherings/events/${eventId}`)} className="flex items-center gap-1.5 text-brand hover:underline">
               <CalendarDays className="size-3" /> Open the event
             </button>

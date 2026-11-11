@@ -206,7 +206,7 @@ export function NotificationsDrawer({
                 variant="ghost"
                 size="sm"
                 className={cn(
-                  "h-7 px-2.5 text-xs",
+                  "h-7 px-2.5 text-sm",
                   activePreset === p.key
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:text-foreground",
@@ -226,10 +226,10 @@ export function NotificationsDrawer({
                 setSelected(new Set());
                 resetPage();
               }}
-              className="h-8 w-36 rounded-md border border-input bg-transparent px-2 text-xs text-foreground"
+              className="h-8 w-36 rounded-md border border-input bg-transparent px-2 text-sm text-foreground"
               aria-label="Start date"
             />
-            <span className="text-xs text-muted-foreground">to</span>
+            <span className="text-sm text-muted-foreground">to</span>
             <Input picker="native"
               type="date"
               value={endDate}
@@ -238,11 +238,11 @@ export function NotificationsDrawer({
                 setSelected(new Set());
                 resetPage();
               }}
-              className="h-8 w-36 rounded-md border border-input bg-transparent px-2 text-xs text-foreground"
+              className="h-8 w-36 rounded-md border border-input bg-transparent px-2 text-sm text-foreground"
               aria-label="End date"
             />
             {(startDate || endDate) && (
-              <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={clearRange}>
+              <Button variant="ghost" size="sm" className="h-7 px-2 text-sm" onClick={clearRange}>
                 Clear
               </Button>
             )}
@@ -254,7 +254,7 @@ export function NotificationsDrawer({
                 variant="ghost"
                 size="sm"
                 className={cn(
-                  "h-7 px-3 text-xs capitalize",
+                  "h-7 px-3 text-sm capitalize",
                   readFilter === r
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover:text-foreground",
@@ -279,7 +279,7 @@ export function NotificationsDrawer({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-7 text-xs"
+                className="h-7 text-sm"
                 onClick={handleBulkMarkRead}
                 disabled={bulkMarkAsRead.isPending}
               >
@@ -297,7 +297,7 @@ export function NotificationsDrawer({
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-7 text-xs text-destructive hover:text-destructive"
+                className="h-7 text-sm text-destructive hover:text-destructive"
                 onClick={handleBulkDelete}
                 disabled={bulkDelete.isPending}
                loading={bulkDelete.isPending}>
@@ -340,7 +340,7 @@ export function NotificationsDrawer({
                   onCheckedChange={(c) => toggleAll(!!c)}
                   aria-label="Select all on page"
                 />
-                <span className="text-xs text-muted-foreground">Select all on this page</span>
+                <span className="text-sm text-muted-foreground">Select all on this page</span>
               </div>
               <ul className="divide-y divide-border">
               {rows.map((n) => (
@@ -371,10 +371,10 @@ export function NotificationsDrawer({
                       {n.body}
                     </span>
                     <span className="mt-1 flex items-center gap-2">
-                      <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+                      <Badge variant="outline" className="text-xs px-1.5 py-0">
                         {NOTIFICATION_TYPE_LABELS[n.type as NotificationType] ?? n.type}
                       </Badge>
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-sm text-muted-foreground">
                         {formatRelativeTime(n.createdAt)}
                       </span>
                     </span>
@@ -415,7 +415,7 @@ export function NotificationsDrawer({
         {/* Slim footer */}
         {total > 0 && (
           <div className="border-t border-border px-5 py-3 flex items-center justify-between gap-3">
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Showing {from}–{to} of {total}
             </p>
             <div className="flex items-center gap-2">
@@ -428,7 +428,7 @@ export function NotificationsDrawer({
               >
                 <ChevronLeft className="h-4 w-4" /> Prev
               </Button>
-              <span className="text-xs text-muted-foreground whitespace-nowrap">
+              <span className="text-sm text-muted-foreground whitespace-nowrap">
                 {page} / {totalPages}
               </span>
               <Button

@@ -91,7 +91,7 @@ export default function LifeEventsPage() {
         <div>
           <Link
             href="/people/pastoral"
-            className="inline-flex items-center gap-1.5 text-[11px] text-ink-faint hover:text-ink"
+            className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink"
           >
             <ArrowLeft className="size-3" /> People · Pastoral care
           </Link>
@@ -103,7 +103,7 @@ export default function LifeEventsPage() {
           </p>
         </div>
         {canCreate ? (
-          <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setFormOpen(true)}>
+          <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setFormOpen(true)}>
             <Plus className="size-3.5" /> Mark an event
           </Button>
         ) : null}
@@ -140,7 +140,7 @@ export default function LifeEventsPage() {
           icon={<Cake />}
           title="No milestones recorded"
           description="Life events are how a church learns to celebrate and mourn on time."
-          action={canCreate ? <Button variant="outline" size="sm" className="rounded-full border-line text-xs" onClick={() => setFormOpen(true)}>Add the first</Button> : undefined}
+          action={canCreate ? <Button variant="outline" size="sm" className="rounded-full border-line text-sm" onClick={() => setFormOpen(true)}>Add the first</Button> : undefined}
         />
       ) : (
         <div className="space-y-6">
@@ -161,17 +161,17 @@ export default function LifeEventsPage() {
                       </span>
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <p className="truncate text-xs font-semibold capitalize">{event.type.replace(/[_-]/g, " ")}</p>
+                          <p className="truncate text-sm font-semibold capitalize">{event.type.replace(/[_-]/g, " ")}</p>
                           <Tag tone={event.notified ? "moss" : "neutral"}>{event.notified ? "Noted" : "To acknowledge"}</Tag>
                         </div>
-                        <div className="mt-0.5 flex min-w-0 items-center gap-2 text-[11px] text-ink-faint">
+                        <div className="mt-0.5 flex min-w-0 items-center gap-2 text-sm text-ink-faint">
                           <PersonAvatar name={`${event.memberFirstName} ${event.memberLastName}`} size="xs" />
                           <Link href={`/people/members/${event.memberId}`} className="truncate hover:text-brand">
                             {event.memberFirstName} {event.memberLastName}
                           </Link>
                         </div>
                       </div>
-                      <span className="num shrink-0 text-[11px] text-ink-soft">{formatDate(event.date)}</span>
+                      <span className="num shrink-0 text-sm text-ink-soft">{formatDate(event.date)}</span>
                       {canDelete ? (
                         <button
                           type="button"

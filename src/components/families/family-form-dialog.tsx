@@ -179,7 +179,7 @@ export function FamilyFormDialog({
                           selectedName={headName}
                           placeholder="Select head of family..."
                         />
-                        <p className="text-xs text-muted-foreground mt-1.5">
+                        <p className="text-sm text-muted-foreground mt-1.5">
                           Optional. The head must be added as a family member
                           too.
                         </p>

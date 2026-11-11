@@ -258,7 +258,7 @@ export function ListTable({
                 value
               ) : (
                 <span
-                  className="block truncate text-[11px]"
+                  className="block truncate text-sm"
                   title={typeof value === "string" ? value : undefined}
                 >
                   {value}
@@ -384,7 +384,7 @@ export function ListTable({
             }
             onCheckedChange={() => setSelected(allSelected ? [] : visibleIds)}
           />
-          <span className="mr-auto text-xs text-muted-foreground" role="status">
+          <span className="mr-auto text-sm text-muted-foreground" role="status">
             {selected.length
               ? `${selected.length} selected on this page`
               : `${visibleIds.length} records on this page`}

@@ -60,7 +60,7 @@ function RespondentPreview({
         <Button type="button" disabled className="w-full rounded-full">
           Submit response <ArrowUpRight className="size-4" />
         </Button>
-        <p className="text-center text-xs leading-relaxed text-ink-soft">
+        <p className="text-center text-sm leading-relaxed text-ink-soft">
           Preview only. Sample answers are not saved or submitted.
         </p>
       </div>

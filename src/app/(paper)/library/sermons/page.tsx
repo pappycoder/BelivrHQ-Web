@@ -169,7 +169,7 @@ function SermonsInner() {
               fetchAllRows={fetchAllExport}
             />
             {canCreate ? (
-              <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => router.push("/library/sermons/new")}>
+              <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => router.push("/library/sermons/new")}>
                 <Plus className="size-3.5" /> New sermon
               </Button>
             ) : null}
@@ -196,7 +196,7 @@ function SermonsInner() {
         />
         {isHq ? (
           <Select value={branchId} onValueChange={(value) => { setBranchId(value); setPage(1); }}>
-            <SelectTrigger className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none">
+            <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
               <SelectValue placeholder="All branches" />
             </SelectTrigger>
             <SelectContent>
@@ -215,16 +215,16 @@ function SermonsInner() {
             { value: "grid", label: "Card view", icon: <LayoutGrid className="size-3.5" /> },
           ]}
         />
-        <Button asChild variant="ghost" size="sm" className="ml-auto gap-1.5 rounded-full text-[11px] text-brand">
+        <Button asChild variant="ghost" size="sm" className="ml-auto gap-1.5 rounded-full text-sm text-brand">
           <Link href="/library/sermons/series"><Rows3 className="size-3" /> Series</Link>
         </Button>
-        <Button asChild variant="ghost" size="sm" className="rounded-full text-[11px] text-brand">
+        <Button asChild variant="ghost" size="sm" className="rounded-full text-sm text-brand">
           <Link href="/library/sermons/speakers">Speakers</Link>
         </Button>
       </div>
 
       {(series || speaker) ? (
-        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-brand/30 bg-brand-soft/30 px-4 py-2.5 text-[11px]">
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-brand/30 bg-brand-soft/30 px-4 py-2.5 text-sm">
           <span className="font-medium text-ink">Filtered:</span>
           {series ? <Tag tone="brand">series · {series}</Tag> : null}
           {speaker ? <Tag tone="brand">speaker · {speaker}</Tag> : null}
@@ -233,7 +233,7 @@ function SermonsInner() {
       ) : null}
 
       {sermons.isError ? (
-        <EmptyState icon={<Search />} title="Couldn&apos;t load the archive" action={<Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => sermons.refetch()}>Retry</Button>} />
+        <EmptyState icon={<Search />} title="Couldn&apos;t load the archive" action={<Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => sermons.refetch()}>Retry</Button>} />
       ) : sermons.isLoading ? (
         <div className="space-y-2">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}</div>
       ) : rows.length === 0 ? (
@@ -241,7 +241,7 @@ function SermonsInner() {
           icon={<BookOpen />}
           title="No sermons match"
           description="Try another name, or clear the filters."
-          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => router.push("/library/sermons/new")}>Add the first</Button> : undefined}
+          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => router.push("/library/sermons/new")}>Add the first</Button> : undefined}
         />
       ) : view === "grid" ? (
         <>
@@ -267,10 +267,10 @@ function SermonsInner() {
                   </span>
                   <button type="button" onClick={() => router.push(`/library/sermons/${sermon.sermonId}`)} className="mt-3 text-left">
                     <span className="line-clamp-2 font-display text-sm font-semibold leading-snug">{sermon.title}</span>
-                    <span className="mt-1 block text-[11px] text-ink-soft">{sermon.speaker ?? "Unknown speaker"}</span>
+                    <span className="mt-1 block text-sm text-ink-soft">{sermon.speaker ?? "Unknown speaker"}</span>
                   </button>
-                  {sermon.scriptureReference ? <span className="mt-1 font-mono text-[10px] text-brand">{sermon.scriptureReference}</span> : null}
-                  <span className="num mt-auto pt-3 text-[10px] text-ink-faint">
+                  {sermon.scriptureReference ? <span className="mt-1 font-mono text-xs text-brand">{sermon.scriptureReference}</span> : null}
+                  <span className="num mt-auto pt-3 text-xs text-ink-faint">
                     {formatDate(sermon.sermonDate)} · {duration(sermon.durationSeconds) ?? "Not available"}
                     {sermon.audioUrl ? " · audio" : ""}{sermon.videoUrl ? " · video" : ""}
                   </span>
@@ -306,25 +306,25 @@ function SermonsInner() {
               <div className="group grid grid-cols-[minmax(0,2.4fr)_1fr_0.8fr_0.9fr_0.8fr_1fr_auto] items-center gap-3 px-5 py-3">
                 <button type="button" onClick={() => router.push(`/library/sermons/${sermon.sermonId}`)} className="min-w-0 text-left">
                   <span className="flex items-center gap-2">
-                    <span className="truncate text-xs font-semibold hover:text-brand">{sermon.title}</span>
+                    <span className="truncate text-sm font-semibold hover:text-brand">{sermon.title}</span>
                     {sermon.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
                   </span>
-                  <span className="block truncate font-mono text-[10px] text-brand">{sermon.scriptureReference ?? ""}</span>
+                  <span className="block truncate font-mono text-xs text-brand">{sermon.scriptureReference ?? ""}</span>
                 </button>
-                <span className="truncate text-[11px] text-ink-soft">{sermon.speaker ?? "Not available"}</span>
+                <span className="truncate text-sm text-ink-soft">{sermon.speaker ?? "Not available"}</span>
                 <span className="truncate">
                   {sermon.seriesName ? (
                     <Tag tone="gold">{sermon.seriesName}</Tag>
                   ) : (
-                    <span className="text-[11px] text-ink-faint">: </span>
+                    <span className="text-sm text-ink-faint">: </span>
                   )}
                 </span>
-                <span className="num text-[11px] text-ink-soft">{formatDate(sermon.sermonDate)}</span>
-                <span className="num text-[11px] text-ink-faint">{duration(sermon.durationSeconds) ?? "Not available"}</span>
+                <span className="num text-sm text-ink-soft">{formatDate(sermon.sermonDate)}</span>
+                <span className="num text-sm text-ink-faint">{duration(sermon.durationSeconds) ?? "Not available"}</span>
                 <span className="flex items-center gap-1.5 text-ink-faint">
                   {sermon.audioUrl ? <Headphones className="size-3.5 text-moss" aria-label="Has audio" /> : null}
                   {sermon.videoUrl ? <Video className="size-3.5 text-sky" aria-label="Has video" /> : null}
-                  {sermon.tags?.length ? <span className="truncate text-[9px]">#{sermon.tags[0]}</span> : null}
+                  {sermon.tags?.length ? <span className="truncate text-xs">#{sermon.tags[0]}</span> : null}
                 </span>
                 <RowActions actions={manageActions(sermon)} />
               </div>
@@ -342,7 +342,7 @@ function SermonsInner() {
         </ListTable>
       )}
 
-      <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] text-ink-faint">
+      <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-ink-faint">
         <span className="flex items-center gap-1.5"><Download className="size-3" /> Exports honour the active filters</span>
         <span>·</span>
         <span>Series and speakers are compiled from the archive itself</span>

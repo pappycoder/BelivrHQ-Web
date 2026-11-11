@@ -66,8 +66,8 @@ export function CustomFieldsEditor({
     <div className="space-y-2">
       {rows.length > 0 && (
         <div className="grid grid-cols-[1fr_1fr_auto] gap-2">
-          <p className="text-xs font-medium text-muted-foreground px-1">Label</p>
-          <p className="text-xs font-medium text-muted-foreground px-1">Value</p>
+          <p className="text-sm font-medium text-muted-foreground px-1">Label</p>
+          <p className="text-sm font-medium text-muted-foreground px-1">Value</p>
           <span className="w-9" />
         </div>
       )}

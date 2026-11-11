@@ -94,7 +94,7 @@ export default function GivingFundsPage() {
         actions={
           canCreate ? (
             <Button
-              className="h-9 gap-1.5 rounded-full text-xs"
+              className="h-9 gap-1.5 rounded-full text-sm"
               onClick={() => setFormTarget({ open: true, category: null })}
             >
               <Plus className="size-3.5" /> New category
@@ -136,7 +136,7 @@ export default function GivingFundsPage() {
         <FilterChip active={archivedView} onClick={() => setArchivedView(true)}>
           Archived
         </FilterChip>
-        <span className="ml-auto text-[10px] text-ink-faint">
+        <span className="ml-auto text-xs text-ink-faint">
           Names stay unique per church; duplicates merge into the existing
           category.
         </span>
@@ -158,7 +158,7 @@ export default function GivingFundsPage() {
               <Button
                 size="sm"
                 variant="outline"
-                className="rounded-full border-line text-xs"
+                className="rounded-full border-line text-sm"
                 onClick={() => setFormTarget({ open: true, category: null })}
               >
                 Create the first
@@ -177,7 +177,7 @@ export default function GivingFundsPage() {
                 />
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2">
-                    <span className="truncate text-xs font-semibold">
+                    <span className="truncate text-sm font-semibold">
                       {category.name}
                     </span>
                     {category.archivedAt ? (
@@ -189,7 +189,7 @@ export default function GivingFundsPage() {
                       <Tag tone="sky">recurring</Tag>
                     ) : null}
                   </span>
-                  <span className="mt-0.5 block truncate text-[10px] text-ink-faint">
+                  <span className="mt-0.5 block truncate text-xs text-ink-faint">
                     {category.description ||
                       `Opened ${formatDate(category.createdAt)}`}
                   </span>
@@ -347,7 +347,7 @@ function FundFormDialog({
           <DialogTitle className="font-display">
             {category ? `Edit ${category.name}` : "New giving category"}
           </DialogTitle>
-          <DialogDescription className="text-xs">
+          <DialogDescription className="text-sm">
             Give this category a clear name and purpose, such as Tithes,
             Offering or Building Fund.
           </DialogDescription>
@@ -355,7 +355,7 @@ function FundFormDialog({
         <div className="space-y-3">
           <RequiredFieldsNotice className="col-span-full" />
           <div className="space-y-1.5">
-            <Label required className="text-xs">Category name</Label>
+            <Label required className="text-sm">Category name</Label>
             <Input
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
@@ -364,7 +364,7 @@ function FundFormDialog({
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Purpose (optional)</Label>
+            <Label className="text-sm">Purpose (optional)</Label>
             <Input
               value={form.description}
               onChange={(e) =>
@@ -380,7 +380,7 @@ function FundFormDialog({
               setForm((f) => ({ ...f, isRecurring: !f.isRecurring }))
             }
             className={cn(
-              "flex w-full items-center justify-between rounded-xl border px-3 py-2.5 text-left text-xs transition-colors",
+              "flex w-full items-center justify-between rounded-xl border px-3 py-2.5 text-left text-sm transition-colors",
               form.isRecurring
                 ? "border-brand/50 bg-brand-soft/40"
                 : "border-line hover:border-ink/20",
@@ -390,13 +390,13 @@ function FundFormDialog({
               <span className="block font-medium">
                 Accepts recurring schedules
               </span>
-              <span className="block text-[10px] text-ink-faint">
+              <span className="block text-xs text-ink-faint">
                 Monthly givers can point their standing order here.
               </span>
             </span>
             <span
               className={cn(
-                "rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider",
+                "rounded-full px-2 py-0.5 text-xs font-semibold uppercase tracking-wider",
                 form.isRecurring
                   ? "bg-brand text-paper"
                   : "bg-muted text-ink-faint",

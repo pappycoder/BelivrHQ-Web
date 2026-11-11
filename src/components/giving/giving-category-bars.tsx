@@ -16,7 +16,7 @@ export function GivingCategoryBars({
 }) {
   if (!data.length || data.every((row) => row.amount === 0))
     return (
-      <div className="flex h-44 items-center justify-center text-xs text-muted-foreground">
+      <div className="flex h-44 items-center justify-center text-sm text-muted-foreground">
         No data yet.
       </div>
     );
@@ -42,7 +42,7 @@ export function GivingCategoryBars({
             type="number"
             tickLine={false}
             axisLine={false}
-            tick={{ fontSize: 10 }}
+            tick={{ fontSize: 12 }}
             tickFormatter={(value) =>
               new Intl.NumberFormat("en-NG", {
                 notation: "compact",
@@ -57,7 +57,7 @@ export function GivingCategoryBars({
             tickLine={false}
             axisLine={false}
             interval={0}
-            tick={{ fontSize: 10 }}
+            tick={{ fontSize: 12 }}
             tickFormatter={(value) =>
               String(value).length > 18
                 ? `${String(value).slice(0, 17)}…`

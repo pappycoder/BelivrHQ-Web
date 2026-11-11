@@ -39,7 +39,7 @@ export default function SermonSeriesPage() {
             <Tag tone="neutral">{new Date(item.lastDate).getFullYear() || "Not available"}</Tag>
           </div>
           <p className="mt-3 flex-1 font-display text-base font-semibold leading-snug tracking-tight">{item.name}</p>
-          <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[11px] text-ink-faint">
+          <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-sm text-ink-faint">
             <span className="num">{item.count} messages · last {formatDate(item.lastDate)}</span>
             <ChevronRight className="size-3.5" />
           </div>

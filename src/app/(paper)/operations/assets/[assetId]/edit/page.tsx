@@ -29,7 +29,7 @@ export default function EditAssetPage({
       <EmptyState
         title="Editing assets needs the register grant"
         description="Your role can view the register but not amend it."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/operations/assets">Back to the register</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/operations/assets">Back to the register</Link></Button>}
       />
     );
   }
@@ -48,7 +48,7 @@ export default function EditAssetPage({
       <EmptyState
         title="We couldn&apos;t open this asset"
         description="It may have been deleted, or the link is old."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/operations/assets">Back to the register</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/operations/assets">Back to the register</Link></Button>}
       />
     );
   }

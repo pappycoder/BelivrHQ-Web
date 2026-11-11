@@ -74,7 +74,7 @@ export function AttendanceRosterTable({
           <p className="text-sm font-semibold">
             {editable ? "Edit mode" : "View mode"}
           </p>
-          <p className="mt-1 text-xs text-ink-muted">
+          <p className="mt-1 text-sm text-ink-muted">
             {editable
               ? "Select people, then save to confirm their attendance."
               : "Selection is locked. Choose Edit attendance to make changes."}
@@ -122,10 +122,10 @@ export function AttendanceRosterTable({
         className="max-h-[52vh] overflow-auto overscroll-contain rounded-b-xl"
       >
         <table
-          className="w-full text-left text-xs"
+          className="w-full text-left text-sm"
           aria-label="Individual attendance roster"
         >
-          <thead className="sticky top-0 z-10 border-b border-line bg-card text-[10px] uppercase tracking-wider text-ink-muted">
+          <thead className="sticky top-0 z-10 border-b border-line bg-card text-xs uppercase tracking-wider text-ink-muted">
             <tr>
               <th className="w-11 p-3 font-medium">
                 <Checkbox
@@ -163,7 +163,7 @@ export function AttendanceRosterTable({
                     <span className="min-w-0 break-words">
                       <span className="block font-medium">{row.name}</span>
                       {row.detail && (
-                        <span className="mt-0.5 block break-all text-[10px] text-ink-faint">
+                        <span className="mt-0.5 block break-all text-xs text-ink-faint">
                           {row.detail}
                         </span>
                       )}

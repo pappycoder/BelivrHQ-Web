@@ -133,7 +133,7 @@ export function PublicRegistrationLink({ kind }: { kind: Kind }) {
     <>
       <Button
         variant="outline"
-        className="h-9 rounded-full text-xs"
+        className="h-9 rounded-full text-sm"
         onClick={() => setOpen(true)}
       >
         Public registration link
@@ -379,7 +379,7 @@ export function IntakeRegister({
       <TabsContent value="pending" className="space-y-6 min-w-0">
         <section aria-label="Pending registration summary" className="grid grid-cols-2 gap-3 lg:grid-cols-3">
           {count.isLoading ? <Skeleton className="h-32 rounded-2xl" /> : count.isError ? (
-            <div className="paper-card flex flex-col justify-between gap-4 rounded-2xl p-5"><span className="rule-label">Awaiting review</span><Button size="sm" variant="ghost" className="w-fit rounded-full text-xs" onClick={() => void count.refetch()}>Retry count</Button></div>
+            <div className="paper-card flex flex-col justify-between gap-4 rounded-2xl p-5"><span className="rule-label">Awaiting review</span><Button size="sm" variant="ghost" className="w-fit rounded-full text-sm" onClick={() => void count.refetch()}>Retry count</Button></div>
           ) : (
             <StatCard label="Awaiting review" value={count.data?.meta.total ?? 0} tone="brand" icon={<ClipboardList className="size-4" />} deltaLabel={`${kind === "members" ? "Member" : "Visitor"} registrations`} />
           )}
@@ -402,7 +402,7 @@ export function IntakeRegister({
           <div className="ml-auto flex max-w-full flex-wrap items-center gap-2">
             {profile?.isAdminHq && (
               <Select value={branchId || "all"} onValueChange={(value) => { setBranchId(value === "all" ? "" : value); setPage(1); }}>
-                <SelectTrigger aria-label="Filter registrations by branch" data-prefix-icon="building" className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none" disabled={branches.isLoading || branches.isError}>
+                <SelectTrigger aria-label="Filter registrations by branch" data-prefix-icon="building" className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none" disabled={branches.isLoading || branches.isError}>
                   <SelectValue placeholder="All branches" />
                 </SelectTrigger>
                 <SelectContent>
@@ -412,16 +412,16 @@ export function IntakeRegister({
               </Select>
             )}
             <Select value={sortBy} onValueChange={(value) => { setSortBy(value); setPage(1); }}>
-              <SelectTrigger aria-label="Sort registrations" data-prefix-icon="none" className="h-8 w-32 rounded-full border-line bg-card text-[11px] shadow-none">
+              <SelectTrigger aria-label="Sort registrations" data-prefix-icon="none" className="h-9 w-40 rounded-full border-line bg-card text-sm shadow-none">
                 <ArrowUpDown className="size-3 shrink-0" /> <SelectValue />
               </SelectTrigger>
               <SelectContent>{[["createdAt", "Date added"], ["firstName", "First name"], ["lastName", "Last name"], ["email", "Email"], ["phone", "Phone"], ["branch", "Branch"]].map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
             </Select>
             <SortDirectionToggle ascending={sortOrder === "asc"} onToggle={() => { setSortOrder((order) => order === "asc" ? "desc" : "asc"); setPage(1); }} />
-            {hasFilters && <Button size="sm" variant="ghost" className="h-8 rounded-full text-[11px]" onClick={clearFilters}>Clear filters</Button>}
+            {hasFilters && <Button size="sm" variant="ghost" className="h-8 rounded-full text-sm" onClick={clearFilters}>Clear filters</Button>}
           </div>
         </div>
-        {profile?.isAdminHq && branches.isError && <p role="alert" className="text-xs text-destructive">Could not load branch filters. <Button size="sm" variant="link" className="h-auto p-0 text-xs" onClick={() => void branches.refetch()}>Retry branches</Button></p>}
+        {profile?.isAdminHq && branches.isError && <p role="alert" className="text-sm text-destructive">Could not load branch filters. <Button size="sm" variant="link" className="h-auto p-0 text-sm" onClick={() => void branches.refetch()}>Retry branches</Button></p>}
         {list.isLoading ? (
           <LoadingState label="Loading registrations" variant="table" />
         ) : list.isError ? (
@@ -429,7 +429,7 @@ export function IntakeRegister({
             icon={<ClipboardList />}
             title="Couldn’t load registrations"
             description="The review queue could not be loaded. Please try again."
-            action={<Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => void list.refetch()}>Retry</Button>}
+            action={<Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => void list.refetch()}>Retry</Button>}
           />
         ) : (
           <div className="paper-card overflow-hidden rounded-2xl">
@@ -443,11 +443,11 @@ export function IntakeRegister({
                     const person = `${row.data.firstName ?? ""} ${row.data.lastName ?? ""}`.trim();
                     return <div key={row.id} className="group grid grid-cols-[minmax(0,2fr)_1.2fr_1fr_1fr_auto] items-center gap-4 px-5 py-3 transition-colors hover:bg-muted/40">
                       <button type="button" className="flex min-w-0 items-center gap-3 text-left" onClick={() => inspect.mutate({ id: row.id })}>
-                        <PersonAvatar name={person} size="sm" /><span className="min-w-0"><span className="block truncate text-xs font-semibold">{person}</span><span className="block truncate text-[11px] text-ink-faint">{String(row.data.email ?? row.data.phone ?? "No contact on file")}</span></span>
+                        <PersonAvatar name={person} size="sm" /><span className="min-w-0"><span className="block truncate text-sm font-semibold">{person}</span><span className="block truncate text-sm text-ink-faint">{String(row.data.email ?? row.data.phone ?? "No contact on file")}</span></span>
                       </button>
-                      <span className="text-[11px] text-ink-soft"><span className="block truncate">{String(row.data.phone ?? row.data.whatsappNumber ?? "Not available")}</span><span className="block truncate text-ink-faint">{String(row.data.email ?? "")}</span></span>
-                      <span className="truncate text-[11px] text-ink-soft">{row.branchName}</span>
-                      <span className="num text-[11px] text-ink-soft">{new Date(row.createdAt).toLocaleDateString()}</span>
+                      <span className="text-sm text-ink-soft"><span className="block truncate">{String(row.data.phone ?? row.data.whatsappNumber ?? "Not available")}</span><span className="block truncate text-ink-faint">{String(row.data.email ?? "")}</span></span>
+                      <span className="truncate text-sm text-ink-soft">{row.branchName}</span>
+                      <span className="num text-sm text-ink-soft">{new Date(row.createdAt).toLocaleDateString()}</span>
                       <RowActions reveal={false} actions={manageActions(row)} />
                     </div>;
                   })}

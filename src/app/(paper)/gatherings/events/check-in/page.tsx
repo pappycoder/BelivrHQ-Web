@@ -221,7 +221,7 @@ export default function EventCheckInPage() {
         icon={<ScanLine />}
         title="Check-in is a staff task"
         description="Your role can view events but not check people in."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/gatherings/events">Back to events</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/gatherings/events">Back to events</Link></Button>}
       />
     );
   }
@@ -245,7 +245,7 @@ export default function EventCheckInPage() {
               value={activeId}
               disabled={saving}
               onChange={(event) => changeContext(() => setEventId(event.target.value))}
-              className="h-9 w-full min-w-[220px] rounded-full border border-line bg-card px-3 text-xs outline-none"
+              className="h-9 w-full min-w-[220px] rounded-full border border-line bg-card px-3 text-sm outline-none"
               aria-label="Choose event"
             >
               {eventList.map((event) => (
@@ -305,24 +305,24 @@ export default function EventCheckInPage() {
               <fieldset disabled={!editable || saving} className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label required className="text-xs">First name</Label>
+                  <Label required className="text-sm">First name</Label>
                   <Input required value={walkIn.firstName} onChange={(e) => setWalkIn((w) => ({ ...w, firstName: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label required className="text-xs">Last name</Label>
+                  <Label required className="text-sm">Last name</Label>
                   <Input required value={walkIn.lastName} onChange={(e) => setWalkIn((w) => ({ ...w, lastName: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label required className="text-xs">Phone</Label>
+                  <Label required className="text-sm">Phone</Label>
                   <Input required value={walkIn.phone} onChange={(e) => setWalkIn((w) => ({ ...w, phone: e.target.value }))} placeholder="+1 415 555 0100" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs">Email (optional)</Label>
+                  <Label className="text-sm">Email (optional)</Label>
                   <Input value={walkIn.email} onChange={(e) => setWalkIn((w) => ({ ...w, email: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5 sm:col-span-2">
-                  <Label className="text-xs">Gender (optional)</Label>
-                  <select value={walkIn.gender} onChange={(e) => setWalkIn((w) => ({ ...w, gender: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+                  <Label className="text-sm">Gender (optional)</Label>
+                  <select value={walkIn.gender} onChange={(e) => setWalkIn((w) => ({ ...w, gender: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                     <option value="">Not said</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -332,7 +332,7 @@ export default function EventCheckInPage() {
               <Button type="submit" disabled={!activeEvent || walkInCheckIn.isPending} className="h-10 w-full gap-2 rounded-lg text-sm">
                 <UserPlus className="size-4" /> {walkInCheckIn.isPending ? "Checking in…" : "Check in as guest"}
               </Button>
-              <p className="text-center text-[10px] text-ink-faint">
+              <p className="text-center text-xs text-ink-faint">
                 Walk-ins become visitor records. The follow-up desk will pick them up tomorrow.
               </p>
               </fieldset>
@@ -346,16 +346,16 @@ export default function EventCheckInPage() {
               {attendanceForDay.slice(0, 8).map((record) => (
                 <div key={record.attendanceId} className="flex items-center gap-2.5 px-4 py-2.5">
                   <PersonAvatar name={record.memberName ?? record.visitorName ?? "Guest"} size="xs" />
-                  <span className="min-w-0 flex-1 truncate text-[11px] font-medium">{record.memberName ?? record.visitorName ?? "Guest"}</span>
-                  <span className="text-[9px] text-ink-faint">
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium">{record.memberName ?? record.visitorName ?? "Guest"}</span>
+                  <span className="text-xs text-ink-faint">
                     {new Date(record.checkInAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </div>
               ))}
-              {!attendanceForDay.length ? <p className="px-4 py-8 text-center text-[11px] text-ink-faint">Doors haven&apos;t opened yet.</p> : null}
+              {!attendanceForDay.length ? <p className="px-4 py-8 text-center text-sm text-ink-faint">Doors haven&apos;t opened yet.</p> : null}
             </div>
           </SectionCard>
-          <div className="rounded-2xl border border-dashed border-line p-4 text-[11px] leading-relaxed text-ink-soft">
+          <div className="rounded-2xl border border-dashed border-line p-4 text-sm leading-relaxed text-ink-soft">
             Volunteers run this screen on the door tablet. Anything missed can be
             reconciled from the event page afterwards.
           </div>
@@ -384,7 +384,7 @@ export default function EventCheckInPage() {
                 occursOn={occursOn}
               />
             ) : (
-              <p className="px-4 py-8 text-center text-xs text-ink-faint">
+              <p className="px-4 py-8 text-center text-sm text-ink-faint">
                 Pick an event above to report its headcount.
               </p>
             )}

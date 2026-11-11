@@ -75,7 +75,7 @@ export function ReportDateRange({ value, onChange }: ReportDateRangeProps) {
             variant="ghost"
             size="sm"
             className={cn(
-              "h-7 px-2.5 text-xs",
+              "h-7 px-2.5 text-sm",
               activePreset === p.key
                 ? "bg-primary/10 text-primary"
                 : "text-muted-foreground hover:text-foreground"
@@ -94,7 +94,7 @@ export function ReportDateRange({ value, onChange }: ReportDateRangeProps) {
         className="w-40"
         aria-label="Start date"
       />
-      <span className="text-xs text-muted-foreground">to</span>
+      <span className="text-sm text-muted-foreground">to</span>
       <Input picker="native"
         type="date"
         value={value.endDate}

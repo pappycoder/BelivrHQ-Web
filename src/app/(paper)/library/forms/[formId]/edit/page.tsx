@@ -31,7 +31,7 @@ export default function EditFormPage({
       <EmptyState
         title="Editing forms needs the forms grant"
         description="Your role can read answers but not amend the builder."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/library/forms">Back to forms</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/library/forms">Back to forms</Link></Button>}
       />
     );
   }
@@ -50,7 +50,7 @@ export default function EditFormPage({
       <EmptyState
         title="We couldn&apos;t open that form"
         description="It may have been deleted, or the link is old."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/library/forms">Back to forms</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/library/forms">Back to forms</Link></Button>}
       />
     );
   }
@@ -77,7 +77,7 @@ export default function EditFormPage({
         title="Amend the form."
         description="Edit questions, settings and access while keeping existing responses intact."
         actions={
-          <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-xs">
+          <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-sm">
             <Link href={`/library/forms/${formId}`}>Back to the form</Link>
           </Button>
         }

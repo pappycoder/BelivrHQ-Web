@@ -29,9 +29,9 @@ function initials(name: string) {
 }
 
 const sizes = {
-  xs: "size-6 text-[9px]",
-  sm: "size-8 text-[10px]",
-  md: "size-10 text-xs",
+  xs: "size-6 text-xs",
+  sm: "size-8 text-xs",
+  md: "size-10 text-sm",
   lg: "size-14 text-base",
   xl: "size-20 text-xl",
 };
@@ -116,7 +116,7 @@ export function AvatarStack({
       {rest > 0 ? (
         <span
           className={cn(
-            "-ml-2 inline-grid shrink-0 place-items-center rounded-full bg-muted text-[10px] font-semibold text-ink-soft ring-2 ring-card",
+            "-ml-2 inline-grid shrink-0 place-items-center rounded-full bg-muted text-xs font-semibold text-ink-soft ring-2 ring-card",
             sizes[size],
           )}
         >
@@ -393,7 +393,7 @@ export function FilterChip({
       size="sm"
       onClick={onClick}
       className={cn(
-        "h-8 gap-1.5 rounded-full border-line bg-card px-3 text-xs font-medium shadow-none",
+        "h-8 gap-1.5 rounded-full border-line bg-card px-3 text-sm font-medium shadow-none",
         active &&
           "border-ink/20 bg-ink text-paper hover:bg-ink/90 hover:text-paper",
       )}
@@ -402,7 +402,7 @@ export function FilterChip({
       {count !== undefined ? (
         <span
           className={cn(
-            "num rounded-full px-1.5 text-[10px]",
+            "num rounded-full px-1.5 text-xs",
             active ? "bg-paper/20" : "bg-muted text-ink-soft",
           )}
         >
@@ -472,9 +472,9 @@ export function EmptyState({
         </span>
       ) : null}
       <div className="space-y-1">
-        <p className="font-display text-sm font-semibold">{title}</p>
+        <p className="font-display text-base font-semibold">{title}</p>
         {description ? (
-          <p className="mx-auto max-w-sm text-xs leading-relaxed text-ink-soft">
+          <p className="mx-auto max-w-sm text-sm leading-relaxed text-ink-soft">
             {description}
           </p>
         ) : null}
@@ -497,8 +497,8 @@ export function FieldRow({
     <div
       className={cn("flex items-start justify-between gap-4 py-2.5", className)}
     >
-      <span className="text-xs text-ink-faint">{label}</span>
-      <span className="text-right text-xs font-medium text-ink">
+      <span className="text-sm text-ink-faint">{label}</span>
+      <span className="text-right text-sm font-medium text-ink">
         {children}
       </span>
     </div>
@@ -547,7 +547,7 @@ export function ListPaginationFooter({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-line px-5 py-2.5 text-[11px] text-ink-faint",
+        "col-span-full flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-line px-5 py-2.5 text-sm text-ink-faint",
         pending && "opacity-60",
       )}
       aria-label="Pagination"
@@ -573,7 +573,7 @@ export function ListPaginationFooter({
                 onPerPageChange(Number(event.target.value));
                 onPageChange(1);
               }}
-              className="h-7 rounded-full border border-line bg-card px-2 text-[11px] outline-none"
+              className="h-7 rounded-full border border-line bg-card px-2 text-sm outline-none"
               aria-label="Rows per page"
             >
               {perPageOptions.map((size) => (

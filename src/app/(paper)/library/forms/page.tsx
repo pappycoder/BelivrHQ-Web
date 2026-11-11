@@ -238,13 +238,13 @@ export default function FormsListPage() {
                 }));
               }}
             />
-            <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
+            <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-sm">
               <Link href="/library/forms/submissions">
                 <Inbox className="size-3.5" /> Answers inbox
               </Link>
             </Button>
             {canCreate ? (
-              <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => router.push("/library/forms/new")}>
+              <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => router.push("/library/forms/new")}>
                 <Plus className="size-3.5" /> New form
               </Button>
             ) : null}
@@ -275,7 +275,7 @@ export default function FormsListPage() {
           </FilterChip>
           {isHq ? (
             <Select value={branchId} onValueChange={(value) => { setBranchId(value); setPage(1); }}>
-              <SelectTrigger className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none">
+              <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
                 <SelectValue placeholder="All branches" />
               </SelectTrigger>
               <SelectContent>
@@ -289,7 +289,7 @@ export default function FormsListPage() {
             </Select>
           ) : null}
           <Select value={sortBy} onValueChange={(value) => { setSortBy(value as SortValue); setPage(1); }}>
-            <SelectTrigger className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none">
+            <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
               <ArrowUpDownIcon /> <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -315,7 +315,7 @@ export default function FormsListPage() {
           icon={<ClipboardList />}
           title="Couldn&apos;t load the forms"
           description="The register failed to reach the server."
-          action={<Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => forms.refetch()}>Retry</Button>}
+          action={<Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => forms.refetch()}>Retry</Button>}
         />
       ) : forms.isLoading ? (
         <div className={view === "cards" ? "grid gap-3 sm:grid-cols-2 lg:grid-cols-3" : "space-y-2"}>
@@ -328,7 +328,7 @@ export default function FormsListPage() {
           icon={<ClipboardList />}
           title={archivedView ? "Nothing archived" : "No forms yet"}
           description="A form is a question asked once and answered forever."
-          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => router.push("/library/forms/new")}>Build the first</Button> : undefined}
+          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => router.push("/library/forms/new")}>Build the first</Button> : undefined}
         />
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
@@ -354,16 +354,16 @@ export default function FormsListPage() {
                       onClick={() => router.push(`/library/forms/${form.id}`)}
                       className="min-w-0 text-left"
                     >
-                      <p className="truncate text-xs font-semibold hover:text-brand">{form.title}</p>
+                      <p className="truncate text-sm font-semibold hover:text-brand">{form.title}</p>
                       {form.description ? (
-                        <p className="truncate text-[10px] text-ink-faint">{form.description}</p>
+                        <p className="truncate text-xs text-ink-faint">{form.description}</p>
                       ) : null}
                     </button>
                     <span>{statusTag(form)}</span>
-                    <span className="truncate text-[11px] text-ink-soft">{form.branchName ?? "All branches"}</span>
-                    <span className="num text-right text-[11px] tabular-nums">{form.fields?.length ?? 0}</span>
-                    <span className="num text-right text-[11px] tabular-nums">{number(form.submissionCount ?? 0)}</span>
-                    <span className="text-[11px] text-ink-faint">{form.updatedAt ? formatDate(form.updatedAt) : "Not available"}</span>
+                    <span className="truncate text-sm text-ink-soft">{form.branchName ?? "All branches"}</span>
+                    <span className="num text-right text-sm tabular-nums">{form.fields?.length ?? 0}</span>
+                    <span className="num text-right text-sm tabular-nums">{number(form.submissionCount ?? 0)}</span>
+                    <span className="text-sm text-ink-faint">{form.updatedAt ? formatDate(form.updatedAt) : "Not available"}</span>
                     <div className="flex justify-end">
                       <RowActions actions={manageActions(form)} />
                     </div>
@@ -393,8 +393,8 @@ export default function FormsListPage() {
                 <div className="paper-card flex h-full flex-col rounded-2xl p-4">
                   <div className="flex items-start justify-between gap-2">
                     <button type="button" onClick={() => router.push(`/library/forms/${form.id}`)} className="min-w-0 text-left">
-                      <p className="truncate text-xs font-semibold hover:text-brand">{form.title}</p>
-                      <p className="mt-0.5 text-[10px] text-ink-faint">
+                      <p className="truncate text-sm font-semibold hover:text-brand">{form.title}</p>
+                      <p className="mt-0.5 text-xs text-ink-faint">
                         {form.fields?.length ?? 0} questions · {form.branchName ?? "all branches"}
                       </p>
                     </button>
@@ -403,8 +403,8 @@ export default function FormsListPage() {
                       <RowActions reveal={false} actions={manageActions(form)} />
                     </span>
                   </div>
-                  {form.description ? <p className="mt-2 line-clamp-2 flex-1 text-[11px] leading-relaxed text-ink-soft">{form.description}</p> : <p className="flex-1" />}
-                  <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
+                  {form.description ? <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-ink-soft">{form.description}</p> : <p className="flex-1" />}
+                  <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
                     <span className="num">{number(form.submissionCount ?? 0)} answers</span>
                     <span>updated {formatDate(form.updatedAt)}</span>
                   </div>

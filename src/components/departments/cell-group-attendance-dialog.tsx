@@ -301,7 +301,7 @@ export function CellGroupAttendanceDialog({
                   />
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Creates a visitor record, then checks them in automatically.
               </p>
               <Button

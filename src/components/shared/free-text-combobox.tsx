@@ -62,7 +62,7 @@ export const FreeTextCombobox = React.forwardRef<HTMLInputElement, Props>(functi
         </div>
       </PopoverAnchor>
       <PopoverContent align="start" className="w-[var(--radix-popover-trigger-width)] min-w-56 max-w-[calc(100vw-2rem)] p-1" onOpenAutoFocus={event => event.preventDefault()} onCloseAutoFocus={event => event.preventDefault()} onInteractOutside={event => { if (anchor.current?.contains(event.target as Node)) event.preventDefault(); }}>
-        <p className="px-3 py-2 text-[11px] font-medium text-muted-foreground">Choose an existing value or keep your own text</p>
+        <p className="px-3 py-2 text-sm font-medium text-muted-foreground">Choose an existing value or keep your own text</p>
         <div id={listId} role="listbox" aria-label={`Existing ${label.toLowerCase()}`} aria-busy={loading} className="max-h-56 overflow-y-auto">
           {matches.map((name, index) => <button type="button" role="option" id={`${listId}-${index}`} key={name} aria-selected={name === value} tabIndex={-1}
             onPointerDown={event => event.preventDefault()} onClick={() => select(name)} onPointerMove={() => setActive(index)}
@@ -70,7 +70,7 @@ export const FreeTextCombobox = React.forwardRef<HTMLInputElement, Props>(functi
             <Check aria-hidden="true" className={cn("size-3.5 shrink-0", name !== value && "invisible")} /><span className="break-words">{name}</span>
           </button>)}
         </div>
-        {!matches.length && <p role="status" className="px-3 py-3 text-xs leading-relaxed text-muted-foreground">{loading ? "Finding existing names…" : failed ? "Suggestions are unavailable. You can still type and save your own value." : value ? "No matching suggestions. Your text will be saved with the sermon." : "No saved names yet. Type a new value above."}</p>}
+        {!matches.length && <p role="status" className="px-3 py-3 text-sm leading-relaxed text-muted-foreground">{loading ? "Finding existing names…" : failed ? "Suggestions are unavailable. You can still type and save your own value." : value ? "No matching suggestions. Your text will be saved with the sermon." : "No saved names yet. Type a new value above."}</p>}
       </PopoverContent>
     </Popover>
   );

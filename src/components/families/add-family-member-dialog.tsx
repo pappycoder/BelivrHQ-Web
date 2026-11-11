@@ -140,7 +140,7 @@ export function AddFamilyMemberDialog({
                         excludeIds={excludeIds}
                       />
                       {excludeIds.length > 0 && (
-                        <p className="text-xs text-muted-foreground mt-1.5">
+                        <p className="text-sm text-muted-foreground mt-1.5">
                           Members already in this family are hidden.
                         </p>
                       )}
@@ -184,7 +184,7 @@ export function AddFamilyMemberDialog({
                   <div className="flex items-center justify-between rounded-md border p-3">
                     <div>
                       <FormLabel>Head of Family</FormLabel>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <p className="text-sm text-muted-foreground mt-0.5">
                         Mark this member as the family head.
                       </p>
                     </div>

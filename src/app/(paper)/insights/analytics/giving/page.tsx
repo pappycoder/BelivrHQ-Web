@@ -60,7 +60,7 @@ export default function GivingAnalyticsPage() {
         title="Giving, in depth."
         description="Review giving totals, fund balances and trends without displaying donor names."
         actions={
-          <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
+          <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-sm">
             <Link href="/insights/reports">
               <HandCoins className="size-3.5" /> Turn it into a report
             </Link>
@@ -72,7 +72,7 @@ export default function GivingAnalyticsPage() {
         {PERIODS.map((item, index) => (
           <FilterChip key={item.label} active={period === index} onClick={() => setPeriod(index)}>{item.label}</FilterChip>
         ))}
-        <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-[11px] outline-none" aria-label="Branch filter">
+        <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Branch filter">
           <option value="">All branches</option>
           {(branches.data?.data ?? []).map((branch) => <option key={branch.branchId} value={branch.branchId}>{branch.name}</option>)}
         </select>
@@ -84,7 +84,7 @@ export default function GivingAnalyticsPage() {
           <Skeleton className="h-72 rounded-2xl" />
         </div>
       ) : giving.isError || !g ? (
-        <EmptyState icon={<HandCoins />} title="Couldn&apos;t load the giving analysis" action={<Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => giving.refetch()}>Retry</Button>} />
+        <EmptyState icon={<HandCoins />} title="Couldn&apos;t load the giving analysis" action={<Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => giving.refetch()}>Retry</Button>} />
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -99,7 +99,7 @@ export default function GivingAnalyticsPage() {
               {trendRows.length ? (
                 <TrendChart data={trendRows} series={[{ key: "total", label: "Given", color: "var(--chart-1)" }]} height={230} formatter={(v) => formatNaira(Number(v))} />
               ) : (
-                <p className="py-12 text-center text-[11px] text-ink-faint">No gifts recorded in this period.</p>
+                <p className="py-12 text-center text-sm text-ink-faint">No gifts recorded in this period.</p>
               )}
             </SectionCard>
 
@@ -107,11 +107,11 @@ export default function GivingAnalyticsPage() {
               {categoryData.length ? (
                 <DonutChart data={categoryData} centerValue={formatNaira(g.total)} centerLabel="received" height={175} formatter={(v) => formatNaira(Number(v))} />
               ) : (
-                <p className="py-12 text-center text-[11px] text-ink-faint">No category split yet.</p>
+                <p className="py-12 text-center text-sm text-ink-faint">No category split yet.</p>
               )}
               <div className="mt-3 space-y-1.5">
                 {categoryData.slice(0, 6).map((entry) => (
-                  <div key={entry.name} className="flex items-center gap-2 text-[10px]">
+                  <div key={entry.name} className="flex items-center gap-2 text-xs">
                     <span className="size-1.5 rounded-full" style={{ background: entry.color }} />
                     <span className="text-ink-soft">{entry.name}</span>
                     <span className="num ml-auto">{percent(entry.value, g.total)}%</span>
@@ -124,7 +124,7 @@ export default function GivingAnalyticsPage() {
               {typeRows.length ? (
                 <BarSeries data={typeRows} series={[{ key: "total", label: "Amount", color: "var(--chart-4)" }]} horizontal height={180} formatter={(v) => formatNaira(Number(v))} />
               ) : (
-                <p className="py-12 text-center text-[11px] text-ink-faint">Method data arrives with the first gifts.</p>
+                <p className="py-12 text-center text-sm text-ink-faint">Method data arrives with the first gifts.</p>
               )}
             </SectionCard>
 
@@ -134,22 +134,22 @@ export default function GivingAnalyticsPage() {
                   <div className="divide-y divide-line/70">
                     {topDonors.map((donor, index) => (
                       <div key={donor.memberId} className="flex items-center gap-3 px-5 py-2.5">
-                        <span className="num w-5 text-[10px] text-ink-faint">{index + 1}</span>
+                        <span className="num w-5 text-xs text-ink-faint">{index + 1}</span>
                         <PersonAvatar name={donor.memberName} size="xs" />
                         <span className="min-w-0 flex-1">
-                          <span className="block truncate text-xs font-medium">{donor.memberName}</span>
-                          <span className="block text-[10px] text-ink-faint">{number(donor.count)} gifts</span>
+                          <span className="block truncate text-sm font-medium">{donor.memberName}</span>
+                          <span className="block text-xs text-ink-faint">{number(donor.count)} gifts</span>
                         </span>
-                        <span className="num text-xs font-semibold">{formatNaira(donor.total)}</span>
+                        <span className="num text-sm font-semibold">{formatNaira(donor.total)}</span>
                       </div>
                     ))}
                   </div>
-                  <div className="border-t border-line px-5 py-2.5 text-[10px] text-ink-faint">
+                  <div className="border-t border-line px-5 py-2.5 text-xs text-ink-faint">
                     Totals stay inside finance leadership. This view is for the people who count, not the noticeboard.
                   </div>
                 </>
               ) : (
-                <div className="px-5 py-10 text-center text-[11px] text-ink-faint">No donors recorded in this period.</div>
+                <div className="px-5 py-10 text-center text-sm text-ink-faint">No donors recorded in this period.</div>
               )}
             </SectionCard>
           </div>
@@ -164,7 +164,7 @@ export default function GivingAnalyticsPage() {
           </div>
 
           <div className="flex justify-end">
-            <Button variant="ghost" size="sm" className="gap-1.5 rounded-full text-xs text-brand" asChild>
+            <Button variant="ghost" size="sm" className="gap-1.5 rounded-full text-sm text-brand" asChild>
               <Link href="/insights/reports">Turn this into a board report</Link>
             </Button>
           </div>

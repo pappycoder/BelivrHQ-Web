@@ -69,7 +69,7 @@ export function TableViewControls({
             </Button>
           </div>
         </div>
-        <p className="text-xs leading-relaxed text-muted-foreground">
+        <p className="text-sm leading-relaxed text-muted-foreground">
           Compact text uses ellipses. Headers stay full size, and number and currency columns keep
           their width.
         </p>
@@ -143,14 +143,14 @@ export function TableColumnActions({
                 }
               />
               <span className="min-w-0 flex-1 truncate">{column.label}</span>
-              {!column.hideable && <span className="text-xs text-muted-foreground">Fixed</span>}
+              {!column.hideable && <span className="text-sm text-muted-foreground">Fixed</span>}
               {hidden.includes(column.id) && (
-                <span className="text-xs text-muted-foreground">Hidden</span>
+                <span className="text-sm text-muted-foreground">Hidden</span>
               )}
             </label>
           ))}
         </div>
-        <p role="status" className="text-xs text-muted-foreground">
+        <p role="status" className="text-sm text-muted-foreground">
           {selected.length} columns selected
         </p>
         <div className="grid grid-cols-2 gap-2">
@@ -187,7 +187,7 @@ export function TableColumnActions({
             Expand selected
           </Button>
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Fixed identifiers stay visible. Numeric and currency widths are preserved.
         </p>
       </PopoverContent>

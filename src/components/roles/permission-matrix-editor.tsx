@@ -99,13 +99,13 @@ export function PermissionMatrixEditor({
   const renderColumn = (resourceList: string[], key: number) => (
     <div key={key} className="overflow-x-auto rounded-lg border">
       <div className="flex items-center border-b bg-muted/50 px-3 py-2 rounded-t-lg">
-        <span className="flex-1 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+        <span className="flex-1 text-sm font-medium text-muted-foreground uppercase tracking-wide">
           Resource
         </span>
         {PERMISSION_ACTIONS.map((action) => (
           <span
             key={action}
-            className="w-14 text-center text-[11px] font-medium text-muted-foreground capitalize"
+            className="w-14 text-center text-sm font-medium text-muted-foreground capitalize"
           >
             {action}
           </span>

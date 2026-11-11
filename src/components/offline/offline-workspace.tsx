@@ -470,7 +470,7 @@ export function OfflineWorkspace() {
                           </option>
                         ))}
                       </select>
-                      {branchLocked && <p className="text-xs text-muted-foreground">Offline access is limited to your assigned branch.</p>}
+                      {branchLocked && <p className="text-sm text-muted-foreground">Offline access is limited to your assigned branch.</p>}
                     </div>
                   )}
                 </>
@@ -484,7 +484,7 @@ export function OfflineWorkspace() {
                   value={passphrase}
                   onChange={(event) => setPassphrase(event.target.value)}
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   At least 12 characters. This passphrase stays on your device
                   and cannot be reset.
                 </p>
@@ -623,7 +623,7 @@ export function OfflineWorkspace() {
                               {workspace.outbox.some(
                                 (item) => item.entityId === row.id,
                               ) && (
-                                <span className="text-xs text-amber-600">
+                                <span className="text-sm text-amber-600">
                                   Pending sync or review
                                 </span>
                               )}
@@ -820,7 +820,7 @@ export function OfflineWorkspace() {
                       )}
                     </div>
                   ))}
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     Submissions are checked against the current form when
                     synced. Attachments require internet.
                   </p>
@@ -863,7 +863,7 @@ export function OfflineWorkspace() {
                         <p className="text-sm text-muted-foreground">
                           {item.message ?? "Saved safely on this device"}
                         </p>
-                        <pre className="max-h-40 overflow-auto rounded-lg bg-muted p-3 text-xs">
+                        <pre className="max-h-40 overflow-auto rounded-lg bg-muted p-3 text-sm">
                           {JSON.stringify(item.data, null, 2)}
                         </pre>
                         {item.status !== "pending" && (

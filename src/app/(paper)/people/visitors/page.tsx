@@ -206,7 +206,7 @@ export default function VisitorsPage() {
             <PersonAvatar name={fullName(visitor)} size="lg" />
             <div className="space-y-1.5">
               <Tag tone={STATUS_TONES[visitor.followUpStatus]} dot>{label(visitor.followUpStatus)}</Tag>
-              <p className="text-[10px] text-ink-faint">First visit {visitor.firstVisitDate.slice(0, 10)}</p>
+              <p className="text-xs text-ink-faint">First visit {visitor.firstVisitDate.slice(0, 10)}</p>
             </div>
           </div>
           <DataList>
@@ -216,16 +216,16 @@ export default function VisitorsPage() {
             {visitor.assignedToName ? <FieldRow label="Assigned to">{visitor.assignedToName}</FieldRow> : null}
           </DataList>
           {visitor.notes ? (
-            <p className="rounded-lg border border-line bg-card p-3 text-[11px] leading-relaxed text-ink-soft">{visitor.notes}</p>
+            <p className="rounded-lg border border-line bg-card p-3 text-sm leading-relaxed text-ink-soft">{visitor.notes}</p>
           ) : null}
           <div className="grid grid-cols-2 gap-2">
-            <Button asChild size="sm" className="h-9 rounded-lg text-xs">
+            <Button asChild size="sm" className="h-9 rounded-lg text-sm">
               <Link href={`/people/visitors/${visitor.id}`}>Full record</Link>
             </Button>
             {canUpdate ? (
               <Button
                 size="sm"
-                className="h-9 rounded-lg text-xs"
+                className="h-9 rounded-lg text-sm"
                 disabled={updateVisitor.isPending}
                 onClick={() => confirm({ title: "Mark guest contacted?", subject: [visitor.firstName, visitor.lastName].filter(Boolean).join(" "), onConfirm: () => updateVisitor.mutateAsync(
                     { visitorId: visitor.id, input: { followUpStatus: "contacted" } },
@@ -236,12 +236,12 @@ export default function VisitorsPage() {
               </Button>
             ) : null}
             {canUpdate ? (
-              <Button variant="outline" size="sm" className="h-9 rounded-lg border-line text-xs" onClick={() => { close(); setEditTarget(visitor); setFormOpen(true); }}>
+              <Button variant="outline" size="sm" className="h-9 rounded-lg border-line text-sm" onClick={() => { close(); setEditTarget(visitor); setFormOpen(true); }}>
                 Edit
               </Button>
             ) : null}
             {canUpdate && !visitor.convertedMemberId && !visitor.archivedAt ? (
-              <Button variant="outline" size="sm" className="h-9 rounded-lg border-line text-xs" onClick={() => { close(); setConvertTarget(visitor); }}>
+              <Button variant="outline" size="sm" className="h-9 rounded-lg border-line text-sm" onClick={() => { close(); setConvertTarget(visitor); }}>
                 Convert
               </Button>
             ) : null}
@@ -250,7 +250,7 @@ export default function VisitorsPage() {
             <Button
               variant="outline"
               size="sm"
-              className="w-full rounded-lg border-line text-xs text-destructive"
+              className="w-full rounded-lg border-line text-sm text-destructive"
               onClick={() => { close(); setDeleteTarget([visitor]); }}
             >
               Remove guest
@@ -268,7 +268,7 @@ export default function VisitorsPage() {
         title="Guests in the room."
         description="Every first-time guest, their follow-up status, and who&apos;s carrying the conversation."
         actions={<><PublicRegistrationLink kind="visitors" />{canCreate ? (
-            <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => { setEditTarget(null); setFormOpen(true); }}>
+            <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => { setEditTarget(null); setFormOpen(true); }}>
               <UserRoundPlus className="size-3.5" /> Add a guest
             </Button>
           ) : null}</>}
@@ -296,7 +296,7 @@ export default function VisitorsPage() {
             Archived
           </FilterChip>
           <Select value={sortBy} onValueChange={(value) => { setSortBy(value as typeof sortBy); setPage(1); }}>
-            <SelectTrigger className="h-8 w-32 rounded-full border-line bg-card text-[11px] shadow-none">
+            <SelectTrigger className="h-9 w-40 rounded-full border-line bg-card text-sm shadow-none">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -318,7 +318,7 @@ export default function VisitorsPage() {
       </div>
 
       {list.isError ? (
-        <EmptyState icon={<Search />} title="Couldn&apos;t load the register" description="The visitor list didn&apos;t answer." action={<Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => list.refetch()}>Retry</Button>} />
+        <EmptyState icon={<Search />} title="Couldn&apos;t load the register" description="The visitor list didn&apos;t answer." action={<Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => list.refetch()}>Retry</Button>} />
       ) : list.isLoading ? (
         view === "table" ? (
           <div className="space-y-2">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}</div>
@@ -332,7 +332,7 @@ export default function VisitorsPage() {
           icon={<Users />}
           title="No guests match"
           description={archivedView ? "Nothing archived under these filters." : "Try a different name, or loosen the filter."}
-          action={<Button variant="outline" size="sm" className="rounded-full border-line text-xs" onClick={() => { setSearchInput(""); setSearch(""); setStatus("all"); setArchivedView(false); setPage(1); }}>Clear filters</Button>}
+          action={<Button variant="outline" size="sm" className="rounded-full border-line text-sm" onClick={() => { setSearchInput(""); setSearch(""); setStatus("all"); setArchivedView(false); setPage(1); }}>Clear filters</Button>}
         />
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
@@ -351,13 +351,13 @@ export default function VisitorsPage() {
                     <button type="button" onClick={() => peek(visitor)} className="flex min-w-0 items-center gap-3 text-left">
                       <PersonAvatar name={fullName(visitor)} size="sm" />
                       <span className="min-w-0">
-                        <span className="block truncate text-xs font-semibold">{fullName(visitor)}</span>
-                        <span className="block truncate text-[11px] text-ink-faint">{visitor.email ?? visitor.phone ?? "No contact"}</span>
+                        <span className="block truncate text-sm font-semibold">{fullName(visitor)}</span>
+                        <span className="block truncate text-sm text-ink-faint">{visitor.email ?? visitor.phone ?? "No contact"}</span>
                       </span>
                     </button>
                     <span><Tag tone={STATUS_TONES[visitor.followUpStatus]} dot>{label(visitor.followUpStatus)}</Tag></span>
-                    <span className="num text-[11px] text-ink-soft">{visitor.firstVisitDate.slice(0, 10)}</span>
-                    <span className="truncate text-[11px] text-ink-faint">{visitor.assignedToName ?? "Not available"}</span>
+                    <span className="num text-sm text-ink-soft">{visitor.firstVisitDate.slice(0, 10)}</span>
+                    <span className="truncate text-sm text-ink-faint">{visitor.assignedToName ?? "Not available"}</span>
                     <RowActions actions={manageActions(visitor)} />
                   </div>
                 ))}
@@ -383,13 +383,13 @@ export default function VisitorsPage() {
                   <button type="button" onClick={() => peek(visitor)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
                     <PersonAvatar name={fullName(visitor)} size="md" />
                     <div className="min-w-0">
-                      <p className="truncate text-xs font-semibold">{fullName(visitor)}</p>
-                      <p className="truncate text-[11px] text-ink-faint">{visitor.email ?? visitor.phone ?? "No contact"}</p>
+                      <p className="truncate text-sm font-semibold">{fullName(visitor)}</p>
+                      <p className="truncate text-sm text-ink-faint">{visitor.email ?? visitor.phone ?? "No contact"}</p>
                     </div>
                   </button>
                   <RowActions reveal={false} actions={manageActions(visitor)} />
                 </div>
-                <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
+                <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
                   <Tag tone={STATUS_TONES[visitor.followUpStatus]}>{label(visitor.followUpStatus)}</Tag>
                   <span className="num">{visitor.firstVisitDate.slice(0, 10)}</span>
                 </div>

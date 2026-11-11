@@ -155,7 +155,7 @@ export default function VisitorFollowUpBoardPage() {
         description="Drag a card or use its dropdown to update the follow-up stage."
         actions={
           canCreate ? (
-            <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setFormOpen(true)}>
+            <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setFormOpen(true)}>
               <UserRoundPlus className="size-3.5" /> Add a guest
             </Button>
           ) : null
@@ -179,7 +179,7 @@ export default function VisitorFollowUpBoardPage() {
             { value: "list", label: "List view", icon: <Rows3 className="size-3.5" /> },
           ]}
         />
-        <span className="text-[10px] text-ink-faint">
+        <span className="text-xs text-ink-faint">
           {stats.data?.converted ?? 0} joined this year · follow-up beats spreadsheets
         </span>
       </div>
@@ -197,25 +197,25 @@ export default function VisitorFollowUpBoardPage() {
               <Link href={`/people/visitors/${visitor.id}`} className="flex min-w-0 flex-1 items-center gap-3">
                 <PersonAvatar name={fullName(visitor)} size="xs" />
                 <span className="min-w-0">
-                  <span className="block truncate text-xs font-medium">{fullName(visitor)}</span>
-                  <span className="block truncate text-[10px] text-ink-faint">{visitor.phone ?? visitor.email ?? "No contact on file"}</span>
+                  <span className="block truncate text-sm font-medium">{fullName(visitor)}</span>
+                  <span className="block truncate text-xs text-ink-faint">{visitor.phone ?? visitor.email ?? "No contact on file"}</span>
                 </span>
               </Link>
-              <span className="hidden w-36 truncate text-[11px] text-ink-soft md:block">
+              <span className="hidden w-36 truncate text-sm text-ink-soft md:block">
                 {visitor.assignedToName ?? <span className="text-brand">Unassigned</span>}
               </span>
-              <span className="num hidden w-24 text-right text-[10px] text-ink-faint sm:block">{formatDate(visitor.firstVisitDate)}</span>
+              <span className="num hidden w-24 text-right text-xs text-ink-faint sm:block">{formatDate(visitor.firstVisitDate)}</span>
               <select
                 value={visitor.followUpStatus}
                 aria-label={`Follow-up stage for ${fullName(visitor)}`}
                 onChange={(event) => setStatus(visitor, event.target.value as FollowUpStatus)}
-                className="ml-auto h-8 shrink-0 rounded-full border border-line bg-card px-2.5 text-[11px] outline-none hover:border-ink/20"
+                className="ml-auto h-8 shrink-0 rounded-full border border-line bg-card px-2.5 text-sm outline-none hover:border-ink/20"
               >
                 {FOLLOW_UP_STATUSES.map((stage) => <option key={stage.value} value={stage.value}>{stage.label}</option>)}
               </select>
             </div>
           ))}
-          <div className="bg-muted/20 px-5 py-2.5 text-[10px] text-ink-faint">
+          <div className="bg-muted/20 px-5 py-2.5 text-xs text-ink-faint">
             Changes are shared with the board. Switch views whenever it helps.
           </div>
         </ListTable>
@@ -262,7 +262,7 @@ export default function VisitorFollowUpBoardPage() {
         </DndContext>
       )}
 
-      <p className="text-[10px] text-ink-faint">
+      <p className="text-xs text-ink-faint">
         Converted guests keep their history; the member profile carries the story from here.
       </p>
 
@@ -293,10 +293,10 @@ function BoardColumn({
       }
     >
       <div className="flex items-center justify-between px-2 pb-1">
-        <p className="text-xs font-semibold">{column.label}</p>
-        <span className="num rounded-full bg-card px-1.5 text-[10px] text-ink-faint">{cards.length}</span>
+        <p className="text-sm font-semibold">{column.label}</p>
+        <span className="num rounded-full bg-card px-1.5 text-xs text-ink-faint">{cards.length}</span>
       </div>
-      <p className="px-2 pb-2 text-[9px] uppercase tracking-wider text-ink-faint">{column.hint}</p>
+      <p className="px-2 pb-2 text-xs uppercase tracking-wider text-ink-faint">{column.hint}</p>
       <div className="flex flex-1 flex-col gap-2">
         {cards.map((visitor) => (
           <BoardCard
@@ -307,7 +307,7 @@ function BoardColumn({
           />
         ))}
         {!cards.length ? (
-          <p className="rounded-xl border border-dashed border-line/70 py-6 text-center text-[10px] text-ink-faint">
+          <p className="rounded-xl border border-dashed border-line/70 py-6 text-center text-xs text-ink-faint">
             Nothing here
           </p>
         ) : null}
@@ -376,11 +376,11 @@ function CardFace({
           <Link
             href={`/people/visitors/${visitor.id}`}
             onPointerDown={(event) => event.stopPropagation()}
-            className="block truncate text-[11px] font-semibold hover:text-brand"
+            className="block truncate text-sm font-semibold hover:text-brand"
           >
             {visitor.firstName} {visitor.lastName ?? ""}
           </Link>
-          <p className="truncate text-[10px] text-ink-faint">
+          <p className="truncate text-xs text-ink-faint">
             {visitor.phone ? <Phone className="mr-1 inline size-2.5" /> : null}
             {daysSince(visitor.firstVisitDate)}
             {visitor.assignedToName ? ` · ${visitor.assignedToName.split(" ")[0]}` : " · unassigned"}
@@ -392,7 +392,7 @@ function CardFace({
           value={visitor.followUpStatus}
           onPointerDown={(event) => event.stopPropagation()}
           onChange={(event) => onMove(event.target.value as FollowUpStatus)}
-          className="mt-2 w-full rounded-md border border-line bg-card px-1.5 py-1 text-[10px] text-ink-soft outline-none"
+          className="mt-2 w-full rounded-md border border-line bg-card px-1.5 py-1 text-xs text-ink-soft outline-none"
           aria-label={`Status for ${visitor.firstName}`}
         >
           {COLUMNS.flatMap((c) => c.statuses).map((value) => (

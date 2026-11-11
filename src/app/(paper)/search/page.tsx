@@ -62,8 +62,8 @@ function MemberRail({ search, onSettled }: RailProps) {
           <Link key={member.memberId} href={`/people/members/${member.memberId}`} className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-muted/40">
             <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.photoUrl} size="sm" />
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-xs font-medium">{member.firstName} {member.lastName}</span>
-              <span className="block truncate text-[10px] text-ink-faint">{member.phone ?? member.email ?? "no contact"} · {member.status}</span>
+              <span className="block truncate text-sm font-medium">{member.firstName} {member.lastName}</span>
+              <span className="block truncate text-xs text-ink-faint">{member.phone ?? member.email ?? "no contact"} · {member.status}</span>
             </span>
             <Tag tone="neutral">{member.memberSince?.slice(0, 4) || "member"}</Tag>
           </Link>
@@ -85,8 +85,8 @@ function VisitorRail({ search, onSettled }: RailProps) {
           <Link key={visitor.id} href={`/people/visitors/${visitor.id}`} className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-muted/40">
             <PersonAvatar name={`${visitor.firstName} ${visitor.lastName ?? ""}`} size="sm" />
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-xs font-medium">{visitor.firstName} {visitor.lastName ?? ""}</span>
-              <span className="block truncate text-[10px] text-ink-faint">{visitor.phone ?? "no phone"} · first visit {formatDate(visitor.firstVisitDate)}</span>
+              <span className="block truncate text-sm font-medium">{visitor.firstName} {visitor.lastName ?? ""}</span>
+              <span className="block truncate text-xs text-ink-faint">{visitor.phone ?? "no phone"} · first visit {formatDate(visitor.firstVisitDate)}</span>
             </span>
             <Tag tone="gold" dot>{visitor.followUpStatus.replace(/_/g, " ")}</Tag>
           </Link>
@@ -110,8 +110,8 @@ function EventRail({ search, onSettled }: RailProps) {
               <CalendarDays className="size-3.5" />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-xs font-medium">{event.title}</span>
-              <span className="block text-[10px] text-ink-faint">{formatDate(event.startDate)} · {event.location ?? "venue TBD"}</span>
+              <span className="block truncate text-sm font-medium">{event.title}</span>
+              <span className="block text-xs text-ink-faint">{formatDate(event.startDate)} · {event.location ?? "venue TBD"}</span>
             </span>
             {event.isFree ? <Tag tone="moss">free</Tag> : <Tag tone="gold">tickets</Tag>}
           </Link>
@@ -135,8 +135,8 @@ function SermonRail({ search, onSettled }: RailProps) {
               <BookOpen className="size-3.5" />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-xs font-medium">{sermon.title}</span>
-              <span className="block text-[10px] text-ink-faint">{sermon.speaker ?? "Unknown speaker"} · {formatDate(sermon.sermonDate)}</span>
+              <span className="block truncate text-sm font-medium">{sermon.title}</span>
+              <span className="block text-xs text-ink-faint">{sermon.speaker ?? "Unknown speaker"} · {formatDate(sermon.sermonDate)}</span>
             </span>
             {sermon.seriesName ? <Tag tone="gold">{sermon.seriesName}</Tag> : null}
           </Link>
@@ -160,8 +160,8 @@ function FormRail({ search, onSettled }: RailProps) {
               <ClipboardList className="size-3.5" />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-xs font-medium">{form.title}</span>
-              <span className="block text-[10px] text-ink-faint">{form.fields?.length ?? 0} questions · {form.submissionCount ?? 0} answers</span>
+              <span className="block truncate text-sm font-medium">{form.title}</span>
+              <span className="block text-xs text-ink-faint">{form.fields?.length ?? 0} questions · {form.submissionCount ?? 0} answers</span>
             </span>
             <Tag tone={form.status === "published" ? "moss" : "neutral"} dot>{form.status}</Tag>
           </Link>
@@ -239,9 +239,9 @@ function SearchInner() {
         </div>
         {recent.length && !query ? (
           <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5">
-            <span className="text-[10px] text-ink-faint">Recent:</span>
+            <span className="text-xs text-ink-faint">Recent:</span>
             {recent.map((item) => (
-              <button key={item} type="button" onClick={() => setQuery(item)} className="rounded-full border border-line bg-card px-2.5 py-1 text-[10px] text-ink-soft hover:border-ink/20 hover:text-ink">
+              <button key={item} type="button" onClick={() => setQuery(item)} className="rounded-full border border-line bg-card px-2.5 py-1 text-xs text-ink-soft hover:border-ink/20 hover:text-ink">
                 {item}
               </button>
             ))}
@@ -262,7 +262,7 @@ function SearchInner() {
         <div className="mx-auto max-w-3xl">
           <div className="paper-card rounded-2xl px-5 py-10 text-center">
             <p className="font-display text-sm font-semibold">Nothing answers to &ldquo;{search}&rdquo;</p>
-            <p className="mt-1 text-[11px] text-ink-faint">Searches only reach what your role can read. A person may exist in a branch you don&apos;t see, or sit behind a grant you don&apos;t hold.</p>
+            <p className="mt-1 text-sm text-ink-faint">Searches only reach what your role can read. A person may exist in a branch you don&apos;t see, or sit behind a grant you don&apos;t hold.</p>
           </div>
         </div>
       ) : active ? (
@@ -272,7 +272,7 @@ function SearchInner() {
           {showEvents ? <EventRail search={search} onSettled={onSettled("events")} /> : null}
           {showSermons ? <SermonRail search={search} onSettled={onSettled("sermons")} /> : null}
           {showForms ? <FormRail search={search} onSettled={onSettled("forms")} /> : null}
-          <p className="text-center text-[10px] text-ink-faint">
+          <p className="text-center text-xs text-ink-faint">
             {total} result{total === 1 ? "" : "s"} · every rail runs only on the grants your role holds.
           </p>
         </div>
@@ -288,12 +288,12 @@ function SearchInner() {
                 <span className="grid size-9 place-items-center rounded-xl bg-brand-soft text-brand">
                   <card.icon className="size-4" />
                 </span>
-                <span className="text-xs font-semibold">{card.title}</span>
-                <span className="text-[10px] leading-relaxed text-ink-faint">{card.line}</span>
+                <span className="text-sm font-semibold">{card.title}</span>
+                <span className="text-xs leading-relaxed text-ink-faint">{card.line}</span>
               </button>
             ))}
           </div>
-          <p className="mt-4 flex items-center justify-center gap-1.5 text-[10px] text-ink-faint">
+          <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-ink-faint">
             <UserRound className="size-3" />
             Two characters start the hunt. Giving rows join once the ledger grant is yours.
           </p>

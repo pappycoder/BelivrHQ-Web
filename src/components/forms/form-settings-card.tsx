@@ -47,7 +47,7 @@ export function FormSettingsCard({
   return (
     <div className="space-y-4">
       <div className="space-y-1.5">
-        <Label htmlFor={`${id}-status`} className="text-xs">Status</Label>
+        <Label htmlFor={`${id}-status`} className="text-sm">Status</Label>
         <Select
           value={values.status ?? "draft"}
           onValueChange={(value) => { if (value) onChange({ ...values, status: value as FormStatus }); }}
@@ -64,14 +64,14 @@ export function FormSettingsCard({
             ))}
           </SelectContent>
         </Select>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Published forms are open to submissions; closed forms reject new submissions.
         </p>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor={`${id}-unique`} className="text-xs">Unique Field (dedupe)</Label>
+          <Label htmlFor={`${id}-unique`} className="text-sm">Unique Field (dedupe)</Label>
           <Select
             value={values.uniqueField ?? "none"}
             onValueChange={(value) =>
@@ -91,13 +91,13 @@ export function FormSettingsCard({
               ))}
             </SelectContent>
           </Select>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             When set, public submissions with a duplicate value for this field are rejected.
           </p>
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor={`${id}-limit`} className="text-xs">Submission Limit (0 = unlimited)</Label>
+          <Label htmlFor={`${id}-limit`} className="text-sm">Submission Limit (0 = unlimited)</Label>
           <Input id={`${id}-limit`}
             type="number"
             min={0}
@@ -113,8 +113,8 @@ export function FormSettingsCard({
       <div className="space-y-3 border-t pt-3">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <Label htmlFor={`${id}-template`} className="text-xs">Reusable Template</Label>
-            <p className="text-xs text-muted-foreground">
+            <Label htmlFor={`${id}-template`} className="text-sm">Reusable Template</Label>
+            <p className="text-sm text-muted-foreground">
               Save this form as a template for cloning.
             </p>
           </div>
@@ -127,8 +127,8 @@ export function FormSettingsCard({
 
         <div className="flex items-center justify-between gap-3">
           <div>
-            <Label htmlFor={`${id}-public`} className="text-xs">Public Submissions</Label>
-            <p className="text-xs text-muted-foreground">
+            <Label htmlFor={`${id}-public`} className="text-sm">Public Submissions</Label>
+            <p className="text-sm text-muted-foreground">
               Allow anyone with the share link to submit without signing in.
             </p>
           </div>

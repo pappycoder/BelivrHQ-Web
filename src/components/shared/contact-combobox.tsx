@@ -101,7 +101,7 @@ export function ContactCombobox({
           {display && (
             <Avatar className="size-6 shrink-0">
               <AvatarImage src={display.avatarUrl} alt={display.name} />
-              <AvatarFallback className="text-[10px]">
+              <AvatarFallback className="text-xs">
                 {initials(display.name) || <UserRound className="size-3" />}
               </AvatarFallback>
             </Avatar>
@@ -147,12 +147,12 @@ export function ContactCombobox({
                     </Avatar>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium">{c.name}</span>
-                      <span className="block truncate text-xs text-muted-foreground">
+                      <span className="block truncate text-sm text-muted-foreground">
                         {ROLE_LABEL[c.role] ?? c.role}
                         {c.branchName ? ` · ${c.branchName}` : ""}
                       </span>
                     </span>
-                    <span className="flex-none rounded border px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                    <span className="flex-none rounded border px-1.5 py-0.5 text-xs text-muted-foreground">
                       {c.role === "visitor" ? "Visitor" : c.isPastor ? "Pastor" : "Person"}
                     </span>
                   </CommandItem>

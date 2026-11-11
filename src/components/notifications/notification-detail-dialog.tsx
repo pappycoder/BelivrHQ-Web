@@ -78,7 +78,7 @@ export function NotificationDetailDialog({ notification, open, onOpenChange, onD
             <>
               <div className="rounded-xl border border-line bg-muted/20 p-4 sm:p-5"><p className="whitespace-pre-wrap break-words text-sm leading-7">{item.body}</p></div>
               {context.length > 0 && <dl className="grid gap-x-6 gap-y-4 rounded-xl border border-line p-4 text-sm sm:grid-cols-2">
-                {context.map(field => <div key={field.label} className="min-w-0 space-y-1"><dt className="text-xs text-muted-foreground">{field.label}</dt><dd className="break-words font-medium">{field.value}</dd></div>)}
+                {context.map(field => <div key={field.label} className="min-w-0 space-y-1"><dt className="text-sm text-muted-foreground">{field.label}</dt><dd className="break-words font-medium">{field.value}</dd></div>)}
               </dl>}
               {read.isError && <div role="alert" className="space-y-2 rounded-xl border border-destructive/30 p-3 text-sm">
                 <p>The notification opened, but its read status could not be saved.</p>

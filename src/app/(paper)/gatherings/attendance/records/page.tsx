@@ -246,7 +246,7 @@ export default function AttendanceRecordsPage() {
               <SelectTrigger
                 aria-label="Gathering"
                 disabled={services.isLoading || services.isError}
-                className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none"
+                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -268,7 +268,7 @@ export default function AttendanceRecordsPage() {
             >
               <SelectTrigger
                 aria-label="Attendance category"
-                className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none"
+                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -294,7 +294,7 @@ export default function AttendanceRecordsPage() {
                   aria-label="Attendance branch"
                   data-prefix-icon="building"
                   disabled={branches.isLoading || branches.isError}
-                  className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none"
+                  className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -318,7 +318,7 @@ export default function AttendanceRecordsPage() {
               <SelectTrigger
                 aria-label="Sort attendance records"
                 data-prefix-icon="none"
-                className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none"
+                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
               >
                 <ArrowUpDown className="size-3" />
                 <SelectValue />
@@ -347,9 +347,9 @@ export default function AttendanceRecordsPage() {
           }}>
             <PopoverTrigger asChild>
               <Button ref={dateTriggerRef} disableTooltip type="button" variant="outline" size="sm" aria-label={startDate || endDate ? `Date range, ${startDate || "any start"} to ${endDate || "any end"}` : "Date range"}
-                className={`h-8 gap-2 rounded-full border-line text-[11px] ${startDate || endDate ? "bg-brand/10 text-brand" : "bg-card"}`}>
+                className={`h-9 max-w-full gap-2 rounded-full border-line text-sm ${startDate || endDate ? "bg-brand/10 text-brand" : "bg-card"}`}>
                 <CalendarDays className="size-3.5" />
-                {startDate || endDate ? `${startDate || "Any start"} → ${endDate || "Any end"}` : "Date range"}
+                <span className="min-w-0 truncate">{startDate || endDate ? `${startDate || "Any start"} → ${endDate || "Any end"}` : "Date range"}</span>
                 <ChevronDown className="size-3" />
               </Button>
             </PopoverTrigger>
@@ -377,7 +377,7 @@ export default function AttendanceRecordsPage() {
                   aria-invalid={invalidRange || undefined} aria-describedby={invalidRange ? "attendance-date-error" : undefined}
                   onChange={event => setDateDraft(value => ({ ...value, to: event.target.value }))} />
               </div>
-              {invalidRange && <p id="attendance-date-error" role="alert" className="text-xs text-destructive">To date must be on or after From date.</p>}
+              {invalidRange && <p id="attendance-date-error" role="alert" className="text-sm text-destructive">To date must be on or after From date.</p>}
               <div className="flex justify-between gap-2 border-t border-line pt-3">
                 <Button type="button" variant="ghost" size="sm" onClick={() => {
                   setStartDate(""); setEndDate(""); setDateDraft({ from: "", to: "" }); setPage(1); setDateOpen(false);
@@ -395,7 +395,7 @@ export default function AttendanceRecordsPage() {
             startDate ||
             endDate) && (
             <button
-              className="text-xs text-ink-soft underline underline-offset-4"
+              className="text-sm text-ink-soft underline underline-offset-4"
               onClick={() => {
                 setQuery("");
                 setSearch("");
@@ -413,7 +413,7 @@ export default function AttendanceRecordsPage() {
         </div>
         {services.isError && (
           <button
-            className="text-xs text-ink-soft underline"
+            className="text-sm text-ink-soft underline"
             onClick={() => services.refetch()}
           >
             Couldn’t load gatherings. Retry
@@ -421,7 +421,7 @@ export default function AttendanceRecordsPage() {
         )}
         {isHq && branches.isError && (
           <button
-            className="text-xs text-ink-soft underline"
+            className="text-sm text-ink-soft underline"
             onClick={() => branches.refetch()}
           >
             Couldn’t load branches. Retry
@@ -473,7 +473,7 @@ export default function AttendanceRecordsPage() {
                 {rows.map((record) => (
                   <div
                     key={record.attendanceId}
-                    className="group grid grid-cols-[minmax(0,1.5fr)_0.8fr_minmax(0,1.2fr)_0.8fr_0.8fr_auto] items-center gap-3 px-5 py-2.5 text-xs"
+                    className="group grid grid-cols-[minmax(0,1.5fr)_0.8fr_minmax(0,1.2fr)_0.8fr_0.8fr_auto] items-center gap-3 px-5 py-2.5 text-sm"
                   >
                     <span className="flex min-w-0 items-center gap-2.5">
                       <PersonAvatar
@@ -491,13 +491,13 @@ export default function AttendanceRecordsPage() {
                         {record.memberId ? "member" : "visitor"}
                       </Tag>
                     </span>
-                    <span className="min-w-0 truncate text-[11px] text-ink-soft">
+                    <span className="min-w-0 truncate text-sm text-ink-soft">
                       {record.serviceName ?? record.eventName ?? "Not available"}
                     </span>
-                    <span className="text-[11px] capitalize text-ink-faint">
+                    <span className="text-sm capitalize text-ink-faint">
                       {attendanceCategoryLabel(record.category) ?? "Not available"}
                     </span>
-                    <span className="num text-[10px] text-ink-faint">
+                    <span className="num text-xs text-ink-faint">
                       {stamp(record.checkInAt)}
                     </span>
                     <div className="flex justify-end">
@@ -519,7 +519,7 @@ export default function AttendanceRecordsPage() {
                           ]}
                         />
                       ) : (
-                        <span className="flex items-center gap-1 text-[9px] text-ink-faint opacity-0 group-hover:opacity-100">
+                        <span className="flex items-center gap-1 text-xs text-ink-faint opacity-0 group-hover:opacity-100">
                           <LogIn className="size-2.5" />{" "}
                           {record.source === "walk_in"
                             ? "walk-in"

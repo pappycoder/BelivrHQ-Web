@@ -592,7 +592,7 @@ export function PeopleImportPage({
                     <Badge
                       key={fmt}
                       variant="secondary"
-                      className="font-mono text-[11px]"
+                      className="font-mono text-sm"
                     >
                       .{fmt.toLowerCase()}
                     </Badge>
@@ -610,7 +610,7 @@ export function PeopleImportPage({
                   }}
                 />
               </label>
-              <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
                 <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
                 Only spreadsheet files (.csv, .xlsx; up to 5 MB and 10,000 rows)
                 are accepted. Other formats are rejected automatically.
@@ -632,7 +632,7 @@ export function PeopleImportPage({
             </CardHeader>
             <CardContent className="mt-auto space-y-4">
               <div>
-                <p className="text-xs font-medium text-muted-foreground mb-2">
+                <p className="text-sm font-medium text-muted-foreground mb-2">
                   Supported columns
                 </p>
                 <div className="flex flex-wrap gap-1.5">
@@ -654,7 +654,7 @@ export function PeopleImportPage({
                 <Download className="h-4 w-4 mr-2" />
                 Download Template
               </Button>
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Phone numbers accept + country codes and leading zeros. Dates
                 use YYYY-MM-DD; calendar availability depends on your
                 spreadsheet app.
@@ -812,7 +812,7 @@ export function PeopleImportPage({
                   </TableBody>
                 </Table>
                 {dryRunResult.errors.length > 25 && (
-                  <p className="px-4 py-2 text-xs text-muted-foreground border-t">
+                  <p className="px-4 py-2 text-sm text-muted-foreground border-t">
                     Showing the first 25 of {dryRunResult.errors.length}{" "}
                     problems.
                   </p>

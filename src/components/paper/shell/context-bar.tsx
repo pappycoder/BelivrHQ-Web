@@ -40,7 +40,7 @@ export function ContextBar({ onOpenSearch }: { onOpenSearch: () => void }) {
         </span>
       </Link>
 
-      <nav aria-label="Breadcrumb" className="hidden min-w-0 items-center gap-1.5 text-xs md:flex">
+      <nav aria-label="Breadcrumb" className="hidden min-w-0 items-center gap-1.5 text-sm md:flex">
         {trail.area ? (
           <>
             <Link
@@ -67,11 +67,11 @@ export function ContextBar({ onOpenSearch }: { onOpenSearch: () => void }) {
         <button
           type="button"
           onClick={onOpenSearch}
-          className="hidden h-8 items-center gap-2 rounded-full border border-line bg-card px-3 text-xs text-ink-faint transition-colors hover:border-ink/20 hover:text-ink sm:flex"
+          className="hidden h-8 items-center gap-2 rounded-full border border-line bg-card px-3 text-sm text-ink-faint transition-colors hover:border-ink/20 hover:text-ink sm:flex"
         >
           <Search className="size-3.5" />
           <span>Search</span>
-          <kbd className="ml-2 rounded border border-line bg-muted px-1 font-mono text-[9px] text-ink-soft">
+          <kbd className="ml-2 rounded border border-line bg-muted px-1 font-mono text-xs text-ink-soft">
             ⌘K
           </kbd>
         </button>
@@ -104,7 +104,7 @@ export function ContextBar({ onOpenSearch }: { onOpenSearch: () => void }) {
           >
             <Bell className="size-4" />
             {unread?.count ? (
-              <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground ring-2 ring-background">
+              <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-destructive px-1 text-xs font-semibold text-destructive-foreground ring-2 ring-background">
                 {unread.count > 99 ? "99+" : unread.count}
               </span>
             ) : null}
@@ -143,8 +143,8 @@ function AccountMenu() {
         <DropdownMenuLabel className="flex items-center gap-2.5 py-2">
           <PersonAvatar name={fullName} src={profile?.avatarUrl} size="md" />
           <div className="min-w-0">
-            <p className="truncate text-xs font-semibold">{fullName}</p>
-            <p className="truncate text-[11px] font-normal text-ink-faint">
+            <p className="truncate text-sm font-semibold">{fullName}</p>
+            <p className="truncate text-sm font-normal text-ink-faint">
               {user?.email}
             </p>
           </div>

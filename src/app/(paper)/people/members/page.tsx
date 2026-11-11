@@ -199,19 +199,19 @@ export default function PeopleMembersPage() {
             {member.dateOfBirth ? <FieldRow label="Birthday">{member.dateOfBirth}</FieldRow> : null}
           </DataList>
           {member.notes ? (
-            <div className="rounded-lg border border-line bg-card p-3 text-[11px] leading-relaxed text-ink-soft">
+            <div className="rounded-lg border border-line bg-card p-3 text-sm leading-relaxed text-ink-soft">
               {member.notes}
             </div>
           ) : null}
           <div className="grid grid-cols-2 gap-2">
-            <Button asChild size="sm" className="h-9 rounded-lg text-xs">
+            <Button asChild size="sm" className="h-9 rounded-lg text-sm">
               <Link href={`/people/members/${member.memberId}`}>Full profile</Link>
             </Button>
             {canUpdate && !member.archivedAt ? (
               <Button
                 variant="outline"
                 size="sm"
-                className="h-9 gap-1.5 rounded-lg text-xs"
+                className="h-9 gap-1.5 rounded-lg text-sm"
                 onClick={() => {
                   closeInspector();
                   setEditTarget(member);
@@ -222,14 +222,14 @@ export default function PeopleMembersPage() {
               </Button>
             ) : null}
             {member.email ? (
-              <Button variant="outline" size="sm" className="h-9 gap-1.5 rounded-lg text-xs" asChild>
+              <Button variant="outline" size="sm" className="h-9 gap-1.5 rounded-lg text-sm" asChild>
                 <a href={`mailto:${member.email}`}>
                   <Mail className="size-3.5" /> Email
                 </a>
               </Button>
             ) : null}
             {member.phone ? (
-              <Button variant="outline" size="sm" className="h-9 gap-1.5 rounded-lg text-xs" asChild>
+              <Button variant="outline" size="sm" className="h-9 gap-1.5 rounded-lg text-sm" asChild>
                 <a href={`tel:${member.phone.replace(/[^\d+]/g, "")}`}>
                   <Phone className="size-3.5" /> Call
                 </a>
@@ -303,7 +303,7 @@ export default function PeopleMembersPage() {
               fetchAllRows={fetchAllExportRows}
             />
             {canCreate ? (
-              <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => { setEditTarget(null); setFormOpen(true); }}>
+              <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => { setEditTarget(null); setFormOpen(true); }}>
                 <UserRoundPlus className="size-3.5" /> Add a person
               </Button>
             ) : null}
@@ -345,7 +345,7 @@ export default function PeopleMembersPage() {
           </FilterChip>
           {isHq ? (
             <Select value={branchId} onValueChange={(value) => { setBranchId(value); setPage(1); }}>
-              <SelectTrigger className="h-8 w-36 rounded-full border-line bg-card text-[11px] shadow-none">
+              <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
                 <SelectValue placeholder="All branches" />
               </SelectTrigger>
               <SelectContent>
@@ -359,7 +359,7 @@ export default function PeopleMembersPage() {
             </Select>
           ) : null}
           <Select value={sortBy} onValueChange={(value) => { setSortBy(value as typeof sortBy); setPage(1); }}>
-            <SelectTrigger className="h-8 w-32 rounded-full border-line bg-card text-[11px] shadow-none">
+            <SelectTrigger className="h-9 w-40 rounded-full border-line bg-card text-sm shadow-none">
               <ArrowUpDownIcon /> <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -385,7 +385,7 @@ export default function PeopleMembersPage() {
           icon={<Rows3 />}
           title="Couldn&apos;t load the register"
           description="The directory failed to reach the server."
-          action={<Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => list.refetch()}>Retry</Button>}
+          action={<Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => list.refetch()}>Retry</Button>}
         />
       ) : isLoading ? (
         <div className="space-y-2">
@@ -399,7 +399,7 @@ export default function PeopleMembersPage() {
           title="Nobody matches that"
           description={archivedView ? "Nothing archived under these filters." : "Try a different name, or loosen the filters."}
           action={
-            <Button variant="outline" size="sm" className="rounded-full border-line text-xs" onClick={() => { setSearchInput(""); setSearch(""); setStatus("all"); setBranchId("all"); setArchivedView(false); setPage(1); }}>
+            <Button variant="outline" size="sm" className="rounded-full border-line text-sm" onClick={() => { setSearchInput(""); setSearch(""); setStatus("all"); setBranchId("all"); setArchivedView(false); setPage(1); }}>
               Clear filters
             </Button>
           }
@@ -424,10 +424,10 @@ export default function PeopleMembersPage() {
                     <button type="button" onClick={() => peek(member)} className="flex min-w-0 items-center gap-3 text-left">
                       <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.photoUrl} size="sm" />
                       <span className="min-w-0">
-                        <span className="block truncate text-xs font-semibold">
+                        <span className="block truncate text-sm font-semibold">
                           {member.firstName} {member.lastName}
                         </span>
-                        <span className="block truncate text-[11px] text-ink-faint">
+                        <span className="block truncate text-sm text-ink-faint">
                           {member.email ?? member.phone ?? "No contact on file"}
                         </span>
                       </span>
@@ -435,10 +435,10 @@ export default function PeopleMembersPage() {
                     <span>
                       <Tag tone={STATUS_TONES[member.status]} dot>{member.status}</Tag>
                     </span>
-                    <span className="truncate text-[11px] text-ink-soft">
+                    <span className="truncate text-sm text-ink-soft">
                       {(member.branchId && branchNames.get(member.branchId)) ?? (isHq ? "Not available" : profile?.branch?.name ?? "Not available")}
                     </span>
-                    <span className="num text-[11px] text-ink-soft">{member.memberSince ?? "Not available"}</span>
+                    <span className="num text-sm text-ink-soft">{member.memberSince ?? "Not available"}</span>
                     <div className="flex items-center justify-end">
                       <RowActions actions={manageActions(member)} />
                     </div>
@@ -467,13 +467,13 @@ export default function PeopleMembersPage() {
                     <button type="button" onClick={() => peek(member)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
                       <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.photoUrl} size="md" />
                       <div className="min-w-0">
-                        <p className="truncate text-xs font-semibold">{member.firstName} {member.lastName}</p>
-                        <p className="truncate text-[11px] text-ink-faint">{member.email ?? member.phone ?? "Not available"}</p>
+                        <p className="truncate text-sm font-semibold">{member.firstName} {member.lastName}</p>
+                        <p className="truncate text-sm text-ink-faint">{member.email ?? member.phone ?? "Not available"}</p>
                       </div>
                     </button>
                     <RowActions reveal={false} actions={manageActions(member)} />
                   </div>
-                  <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
+                  <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
                     <Tag tone={STATUS_TONES[member.status]}>{member.status}</Tag>
                     <span className="num">{member.memberSince ?? ""}</span>
                   </div>
@@ -512,7 +512,7 @@ export default function PeopleMembersPage() {
       />
 
       {archivedView && canUpdate ? (
-        <p className="text-center text-[11px] text-ink-faint">
+        <p className="text-center text-sm text-ink-faint">
           Restoring returns someone to the active register. Delete Forever lives on the member&apos;s profile.
         </p>
       ) : null}
