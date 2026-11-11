@@ -43,7 +43,7 @@ export function DetailManagementMenu({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="text-xs text-muted-foreground">
+        <DropdownMenuLabel className="text-sm text-muted-foreground">
           Management
         </DropdownMenuLabel>
         {actions.map((action, index) => (

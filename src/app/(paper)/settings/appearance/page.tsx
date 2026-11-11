@@ -54,7 +54,7 @@ export default function SettingsAppearancePage() {
         title="The primary colour of your workspace"
         actions={
           !isDefault ? (
-            <Button size="sm" variant="ghost" className="h-7 gap-1.5 rounded-full text-[11px] text-ink-faint" onClick={() => { resetPaperBrand(); setBrand(currentPaperBrand()); }}>
+            <Button size="sm" variant="ghost" className="h-7 gap-1.5 rounded-full text-sm text-ink-faint" onClick={() => { resetPaperBrand(); setBrand(currentPaperBrand()); }}>
               <RotateCcw className="size-3" /> Reset to teal
             </Button>
           ) : <Tag tone="moss">Teal (BelivrHQ default)</Tag>
@@ -71,7 +71,7 @@ export default function SettingsAppearancePage() {
                 title={preset.name}
                 onClick={() => { setPaperBrandPreset(preset.id); setBrand(currentPaperBrand()); }}
                 className={cn(
-                  "flex items-center gap-2 rounded-full border py-1.5 pl-1.5 pr-3.5 text-[11px] transition-colors",
+                  "flex items-center gap-2 rounded-full border py-1.5 pl-1.5 pr-3.5 text-sm transition-colors",
                   active ? "border-ink/25 bg-muted font-semibold" : "border-line hover:border-ink/20",
                 )}
               >
@@ -85,7 +85,7 @@ export default function SettingsAppearancePage() {
 
           <label
             className={cn(
-              "flex cursor-pointer items-center gap-2 rounded-full border py-1.5 pl-1.5 pr-3.5 text-[11px] transition-colors",
+              "flex cursor-pointer items-center gap-2 rounded-full border py-1.5 pl-1.5 pr-3.5 text-sm transition-colors",
               brand.presetId === "custom" ? "border-ink/25 bg-muted font-semibold" : "border-line hover:border-ink/20",
             )}
           >
@@ -102,7 +102,7 @@ export default function SettingsAppearancePage() {
             Custom
           </label>
         </div>
-        <p className="mt-4 text-[10px] leading-relaxed text-ink-faint">
+        <p className="mt-4 text-xs leading-relaxed text-ink-faint">
           Teal is the default throughout. The accent you pick re-skins the dock, buttons, charts, links and
           highlights across the whole workspace, is stored on this device only, and follows you across tabs instantly.
         </p>
@@ -132,7 +132,7 @@ export default function SettingsAppearancePage() {
                 </span>
                 <span>
                   <span className="block font-display text-sm font-semibold">{mode.title}</span>
-                  <span className="mt-0.5 block text-[11px] leading-relaxed text-ink-faint">{mode.note}</span>
+                  <span className="mt-0.5 block text-sm leading-relaxed text-ink-faint">{mode.note}</span>
                 </span>
               </button>
             );
@@ -156,11 +156,11 @@ export default function SettingsAppearancePage() {
           ].map(([token, label]) => (
             <span key={token} className="flex flex-1 flex-col items-center gap-1.5">
               <span className="h-8 w-full rounded-lg border border-line" style={{ background: token }} />
-              <span className="text-center text-[8px] uppercase tracking-wider text-ink-faint">{label}</span>
+              <span className="text-center text-xs uppercase tracking-wider text-ink-faint">{label}</span>
             </span>
           ))}
         </div>
-        <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+        <p className="mt-3 text-xs leading-relaxed text-ink-faint">
           The semantic colours keep their meaning in both themes. A chart read at 6am says the same thing at 11pm,
           whatever accent you choose to wear.
         </p>

@@ -78,7 +78,7 @@ export function NavRail({
             href="/home"
             aria-label="BelivrHQ home"
             title="BelivrHQ"
-            className="mb-1 grid size-9 place-items-center rounded-[14px] bg-ink text-paper"
+            className="mb-1 grid size-9 place-items-center rounded-[14px] bg-ink text-paper dark:bg-paper dark:ring-1 dark:ring-line"
           >
             <BrandLogo variant="mark" emblemClassName="size-[22px] brightness-0 invert" />
           </Link>
@@ -118,7 +118,7 @@ export function NavRail({
                     ) : null}
                   </button>
                 </TooltipTrigger>
-                <TooltipContent side="right" sideOffset={10} className="text-xs">
+                <TooltipContent side="right" sideOffset={10} className="text-sm">
                   {item.label}
                 </TooltipContent>
               </Tooltip>
@@ -138,8 +138,8 @@ export function NavRail({
                 <Command className="size-[17px]" strokeWidth={1.8} />
               </button>
             </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={10} className="text-xs">
-              Search <kbd className="ml-1 font-mono text-[10px]">⌘K</kbd>
+            <TooltipContent side="right" sideOffset={10} className="text-sm">
+              Search <kbd className="ml-1 font-mono text-xs">⌘K</kbd>
             </TooltipContent>
           </Tooltip>
 
@@ -158,7 +158,7 @@ export function NavRail({
                 )}
               </button>
             </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={10} className="text-xs">
+            <TooltipContent side="right" sideOffset={10} className="text-sm">
               Toggle theme
             </TooltipContent>
           </Tooltip>
@@ -173,7 +173,7 @@ export function NavRail({
                 <PersonAvatar name={fullName} src={profile?.avatarUrl} size="sm" />
               </Link>
             </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={10} className="text-xs">
+            <TooltipContent side="right" sideOffset={10} className="text-sm">
               {fullName}
             </TooltipContent>
           </Tooltip>
@@ -193,7 +193,7 @@ export function NavRail({
                 <div className="mb-3 flex items-start justify-between gap-2">
                   <div>
                     <p className="rule-label">{area.label}</p>
-                    <p className="mt-0.5 text-xs text-ink-soft">{area.blurb}</p>
+                    <p className="mt-0.5 text-sm text-ink-soft">{area.blurb}</p>
                   </div>
                   <area.icon className="mt-0.5 size-4 text-ink-faint" />
                 </div>
@@ -201,7 +201,7 @@ export function NavRail({
                 <div className="space-y-4">
                   {area.children.map((module) => (
                     <div key={module.title} className="space-y-1">
-                      <p className="px-1 text-[11px] font-semibold text-ink">{module.title}</p>
+                      <p className="px-1 text-sm font-semibold text-ink">{module.title}</p>
                       {module.children.map((leaf) => {
                         const active = leaf.href === activeHref;
                         return (
@@ -210,7 +210,7 @@ export function NavRail({
                             href={leaf.href}
                             onClick={() => setOpenArea(null)}
                             className={cn(
-                              "group flex items-center gap-2 rounded-lg px-1.5 py-1.5 text-xs transition-colors",
+                              "group flex items-center gap-2 rounded-lg px-1.5 py-1.5 text-sm transition-colors",
                               active
                                 ? "bg-brand-soft/70 text-brand"
                                 : "text-ink-soft hover:bg-muted hover:text-ink",

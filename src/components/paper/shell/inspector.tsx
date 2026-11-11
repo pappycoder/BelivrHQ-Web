@@ -47,7 +47,7 @@ export function Inspector() {
                   {payload.title}
                 </h2>
                 {payload.subtitle ? (
-                  <p className="truncate text-xs text-ink-soft">{payload.subtitle}</p>
+                  <p className="truncate text-sm text-ink-soft">{payload.subtitle}</p>
                 ) : null}
               </div>
               <ActionTooltip label="Close panel">

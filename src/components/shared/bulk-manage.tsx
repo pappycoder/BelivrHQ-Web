@@ -104,6 +104,7 @@ export function BulkManage({
       {choices.map((action) => (
         <Button
           key={action.key}
+          className="h-auto min-h-9 max-w-full whitespace-normal text-left"
           size="sm"
           variant={action.destructive ? "destructive" : "outline"}
           disabled={busy}

@@ -67,7 +67,7 @@ export default function FamilyDetailPage({
         title="We couldn&apos;t find that household"
         description="The link may be old, or the family removed."
         action={
-          <Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs">
+          <Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm">
             <Link href="/people/families">Back to households</Link>
           </Button>
         }
@@ -82,7 +82,7 @@ export default function FamilyDetailPage({
     <div className="space-y-6">
       <Link
         href="/people/families"
-        className="inline-flex items-center gap-1.5 text-[11px] text-ink-faint hover:text-ink"
+        className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink"
       >
         <ArrowLeft className="size-3" /> People · Families
       </Link>
@@ -98,7 +98,7 @@ export default function FamilyDetailPage({
                 <h1 className="font-display text-2xl font-semibold tracking-tight">{f.name}</h1>
                 {f.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
               </div>
-              <p className="text-xs text-ink-soft">
+              <p className="text-sm text-ink-soft">
                 {f.members.length} {f.members.length === 1 ? "person" : "people"}
                 {head ? ` · headed by ${head.firstName} ${head.lastName}` : " · no head assigned"}
               </p>
@@ -107,16 +107,16 @@ export default function FamilyDetailPage({
           <div className="flex flex-wrap gap-2">
             {canUpdate ? (
               <>
-                <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" onClick={() => setEditOpen(true)}>
+                <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm" onClick={() => setEditOpen(true)}>
                   <PencilLine className="size-3.5" /> Edit
                 </Button>
-                <Button size="sm" className="h-8 gap-1.5 rounded-full text-xs" onClick={() => setAddOpen(true)}>
+                <Button size="sm" className="h-8 gap-1.5 rounded-full text-sm" onClick={() => setAddOpen(true)}>
                   <UserRoundPlus className="size-3.5" /> Add member
                 </Button>
               </>
             ) : null}
             {canDelete && !f.archivedAt ? (
-              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs text-destructive" onClick={() => setDeleteOpen(true)}>
+              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm text-destructive" onClick={() => setDeleteOpen(true)}>
                 <UserX className="size-3.5" /> Delete
               </Button>
             ) : null}
@@ -144,17 +144,17 @@ export default function FamilyDetailPage({
                   <div className="min-w-0 flex-1">
                     <Link
                       href={`/people/members/${member.memberId}`}
-                      className="block truncate text-xs font-semibold hover:text-brand"
+                      className="block truncate text-sm font-semibold hover:text-brand"
                     >
                       {member.firstName} {member.lastName}
                     </Link>
-                    <p className="text-[10px] capitalize text-ink-faint">
+                    <p className="text-xs capitalize text-ink-faint">
                       {member.relationship.replace(/[_-]/g, " ")}
                       {member.isHead ? " · head of household" : ""}
                     </p>
                   </div>
                   {member.isHead ? (
-                    <span className="flex items-center gap-1 text-[10px] text-gold">
+                    <span className="flex items-center gap-1 text-xs text-gold">
                       <Crown className="size-3" /> head
                     </span>
                   ) : null}
@@ -173,7 +173,7 @@ export default function FamilyDetailPage({
             ))
           ) : (
             <StaggerItem>
-              <p className="px-5 py-10 text-center text-xs text-ink-soft">
+              <p className="px-5 py-10 text-center text-sm text-ink-soft">
                 No members linked to this household yet.
               </p>
             </StaggerItem>
@@ -189,8 +189,8 @@ export default function FamilyDetailPage({
               <FieldRow label="Status">{f.archivedAt ? "Archived" : "Active"}</FieldRow>
             </DataList>
           </div>
-          <div className="rounded-2xl border border-dashed border-line p-4 text-[11px] leading-relaxed text-ink-soft">
-            <p className="mb-1 font-display text-xs font-semibold text-ink">Care follows families</p>
+          <div className="rounded-2xl border border-dashed border-line p-4 text-sm leading-relaxed text-ink-soft">
+            <p className="mb-1 font-display text-sm font-semibold text-ink">Care follows families</p>
             A visit note on one person is a visit to the household. Statements,
             greetings, and follow-up all read better with the whole home in view.
           </div>

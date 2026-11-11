@@ -71,7 +71,7 @@ export default function PaperHomePage() {
         }
         description="See giving, gatherings and people who need a follow-up in one place."
         actions={
-          <Button variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs" asChild>
+          <Button variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-sm" asChild>
             <Link href="/notifications">
               Notifications <ArrowRight className="size-3.5" />
             </Link>
@@ -114,7 +114,7 @@ export default function PaperHomePage() {
             eyebrow="Generosity"
             title="Giving, month by month"
             actions={
-              <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-full text-[11px] text-ink-faint" asChild>
+              <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-full text-sm text-ink-faint" asChild>
                 <Link href="/giving">Ledger <ArrowRight className="size-3" /></Link>
               </Button>
             }
@@ -160,7 +160,7 @@ export default function PaperHomePage() {
                 />
                 <div className="mt-3 space-y-1.5">
                   {Object.entries(members.data.byStatus).slice(0, 4).map(([key, value], index) => (
-                    <div key={key} className="flex items-center gap-2 text-[11px]">
+                    <div key={key} className="flex items-center gap-2 text-sm">
                       <span className="size-1.5 rounded-full" style={{ background: STATUS_COLORS[index % STATUS_COLORS.length] }} />
                       <span className="text-ink-soft">{STATUS_LABELS[key] ?? key}</span>
                       <span className="num ml-auto font-medium">{value}</span>
@@ -181,7 +181,7 @@ export default function PaperHomePage() {
           eyebrow="Signals"
           title="What happened while you were away"
           actions={
-            <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-full text-[11px] text-ink-faint" asChild>
+            <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-full text-sm text-ink-faint" asChild>
               <Link href="/notifications">All <ArrowRight className="size-3" /></Link>
             </Button>
           }
@@ -198,16 +198,16 @@ export default function PaperHomePage() {
                   }
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-xs font-medium">{item.title}</p>
-                  <p className="truncate text-[11px] text-ink-soft">{item.body}</p>
+                  <p className="truncate text-sm font-medium">{item.title}</p>
+                  <p className="truncate text-sm text-ink-soft">{item.body}</p>
                 </div>
-                <span className="shrink-0 text-[10px] text-ink-faint">
+                <span className="shrink-0 text-xs text-ink-faint">
                   {formatRelativeTime(item.createdAt)}
                 </span>
               </div>
             ))}
             {!notifications.isLoading && !notifications.data?.data?.length ? (
-              <p className="px-5 py-8 text-center text-xs text-ink-soft">
+              <p className="px-5 py-8 text-center text-sm text-ink-soft">
                 Nothing new. Rare, lovely, and temporary.
               </p>
             ) : null}
@@ -233,7 +233,7 @@ export default function PaperHomePage() {
         ) : null}
       </div>
 
-      <p className="text-[10px] text-ink-faint">
+      <p className="text-xs text-ink-faint">
         Press ⌘K anywhere to jump to a page you have access to.
       </p>
     </div>
@@ -288,7 +288,7 @@ function UpcomingEvents({ className }: { className?: string }) {
       eyebrow="Gatherings"
       title="Next up"
       actions={
-        <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-full text-[11px] text-ink-faint" asChild>
+        <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-full text-sm text-ink-faint" asChild>
           <Link href="/events">Calendar <ArrowRight className="size-3" /></Link>
         </Button>
       }
@@ -307,8 +307,8 @@ function UpcomingEvents({ className }: { className?: string }) {
               </span>
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-medium">{event.title}</p>
-              <p className="truncate text-[11px] text-ink-soft">
+              <p className="truncate text-sm font-medium">{event.title}</p>
+              <p className="truncate text-sm text-ink-soft">
                 {shortDate(event.startDate)} · {event.location ?? "Location TBD"}
               </p>
             </div>
@@ -316,7 +316,7 @@ function UpcomingEvents({ className }: { className?: string }) {
           </Link>
         ))}
         {!upcoming.length ? (
-          <p className="px-5 py-8 text-center text-xs text-ink-soft">
+          <p className="px-5 py-8 text-center text-sm text-ink-soft">
             Nothing scheduled yet. Add a gathering to get started.
           </p>
         ) : null}

@@ -244,7 +244,7 @@ function Table({
               <div className="flex flex-wrap justify-end gap-2 px-4 py-2 border-b bg-muted/20">
                 {supportsSelection && selected.length > 0 && (
                   <div className="mr-auto flex flex-wrap items-center gap-2">
-                    <span role="status" className="text-xs font-medium">
+                    <span role="status" className="text-sm font-medium">
                       {selected.length} rows selected on this page
                     </span>
                     <VisibleDataExport

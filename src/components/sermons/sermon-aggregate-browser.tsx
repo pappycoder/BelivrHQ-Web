@@ -168,7 +168,7 @@ export function SermonAggregateBrowser({
         />
         <div className="ml-auto flex flex-wrap items-center gap-2">
           <Select value={sortBy} onValueChange={(value) => { setSortBy(value as SortValue); setPage(1); }}>
-            <SelectTrigger className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none">
+            <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
               <ArrowUpDownIcon /> <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -203,7 +203,7 @@ export function SermonAggregateBrowser({
           icon={emptyIcon}
           title={query ? `No ${nounPlural.toLowerCase()} match that` : emptyTitle}
           description={query ? "Try a different name, or clear the search." : emptyDescription}
-          action={query ? <Button variant="outline" size="sm" className="rounded-full border-line text-xs" onClick={() => { setQuery(""); setPage(1); }}>Clear search</Button> : undefined}
+          action={query ? <Button variant="outline" size="sm" className="rounded-full border-line text-sm" onClick={() => { setQuery(""); setPage(1); }}>Clear search</Button> : undefined}
         />
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
@@ -222,10 +222,10 @@ export function SermonAggregateBrowser({
                     className="group grid grid-cols-[minmax(0,2.2fr)_0.8fr_1.2fr_auto] items-center gap-3 px-5 py-3 transition-colors hover:bg-muted/40"
                   >
                     <button type="button" onClick={() => open(item)} className="min-w-0 text-left">
-                      <span className="block truncate text-xs font-semibold hover:text-brand">{item.name}</span>
+                      <span className="block truncate text-sm font-semibold hover:text-brand">{item.name}</span>
                     </button>
-                    <span className="num text-right text-[11px] tabular-nums">{item.count}</span>
-                    <span className="num text-[11px] text-ink-faint">{item.lastDate ? formatDate(item.lastDate) : "Not available"}</span>
+                    <span className="num text-right text-sm tabular-nums">{item.count}</span>
+                    <span className="num text-sm text-ink-faint">{item.lastDate ? formatDate(item.lastDate) : "Not available"}</span>
                     <div className="flex justify-end">
                       <RowActions actions={manageActions(item)} />
                     </div>

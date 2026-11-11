@@ -59,7 +59,7 @@ export function AttendanceCategoryBadge({ category }: { category?: string }) {
   return (
     <Badge
       variant="outline"
-      className={`rounded-full text-[11px] font-medium ${category === "children" ? "border-blue-600/15 bg-blue-500/8 text-blue-700 dark:text-blue-300" : category === "adult" ? "border-violet-600/15 bg-violet-500/8 text-violet-700 dark:text-violet-300" : "border-slate-500/15 bg-slate-500/8 text-slate-600 dark:text-slate-300"}`}
+      className={`rounded-full text-sm font-medium ${category === "children" ? "border-blue-600/15 bg-blue-500/8 text-blue-700 dark:text-blue-300" : category === "adult" ? "border-violet-600/15 bg-violet-500/8 text-violet-700 dark:text-violet-300" : "border-slate-500/15 bg-slate-500/8 text-slate-600 dark:text-slate-300"}`}
     >
       {label}
     </Badge>

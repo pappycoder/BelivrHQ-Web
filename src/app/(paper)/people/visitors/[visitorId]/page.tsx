@@ -90,7 +90,7 @@ export default function VisitorDetailPage({
         title="We couldn&apos;t find this guest"
         description="The link may be old, or the record removed."
         action={
-          <Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs">
+          <Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm">
             <Link href="/people/visitors">Back to the pipeline</Link>
           </Button>
         }
@@ -106,7 +106,7 @@ export default function VisitorDetailPage({
       {dialog}
       <Link
         href="/people/visitors"
-        className="inline-flex items-center gap-1.5 text-[11px] text-ink-faint hover:text-ink"
+        className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink"
       >
         <ArrowLeft className="size-3" /> People · Visitors
       </Link>
@@ -129,20 +129,20 @@ export default function VisitorDetailPage({
                   </Link>
                 ) : null}
               </div>
-              <p className="text-xs text-ink-soft">
+              <p className="text-sm text-ink-soft">
                 First visit {formatDate(v.firstVisitDate)}
                 {v.branchName ? ` · ${v.branchName}` : ""}
               </p>
               <div className="flex flex-wrap gap-2 pt-1">
                 {v.email ? (
-                  <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs">
+                  <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm">
                     <a href={`mailto:${v.email}`}>
                       <Mail className="size-3.5" /> Email
                     </a>
                   </Button>
                 ) : null}
                 {v.phone ? (
-                  <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs">
+                  <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm">
                     <a href={`tel:${v.phone.replace(/[^\d+]/g, "")}`}>
                       <Phone className="size-3.5" /> Call
                     </a>
@@ -154,18 +154,18 @@ export default function VisitorDetailPage({
           <div className="flex flex-wrap gap-2">
             {canUpdate ? (
               <>
-                <Button size="sm" className="h-8 gap-1.5 rounded-full text-xs" onClick={() => setEditOpen(true)}>
+                <Button size="sm" className="h-8 gap-1.5 rounded-full text-sm" onClick={() => setEditOpen(true)}>
                   <PencilLine className="size-3.5" /> Edit
                 </Button>
                 {!v.convertedMemberId ? (
-                  <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs" onClick={() => setConvertOpen(true)}>
+                  <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm" onClick={() => setConvertOpen(true)}>
                     Convert to member
                   </Button>
                 ) : null}
               </>
             ) : null}
             {canDelete ? (
-              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs text-destructive" onClick={() => setDeleteOpen(true)}>
+              <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm text-destructive" onClick={() => setDeleteOpen(true)}>
                 Delete
               </Button>
             ) : null}
@@ -185,7 +185,7 @@ export default function VisitorDetailPage({
 
         <SectionCard eyebrow="Visit & follow-up" title="Where the conversation stands">
           <div className="space-y-1.5">
-            <span className="text-xs text-ink-faint">Follow-up status</span>
+            <span className="text-sm text-ink-faint">Follow-up status</span>
             {canUpdate ? (
               <select
                 value={v.followUpStatus}
@@ -194,14 +194,14 @@ export default function VisitorDetailPage({
                     { visitorId: v.id, input: { followUpStatus: nextStatus as FollowUpStatus } },
                     { onSuccess: () => toast("Status updated."), onError: () => toast.error("Couldn't update the status.") },
                   ) }); }}
-                className="h-10 w-full rounded-lg border border-line bg-card px-2 text-xs outline-none"
+                className="h-10 w-full rounded-lg border border-line bg-card px-2 text-sm outline-none"
               >
                 {FOLLOW_UP_OPTIONS.map((item) => (
                   <option key={item.value} value={item.value}>{item.label}</option>
                 ))}
               </select>
             ) : (
-              <p className="text-xs font-medium">
+              <p className="text-sm font-medium">
                 {FOLLOW_UP_OPTIONS.find((o) => o.value === v.followUpStatus)?.label ?? v.followUpStatus}
               </p>
             )}
@@ -212,7 +212,7 @@ export default function VisitorDetailPage({
             <FieldRow label="Registered">{formatDate(v.createdAt)}</FieldRow>
           </DataList>
           {v.notes ? (
-            <p className="mt-3 whitespace-pre-line rounded-lg border border-line bg-card p-3 text-[11px] leading-relaxed text-ink-soft">
+            <p className="mt-3 whitespace-pre-line rounded-lg border border-line bg-card p-3 text-sm leading-relaxed text-ink-soft">
               {v.notes}
             </p>
           ) : null}
@@ -228,7 +228,7 @@ export default function VisitorDetailPage({
               ))}
             </DataList>
           ) : (
-            <p className="text-[11px] text-ink-faint">Nothing recorded beyond the form.</p>
+            <p className="text-sm text-ink-faint">Nothing recorded beyond the form.</p>
           )}
         </SectionCard>
       </div>
@@ -237,7 +237,7 @@ export default function VisitorDetailPage({
         <SectionCard
           eyebrow="Being here"
           title="Visit history"
-          actions={<span className="num text-[11px] text-ink-faint">{visits.data?.meta?.total ?? visitsRows.length} check-ins</span>}
+          actions={<span className="num text-sm text-ink-faint">{visits.data?.meta?.total ?? visitsRows.length} check-ins</span>}
           bodyClassName="p-0"
         >
           {visits.isLoading ? (
@@ -247,13 +247,13 @@ export default function VisitorDetailPage({
           ) : visitsRows.length ? (
             <div className="divide-y divide-line/70">
               {visitsRows.map((record) => (
-                <div key={record.attendanceId} className="flex items-center gap-3 px-5 py-3 text-xs">
+                <div key={record.attendanceId} className="flex items-center gap-3 px-5 py-3 text-sm">
                   <CalendarCheck className="size-3.5 shrink-0 text-ink-faint" />
                   <span className="min-w-0 flex-1 truncate font-medium">
                     {record.serviceName ?? record.eventName ?? "A gathering"}
                   </span>
                   <Tag tone="neutral">{record.category ?? "Not available"}</Tag>
-                  <span className="num w-36 shrink-0 text-right text-[11px] text-ink-faint">
+                  <span className="num w-36 shrink-0 text-right text-sm text-ink-faint">
                     {formatDate(record.checkInAt)}
                   </span>
                 </div>
@@ -261,7 +261,7 @@ export default function VisitorDetailPage({
             </div>
           ) : (
             <div className="px-5 py-8">
-              <p className="flex flex-col items-center gap-1.5 text-center text-xs text-ink-faint">
+              <p className="flex flex-col items-center gap-1.5 text-center text-sm text-ink-faint">
                 <Home className="size-4" />
                 No visits recorded yet.
               </p>

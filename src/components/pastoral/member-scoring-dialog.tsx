@@ -37,7 +37,7 @@ function FactorBars({ factors, labels, danger = false }: FactorBarsProps) {
         const numeric = Number(value) || 0;
         return (
           <div key={key}>
-            <div className="mb-1 flex items-center justify-between text-xs">
+            <div className="mb-1 flex items-center justify-between text-sm">
               <span>{labels[key] ?? key}</span>
               <span className="text-muted-foreground">
                 {Math.round(numeric * 100)}%

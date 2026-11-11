@@ -305,7 +305,7 @@ export function VisitorFormDialog({
                         />
                       </FormControl>
                     )}
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       {isAdminHq
                         ? "Choose the visitor's branch."
                         : "Visitors are limited to your assigned branch."}

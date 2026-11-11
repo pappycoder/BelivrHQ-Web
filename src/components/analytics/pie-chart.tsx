@@ -89,7 +89,7 @@ export function DonutChart({ data, loading, unit, height = 220 }: PieChartCardPr
                 const value = Number(p.value ?? 0);
                 const pct = total > 0 ? Math.round((value / total) * 100) : 0;
                 return (
-                  <div className="rounded-lg border bg-popover px-3 py-2 text-xs text-popover-foreground shadow-md">
+                  <div className="rounded-lg border bg-popover px-3 py-2 text-sm text-popover-foreground shadow-md">
                     <div className="font-medium capitalize">{p.name}</div>
                     <div className="text-muted-foreground">
                       {value.toLocaleString()} {slice?.unit ?? unit ?? ""} · {pct}%
@@ -101,7 +101,7 @@ export function DonutChart({ data, loading, unit, height = 220 }: PieChartCardPr
           </PieChart>
         </ChartContainer>
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-xs text-muted-foreground">Total</span>
+          <span className="text-sm text-muted-foreground">Total</span>
           <span className="text-lg font-semibold tabular-nums">{total.toLocaleString()}</span>
         </div>
       </div>
@@ -120,7 +120,7 @@ export function DonutChart({ data, loading, unit, height = 220 }: PieChartCardPr
               <span className="font-semibold tabular-nums">
                 {slice.value.toLocaleString()}
               </span>
-              <span className="w-10 text-right text-xs text-muted-foreground tabular-nums">
+              <span className="w-10 text-right text-sm text-muted-foreground tabular-nums">
                 {pct}%
               </span>
             </li>

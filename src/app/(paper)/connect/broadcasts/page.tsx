@@ -169,7 +169,7 @@ export default function BroadcastsPage() {
         description="Send to groups and review delivery receipts. Aim for no more than two broadcasts a week."
         actions={
           canCreate ? (
-            <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={openForm}>
+            <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={openForm}>
               <Plus className="size-3.5" /> New broadcast
             </Button>
           ) : null
@@ -204,9 +204,9 @@ export default function BroadcastsPage() {
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {rows.map(b => <article key={b.broadcastId} className="paper-card flex flex-col gap-4 rounded-2xl p-5">
             <div className="flex flex-wrap items-center justify-between gap-2"><Tag tone={b.channel === "whatsapp" ? "moss" : b.channel === "sms" ? "sky" : "gold"}>{BROADCAST_CHANNEL_LABELS[b.channel]}</Tag><Tag tone={STATUS_TONES[b.status] ?? "neutral"} dot>{BROADCAST_STATUS_LABELS[b.status]}</Tag></div>
-            <div><h2 className="break-words font-display text-lg font-semibold">{b.name}</h2><p className="mt-1 text-xs text-ink-soft">{b.templateName}</p></div>
-            <dl className="grid grid-cols-2 gap-3 text-xs"><div><dt className="text-ink-faint">Recipients</dt><dd className="mt-1 font-semibold num">{b.totalRecipients}</dd></div><div><dt className="text-ink-faint">{b.scheduledAt ? "Scheduled" : "Sent / added"}</dt><dd className="mt-1">{stamp(b.scheduledAt ?? b.sentAt ?? b.createdAt)}</dd></div></dl>
-            <div className="mt-auto flex items-center justify-between gap-2 border-t border-line pt-3"><span className="text-xs text-ink-faint">{b.branchName ?? "All branches"}</span>{actionsFor(b, false)}</div>
+            <div><h2 className="break-words font-display text-lg font-semibold">{b.name}</h2><p className="mt-1 text-sm text-ink-soft">{b.templateName}</p></div>
+            <dl className="grid grid-cols-2 gap-3 text-sm"><div><dt className="text-ink-faint">Recipients</dt><dd className="mt-1 font-semibold num">{b.totalRecipients}</dd></div><div><dt className="text-ink-faint">{b.scheduledAt ? "Scheduled" : "Sent / added"}</dt><dd className="mt-1">{stamp(b.scheduledAt ?? b.sentAt ?? b.createdAt)}</dd></div></dl>
+            <div className="mt-auto flex items-center justify-between gap-2 border-t border-line pt-3"><span className="text-sm text-ink-faint">{b.branchName ?? "All branches"}</span>{actionsFor(b, false)}</div>
           </article>)}
         </div>
       ) : (
@@ -224,25 +224,25 @@ export default function BroadcastsPage() {
               </div>
               <div className="divide-y divide-line/70">
                 {filtered.map((b) => (
-                  <div key={b.broadcastId} className="group grid grid-cols-[minmax(0,1.5fr)_1fr_1fr_0.8fr_1.1fr_1fr_auto] items-center gap-3 px-5 py-3 text-xs">
+                  <div key={b.broadcastId} className="group grid grid-cols-[minmax(0,1.5fr)_1fr_1fr_0.8fr_1.1fr_1fr_auto] items-center gap-3 px-5 py-3 text-sm">
                     <span className="min-w-0">
                       <span className="block truncate font-medium">{b.name}</span>
-                      {b.branchName ? <span className="block text-[10px] text-ink-faint">{b.branchName}</span> : null}
+                      {b.branchName ? <span className="block text-xs text-ink-faint">{b.branchName}</span> : null}
                     </span>
-                    <span className="truncate text-[11px] text-ink-soft">{b.templateName}</span>
+                    <span className="truncate text-sm text-ink-soft">{b.templateName}</span>
                     <span><Tag tone={b.channel === "whatsapp" ? "moss" : b.channel === "sms" ? "sky" : "gold"}>{BROADCAST_CHANNEL_LABELS[b.channel]}</Tag></span>
                     <span className="num">{b.totalRecipients}</span>
                     <span><Tag tone={STATUS_TONES[b.status] ?? "neutral"} dot>{BROADCAST_STATUS_LABELS[b.status as keyof typeof BROADCAST_STATUS_LABELS] ?? b.status}</Tag></span>
-                    <span className="num text-[11px] text-ink-faint">{b.scheduledAt ? `sched ${stamp(b.scheduledAt)}` : stamp(b.sentAt ?? b.createdAt)}</span>
+                    <span className="num text-sm text-ink-faint">{b.scheduledAt ? `sched ${stamp(b.scheduledAt)}` : stamp(b.sentAt ?? b.createdAt)}</span>
                     {actionsFor(b)}
                   </div>
                 ))}
               </div>
             </ListTable>
           </div>
-          <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-5 py-2.5 text-[10px] text-ink-faint">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line px-5 py-2.5 text-xs text-ink-faint">
             <span>Recipients are computed when a scheduled send runs, with branch and audience rules honoured at the server.</span>
-            <Button asChild variant="ghost" size="xs" className="rounded-full text-[10px] text-brand">
+            <Button asChild variant="ghost" size="xs" className="rounded-full text-xs text-brand">
               <Link href="/connect/templates">Manage templates</Link>
             </Button>
           </div>
@@ -255,32 +255,32 @@ export default function BroadcastsPage() {
         <DialogContent className="rounded-2xl border-line bg-card sm:max-w-[520px]">
           <DialogHeader>
             <DialogTitle className="font-display">Compose a broadcast</DialogTitle>
-            <DialogDescription className="text-xs">
+            <DialogDescription className="text-sm">
               A name, a published template, an audience, sent once, remembered kindly.
             </DialogDescription>
           </DialogHeader>
           <ValidatedForm onSubmit={submit} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label required className="text-xs">Name</Label>
+                <Label required className="text-sm">Name</Label>
                 <Input required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="November news" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label required className="text-xs">Channel</Label>
-                <select required value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as BroadcastChannel, templateId: "" }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+                <Label required className="text-sm">Channel</Label>
+                <select required value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as BroadcastChannel, templateId: "" }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                   {BROADCAST_CHANNELS.map((c) => <option key={c} value={c}>{BROADCAST_CHANNEL_LABELS[c]}</option>)}
                 </select>
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label required className="text-xs">Template ({TEMPLATE_CHANNEL_LABELS[draft.channel as TemplateChannel] ?? draft.channel} · published only)</Label>
+              <Label required className="text-sm">Template ({TEMPLATE_CHANNEL_LABELS[draft.channel as TemplateChannel] ?? draft.channel} · published only)</Label>
               {channelTemplates.length ? (
-                <select required value={draft.templateId} onChange={(e) => setDraft((d) => ({ ...d, templateId: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+                <select required value={draft.templateId} onChange={(e) => setDraft((d) => ({ ...d, templateId: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                   <option value="">Choose a template…</option>
                   {channelTemplates.map((t) => <option key={t.templateId} value={t.templateId}>{t.name}</option>)}
                 </select>
               ) : (
-                <p className="rounded-lg border border-dashed border-line px-3 py-2.5 text-[11px] text-ink-faint">
+                <p className="rounded-lg border border-dashed border-line px-3 py-2.5 text-sm text-ink-faint">
                   No published {draft.channel} templates yet.{" "}
                   <Link href="/connect/templates" className="text-brand underline">publish one first</Link>.
                 </p>
@@ -288,22 +288,22 @@ export default function BroadcastsPage() {
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-xs">Audience</Label>
-                <select value={draft.audienceStatus} onChange={(e) => setDraft((d) => ({ ...d, audienceStatus: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+                <Label className="text-sm">Audience</Label>
+                <select value={draft.audienceStatus} onChange={(e) => setDraft((d) => ({ ...d, audienceStatus: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                   <option value="">Everyone</option>
                   {Object.entries(MEMBER_STATUS_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
                 </select>
               </div>
               <div className="space-y-1.5">
-                <Label required className="text-xs">Branch</Label>
-                <select required disabled={!isHq} value={draft.audienceBranch} onChange={(e) => setDraft((d) => ({ ...d, audienceBranch: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none disabled:opacity-50">
+                <Label required className="text-sm">Branch</Label>
+                <select required disabled={!isHq} value={draft.audienceBranch} onChange={(e) => setDraft((d) => ({ ...d, audienceBranch: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none disabled:opacity-50">
                   <option value="">Select a branch</option>
                   {(branches.data?.data ?? []).map((b) => <option key={b.branchId} value={b.branchId}>{b.name}</option>)}
                 </select>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Gender</Label>
-                <select value={draft.audienceGender} onChange={(e) => setDraft((d) => ({ ...d, audienceGender: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+                <Label className="text-sm">Gender</Label>
+                <select value={draft.audienceGender} onChange={(e) => setDraft((d) => ({ ...d, audienceGender: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                   <option value="">Any</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
@@ -311,7 +311,7 @@ export default function BroadcastsPage() {
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Send later? (optional)</Label>
+              <Label className="text-sm">Send later? (optional)</Label>
               <Input picker="wheel" type="datetime-local" value={draft.scheduledAt} onChange={(e) => setDraft((d) => ({ ...d, scheduledAt: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
             <BotProtection path="/broadcasts" authenticated />

@@ -39,7 +39,7 @@ export function TableOptions({
         aria-label="Table options"
       >
         <h3 className="text-sm font-semibold">Display and columns</h3>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Adjust spacing, choose visible columns, or resize several columns
           together.
         </p>

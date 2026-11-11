@@ -93,7 +93,7 @@ export default function MessagesPage() {
         description="Every conversation the church has had by text, with inbound questions answered within a day, outbound with purpose."
         actions={
           canSend ? (
-            <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setSendOpen(true)}>
+            <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setSendOpen(true)}>
               <Send className="size-3.5" /> New message
             </Button>
           ) : null
@@ -117,7 +117,7 @@ export default function MessagesPage() {
       {channels.length ? (
         <div className="paper-card flex flex-wrap items-center gap-x-8 gap-y-2 rounded-2xl px-5 py-3">
           {channels.map((c) => (
-            <span key={c.channel} className="flex items-center gap-2 text-[11px] text-ink-soft">
+            <span key={c.channel} className="flex items-center gap-2 text-sm text-ink-soft">
               <Tag tone={CHANNEL_TONES[c.channel as MessageChannel] ?? "neutral"}>{MESSAGE_CHANNEL_LABELS[c.channel as MessageChannel] ?? c.channel}</Tag>
               <span className="num">{c.sent}</span> sent ·
               <span className="num text-moss">{c.delivered}</span> delivered ·
@@ -149,20 +149,20 @@ export default function MessagesPage() {
               </span>
               <div className="min-w-0 flex-1">
                 <p className="flex items-center gap-2">
-                  <span className="num truncate text-xs font-medium">{message.phone}</span>
+                  <span className="num truncate text-sm font-medium">{message.phone}</span>
                   <Tag tone={CHANNEL_TONES[message.channel]}>{MESSAGE_CHANNEL_LABELS[message.channel]}</Tag>
                 </p>
                 {message.content ? (
-                  <p className="mt-0.5 truncate text-[11px] text-ink-soft">{message.content}</p>
+                  <p className="mt-0.5 truncate text-sm text-ink-soft">{message.content}</p>
                 ) : null}
               </div>
               <Tag tone={message.status === "failed" ? "rose" : "neutral"}>{MESSAGE_STATUS_LABELS[message.status] ?? message.status}</Tag>
-              <span className="num hidden w-32 shrink-0 text-right text-[10px] text-ink-faint sm:block">{stamp(message.createdAt)}</span>
+              <span className="num hidden w-32 shrink-0 text-right text-xs text-ink-faint sm:block">{stamp(message.createdAt)}</span>
               {canSend && message.direction === "inbound" ? (
                 <button
                   type="button"
                   onClick={() => { setDraft({ to: message.phone, text: "" }); setSendOpen(true); }}
-                  className="shrink-0 rounded-full px-2 py-1 text-[10px] text-brand opacity-0 transition-opacity hover:underline md:opacity-100"
+                  className="shrink-0 rounded-full px-2 py-1 text-xs text-brand opacity-0 transition-opacity hover:underline md:opacity-100"
                 >
                   Reply
                 </button>
@@ -176,23 +176,23 @@ export default function MessagesPage() {
         <DialogContent className="rounded-2xl border-line bg-card">
           <DialogHeader>
             <DialogTitle className="font-display">Send a text</DialogTitle>
-            <DialogDescription className="text-xs">
+            <DialogDescription className="text-sm">
               WhatsApp is tried first, then SMS falls back, using one number, one message.
             </DialogDescription>
           </DialogHeader>
           <ValidatedForm onSubmit={submit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label required className="text-xs">To (phone)</Label>
+              <Label required className="text-sm">To (phone)</Label>
               <Input required value={draft.to} onChange={(e) => setDraft((d) => ({ ...d, to: e.target.value }))} placeholder="+1 415 555 0100" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
             <div className="space-y-1.5">
-              <Label required className="text-xs">Message</Label>
-              <Textarea required rows={4} value={draft.text} onChange={(e) => setDraft((d) => ({ ...d, text: e.target.value }))} placeholder="Warm, short, and worth a reply…" className="resize-none rounded-lg border-line bg-background text-xs shadow-none" />
+              <Label required className="text-sm">Message</Label>
+              <Textarea required rows={4} value={draft.text} onChange={(e) => setDraft((d) => ({ ...d, text: e.target.value }))} placeholder="Warm, short, and worth a reply…" className="resize-none rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
             <Button type="submit" disabled={send.isPending} className="h-10 w-full gap-2 rounded-lg text-sm">
               <Send className="size-4" /> {send.isPending ? "Sending…" : "Send message"}
             </Button>
-            <p className="text-center text-[10px] text-ink-faint">
+            <p className="text-center text-xs text-ink-faint">
               From addresses are managed on {MESSAGE_CHANNELS.join(", ")} in Settings → Integrations.
             </p>
           </ValidatedForm>

@@ -36,11 +36,11 @@ export default function SpeakersPage() {
             <PersonAvatar name={item.name} size="lg" />
             <div className="min-w-0">
               <p className="truncate font-display text-sm font-semibold">{item.name}</p>
-              <p className="num text-[11px] text-ink-faint">{item.count} messages on record</p>
+              <p className="num text-sm text-ink-faint">{item.count} messages on record</p>
             </div>
           </div>
           <div className="mt-4 flex-1" />
-          <div className="flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
+          <div className="flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
             <span>latest {formatDate(item.lastDate)}</span>
           </div>
         </button>

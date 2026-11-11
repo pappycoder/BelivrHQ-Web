@@ -18,7 +18,7 @@ export default function AssetMaintenancePage() {
         title="Service, scheduled before it&apos;s urgent."
         description="Log repairs, servicing and software updates so the team knows what needs attention."
         actions={
-          <Link href="/operations/assets/loans" className="flex h-9 items-center gap-1.5 rounded-full border border-line bg-card px-3 text-xs text-ink-soft transition-colors hover:text-ink">
+          <Link href="/operations/assets/loans" className="flex h-9 items-center gap-1.5 rounded-full border border-line bg-card px-3 text-sm text-ink-soft transition-colors hover:text-ink">
             <Wrench className="size-3.5" /> Loans board
           </Link>
         }

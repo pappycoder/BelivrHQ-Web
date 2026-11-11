@@ -74,7 +74,7 @@ export default function EngagementPage() {
           canRecalculate ? (
             <Button
               variant="outline"
-              className="h-9 gap-1.5 rounded-full border-line bg-card text-xs"
+              className="h-9 gap-1.5 rounded-full border-line bg-card text-sm"
               disabled={recalculate.isPending}
               onClick={() =>
                 recalculate.mutate(undefined, {
@@ -124,11 +124,11 @@ export default function EngagementPage() {
                 >
                   <PersonAvatar name={name} size="sm" />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs font-semibold">{name}</p>
-                    <p className="truncate text-[10px] text-ink-faint">{row.memberEmail ?? "Not available"}</p>
+                    <p className="truncate text-sm font-semibold">{name}</p>
+                    <p className="truncate text-xs text-ink-faint">{row.memberEmail ?? "Not available"}</p>
                   </div>
                   <div className="w-40 shrink-0">
-                    <div className="flex justify-between text-[10px] text-ink-soft">
+                    <div className="flex justify-between text-xs text-ink-soft">
                       <span className="num font-semibold">{Math.round(row.score)}</span>
                       <span className="text-ink-faint">/ 100</span>
                     </div>
@@ -142,7 +142,7 @@ export default function EngagementPage() {
                       />
                     </div>
                   </div>
-                  <span className="hidden w-32 shrink-0 text-right text-[10px] text-ink-faint sm:block">
+                  <span className="hidden w-32 shrink-0 text-right text-xs text-ink-faint sm:block">
                     calculated {new Date(row.calculatedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
                   </span>
                 </button>
@@ -163,7 +163,7 @@ export default function EngagementPage() {
 
       <div className="rounded-2xl border border-dashed border-line p-4">
         <p className="rule-label mb-2">Buckets</p>
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-ink-soft">
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-soft">
           {BUCKETS.filter((b) => b.value !== "all").map((b) => (
             <span key={b.value} className="flex items-center gap-1.5">
               <Tag tone={b.tone} dot>{ENGAGEMENT_BUCKET_LABELS[b.value as EngagementBucket]}</Tag>

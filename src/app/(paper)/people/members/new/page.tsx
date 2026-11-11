@@ -198,7 +198,7 @@ export default function NewMemberPage() {
                 <RhfField name="city" label="City" />
                 <RhfField name="state" label="State" />
                 <div className="space-y-1.5 sm:col-span-2">
-                  <FormLabel className="text-xs">Household</FormLabel>
+                  <FormLabel className="text-sm">Household</FormLabel>
                   <FormField
                     control={form.control}
                     name="familyId"
@@ -227,7 +227,7 @@ export default function NewMemberPage() {
                         name="isFamilyHead"
                         render={({ field }) => (
                           <div className="flex items-center justify-between rounded-lg border border-line px-3 py-2.5">
-                            <span className="text-xs">Head of household</span>
+                            <span className="text-sm">Head of household</span>
                             <Switch checked={!!field.value} onCheckedChange={(v) => field.onChange(!!v)} />
                           </div>
                         )}
@@ -247,7 +247,7 @@ export default function NewMemberPage() {
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="h-7 rounded-full border-line text-[11px]"
+                  className="h-7 rounded-full border-line text-sm"
                   onClick={() => setCustomRows((rows) => [...rows, { key: "", value: "" }])}
                 >
                   Add field
@@ -257,7 +257,7 @@ export default function NewMemberPage() {
               {customRows.length ? (
                 <CustomFieldsEditor rows={customRows} onChange={setCustomRows} />
               ) : (
-                <p className="text-[11px] text-ink-faint">Nothing yet. Add one if it matters.</p>
+                <p className="text-sm text-ink-faint">Nothing yet. Add one if it matters.</p>
               )}
             </SectionCard>
 
@@ -268,7 +268,7 @@ export default function NewMemberPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Textarea rows={3} placeholder="How they came to us, what they're carrying…" className="resize-none rounded-lg border-line bg-card text-xs shadow-none" {...field} />
+                      <Textarea rows={3} placeholder="How they came to us, what they're carrying…" className="resize-none rounded-lg border-line bg-card text-sm shadow-none" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -297,10 +297,10 @@ export default function NewMemberPage() {
                     <p className="truncate text-sm font-semibold">
                       {form.watch("firstName") || "First"} {form.watch("lastName") || "name"}
                     </p>
-                    <p className="truncate text-[11px] text-ink-faint">{form.watch("email") || "no email yet"}</p>
+                    <p className="truncate text-sm text-ink-faint">{form.watch("email") || "no email yet"}</p>
                   </div>
                 </div>
-                <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-line py-3 text-[11px] text-ink-soft transition-colors hover:border-brand/40">
+                <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-line py-3 text-sm text-ink-soft transition-colors hover:border-brand/40">
                   {photoPreview ? <Camera className="size-3.5" /> : <ImagePlus className="size-3.5" />}
                   {photoPreview ? "Replace photo" : "Add a photo"}
                   <input
@@ -314,12 +314,12 @@ export default function NewMemberPage() {
                   <button
                     type="button"
                     onClick={() => { setPhotoFile(null); if (photoPreview) URL.revokeObjectURL(photoPreview); setPhotoPreview(""); }}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-[10px] text-rose hover:bg-rose-soft"
+                    className="flex w-full items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs text-rose hover:bg-rose-soft"
                   >
                     <Trash2 className="size-3" /> Remove photo
                   </button>
                 ) : null}
-                {familyName ? <p className="text-[11px] text-ink-soft">Household: <span className="font-medium">{familyName}</span></p> : null}
+                {familyName ? <p className="text-sm text-ink-soft">Household: <span className="font-medium">{familyName}</span></p> : null}
               </div>
             </div>
             <div className="mt-3 space-y-2">
@@ -329,7 +329,7 @@ export default function NewMemberPage() {
               <Button
                 type="button"
                 variant="ghost"
-                className="h-9 w-full rounded-lg text-xs text-ink-soft"
+                className="h-9 w-full rounded-lg text-sm text-ink-soft"
                 onClick={async () => {
                   if (form.formState.isDirty && !(await confirmDiscardChanges())) return;
                   router.push("/people/members");
@@ -339,7 +339,7 @@ export default function NewMemberPage() {
               </Button>
             </div>
             {!canCreate && ready ? (
-              <p className="mt-3 text-center text-[10px] text-ink-faint">Your role can view the register but not add to it.</p>
+              <p className="mt-3 text-center text-xs text-ink-faint">Your role can view the register but not add to it.</p>
             ) : null}
           </aside>
         </ValidatedForm>
@@ -371,7 +371,7 @@ function RhfField({
       name={name as never}
       render={({ field }) => (
         <FormItem className={className}>
-          <FormLabel className="text-xs">{label}</FormLabel>
+          <FormLabel className="text-sm">{label}</FormLabel>
           <FormControl>
             <Input picker="wheel"
               type={type}
@@ -408,7 +408,7 @@ function SelectField({
       name={name as never}
       render={({ field }) => (
         <FormItem className="space-y-1.5">
-          <FormLabel className="text-xs">{label}</FormLabel>
+          <FormLabel className="text-sm">{label}</FormLabel>
           <Select
             disabled={disabled}
             onValueChange={(value) => field.onChange(value === "__none__" ? "" : value)}

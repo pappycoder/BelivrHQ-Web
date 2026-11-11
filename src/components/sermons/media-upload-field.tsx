@@ -87,7 +87,7 @@ export function MediaUploadField({
               <span className="min-w-0 flex-1 truncate text-sm">
                 {value.file.name}
               </span>
-              <span className="shrink-0 text-xs text-muted-foreground">
+              <span className="shrink-0 text-sm text-muted-foreground">
                 {(value.file.size / 1024 / 1024).toFixed(1)} MB
               </span>
               <Button

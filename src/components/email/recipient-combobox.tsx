@@ -122,7 +122,7 @@ export function RecipientCombobox({
                     </Avatar>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium">{c.name}</span>
-                      <span className="block truncate text-xs text-muted-foreground">
+                      <span className="block truncate text-sm text-muted-foreground">
                         {ROLE_LABEL[c.role] ?? c.role}
                         {c.branchName ? ` · ${c.branchName}` : ""}
                         {c.email ? ` · ${c.email}` : ""}

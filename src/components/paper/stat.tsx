@@ -40,7 +40,7 @@ export function Tag({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium leading-5",
+        "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium leading-5",
         toneBg[tone],
         className,
       )}
@@ -108,7 +108,7 @@ export function StatCard({
           />
         </div>
         {delta !== undefined || footer ? (
-          <div className="flex items-center gap-2 text-xs text-ink-soft">
+          <div className="flex items-center gap-2 text-sm text-ink-soft">
             {delta !== undefined ? (
               <span
                 className={cn(

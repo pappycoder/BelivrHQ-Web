@@ -188,24 +188,24 @@ export function ServiceFormDialog({
       <DialogContent className="rounded-2xl border-line bg-card">
         <DialogHeader>
           <DialogTitle className="font-display">{service ? `Edit ${service.name}` : "New service"}</DialogTitle>
-          <DialogDescription className="text-xs">
+          <DialogDescription className="text-sm">
             Recurrence, time and category drive the check-in windows. Weekly services can float on any day; one-time and date-range services only accept their own dates.
           </DialogDescription>
         </DialogHeader>
         <ValidatedForm onSubmit={submit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label required className="text-xs">Name</Label>
+            <Label required className="text-sm">Name</Label>
             <Input required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="Sunday · 11:30" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Category</Label>
-            <select value={draft.category} onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value as ServiceCategory | "" }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+            <Label className="text-sm">Category</Label>
+            <select value={draft.category} onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value as ServiceCategory | "" }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
               <option value="">Mixed</option>
               {SERVICE_CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
             </select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Recurrence</Label>
+            <Label className="text-sm">Recurrence</Label>
             <div className="flex flex-wrap gap-1.5">
               {SCHEDULE_RECURRENCES.map((recurrence) => (
                 <FilterChip
@@ -221,75 +221,75 @@ export function ServiceFormDialog({
           {draft.recurrence === "weekly" ? (
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-xs">Day</Label>
-                <select value={draft.dayOfWeek ?? ""} onChange={(e) => setDraft((d) => ({ ...d, dayOfWeek: e.target.value === "" ? null : Number(e.target.value) }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+                <Label className="text-sm">Day</Label>
+                <select value={draft.dayOfWeek ?? ""} onChange={(e) => setDraft((d) => ({ ...d, dayOfWeek: e.target.value === "" ? null : Number(e.target.value) }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                   <option value="">Any day</option>
                   {DAYS.map((d, i) => <option key={d} value={i}>{d}</option>)}
                 </select>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Starts</Label>
+                <Label className="text-sm">Starts</Label>
                 <Input picker="wheel" type="time" value={draft.startTime} onChange={(e) => setDraft((d) => ({ ...d, startTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Ends</Label>
+                <Label className="text-sm">Ends</Label>
                 <Input picker="wheel" type="time" value={draft.endTime} onChange={(e) => setDraft((d) => ({ ...d, endTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">From (optional)</Label>
+                <Label className="text-sm">From (optional)</Label>
                 <Input picker="wheel" type="date" value={draft.startsOn} onChange={(e) => setDraft((d) => ({ ...d, startsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5 sm:col-span-2">
-                <Label className="text-xs">Until (optional)</Label>
+                <Label className="text-sm">Until (optional)</Label>
                 <Input picker="wheel" type="date" value={draft.endsOn} onChange={(e) => setDraft((d) => ({ ...d, endsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
             </div>
           ) : draft.recurrence === "one_time" ? (
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5 sm:col-span-2">
-                <Label required className="text-xs">Date</Label>
+                <Label required className="text-sm">Date</Label>
                 <Input required picker="wheel" type="date" value={draft.startsOn} onChange={(e) => setDraft((d) => ({ ...d, startsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Starts</Label>
+                <Label className="text-sm">Starts</Label>
                 <Input picker="wheel" type="time" value={draft.startTime} onChange={(e) => setDraft((d) => ({ ...d, startTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Ends</Label>
+                <Label className="text-sm">Ends</Label>
                 <Input picker="wheel" type="time" value={draft.endTime} onChange={(e) => setDraft((d) => ({ ...d, endTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label required className="text-xs">Start date</Label>
+                <Label required className="text-sm">Start date</Label>
                 <Input required picker="wheel" type="date" value={draft.startsOn} onChange={(e) => setDraft((d) => ({ ...d, startsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label required className="text-xs">End date</Label>
+                <Label required className="text-sm">End date</Label>
                 <Input required picker="wheel" type="date" value={draft.endsOn} onChange={(e) => setDraft((d) => ({ ...d, endsOn: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Starts</Label>
+                <Label className="text-sm">Starts</Label>
                 <Input picker="wheel" type="time" value={draft.startTime} onChange={(e) => setDraft((d) => ({ ...d, startTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Ends</Label>
+                <Label className="text-sm">Ends</Label>
                 <Input picker="wheel" type="time" value={draft.endTime} onChange={(e) => setDraft((d) => ({ ...d, endTime: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
             </div>
           )}
           {isHq ? (
             <div className="space-y-1.5">
-              <Label required className="text-xs">Branch</Label>
-              <select required value={draft.branchId} onChange={(e) => setDraft((d) => ({ ...d, branchId: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+              <Label required className="text-sm">Branch</Label>
+              <select required value={draft.branchId} onChange={(e) => setDraft((d) => ({ ...d, branchId: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                 <option value="">Select a branch</option>
                 {(branches.data?.data ?? []).map((b) => <option key={b.branchId} value={b.branchId}>{b.name}</option>)}
               </select>
             </div>
           ) : null}
           <label className="flex items-center justify-between rounded-lg border border-line px-3 py-2.5">
-            <span className="text-xs">Counting active</span>
+            <span className="text-sm">Counting active</span>
             <Switch checked={draft.isActive} onCheckedChange={(v) => setDraft((d) => ({ ...d, isActive: !!v }))} />
           </label>
           <Button type="submit" disabled={createService.isPending || updateService.isPending} className="h-10 w-full rounded-lg text-sm">

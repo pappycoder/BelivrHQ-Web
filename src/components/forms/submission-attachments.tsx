@@ -102,7 +102,7 @@ export function SubmissionAttachments({ onChange, disabled }: SubmissionAttachme
               className="flex items-center justify-between gap-2 rounded-md border px-3 py-2 text-sm"
             >
               <span className="min-w-0 flex-1 truncate">{a.filename}</span>
-              <span className="shrink-0 text-xs text-muted-foreground">{formatBytes(a.size)}</span>
+              <span className="shrink-0 text-sm text-muted-foreground">{formatBytes(a.size)}</span>
               <Button
                 type="button"
                 variant="ghost"

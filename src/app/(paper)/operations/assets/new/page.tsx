@@ -21,7 +21,7 @@ export default function NewAssetPage() {
       <EmptyState
         title="Registering assets needs the assets grant"
         description="Your role can look at the register but not write to it."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/operations/assets">Back to the register</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/operations/assets">Back to the register</Link></Button>}
       />
     );
   }
@@ -37,7 +37,7 @@ export default function NewAssetPage() {
         title="Register a new asset."
         description="Record the asset tag, value, custodian and maintenance schedule for future stock checks."
         actions={
-          <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-xs">
+          <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-sm">
             <Link href="/operations/assets">Cancel</Link>
           </Button>
         }

@@ -71,7 +71,7 @@ function TiersInner() {
         description="Set ticket tiers and prices for each paid event before registration opens."
         actions={
           canManage && paidEvent ? (
-            <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setFormTarget({ open: true, tier: null })}>
+            <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setFormTarget({ open: true, tier: null })}>
               <Plus className="size-3.5" /> New tier
             </Button>
           ) : null
@@ -82,7 +82,7 @@ function TiersInner() {
         <select
           value={eventId}
           onChange={(e) => { setEventId(e.target.value); router.replace(`/gatherings/events/tiers${e.target.value ? `?event=${e.target.value}` : ""}`); }}
-          className="h-9 rounded-full border border-line bg-card px-3 text-[11px] outline-none"
+          className="h-9 rounded-full border border-line bg-card px-3 text-sm outline-none"
           aria-label="Event selector"
         >
           <option value="">Choose an event…</option>
@@ -94,7 +94,7 @@ function TiersInner() {
         </select>
         {selected && !selected.isFree ? <Tag tone="gold">paid event</Tag> : null}
         {selected?.isFree ? (
-          <span className="text-[11px] text-ink-faint">Free events use registration check-in; no tiers needed.</span>
+          <span className="text-sm text-ink-faint">Free events use registration check-in; no tiers needed.</span>
         ) : null}
       </div>
 
@@ -118,9 +118,9 @@ function TiersInner() {
               <div className="space-y-2 p-5">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-12 rounded-xl" />)}</div>
             ) : rows.length === 0 ? (
               <div className="px-5 py-10 text-center">
-                <p className="text-xs text-ink-faint">{paidEvent ? "No tiers yet. The first one sets the price of entry." : "Free event: registrations stand in for tickets."}</p>
+                <p className="text-sm text-ink-faint">{paidEvent ? "No tiers yet. The first one sets the price of entry." : "Free event: registrations stand in for tickets."}</p>
                 {canManage && paidEvent ? (
-                  <Button size="sm" variant="outline" className="mt-3 rounded-full border-line text-xs" onClick={() => setFormTarget({ open: true, tier: null })}>Create the first tier</Button>
+                  <Button size="sm" variant="outline" className="mt-3 rounded-full border-line text-sm" onClick={() => setFormTarget({ open: true, tier: null })}>Create the first tier</Button>
                 ) : null}
               </div>
             ) : (
@@ -130,11 +130,11 @@ function TiersInner() {
                     <div className="group flex items-center gap-4 px-5 py-3">
                       <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-gold-soft text-gold"><Ticket className="size-3.5" /></span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-xs font-semibold">{tier.name}</span>
-                        <span className="block truncate text-[10px] text-ink-faint">{tier.description || "No description"}</span>
+                        <span className="block truncate text-sm font-semibold">{tier.name}</span>
+                        <span className="block truncate text-xs text-ink-faint">{tier.description || "No description"}</span>
                       </span>
-                      <span className="num hidden w-24 text-right text-xs font-semibold sm:block">{formatNaira(tier.price)}</span>
-                      <span className="num hidden w-28 text-right text-[11px] text-ink-soft md:block">
+                      <span className="num hidden w-24 text-right text-sm font-semibold sm:block">{formatNaira(tier.price)}</span>
+                      <span className="num hidden w-28 text-right text-sm text-ink-soft md:block">
                         {tier.capacity != null ? <>{number(tier.capacity)} seats</> : "uncapped seats"}
                       </span>
                       {canManage && paidEvent ? (
@@ -180,17 +180,17 @@ function TiersInner() {
                 {ticketRows
                   .filter((t) => (ticketFilter === "used" ? Boolean(t.usedAt) : ticketFilter === "open" ? !t.usedAt : true))
                   .map((t) => (
-                    <div key={t.ticketId ?? t.code} className="flex items-center gap-3 px-5 py-2.5 text-[11px]">
-                      <span className="font-mono text-[10px] text-ink-faint">{t.code}</span>
+                    <div key={t.ticketId ?? t.code} className="flex items-center gap-3 px-5 py-2.5 text-sm">
+                      <span className="font-mono text-xs text-ink-faint">{t.code}</span>
                       <span className="min-w-0 flex-1 truncate">{t.memberName ?? t.visitorName ?? "Unassigned"}</span>
-                      <span className="hidden truncate text-[10px] text-ink-faint sm:block">{t.tierName ?? "Not available"} · {formatDate(t.createdAt)}</span>
+                      <span className="hidden truncate text-xs text-ink-faint sm:block">{t.tierName ?? "Not available"} · {formatDate(t.createdAt)}</span>
                       <Tag tone={t.usedAt ? "moss" : "neutral"} dot>{t.usedAt ? "used" : "open"}</Tag>
                     </div>
                   ))}
-                {!ticketRows.length ? <p className="px-5 py-8 text-center text-[11px] text-ink-faint">No passes issued for this event yet.</p> : null}
+                {!ticketRows.length ? <p className="px-5 py-8 text-center text-sm text-ink-faint">No passes issued for this event yet.</p> : null}
               </div>
             )}
-            <div className="border-t border-line px-5 py-2.5 text-[10px] text-ink-faint">
+            <div className="border-t border-line px-5 py-2.5 text-xs text-ink-faint">
               Ticket PDFs and claims live with the event page and the check-in desk.
             </div>
           </SectionCard>
@@ -265,26 +265,26 @@ function TierFormDialog({
       <DialogContent className="rounded-2xl border-line bg-card">
         <DialogHeader>
           <DialogTitle className="font-display">{tier ? `Edit ${tier.name}` : "Set a new tier"}</DialogTitle>
-          <DialogDescription className="text-xs">Name the ticket the way the congregation would say it.</DialogDescription>
+          <DialogDescription className="text-sm">Name the ticket the way the congregation would say it.</DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
           <RequiredFieldsNotice className="col-span-full" />
           <div className="space-y-1.5">
-            <Label required className="text-xs">Tier name</Label>
+            <Label required className="text-sm">Tier name</Label>
             <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Standard" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label required className="text-xs">Price (₦)</Label>
+              <Label required className="text-sm">Price (₦)</Label>
               <Input inputMode="numeric" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value.replace(/[^\d]/g, "") }))} placeholder="5000" className="num h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Capacity (optional)</Label>
+              <Label className="text-sm">Capacity (optional)</Label>
               <Input inputMode="numeric" value={form.capacity} onChange={(e) => setForm((f) => ({ ...f, capacity: e.target.value.replace(/[^\d]/g, "") }))} placeholder="100" className="num h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">Note (optional)</Label>
+            <Label className="text-sm">Note (optional)</Label>
             <Input value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="What the ticket covers" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
           </div>
           <Button

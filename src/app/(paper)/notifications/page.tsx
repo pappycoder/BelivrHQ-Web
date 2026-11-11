@@ -3,7 +3,6 @@
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
 import {
   BellOff,
   CalendarCheck,
@@ -39,9 +38,12 @@ import {
   useMarkAllAsRead,
   useMarkAsRead,
   useNotificationsList,
+  type Notification,
   type NotificationType,
 } from "@/hooks/use-notifications";
 import { cn } from "@/lib/utils";
+import { NotificationDetailDialog } from "@/components/notifications/notification-detail-dialog";
+import { notificationLabel } from "@/lib/notification-details";
 
 const TYPE_ICONS: Record<NotificationType, React.ElementType> = {
   system: Settings2,
@@ -80,12 +82,12 @@ type DeleteTarget = { ids: string[]; label: string };
 
 export default function PaperNotificationsPage() {
   const { confirm, dialog } = useManageConfirmation();
-  const router = useRouter();
   const [read, setRead] = React.useState<"all" | "unread">("all");
   const [type, setType] = React.useState<"all" | NotificationType>("all");
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState(20);
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
+  const [activeNotification, setActiveNotification] = React.useState<Notification | null>(null);
   const [deleteTarget, setDeleteTarget] = React.useState<DeleteTarget | null>(null);
 
   const list = useNotificationsList({
@@ -110,11 +112,6 @@ export default function PaperNotificationsPage() {
   React.useEffect(() => {
     setSelected(new Set());
   }, [read, type, page, perPage]);
-
-  const open = (id: string, readAt: string | undefined, link?: string) => {
-    if (!readAt) markRead.mutate(id);
-    if (link?.startsWith("/")) router.push(link);
-  };
 
   const toggle = (id: string) =>
     setSelected((current) => {
@@ -179,7 +176,7 @@ export default function PaperNotificationsPage() {
         actions={
           <Button
             variant="outline"
-            className="h-9 gap-1.5 rounded-full border-line bg-card text-xs"
+            className="h-9 gap-1.5 rounded-full border-line bg-card text-sm"
             disabled={!list.data?.unreadCount || markAll.isPending}
             onClick={() =>
               confirm({ title: "Mark all notifications read?", subject: "All unread notifications", onConfirm: () => markAll.mutateAsync(undefined, {
@@ -222,7 +219,7 @@ export default function PaperNotificationsPage() {
         <div className="paper-card overflow-hidden rounded-2xl">
           <div
             className={cn(
-              "flex items-center gap-3 px-4 py-2.5 text-xs",
+              "flex items-center gap-3 px-4 py-2.5 text-sm",
               selectedIds.length
                 ? "bg-ink text-paper"
                 : "border-b border-line text-ink-faint",
@@ -274,7 +271,7 @@ export default function PaperNotificationsPage() {
                   <Button
                     size="xs"
                     variant="ghost"
-                    className="rounded-full text-[11px] text-paper/70 hover:bg-paper/10 hover:text-paper"
+                    className="rounded-full text-sm text-paper/70 hover:bg-paper/10 hover:text-paper"
                     onClick={() => setSelected(new Set())}
                   >
                     Clear
@@ -289,14 +286,13 @@ export default function PaperNotificationsPage() {
           <div className="divide-y divide-line/70">
             {items.map((item) => {
               const Icon = TYPE_ICONS[item.type] ?? Settings2;
-              const link = typeof item.data?.link === "string" ? item.data.link : undefined;
               return (
-                <div key={item.id} className="group flex items-center gap-3 px-4 py-2 transition-colors hover:bg-muted/40">
+                <div key={item.id} className="group flex items-start gap-3 px-4 py-4 transition-colors hover:bg-muted/40">
                   <Checkbox
                     checked={selected.has(item.id)}
                     onCheckedChange={() => toggle(item.id)}
                     aria-label={`Select ${item.title}`}
-                    className="size-4 shrink-0 rounded border-line"
+                    className="mt-1 size-4 shrink-0 rounded border-line"
                   />
                   <span
                     className={cn(
@@ -313,16 +309,23 @@ export default function PaperNotificationsPage() {
                   </span>
                   <button
                     type="button"
-                    onClick={() => open(item.id, item.readAt, link)}
-                    className="flex min-w-0 flex-1 items-baseline gap-2 text-left"
+                    aria-label={`View notification: ${item.title}`}
+                    aria-describedby={`notification-preview-${item.id}`}
+                    onClick={() => setActiveNotification(item)}
+                    className="min-w-0 flex-1 space-y-1.5 text-left"
                   >
-                    <span className={cn("flex min-w-0 items-center gap-1.5 text-xs", item.readAt ? "text-ink-soft" : "font-semibold text-ink")}>
-                      {!item.readAt ? <span className="size-1.5 shrink-0 rounded-full bg-brand" /> : null}
-                      <span className="truncate">{item.title}</span>
+                    <span className={cn("flex min-w-0 items-start gap-1.5 text-sm leading-snug", item.readAt ? "text-ink-soft" : "font-semibold text-ink")}>
+                      {!item.readAt ? <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-brand" /> : null}
+                      <span className="break-words">{item.title}</span>
                     </span>
-                    <span className="hidden min-w-0 flex-1 truncate text-[11px] text-ink-faint sm:block">{item.body}</span>
+                    <span id={`notification-preview-${item.id}`} className="whitespace-pre-line break-words text-sm leading-relaxed text-ink-soft line-clamp-3">{item.body}</span>
+                    <span className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-ink-faint">
+                      <span>{NOTIFICATION_TYPE_LABELS[item.type] ?? notificationLabel(item.type)}</span>
+                      <span className="sm:hidden">{formatRelativeTime(item.createdAt)}</span>
+                      <span className="text-brand">View details</span>
+                    </span>
                   </button>
-                  <span className="hidden w-24 shrink-0 text-right text-[10px] text-ink-faint sm:block">
+                  <span className="hidden w-24 shrink-0 text-right text-xs text-ink-faint sm:block">
                     {formatRelativeTime(item.createdAt)}
                   </span>
                   <RowActions
@@ -367,6 +370,9 @@ export default function PaperNotificationsPage() {
         </div>
       )}
 
+      <NotificationDetailDialog notification={activeNotification} open={!!activeNotification}
+        onOpenChange={value => { if (!value) setActiveNotification(null); }}
+        onDeleted={() => { if (activeNotification) setSelected(current => { const next = new Set(current); next.delete(activeNotification.id); return next; }); }} />
       <ConfirmDeleteDialog
         open={!!deleteTarget}
         onOpenChange={(value) => !value && setDeleteTarget(null)}

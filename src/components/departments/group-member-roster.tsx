@@ -129,7 +129,7 @@ export function GroupMemberRoster({
             {paged.map((member) => (
               <div
                 key={member.id}
-                className="group grid grid-cols-[1.5fr_1fr_1fr_auto] items-center gap-3 border-b border-line/70 px-5 py-3 text-xs"
+                className="group grid grid-cols-[1.5fr_1fr_1fr_auto] items-center gap-3 border-b border-line/70 px-5 py-3 text-sm"
               >
                 <div className="flex min-w-0 items-center gap-2">
                   <PersonAvatar

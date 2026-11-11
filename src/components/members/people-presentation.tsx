@@ -46,7 +46,7 @@ export function PeopleHeader({
       titleMeta={
         count === undefined ? undefined : (
           <span
-            className="rounded-full border border-primary/15 bg-primary/5 px-2.5 py-1 text-xs font-medium tabular-nums text-[var(--workspace-accent-readable,var(--primary))]"
+            className="rounded-full border border-primary/15 bg-primary/5 px-2.5 py-1 text-sm font-medium tabular-nums text-[var(--workspace-accent-readable,var(--primary))]"
             aria-label={`${count.toLocaleString()} results`}
           >
             {count.toLocaleString()}
@@ -103,7 +103,7 @@ export function PeopleStatusBadge({ status }: { status: string }) {
     <Badge
       variant="outline"
       className={cn(
-        "gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium capitalize",
+        "gap-1.5 rounded-full px-2 py-0.5 text-sm font-medium capitalize",
         statusTones[status] ?? statusTones.inactive,
       )}
     >
@@ -157,7 +157,7 @@ export function PeopleFormSection({
         <PeopleSectionHeading icon={icon}>{title}</PeopleSectionHeading>
       </legend>
       {description && (
-        <p className="text-xs text-muted-foreground">{description}</p>
+        <p className="text-sm text-muted-foreground">{description}</p>
       )}
       {children}
     </fieldset>
@@ -179,7 +179,7 @@ export function PeopleMoreFilters({
           More filters
           {count > 0 && (
             <span
-              className="rounded-full bg-primary/10 px-1.5 text-[11px] text-[var(--workspace-accent-readable,var(--primary))]"
+              className="rounded-full bg-primary/10 px-1.5 text-sm text-[var(--workspace-accent-readable,var(--primary))]"
               aria-label={`${count} active filters`}
             >
               {count}
@@ -215,7 +215,7 @@ export function PeopleImportProgress({
           key={value}
           aria-current={step === value ? "step" : undefined}
           className={cn(
-            "flex items-center gap-2 rounded-lg px-2 py-2 text-xs font-medium",
+            "flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium",
             index === current
               ? "bg-blue-500/8 text-blue-700 dark:text-blue-300"
               : "text-muted-foreground",

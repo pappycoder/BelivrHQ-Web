@@ -20,7 +20,7 @@ export function ColumnSelector({ columns, hidden, onChange }: {
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" aria-label="Choose visible columns">
           <Columns3 className="h-4 w-4" />
-          Columns <span className="text-muted-foreground text-xs">{visibleCount}/{choices.length}</span>
+          Columns <span className="text-muted-foreground text-sm">{visibleCount}/{choices.length}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
@@ -35,7 +35,7 @@ export function ColumnSelector({ columns, hidden, onChange }: {
               disabled={!column.hideable || (checked && !fixedData && visibleCount === 1)}
               onSelect={(event) => event.preventDefault()}
               onCheckedChange={(value) => onChange(value ? hidden.filter((id) => id !== column.id) : [...hidden, column.id])}>
-              {column.label}{!column.hideable && <span className="ml-auto text-[10px] text-muted-foreground">Fixed</span>}
+              {column.label}{!column.hideable && <span className="ml-auto text-xs text-muted-foreground">Fixed</span>}
             </DropdownMenuCheckboxItem>;
           })}
         </div>

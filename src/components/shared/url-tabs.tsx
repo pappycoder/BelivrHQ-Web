@@ -11,18 +11,20 @@ type UrlTabsProps = Omit<
   children?: ReactNode | ((activeTab: string) => ReactNode);
   defaultValue: string;
   values: string[];
+  aliases?: Record<string, string>;
 };
 
 function UrlTabsContent({
   defaultValue,
   values,
+  aliases,
   children,
   ...props
 }: UrlTabsProps) {
   const searchParams = useSearchParams();
   const requested = searchParams.get("tab");
-  const value =
-    requested && values.includes(requested) ? requested : defaultValue;
+  const resolved = requested ? aliases?.[requested] ?? requested : null;
+  const value = resolved && values.includes(resolved) ? resolved : defaultValue;
 
   return (
     <Tabs
@@ -40,7 +42,7 @@ function UrlTabsContent({
 }
 
 /** Preserve other query parameters and browser history without remounting drafts. */
-export function UrlTabs({ values, children, ...props }: UrlTabsProps) {
+export function UrlTabs({ values, aliases, children, ...props }: UrlTabsProps) {
   return (
     <Suspense
       fallback={
@@ -51,7 +53,7 @@ export function UrlTabs({ values, children, ...props }: UrlTabsProps) {
         </Tabs>
       }
     >
-      <UrlTabsContent {...props} values={values}>
+      <UrlTabsContent {...props} values={values} aliases={aliases}>
         {children}
       </UrlTabsContent>
     </Suspense>

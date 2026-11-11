@@ -164,7 +164,7 @@ for (const width of [1280, 320]) {
     ).toHaveText("All categories");
   });
 
-  test(`records toolbar supports search, sorting and native inclusive dates at ${width}px`, async ({
+  test(`records toolbar supports search, sorting and an inclusive date dropdown at ${width}px`, async ({
     page,
     context,
   }) => {
@@ -190,13 +190,18 @@ for (const width of [1280, 320]) {
     await page
       .getByRole("option", { name: "Sunday Worship", exact: true })
       .click();
-    await filters
-      .locator('input[type="date"][aria-label="From date"]')
-      .fill("2026-12-25");
-    await filters
-      .locator('input[type="date"][aria-label="To date"]')
-      .fill("2026-12-25");
-    await expect(page.getByRole("spinbutton")).toHaveCount(0);
+    await expect(page.getByLabel("From date", { exact: true })).toHaveCount(0);
+    await expect.poll(() => requests.some(url => url.pathname.endsWith("/attendance") && url.searchParams.get("search") === "Ada Rice" && url.searchParams.get("serviceId") === "sunday")).toBe(true);
+    await page.getByRole("button", { name: "Next", exact: true }).click();
+    await expect.poll(() => requests.filter(url => url.pathname.endsWith("/attendance")).at(-1)?.searchParams.get("page")).toBe("2");
+    const dateTrigger = filters.getByRole("button", { name: /^Date range/ });
+    await dateTrigger.click();
+    const dropdown = page.getByRole("dialog", { name: "Filter attendance dates", exact: true });
+    await dropdown.getByLabel("From date", { exact: true }).fill("2026-12-25");
+    await dropdown.getByLabel("To date", { exact: true }).fill("2026-12-25");
+    await expect(dropdown.getByRole("spinbutton")).toHaveCount(0);
+    expect(requests.filter(url => url.pathname.endsWith("/attendance")).at(-1)?.searchParams.has("startDate")).toBe(false);
+    await dropdown.getByRole("button", { name: "Apply dates", exact: true }).click();
     await expect
       .poll(() =>
         requests.some(
@@ -207,10 +212,27 @@ for (const width of [1280, 320]) {
             url.searchParams.get("sortOrder") === "asc" &&
             url.searchParams.get("serviceId") === "sunday" &&
             url.searchParams.get("startDate") === "2026-12-24T23:00:00.000Z" &&
-            url.searchParams.get("endDate") === "2026-12-25T22:59:59.999Z",
+            url.searchParams.get("endDate") === "2026-12-25T22:59:59.999Z" &&
+            url.searchParams.get("page") === "1",
         ),
       )
       .toBe(true);
+    await dateTrigger.click();
+    await dropdown.getByLabel("To date", { exact: true }).fill("2026-12-24");
+    await expect(dropdown.getByRole("button", { name: "Apply dates", exact: true })).toBeDisabled();
+    await expect(dropdown.getByRole("alert")).toContainText("on or after");
+    await page.keyboard.press("Escape");
+    await expect(dateTrigger).toBeFocused();
+    await dateTrigger.click();
+    await expect(dropdown.getByLabel("To date", { exact: true })).toHaveValue("2026-12-25");
+    await dropdown.screenshot({ path: `/tmp/belivrhq-attendance-date-dropdown-${width}.png` });
+    await dropdown.getByRole("button", { name: "Clear dates", exact: true }).click();
+    await expect(dateTrigger).toHaveAccessibleName("Date range");
+    await expect(filters.getByRole("combobox", { name: "Gathering", exact: true })).toHaveText("Sunday Worship");
+    await dateTrigger.click();
+    await expect(dropdown.getByLabel("From date", { exact: true })).toHaveValue("");
+    await expect(dropdown.getByLabel("To date", { exact: true })).toHaveValue("");
+    await page.keyboard.press("Escape");
     await settleScreenshot(page, "Matching records", "40");
     await page.screenshot({
       path: `/tmp/belivrhq-records-toolbar-${width}.png`,
@@ -222,9 +244,8 @@ for (const width of [1280, 320]) {
     await filters
       .getByRole("button", { name: "Clear filters", exact: true })
       .click();
-    await expect(
-      filters.locator('input[type="date"][aria-label="From date"]'),
-    ).toHaveValue("");
+    await expect(dateTrigger).toHaveAccessibleName("Date range");
+    await expect(page.getByLabel("From date", { exact: true })).toHaveCount(0);
     await expect(
       filters.getByRole("combobox", { name: "Gathering", exact: true }),
     ).toHaveText("All gatherings");

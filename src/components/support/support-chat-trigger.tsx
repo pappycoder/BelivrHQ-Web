@@ -44,7 +44,7 @@ export function SupportChatTrigger() {
           exit={reduced ? undefined : { opacity: 0, y: 6, scale: 0.97 }}
           transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
           whileTap={reduced ? undefined : { scale: 0.96 }}
-          className="fixed right-4 bottom-[calc(env(safe-area-inset-bottom)+4.5rem)] z-30 flex items-center gap-2 rounded-full border border-line bg-card/95 py-2 pl-2.5 pr-3.5 text-[11px] font-semibold text-ink-soft shadow-[0_12px_32px_-16px_rgb(38_32_26_/_0.35)] backdrop-blur transition-colors hover:border-ink/20 hover:text-ink md:bottom-6 md:right-5"
+          className="fixed right-4 bottom-[calc(env(safe-area-inset-bottom)+4.5rem)] z-30 flex items-center gap-2 rounded-full border border-line bg-card/95 py-2 pl-2.5 pr-3.5 text-sm font-semibold text-ink-soft shadow-[0_12px_32px_-16px_rgb(38_32_26_/_0.35)] backdrop-blur transition-colors hover:border-ink/20 hover:text-ink md:bottom-6 md:right-5"
         >
           <span className="grid size-6 place-items-center rounded-full bg-brand-soft text-brand">
             <MessageCircle className="size-3.5" />

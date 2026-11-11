@@ -41,13 +41,13 @@ export function AttendanceHeadcountCharts({
     <section aria-label="Reported service headcounts" className="space-y-3">
       <div>
         <h2 className="text-sm font-semibold">Reported service headcounts</h2>
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p className="mt-1 text-sm text-muted-foreground">
           Separate from named check-ins. Age and gender are breakdowns of the
           same reported total; do not add them together.
         </p>
       </div>
       {!query.error && !query.isLoading && !summary?.reportCount ? (
-        <p className="rounded-xl border border-dashed p-5 text-center text-xs text-muted-foreground">
+        <p className="rounded-xl border border-dashed p-5 text-center text-sm text-muted-foreground">
           No reported service headcounts in this period.
         </p>
       ) : (

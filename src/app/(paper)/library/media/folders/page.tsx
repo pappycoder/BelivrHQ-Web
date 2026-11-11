@@ -98,7 +98,7 @@ export default function MediaFoldersPage() {
         title="Folders, kept tidy on purpose."
         description="Organised by what the team actually reaches for: Sundays first, archives later."
         actions={
-          <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
+          <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-sm">
             <Link href="/library/media">
               <FolderOpen className="size-3.5" /> Open library
             </Link>
@@ -121,7 +121,7 @@ export default function MediaFoldersPage() {
         />
         <div className="ml-auto flex flex-wrap items-center gap-2">
           <Select value={sortBy} onValueChange={(value) => { setSortBy(value as SortValue); setPage(1); }}>
-            <SelectTrigger className="h-8 w-40 rounded-full border-line bg-card text-[11px] shadow-none">
+            <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
               <ArrowUpDownIcon /> <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -162,7 +162,7 @@ export default function MediaFoldersPage() {
           icon={<FolderClosed />}
           title="No folders match that"
           description="Try a different name, or clear the search."
-          action={<Button variant="outline" size="sm" className="rounded-full border-line text-xs" onClick={() => { setQuery(""); setPage(1); }}>Clear search</Button>}
+          action={<Button variant="outline" size="sm" className="rounded-full border-line text-sm" onClick={() => { setQuery(""); setPage(1); }}>Clear search</Button>}
         />
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
@@ -188,10 +188,10 @@ export default function MediaFoldersPage() {
                         className="h-1.5 w-1.5 shrink-0 rounded-full"
                         style={{ background: colorOf(folder.folder) }}
                       />
-                      <span className="truncate text-xs font-semibold hover:text-brand">{folder.folder}</span>
+                      <span className="truncate text-sm font-semibold hover:text-brand">{folder.folder}</span>
                     </Link>
-                    <span className="num text-right text-[11px] tabular-nums">{number(folder.count)}</span>
-                    <span className="num text-[11px] text-ink-faint">
+                    <span className="num text-right text-sm tabular-nums">{number(folder.count)}</span>
+                    <span className="num text-sm text-ink-faint">
                       {folder.newestAt ? formatDate(folder.newestAt) : "no files yet"}
                     </span>
                     <div className="flex justify-end">
@@ -234,11 +234,11 @@ export default function MediaFoldersPage() {
                   <div className="mt-3 flex flex-1 items-start justify-between">
                     <div>
                       <p className="font-display text-sm font-semibold">{folder.folder}</p>
-                      <p className="num mt-1 text-[11px] text-ink-soft">{number(folder.count)} files</p>
+                      <p className="num mt-1 text-sm text-ink-soft">{number(folder.count)} files</p>
                     </div>
                     <FolderClosed className="size-4 text-ink-faint" />
                   </div>
-                  <p className="mt-3 border-t border-line/70 pt-3 text-[10px] text-ink-faint">
+                  <p className="mt-3 border-t border-line/70 pt-3 text-xs text-ink-faint">
                     {folder.newestAt ? `newest ${formatDate(folder.newestAt)}` : "no files yet"}
                   </p>
                 </Link>
@@ -263,7 +263,7 @@ export default function MediaFoldersPage() {
             />
           ))}
         </div>
-        <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+        <p className="mt-3 text-xs leading-relaxed text-ink-faint">
           Folders are namespacing, not permissions. Each file keeps its own public/members/leadership badge.
         </p>
       </div>

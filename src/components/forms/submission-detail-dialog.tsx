@@ -71,7 +71,7 @@ export function SubmissionDetailDialog({
                 {Array.isArray(value) ? (
                   <div className="flex flex-wrap gap-1">
                     {value.map((v) => (
-                      <span key={String(v)} className="rounded bg-muted px-2 py-0.5 text-xs">
+                      <span key={String(v)} className="rounded bg-muted px-2 py-0.5 text-sm">
                         {String(v)}
                       </span>
                     ))}

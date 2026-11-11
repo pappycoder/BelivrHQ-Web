@@ -180,7 +180,7 @@ export function BranchAssignmentField({
 export function BranchDetail({ record }: { record: AssignedRecord }) {
   return (
     <div className="space-y-1">
-      <p className="text-xs text-muted-foreground">Branch</p>
+      <p className="text-sm text-muted-foreground">Branch</p>
       <p className="text-sm font-medium">
         {record.branchName ??
           (record.branchId ? "Branch unavailable" : "Church-wide")}

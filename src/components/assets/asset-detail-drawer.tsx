@@ -255,7 +255,7 @@ export function AssetDetailDrawer({
               ) : (
                 qrQuery.isLoading ? <div role="status" aria-label="Loading asset QR code" aria-busy="true"><Skeleton className="size-[180px] rounded-lg" /></div> : <p className="text-sm text-muted-foreground">No QR code generated yet.</p>
               )}
-              <p className="text-center text-xs text-muted-foreground break-all">
+              <p className="text-center text-sm text-muted-foreground break-all">
                 {qrQuery.data?.qrData}
               </p>
               {can("assets:list", "create") && (
@@ -291,7 +291,7 @@ export function AssetDetailDrawer({
                       <p className="text-sm font-medium">{record.type}</p>
                       <StatusBadge kind="maintenance" value={record.status} />
                     </div>
-                    <p className="text-xs text-muted-foreground pt-1">
+                    <p className="text-sm text-muted-foreground pt-1">
                       Scheduled {formatDate(record.scheduledDate)}
                       {record.completedDate
                         ? ` · completed ${formatDate(record.completedDate)}`
@@ -301,7 +301,7 @@ export function AssetDetailDrawer({
                         : ""}
                     </p>
                     {record.performedBy && (
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-sm text-muted-foreground">
                         by {record.performedBy}
                       </p>
                     )}
@@ -328,7 +328,7 @@ export function AssetDetailDrawer({
                       </p>
                       <StatusBadge kind="loan" value={loan.status} />
                     </div>
-                    <p className="text-xs text-muted-foreground pt-1">
+                    <p className="text-sm text-muted-foreground pt-1">
                       {formatDate(loan.loanDate)} →{" "}
                       {formatDate(loan.expectedReturnDate)}
                       {loan.actualReturnDate
@@ -356,7 +356,7 @@ export function AssetDetailDrawer({
                 <>
                   <div className="grid grid-cols-3 gap-2 rounded-lg border p-3">
                     <div>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-sm text-muted-foreground">
                         Purchase Price
                       </p>
                       <p className="font-semibold">
@@ -364,7 +364,7 @@ export function AssetDetailDrawer({
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-sm text-muted-foreground">
                         Depreciated
                       </p>
                       <p className="font-semibold">
@@ -374,7 +374,7 @@ export function AssetDetailDrawer({
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-sm text-muted-foreground">
                         Current Value
                       </p>
                       <p className="font-semibold">

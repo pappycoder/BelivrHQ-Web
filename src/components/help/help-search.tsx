@@ -197,7 +197,7 @@ export function HelpSearch({
                 href={`/help/${article.slug}`}
                 className="group flex min-w-0 flex-col rounded-xl border bg-card p-5 transition hover:border-primary/50 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-primary"
               >
-                <span className="mb-3 text-xs font-medium text-primary">
+                <span className="mb-3 text-sm font-medium text-primary">
                   {helpTopics.find((item) => item.id === article.topic)?.title}{" "}
                   · {article.minutes} min read
                 </span>

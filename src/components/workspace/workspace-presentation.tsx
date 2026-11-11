@@ -42,7 +42,7 @@ export function WorkspaceHeader({
           (count === undefined ? undefined : (
             <span
               aria-label={`${loading ? "Loading" : count.toLocaleString()} ${countLabel}`}
-              className="inline-flex items-center gap-1.5 rounded-full border bg-muted/50 px-2 py-0.5 text-xs font-medium tabular-nums text-muted-foreground"
+              className="inline-flex items-center gap-1.5 rounded-full border bg-muted/50 px-2 py-0.5 text-sm font-medium tabular-nums text-muted-foreground"
             >
               {loading ? <LoadingState label={`Loading ${countLabel}`} variant="inline" className="max-w-8" /> : count.toLocaleString()}
               <span className="sr-only"> {countLabel}</span>
@@ -73,7 +73,7 @@ export function SummaryMetric({
         className,
       )}
     >
-      <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+      <div className="mb-1 flex items-center gap-1.5 text-sm text-muted-foreground">
         {icon && (
           <span className="[&_svg]:size-3.5" aria-hidden="true">
             {icon}
@@ -89,7 +89,7 @@ export function SummaryMetric({
         </p>
       )}
       {subtitle && (
-        <div className="mt-1 text-xs text-muted-foreground">{subtitle}</div>
+        <div className="mt-1 text-sm text-muted-foreground">{subtitle}</div>
       )}
     </div>
   );
@@ -115,7 +115,7 @@ export function WorkspaceSection({
         <div>
           <h2 className="text-sm font-semibold">{title}</h2>
           {description && (
-            <p className="mt-0.5 text-xs text-muted-foreground">
+            <p className="mt-0.5 text-sm text-muted-foreground">
               {description}
             </p>
           )}
@@ -152,7 +152,7 @@ export function DistributionChart({
           </span>
           <div>
             <CardTitle>{title}</CardTitle>
-            <CardDescription className="mt-0.5 text-xs">
+            <CardDescription className="mt-0.5 text-sm">
               {description}
             </CardDescription>
           </div>
@@ -202,7 +202,7 @@ export function WorkspaceFormSection({
   if (!enabled) return children;
   return (
     <fieldset className="min-w-0 space-y-4 rounded-xl border p-4">
-      <legend className="px-1 text-xs font-semibold text-muted-foreground">
+      <legend className="px-1 text-sm font-semibold text-muted-foreground">
         {title}
       </legend>
       {children}

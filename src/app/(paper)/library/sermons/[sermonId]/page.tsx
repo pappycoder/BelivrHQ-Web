@@ -77,7 +77,7 @@ export default function SermonDetailPage({
         title="We couldn&apos;t find this message"
         description="It may have been deleted, or the link is old."
         action={
-          <Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs">
+          <Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm">
             <Link href="/library/sermons">Back to the archive</Link>
           </Button>
         }
@@ -94,7 +94,7 @@ export default function SermonDetailPage({
 
   return (
     <div className="space-y-6">
-      <Link href="/library/sermons" className="inline-flex items-center gap-1.5 text-[11px] text-ink-faint hover:text-ink">
+      <Link href="/library/sermons" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
         <ArrowLeft className="size-3" /> Library · Sermons
       </Link>
 
@@ -115,7 +115,7 @@ export default function SermonDetailPage({
             <h1 className="font-display text-[clamp(1.5rem,3vw,2.2rem)] font-semibold leading-tight tracking-tight">
               {s.title}
             </h1>
-            <p className="text-xs text-ink-soft">
+            <p className="text-sm text-ink-soft">
               {s.speaker ?? "Unknown speaker"}
               {s.scriptureReference ? <span className="ml-2 font-mono text-brand">{s.scriptureReference}</span> : null}
               {s.durationSeconds ? <span className="num ml-2 text-ink-faint">{duration(s.durationSeconds)}</span> : null}
@@ -130,7 +130,7 @@ export default function SermonDetailPage({
             <Button
               variant={isBookmarked ? "default" : "outline"}
               size="sm"
-              className={isBookmarked ? "h-8 gap-1.5 rounded-full text-xs" : "h-8 gap-1.5 rounded-full border-line bg-card text-xs"}
+              className={isBookmarked ? "h-8 gap-1.5 rounded-full text-sm" : "h-8 gap-1.5 rounded-full border-line bg-card text-sm"}
               disabled={toggleBookmark.isPending}
               onClick={() => toggleBookmark.mutate(isBookmarked, {
                 onSuccess: () => toast(isBookmarked ? "Removed from your library." : "Saved to your library."),
@@ -140,7 +140,7 @@ export default function SermonDetailPage({
               {isBookmarked ? "Saved" : "Save"}
             </Button>
             {canUpdate ? (
-              <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs">
+              <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm">
                 <Link href={`/library/sermons/${s.sermonId}/edit`}>
                   <PencilLine className="size-3.5" /> Edit
                 </Link>
@@ -157,7 +157,7 @@ export default function SermonDetailPage({
                   <PlayCircle className="size-5" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="mb-1 flex items-center justify-between text-[10px] uppercase tracking-wider text-ink-faint">
+                  <p className="mb-1 flex items-center justify-between text-xs uppercase tracking-wider text-ink-faint">
                     Listen
                     <button
                       type="button"
@@ -178,7 +178,7 @@ export default function SermonDetailPage({
             ) : video ? (
               <video controls preload="metadata" src={video} className="aspect-video w-full rounded-xl bg-ink" />
             ) : null}
-            <p className="flex flex-wrap gap-4 text-[11px]">
+            <p className="flex flex-wrap gap-4 text-sm">
               {video ? <a href={video} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-ink-faint hover:text-brand"><ExternalLink className="size-3" /> Original video</a> : null}
               {audio ? <a href={audio} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-ink-faint hover:text-brand"><ExternalLink className="size-3" /> Download audio</a> : null}
             </p>
@@ -191,10 +191,10 @@ export default function SermonDetailPage({
           {s.description ? (
             <p className="whitespace-pre-line text-sm leading-relaxed text-ink-soft">{s.description}</p>
           ) : (
-            <p className="text-xs text-ink-faint">No summary recorded. Add one to help people find this sermon.</p>
+            <p className="text-sm text-ink-faint">No summary recorded. Add one to help people find this sermon.</p>
           )}
           {audio || video ? null : (
-            <div className="mt-4 flex items-center gap-2 rounded-xl border border-dashed border-line px-4 py-3 text-[11px] text-ink-faint">
+            <div className="mt-4 flex items-center gap-2 rounded-xl border border-dashed border-line px-4 py-3 text-sm text-ink-faint">
               <Film className="size-3.5" /> No recording attached yet. Audio and video save independently from the editor.
             </div>
           )}
@@ -215,15 +215,15 @@ export default function SermonDetailPage({
         <SectionCard
           eyebrow={`More in ${s.seriesName}`}
           title="The series continues"
-          actions={<Link href={`/library/sermons?series=${encodeURIComponent(s.seriesName)}`} className="flex items-center gap-1 text-[11px] text-brand hover:underline"><Layers className="size-3" /> All parts</Link>}
+          actions={<Link href={`/library/sermons?series=${encodeURIComponent(s.seriesName)}`} className="flex items-center gap-1 text-sm text-brand hover:underline"><Layers className="size-3" /> All parts</Link>}
           bodyClassName="p-0"
         >
           <div className="divide-y divide-line/70">
             {siblings.map((r) => (
               <Link key={r.sermonId} href={`/library/sermons/${r.sermonId}`} className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-muted/40">
                 <Film className="size-3.5 shrink-0 text-ink-faint" />
-                <span className="min-w-0 flex-1 truncate text-xs font-medium">{r.title}</span>
-                <span className="num shrink-0 text-[10px] text-ink-faint">{formatDate(r.sermonDate)}</span>
+                <span className="min-w-0 flex-1 truncate text-sm font-medium">{r.title}</span>
+                <span className="num shrink-0 text-xs text-ink-faint">{formatDate(r.sermonDate)}</span>
               </Link>
             ))}
           </div>

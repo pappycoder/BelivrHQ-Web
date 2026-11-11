@@ -35,7 +35,7 @@ function RoleBadge({
 }) {
   const variant = role === "super_admin" ? "destructive" : "secondary";
   return (
-    <Badge variant={variant} className="text-xs">
+    <Badge variant={variant} className="text-sm">
       {resolveRoleLabel(role, labels)}
     </Badge>
   );

@@ -35,7 +35,7 @@ export function GivingSourceIdentity({
       )}
       <span className="min-w-0">
         <span
-          className="block truncate text-xs font-medium"
+          className="block truncate text-sm font-medium"
           title={source.label}
         >
           {source.label}

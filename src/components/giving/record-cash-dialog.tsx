@@ -375,7 +375,7 @@ export function RecordCashDialog({
                   onChange={(e) => setNewCategoryName(e.target.value)}
                 />
               )}
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Not listed? Pick “+ Add new category…” and type it. It&apos;s
                 created automatically.
               </p>
@@ -392,7 +392,7 @@ export function RecordCashDialog({
                     key={tab.value}
                     type="button"
                     onClick={() => setLinkTo(tab.value)}
-                    className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
+                    className={`rounded px-3 py-1 text-sm font-medium transition-colors ${
                       linkTo === tab.value
                         ? "border border-[var(--workspace-accent-border,var(--primary))] bg-primary text-primary-foreground"
                         : "border border-transparent text-muted-foreground hover:text-foreground"

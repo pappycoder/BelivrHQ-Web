@@ -251,7 +251,7 @@ export function BotProtection({
 
   return (
     <div
-      className="my-3 space-y-1 text-xs text-muted-foreground"
+      className="my-3 space-y-1 text-sm text-muted-foreground"
       data-bot-protection
       data-bot-verified={verified ? "true" : "false"}
       hidden={verified}

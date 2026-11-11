@@ -81,14 +81,14 @@ export default function SegmentsPage() {
         actions={
           <>
             <Tag tone="gold" dot>Preview</Tag>
-            <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => setDialogOpen(true)}>
+            <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setDialogOpen(true)}>
               <Plus className="size-3.5" /> New segment
             </Button>
           </>
         }
       />
 
-      <div className="flex items-start gap-2.5 rounded-2xl border border-dashed border-gold/50 bg-gold-soft/30 px-4 py-3 text-[11px] leading-relaxed text-ink-soft">
+      <div className="flex items-start gap-2.5 rounded-2xl border border-dashed border-gold/50 bg-gold-soft/30 px-4 py-3 text-sm leading-relaxed text-ink-soft">
         <Sparkles className="mt-0.5 size-3.5 shrink-0 text-gold" />
         <span>
           Every card below runs a live query the moment you open this page. Nothing is stored. Saving a segment as a
@@ -199,13 +199,13 @@ export default function SegmentsPage() {
 
           <div className="paper-card rounded-2xl p-5">
             <p className="rule-label mb-2">Where rules actually live today</p>
-            <div className="flex flex-wrap gap-2 text-[11px]">
+            <div className="flex flex-wrap gap-2 text-sm">
               <Link href="/people/members" className="rounded-full border border-line bg-card px-3 py-1.5 hover:border-brand/40">Members status &amp; branch filters</Link>
               <Link href="/people/visitors" className="rounded-full border border-line bg-card px-3 py-1.5 hover:border-brand/40">Visitor follow-up chips</Link>
               <Link href="/people/pastoral/risk" className="rounded-full border border-line bg-card px-3 py-1.5 hover:border-brand/40">Care level filters</Link>
               <Link href="/connect/broadcasts" className="rounded-full border border-line bg-card px-3 py-1.5 hover:border-brand/40">Broadcast audience builder</Link>
             </div>
-            <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+            <p className="mt-3 text-xs leading-relaxed text-ink-faint">
               The audience builder on a broadcast already does rule-based targeting ad hoc. Saved segments make
               those rules reusable. <Flower2 className="mr-1 inline size-3" />Until then, nothing here can go stale.
             </p>
@@ -247,8 +247,8 @@ function SegmentCard({
           {loading ? <Skeleton className="h-7 w-10" /> : number(count)}
         </span>
       </div>
-      <p className="mt-3 flex-1 text-[11px] leading-relaxed text-ink-soft">{blurb}</p>
-      <p className="mt-3 flex flex-wrap items-center gap-1 text-[9px] text-ink-faint">
+      <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-soft">{blurb}</p>
+      <p className="mt-3 flex flex-wrap items-center gap-1 text-xs text-ink-faint">
         <span className="rounded bg-muted px-1.5 py-0.5 font-medium uppercase tracking-wider">{rules[0]}</span>
         <span>{rules[1]}</span>
         <span className="rounded bg-muted px-1.5 py-0.5">{rules[2] ?? rules[1] ?? ""}</span>
@@ -260,7 +260,7 @@ function SegmentCard({
             {faces.map((face) => <PersonAvatar key={face.name} name={face.name} src={face.photoUrl} size="xs" className="ring-2 ring-card" />)}
           </span>
         ) : <span />}
-        <Link href={href} className="flex items-center gap-1 text-[11px] text-brand hover:underline">
+        <Link href={href} className="flex items-center gap-1 text-sm text-brand hover:underline">
           {cta} <ArrowRight className="size-3" />
         </Link>
       </div>
@@ -282,30 +282,30 @@ function NewSegmentDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
       <DialogContent className="rounded-2xl border-line bg-card">
         <DialogHeader>
           <DialogTitle className="font-display">Describe a segment</DialogTitle>
-          <DialogDescription className="text-xs">
+          <DialogDescription className="text-sm">
             Rules read like sentences. This preview runs them live and hands you the working filters today; saved
             lists arrive with the segments endpoint.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
           <div className="space-y-1.5">
-            <Label className="text-xs">Name</Label>
+            <Label className="text-sm">Name</Label>
             <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Night-shift workers" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs">First rule</Label>
+            <Label className="text-sm">First rule</Label>
             <div className="grid grid-cols-3 gap-2">
-              <select value={field} onChange={(e) => setField(e.target.value as typeof field)} className="h-10 rounded-lg border border-line bg-background px-2 text-xs outline-none" aria-label="Rule field">
+              <select value={field} onChange={(e) => setField(e.target.value as typeof field)} className="h-10 rounded-lg border border-line bg-background px-2 text-sm outline-none" aria-label="Rule field">
                 {RULE_FIELDS.map((f) => <option key={f}>{f}</option>)}
               </select>
-              <select value={op} onChange={(e) => setOp(e.target.value as typeof op)} className="h-10 rounded-lg border border-line bg-background px-2 text-xs outline-none" aria-label="Operator">
+              <select value={op} onChange={(e) => setOp(e.target.value as typeof op)} className="h-10 rounded-lg border border-line bg-background px-2 text-sm outline-none" aria-label="Operator">
                 {RULE_OPS.map((o) => <option key={o}>{o}</option>)}
               </select>
-              <Input value={value} onChange={(e) => setValue(e.target.value)} className="h-10 rounded-lg border-line bg-background text-xs shadow-none" aria-label="Rule value" />
+              <Input value={value} onChange={(e) => setValue(e.target.value)} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" aria-label="Rule value" />
             </div>
           </div>
-          <div className="rounded-xl border border-dashed border-line px-3.5 py-2.5 text-[11px] text-ink-soft">
-            “<span className="font-medium text-ink">{name.trim() || "This segment"}</span>” = members where {field.toLowerCase()} {op} <span className="font-mono text-[10px] text-brand">{value || "…"}</span>
+          <div className="rounded-xl border border-dashed border-line px-3.5 py-2.5 text-sm text-ink-soft">
+            “<span className="font-medium text-ink">{name.trim() || "This segment"}</span>” = members where {field.toLowerCase()} {op} <span className="font-mono text-xs text-brand">{value || "…"}</span>
           </div>
           <Button
             className="h-10 w-full gap-2 rounded-lg text-sm"

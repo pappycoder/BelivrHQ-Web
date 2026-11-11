@@ -42,6 +42,7 @@ interface CellGroupAttendanceDialogProps {
   onOpenChange: (open: boolean) => void;
   groupId: string;
   groupName: string;
+  attendanceDate?: string;
   members: CellGroupMember[];
   loadingMembers?: boolean;
   membersError?: boolean;
@@ -53,6 +54,7 @@ export function CellGroupAttendanceDialog({
   onOpenChange,
   groupId,
   groupName,
+  attendanceDate,
   members,
   loadingMembers,
   membersError,
@@ -80,14 +82,14 @@ export function CellGroupAttendanceDialog({
   React.useEffect(() => {
     if (open) {
       setTab("member");
-      setMeetingDate(todayISO());
+      setMeetingDate(attendanceDate || todayISO());
       setStatus("present");
       setNotes("");
       setVisitorId("");
       setVisitorName("");
       setNewVisitor({ firstName: "", lastName: "", phone: "", email: "" });
     }
-  }, [open]);
+  }, [open, attendanceDate]);
 
   const record = (
     payload: { memberId?: string; visitorId?: string; visitorName?: string },
@@ -299,7 +301,7 @@ export function CellGroupAttendanceDialog({
                   />
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Creates a visitor record, then checks them in automatically.
               </p>
               <Button

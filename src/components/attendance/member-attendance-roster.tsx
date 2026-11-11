@@ -1,11 +1,12 @@
 "use client";
 
+import { AttendanceSelectionBar } from "./attendance-selection-bar";
 import { LoadingState } from "@/components/shared/loading-state";
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+import { AttendanceRosterTable } from "./attendance-roster-table";
 import {
   Card,
   CardContent,
@@ -52,6 +53,7 @@ export function MemberAttendanceRoster({
   const [search, setSearch] = React.useState("");
   const [selected, setSelected] = React.useState<Set<string>>(new Set());
   const [busy, setBusy] = React.useState(false);
+  const [editable, setEditable] = React.useState(false);
   const rows = React.useMemo(
     () =>
       onSearch
@@ -63,7 +65,7 @@ export function MemberAttendanceRoster({
           ),
     [members, search, onSearch],
   );
-  const locked = busy || disabled;
+  const locked = busy || disabled || !editable;
   async function save() {
     if (locked || !selected.size) return;
     setBusy(true);
@@ -83,6 +85,7 @@ export function MemberAttendanceRoster({
             new Set([...previous].filter((id) => !batch.includes(id))),
         );
       }
+      setEditable(false);
       toast.success(`${recorded} attendance records saved`, {
         description: skipped
           ? `${skipped} already recorded and skipped.`
@@ -107,7 +110,6 @@ export function MemberAttendanceRoster({
               Select members and record their attendance together.
             </CardDescription>
           </div>
-
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -122,45 +124,6 @@ export function MemberAttendanceRoster({
             onSearch?.(event.target.value);
           }}
         />
-        <div
-          className="flex flex-wrap items-center justify-between gap-2"
-          data-export-ignore
-        >
-          <span className="text-sm">{selected.size} selected</span>
-          <div className="flex flex-wrap gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              disabled={busy || loading || error || !rows.length}
-              onClick={() =>
-                setSelected(
-                  (previous) =>
-                    new Set([
-                      ...previous,
-                      ...rows.map((member) => member.memberId),
-                    ]),
-                )
-              }
-            >
-              Select visible
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              disabled={busy || !selected.size}
-              onClick={() => setSelected(new Set())}
-            >
-              Clear selection
-            </Button>
-            <Button
-              type="button"
-              disabled={locked || !selected.size}
-              onClick={save}
-            >
-              {busy ? "Recording..." : `Mark attendance (${selected.size})`}
-            </Button>
-          </div>
-        </div>
         {error ? (
           <div role="alert">
             Unable to load the roster.{" "}
@@ -171,49 +134,49 @@ export function MemberAttendanceRoster({
         ) : loading ? (
           <LoadingState label="Loading roster" variant="table" />
         ) : (
-          <div
-            data-export-list
-            className="max-h-[52vh] overflow-y-auto rounded-md border divide-y"
-          >
-            {rows.length ? (
-              rows.map((member) => (
-                <label
-                  key={member.memberId}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-muted/40"
-                >
-                  <Checkbox
-                    aria-label={`Select ${member.firstName} ${member.lastName}`}
-                    checked={selected.has(member.memberId)}
-                    disabled={busy}
-                    onCheckedChange={(checked) =>
-                      setSelected((previous) => {
-                        const next = new Set(previous);
-                        if (checked === true) next.add(member.memberId);
-                        else next.delete(member.memberId);
-                        return next;
-                      })
-                    }
-                  />
-                  <span className="min-w-0">
-                    <span className="block text-sm font-medium">
-                      {member.firstName} {member.lastName}
-                    </span>
-                    {member.phone && (
-                      <span className="block text-xs text-muted-foreground">
-                        {member.phone}
-                      </span>
-                    )}
-                  </span>
-                </label>
-              ))
-            ) : (
-              <p className="p-6 text-sm text-muted-foreground">
-                No members match your search.
-              </p>
-            )}
-          </div>
+          <AttendanceRosterTable
+            rows={rows.map((member) => ({
+              id: member.memberId,
+              name: `${member.firstName} ${member.lastName}`,
+              detail: member.phone,
+            }))}
+            selected={selected}
+            editable={editable}
+            busy={busy || disabled}
+            onEdit={() => setEditable(true)}
+            onCancel={() => {
+              setSelected(new Set());
+              setEditable(false);
+            }}
+            onToggle={(id) =>
+              setSelected((previous) => {
+                const next = new Set(previous);
+                if (next.has(id)) next.delete(id);
+                else next.add(id);
+                return next;
+              })
+            }
+            onSelectAll={(ids, checked) =>
+              setSelected((previous) => {
+                const next = new Set(previous);
+                ids.forEach((id) => (checked ? next.add(id) : next.delete(id)));
+                return next;
+              })
+            }
+          />
         )}
-        {loadingMore && <LoadingState label="Loading more members" variant="table" rows={2} />}
+        <AttendanceSelectionBar
+          editable={editable}
+          count={selected.size}
+          busy={busy}
+          disabled={disabled}
+          onSave={save}
+          onClear={() => setSelected(new Set())}
+          meeting
+        />
+        {loadingMore && (
+          <LoadingState label="Loading more members" variant="table" rows={2} />
+        )}
         {hasMore && (
           <Button
             type="button"

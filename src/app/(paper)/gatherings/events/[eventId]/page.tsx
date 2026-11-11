@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AttendanceWorkspace } from "@/components/attendance/attendance-workspace";
 import { GeneralAttendancePanel } from "@/components/attendance/general-attendance-panel";
 import { attendanceCategoryLabel } from "@/hooks/use-attendance";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -88,7 +89,7 @@ export default function EventDetailPage({
         title="We couldn&apos;t find that gathering"
         description="It may have been archived, or the link is old."
         action={
-          <Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs">
+          <Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm">
             <Link href="/gatherings/events">Back to the calendar</Link>
           </Button>
         }
@@ -113,7 +114,7 @@ export default function EventDetailPage({
 
   return (
     <div className="space-y-6">
-      <Link href="/gatherings/events" className="inline-flex items-center gap-1.5 text-[11px] text-ink-faint hover:text-ink">
+      <Link href="/gatherings/events" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
         <ArrowLeft className="size-3" /> Gatherings · Events
       </Link>
 
@@ -128,12 +129,12 @@ export default function EventDetailPage({
               {e.archivedAt ? <Tag tone="rose">Archived</Tag> : null}
             </div>
             <h1 className="font-display text-[clamp(1.5rem,2.6vw,2.1rem)] font-semibold tracking-tight">{e.title}</h1>
-            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-soft">
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-soft">
               <span>{fullDate(e.startDate)}{e.endDate && timeOf(e.endDate) ? ` → ${timeOf(e.endDate)}` : ""}</span>
               <span className="flex items-center gap-1"><MapPin className="size-3" /> {e.location ?? "Location to be announced"}</span>
             </p>
             {recurrence !== "one_time" ? (
-              <p className="text-[10px] text-ink-faint">
+              <p className="text-xs text-ink-faint">
                 {recurrence === "weekly"
                   ? `Repeats every ${new Date(e.startDate).toLocaleDateString("en-GB", { weekday: "long" })}`
                   : `Runs every day through ${e.endDate ? fullDate(e.endDate) : "its window"}`}
@@ -143,26 +144,26 @@ export default function EventDetailPage({
               </p>
             ) : null}
             {e.description ? (
-              <p className="max-w-2xl text-xs leading-relaxed text-ink-soft">{e.description}</p>
+              <p className="max-w-2xl text-sm leading-relaxed text-ink-soft">{e.description}</p>
             ) : null}
           </div>
           <div className="flex flex-wrap gap-2">
             {canCheckIn ? (
-              <Button asChild size="sm" className="h-8 gap-1.5 rounded-full text-xs">
-                <Link href="/gatherings/events/check-in">
+              <Button asChild size="sm" className="h-8 gap-1.5 rounded-full text-sm">
+                <Link href={`/gatherings/events/check-in?event=${encodeURIComponent(e.eventId)}`}>
                   <ScanLine className="size-3.5" /> Check-in desk
                 </Link>
               </Button>
             ) : null}
             {canManageTickets && !e.isFree ? (
-              <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs">
+              <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm">
                 <Link href={`/gatherings/events/tiers?event=${encodeURIComponent(e.eventId)}`}>
                   <Ticket className="size-3.5" /> Tiers
                 </Link>
               </Button>
             ) : null}
             {canEditEvent && !e.archivedAt ? (
-              <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-xs">
+              <Button asChild variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm">
                 <Link href={`/gatherings/events/${e.eventId}/edit`}>
                   <PencilLine className="size-3.5" /> Edit
                 </Link>
@@ -173,7 +174,7 @@ export default function EventDetailPage({
         </div>
         {e.capacity ? (
           <div className="border-t border-line px-5 py-3 md:px-6">
-            <div className="flex items-center justify-between text-[11px] text-ink-soft">
+            <div className="flex items-center justify-between text-sm text-ink-soft">
               <span className="num">{e.registrationCount ?? 0} registered of {e.capacity}</span>
               <span className="num">{e.capacity - (e.registrationCount ?? 0)} seats left</span>
             </div>
@@ -197,17 +198,17 @@ export default function EventDetailPage({
       <Tabs defaultValue="registrations">
         <TabsList className="h-9 rounded-full border border-line bg-card p-0.5">
           {canSeeRegistrations ? (
-            <TabsTrigger value="registrations" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
+            <TabsTrigger value="registrations" className="rounded-full px-3.5 text-sm data-[state=active]:bg-ink data-[state=active]:text-paper">
               Registrations
             </TabsTrigger>
           ) : null}
           {canSeeAttendance ? (
-            <TabsTrigger value="attendance" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
+            <TabsTrigger value="attendance" className="rounded-full px-3.5 text-sm data-[state=active]:bg-ink data-[state=active]:text-paper">
               Attendance
             </TabsTrigger>
           ) : null}
           {!e.isFree ? (
-            <TabsTrigger value="tiers" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
+            <TabsTrigger value="tiers" className="rounded-full px-3.5 text-sm data-[state=active]:bg-ink data-[state=active]:text-paper">
               Ticket tiers
             </TabsTrigger>
           ) : null}
@@ -221,23 +222,23 @@ export default function EventDetailPage({
               ) : registrations.data?.length ? (
                 <div className="divide-y divide-line/70">
                   {registrations.data.map((reg) => (
-                    <div key={reg.registrationId} className="flex items-center gap-3 px-5 py-3 text-xs">
+                    <div key={reg.registrationId} className="flex items-center gap-3 px-5 py-3 text-sm">
                       <PersonAvatar name={reg.memberName ?? "Guest"} size="xs" />
                       <span className="min-w-0 flex-1 truncate font-medium">
                         {reg.memberName ?? reg.memberId.slice(0, 10)}
                       </span>
                       {reg.tierName ? <Tag tone="neutral">{reg.tierName}</Tag> : null}
-                      <span className="num text-[10px] text-ink-faint">×{reg.quantity}</span>
+                      <span className="num text-xs text-ink-faint">×{reg.quantity}</span>
                       <Tag tone={reg.paymentStatus === "paid" || reg.paymentStatus === "success" ? "moss" : reg.paymentStatus === "pending" ? "gold" : "rose"}>
                         {reg.paymentStatus}
                       </Tag>
                       <Tag tone={reg.checkedIn ? "moss" : "neutral"} dot>{reg.checkedIn ? "In" : "Awaiting"}</Tag>
-                      {reg.ticketCode ? <span className="hidden font-mono text-[9px] text-ink-faint sm:block">{reg.ticketCode}</span> : null}
+                      {reg.ticketCode ? <span className="hidden font-mono text-xs text-ink-faint sm:block">{reg.ticketCode}</span> : null}
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="px-5 py-8 text-center text-xs text-ink-faint">No registrations yet.</p>
+                <p className="px-5 py-8 text-center text-sm text-ink-faint">No registrations yet.</p>
               )}
             </SectionCard>
           </TabsContent>
@@ -245,35 +246,27 @@ export default function EventDetailPage({
 
         {canSeeAttendance ? (
           <TabsContent value="attendance" className="mt-4">
-            <Tabs defaultValue="named">
-              <TabsList className="h-9 w-fit rounded-full border border-line bg-card p-0.5">
-                <TabsTrigger value="named" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
-                  Check-ins
-                </TabsTrigger>
-                <TabsTrigger value="reported" className="rounded-full px-3.5 text-xs data-[state=active]:bg-ink data-[state=active]:text-paper">
-                  Reported totals
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="named" className="mt-4">
+            <AttendanceWorkspace name={e.title} scope="Event" peopleValue="named" headcountValue="reported" canSeeHeadcount={true}>
+        <TabsContent value="named" className="mt-4">
             <SectionCard eyebrow="In the room" title={`${attendance.data?.length ?? 0} check-ins`} bodyClassName="p-0">
               {attendance.data?.length ? (
                 <div className="divide-y divide-line/70">
                   {attendance.data.map((record) => (
-                    <div key={record.attendanceId} className="flex items-center gap-3 px-5 py-3 text-xs">
+                    <div key={record.attendanceId} className="flex items-center gap-3 px-5 py-3 text-sm">
                       <ScanLine className="size-3.5 shrink-0 text-ink-faint" />
                       <span className="min-w-0 flex-1 truncate font-medium">
                         {record.memberName ?? record.visitorName ?? "Guest"}
-                        {!record.memberId && record.visitorName ? <span className="ml-1.5 text-[9px] text-gold">walk-in</span> : null}
+                        {!record.memberId && record.visitorName ? <span className="ml-1.5 text-xs text-gold">walk-in</span> : null}
                       </span>
                       <Tag tone="neutral">{attendanceCategoryLabel(record.category) ?? "Not available"}</Tag>
-                      <span className="num w-40 shrink-0 text-right text-[10px] text-ink-faint">
+                      <span className="num w-40 shrink-0 text-right text-xs text-ink-faint">
                         {new Date(record.checkInAt).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                       </span>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="px-5 py-8 text-center text-xs text-ink-faint">The doors haven&apos;t opened for this one yet.</p>
+                <p className="px-5 py-8 text-center text-sm text-ink-faint">The doors haven&apos;t opened for this one yet.</p>
               )}
             </SectionCard>
               </TabsContent>
@@ -289,7 +282,7 @@ export default function EventDetailPage({
                   }}
                 />
               </TabsContent>
-            </Tabs>
+            </AttendanceWorkspace>
           </TabsContent>
         ) : null}
 
@@ -299,17 +292,17 @@ export default function EventDetailPage({
               tiers.data.map((tier) => (
                 <div key={tier.id} className="paper-card rounded-2xl p-4">
                   <div className="flex items-center justify-between">
-                    <p className="text-xs font-semibold">{tier.name}</p>
+                    <p className="text-sm font-semibold">{tier.name}</p>
                     <Tag tone="gold">{tier.price}</Tag>
                   </div>
-                  {tier.description ? <p className="mt-1 line-clamp-2 text-[10px] text-ink-soft">{tier.description}</p> : null}
-                  <p className="num mt-3 text-[11px] text-ink-faint">
+                  {tier.description ? <p className="mt-1 line-clamp-2 text-xs text-ink-soft">{tier.description}</p> : null}
+                  <p className="num mt-3 text-sm text-ink-faint">
                     capacity {tier.capacity ?? "open"}
                   </p>
                 </div>
               ))
             ) : (
-              <p className="col-span-full rounded-xl border border-dashed border-line py-8 text-center text-xs text-ink-faint">
+              <p className="col-span-full rounded-xl border border-dashed border-line py-8 text-center text-sm text-ink-faint">
                 No tiers yet. Manage them on the legacy tiers board.
               </p>
             )}

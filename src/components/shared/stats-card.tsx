@@ -52,7 +52,7 @@ export function StatsCard({
             {trend && (
               <span
                 className={cn(
-                  "inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium",
+                  "inline-flex items-center gap-1 rounded-full px-2 py-1 text-sm font-medium",
                   trend.value >= 0 ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400" : "bg-rose-500/10 text-rose-700 dark:text-rose-400"
                 )}
               >
@@ -62,7 +62,7 @@ export function StatsCard({
               </span>
             )}
           </div>
-          {subtitle && <div className="text-xs text-muted-foreground mt-1">{subtitle}</div>}
+          {subtitle && <div className="text-sm text-muted-foreground mt-1">{subtitle}</div>}
         </div>
         {icon && (
           <div className="shrink-0 text-muted-foreground [&_svg]:size-4">{icon}</div>

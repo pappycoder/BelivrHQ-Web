@@ -119,7 +119,7 @@ export function SubmissionsTable({
       {dialog}
       {selected.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 border-b bg-accent/30 p-3">
-          <span role="status" className="mr-auto text-xs font-medium">
+          <span role="status" className="mr-auto text-sm font-medium">
             {selected.length} responses selected · {pending.length} pending
           </span>
           <VisibleDataExport
@@ -257,7 +257,7 @@ export function SubmissionsTable({
                   <TableCell>
                     <Button
                       variant="link"
-                      className="h-auto max-w-full justify-start p-0 font-mono text-xs"
+                      className="h-auto max-w-full justify-start p-0 font-mono text-sm"
                       onClick={(event) => {
                         event.stopPropagation();
                         onOpen(submission);
@@ -351,7 +351,7 @@ export function SubmissionsTable({
               responses are skipped.
             </DialogDescription>
           </DialogHeader>
-          <div className="max-h-32 space-y-1 overflow-y-auto rounded-lg bg-muted/30 p-3 font-mono text-xs">
+          <div className="max-h-32 space-y-1 overflow-y-auto rounded-lg bg-muted/30 p-3 font-mono text-sm">
             {pending.map((row) => (
               <p key={row.id}>{row.id}</p>
             ))}
@@ -368,7 +368,7 @@ export function SubmissionsTable({
                 disabled={bulk.isPending}
                 onChange={(event) => setReason(event.target.value)}
               />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 This reason applies to every response in this batch.
               </p>
             </div>

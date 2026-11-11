@@ -35,7 +35,7 @@ export function AuthFormWrapper({
         BelivrHQ
       </Link>
       <div className="space-y-3">
-        <div className="mb-4 flex items-center gap-2 text-[10px] font-semibold tracking-[.18em] text-muted-foreground">
+        <div className="mb-4 flex items-center gap-2 text-xs font-semibold tracking-[.18em] text-muted-foreground">
           <span className="h-px w-6 bg-primary/40" />
           YOUR CHURCH, CONNECTED
         </div>

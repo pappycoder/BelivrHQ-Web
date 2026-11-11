@@ -7,7 +7,7 @@ import {
   Camera,
   Check,
   KeyRound,
-  Mail,
+  Bell,
   Phone,
   ShieldCheck,
   UserRound,
@@ -184,7 +184,7 @@ export default function SettingsProfilePage() {
           <p className="font-display text-base font-semibold">
             {p.firstName} {p.lastName}
           </p>
-          <p className="text-[11px] text-ink-faint">
+          <p className="text-sm text-ink-faint">
             {p.email ?? "No email on file"}
           </p>
           <p className="mt-1.5 flex flex-wrap items-center gap-1.5">
@@ -209,7 +209,7 @@ export default function SettingsProfilePage() {
           </p>
         </div>
         {photoPreview ? (
-          <p className="flex items-center gap-1.5 text-[10px] text-ink-faint">
+          <p className="flex items-center gap-1.5 text-xs text-ink-faint">
             {uploadAvatar.isPending ? "Uploading photo…" : "Processing…"}
           </p>
         ) : null}
@@ -226,7 +226,7 @@ export default function SettingsProfilePage() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="h-7 rounded-full text-[11px]"
+                    className="h-7 rounded-full text-sm"
                     onClick={() =>
                       setForm({
                         firstName: p.firstName,
@@ -239,7 +239,7 @@ export default function SettingsProfilePage() {
                   </Button>
                   <Button
                     size="sm"
-                    className="h-7 gap-1.5 rounded-full text-[11px]"
+                    className="h-7 gap-1.5 rounded-full text-sm"
                     disabled={update.isPending}
                     onClick={save}
                   >
@@ -251,7 +251,7 @@ export default function SettingsProfilePage() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-7 rounded-full border-line text-[11px] text-ink-faint"
+                  className="h-7 rounded-full border-line text-sm text-ink-faint"
                   disabled
                 >
                   Saved on this device
@@ -260,11 +260,17 @@ export default function SettingsProfilePage() {
             </div>
           }
         >
+          <RequiredFieldsNotice className="mb-4" />
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <RequiredFieldsNotice />
-              <Label required className="text-xs">First name</Label>
+              <Label htmlFor="profile-first-name" required className="text-sm">First name</Label>
               <Input
+                id="profile-first-name"
+                name="firstName"
+                type="text"
+                autoComplete="given-name"
+                placeholder="Enter your first name"
+                required
                 value={form.firstName}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, firstName: e.target.value }))
@@ -273,8 +279,14 @@ export default function SettingsProfilePage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label required className="text-xs">Last name</Label>
+              <Label htmlFor="profile-last-name" required className="text-sm">Last name</Label>
               <Input
+                id="profile-last-name"
+                name="lastName"
+                type="text"
+                autoComplete="family-name"
+                placeholder="Enter your last name"
+                required
                 value={form.lastName}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, lastName: e.target.value }))
@@ -283,8 +295,13 @@ export default function SettingsProfilePage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Phone</Label>
+              <Label htmlFor="profile-phone" className="text-sm">Phone</Label>
               <Input
+                id="profile-phone"
+                name="phone"
+                type="tel"
+                autoComplete="tel"
+                placeholder="Enter your phone number"
                 value={form.phone}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, phone: e.target.value }))
@@ -293,8 +310,13 @@ export default function SettingsProfilePage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Email (admin-managed)</Label>
+              <Label htmlFor="profile-email" className="text-sm">Email (admin-managed)</Label>
               <Input
+                id="profile-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="No email on file"
                 value={p.email ?? ""}
                 readOnly
                 disabled
@@ -302,7 +324,7 @@ export default function SettingsProfilePage() {
               />
             </div>
           </div>
-          <p className="mt-3 text-[10px] leading-relaxed text-ink-faint">
+          <p className="mt-3 text-xs leading-relaxed text-ink-faint">
             Email is a sign-in credential managed by your church admin. Changes
             ripple through the shared directory.
           </p>
@@ -333,7 +355,7 @@ export default function SettingsProfilePage() {
           </SectionCard>
 
           <SectionCard eyebrow="Locked doors" title="Security lives elsewhere">
-            <div className="space-y-2 text-[11px] text-ink-soft">
+            <div className="space-y-2 text-sm text-ink-soft">
               <button
                 type="button"
                 onClick={() => router.push("/settings/security")}
@@ -343,11 +365,10 @@ export default function SettingsProfilePage() {
                 two-factor
               </button>
               <Link
-                href="/settings/notifications"
+                href="/notifications"
                 className="flex items-center gap-2 rounded-lg border border-line px-3 py-2 hover:border-brand/40"
               >
-                <Mail className="size-3.5 text-moss" /> What reaches you, and
-                when
+                <Bell className="size-3.5 text-moss" /> Notifications
               </Link>
               <Link
                 href="/settings/appearance"
@@ -356,7 +377,7 @@ export default function SettingsProfilePage() {
                 <ShieldCheck className="size-3.5 text-sky" /> Light, dark, and
                 rhythm
               </Link>
-              <p className="flex items-center gap-1.5 pt-1 text-[10px] text-ink-faint">
+              <p className="flex items-center gap-1.5 pt-1 text-xs text-ink-faint">
                 <Phone className="size-3" /> Your phone is how the care team
                 finds you on a Monday.
               </p>

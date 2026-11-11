@@ -32,7 +32,7 @@ const number = (value: number) => value.toLocaleString("en-NG");
 
 function EmptyPlot() {
   return (
-    <div className="flex min-h-54 items-center justify-center text-xs text-muted-foreground">
+    <div className="flex min-h-54 items-center justify-center text-sm text-muted-foreground">
       No data yet.
     </div>
   );
@@ -113,7 +113,7 @@ export function DashboardTrend({
           axisLine={false}
           minTickGap={30}
           tickMargin={8}
-          tick={{ fontSize: 10 }}
+          tick={{ fontSize: 12 }}
           tickFormatter={(date) =>
             new Date(date).toLocaleDateString(
               "en-NG",
@@ -129,7 +129,7 @@ export function DashboardTrend({
           domain={[0, "auto"]}
           tickLine={false}
           axisLine={false}
-          tick={{ fontSize: 10 }}
+          tick={{ fontSize: 12 }}
           tickFormatter={(value) =>
             new Intl.NumberFormat("en-NG", {
               notation: "compact",
@@ -192,7 +192,7 @@ export function DashboardBars({
           axisLine={false}
           minTickGap={10}
           tickMargin={8}
-          tick={{ fontSize: 10 }}
+          tick={{ fontSize: 12 }}
           tickFormatter={(value) =>
             String(value).length > 13
               ? `${String(value).slice(0, 12)}…`
@@ -282,7 +282,7 @@ export function DashboardDonut({
           />
         </PieChart>
       </ChartContainer>
-      <ul className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+      <ul className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
         {data.map((entry, i) => (
           <li key={entry.name} className="flex items-center gap-1.5 capitalize">
             <span

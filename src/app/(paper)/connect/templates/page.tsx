@@ -204,7 +204,7 @@ export default function TemplatesPage() {
         description="The team&apos;s best sentences: kind, consistent, and always personalised before sending."
         actions={
           canCreate ? (
-            <Button className="h-9 gap-1.5 rounded-full text-xs" onClick={() => openForm(null)}>
+            <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => openForm(null)}>
               <Plus className="size-3.5" /> New template
             </Button>
           ) : null
@@ -234,14 +234,14 @@ export default function TemplatesPage() {
           icon={<Search />}
           title="No templates match"
           description="Templates keep a small team sounding like one voice."
-          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => openForm(null)}>Write the first</Button> : undefined}
+          action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => openForm(null)}>Write the first</Button> : undefined}
         />
       ) : controls.view === "table" ? (
         <ListTable tableId="connect-templates-1" label="Templates" records={rows} recordKey="templateId" recordType="template" className="paper-card min-w-[900px] overflow-hidden rounded-2xl">
           <div className="rule-label grid grid-cols-[minmax(0,2fr)_1fr_1fr_1fr_1fr_1fr_auto] items-center gap-3 border-b border-line px-5 py-3">
             <span>Template</span><span>Channel</span><span>Status</span><span>Category</span><span>Branch</span><span>Last updated</span><ManageHeading />
           </div>
-          {rows.map(t => <div key={t.templateId} className="group grid grid-cols-[minmax(0,2fr)_1fr_1fr_1fr_1fr_1fr_auto] items-center gap-3 border-b border-line/70 px-5 py-4 text-xs">
+          {rows.map(t => <div key={t.templateId} className="group grid grid-cols-[minmax(0,2fr)_1fr_1fr_1fr_1fr_1fr_auto] items-center gap-3 border-b border-line/70 px-5 py-4 text-sm">
             <div className="min-w-0"><p className="truncate font-semibold">{t.name}</p><p className="mt-1 truncate text-ink-faint">{t.content}</p></div>
             <span><Tag tone={CHANNEL_TONES[t.channel]}>{TEMPLATE_CHANNEL_LABELS[t.channel]}</Tag></span>
             <span><Tag tone={t.archivedAt ? "neutral" : t.status === "published" ? "moss" : "gold"}>{t.archivedAt ? "Archived" : TEMPLATE_STATUS_LABELS[t.status]}</Tag></span>
@@ -258,22 +258,22 @@ export default function TemplatesPage() {
               <div className={cn("paper-card flex h-full flex-col rounded-2xl p-4", t.archivedAt && "opacity-60")}>
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="truncate text-xs font-semibold">{t.name}</p>
+                    <p className="truncate text-sm font-semibold">{t.name}</p>
                     <p className="mt-0.5 flex items-center gap-1.5">
                       <Tag tone={CHANNEL_TONES[t.channel]}>{TEMPLATE_CHANNEL_LABELS[t.channel]}</Tag>
                       {t.archivedAt ? <Tag tone="neutral">Archived</Tag> : <Tag tone={t.status === "published" ? "moss" : "gold"}>{TEMPLATE_STATUS_LABELS[t.status]}</Tag>}
                     </p>
                   </div>
                 </div>
-                <p className="mt-3 line-clamp-3 flex-1 font-mono text-[10px] leading-relaxed text-ink-soft">{t.content}</p>
+                <p className="mt-3 line-clamp-3 flex-1 font-mono text-xs leading-relaxed text-ink-soft">{t.content}</p>
                 {t.variables?.length ? (
                   <p className="mt-2 flex flex-wrap gap-1">
                     {t.variables.slice(0, 4).map((v) => (
-                      <span key={v} className="rounded bg-brand-soft px-1.5 py-0.5 font-mono text-[9px] text-brand">{`{{${v}}}`}</span>
+                      <span key={v} className="rounded bg-brand-soft px-1.5 py-0.5 font-mono text-xs text-brand">{`{{${v}}}`}</span>
                     ))}
                   </p>
                 ) : null}
-                <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-[10px] text-ink-faint">
+                <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
                   <span>{t.branchName ?? "All branches"}</span>
                   <span className="flex items-center gap-0.5">
                     {actionsFor(t)}
@@ -294,39 +294,39 @@ export default function TemplatesPage() {
           </DialogHeader>
           <ValidatedForm onSubmit={submit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label required className="text-xs">Name</Label>
+              <Label required className="text-sm">Name</Label>
               <Input required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="First-time guest welcome" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1.5">
-                <Label required className="text-xs">Channel</Label>
-                <select required value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as TemplateChannel }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+                <Label required className="text-sm">Channel</Label>
+                <select required value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as TemplateChannel }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                   {TEMPLATE_CHANNELS.map((c) => <option key={c} value={c}>{TEMPLATE_CHANNEL_LABELS[c]}</option>)}
                 </select>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Category</Label>
-                <select value={draft.category} onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-xs outline-none">
+                <Label className="text-sm">Category</Label>
+                <select value={draft.category} onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                   <option value="MARKETING">Marketing</option>
                   <option value="UTILITY">Utility</option>
                   <option value="AUTHENTICATION">Authentication</option>
                 </select>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Language</Label>
-                <Input value={draft.language} onChange={(e) => setDraft((d) => ({ ...d, language: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-xs shadow-none" />
+                <Label className="text-sm">Language</Label>
+                <Input value={draft.language} onChange={(e) => setDraft((d) => ({ ...d, language: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label required className="text-xs">Content</Label>
-              <Textarea required rows={5} value={draft.content} onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))} placeholder="Hi {{first_name}}, it was lovely to meet you on Sunday…" className="resize-none rounded-lg border-line bg-background font-mono text-xs shadow-none" />
+              <Label required className="text-sm">Content</Label>
+              <Textarea required rows={5} value={draft.content} onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))} placeholder="Hi {{first_name}}, it was lovely to meet you on Sunday…" className="resize-none rounded-lg border-line bg-background font-mono text-sm shadow-none" />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Variables (comma separated)</Label>
-              <Input value={draft.variables} onChange={(e) => setDraft((d) => ({ ...d, variables: e.target.value }))} placeholder="first_name, church" className="h-10 rounded-lg border-line bg-background font-mono text-xs shadow-none" />
+              <Label className="text-sm">Variables (comma separated)</Label>
+              <Input value={draft.variables} onChange={(e) => setDraft((d) => ({ ...d, variables: e.target.value }))} placeholder="first_name, church" className="h-10 rounded-lg border-line bg-background font-mono text-sm shadow-none" />
             </div>
             <label className="flex items-center justify-between rounded-lg border border-line px-3 py-2.5">
-              <span className="text-xs">Published (usable in broadcasts)</span>
+              <span className="text-sm">Published (usable in broadcasts)</span>
               <input type="checkbox" checked={draft.publish} onChange={(e) => setDraft((d) => ({ ...d, publish: e.target.checked }))} />
             </label>
             <Button type="submit" disabled={createTemplate.isPending || updateTemplate.isPending} className="h-10 w-full rounded-lg text-sm">

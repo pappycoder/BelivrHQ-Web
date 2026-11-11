@@ -51,7 +51,7 @@ export default function MembersAnalyticsPage() {
         title="The growing family."
         description="Track member growth, group participation and retention over time."
         actions={
-          <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-xs">
+          <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-sm">
             <Link href="/people/members">
               <Users className="size-3.5" /> Member directory
             </Link>
@@ -72,7 +72,7 @@ export default function MembersAnalyticsPage() {
           <Skeleton className="h-72 rounded-2xl" />
         </div>
       ) : members.isError || !m ? (
-        <EmptyState icon={<Users />} title="Couldn&apos;t load the membership analysis" action={<Button size="sm" variant="outline" className="rounded-full border-line text-xs" onClick={() => members.refetch()}>Retry</Button>} />
+        <EmptyState icon={<Users />} title="Couldn&apos;t load the membership analysis" action={<Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => members.refetch()}>Retry</Button>} />
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -87,7 +87,7 @@ export default function MembersAnalyticsPage() {
               {growthRows.length ? (
                 <TrendChart data={growthRows} series={[{ key: "members", label: "Members", color: "var(--chart-2)" }]} height={220} formatter={(v) => number(Number(v))} />
               ) : (
-                <p className="py-12 text-center text-[11px] text-ink-faint">Growth trends will appear once there are enough records.</p>
+                <p className="py-12 text-center text-sm text-ink-faint">Growth trends will appear once there are enough records.</p>
               )}
             </SectionCard>
 
@@ -95,11 +95,11 @@ export default function MembersAnalyticsPage() {
               {ageData.length ? (
                 <DonutChart data={ageData} centerValue={number(m.total)} centerLabel="people" height={170} formatter={(v) => `${number(Number(v))} people`} />
               ) : (
-                <p className="py-12 text-center text-[11px] text-ink-faint">Age data appears as profiles are filled.</p>
+                <p className="py-12 text-center text-sm text-ink-faint">Age data appears as profiles are filled.</p>
               )}
               <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
                 {ageData.map((band) => (
-                  <div key={band.name} className="flex items-center gap-1.5 text-[10px]">
+                  <div key={band.name} className="flex items-center gap-1.5 text-xs">
                     <span className="size-1.5 rounded-full" style={{ background: band.color }} />
                     <span className="truncate text-ink-soft">{band.name}</span>
                     <span className="num ml-auto">{m.total ? percent(band.value, m.total) : 0}%</span>
@@ -112,7 +112,7 @@ export default function MembersAnalyticsPage() {
               {statusRows.length ? (
                 <BarSeries data={statusRows} series={[{ key: "count", label: "Members", color: "var(--chart-4)" }]} horizontal height={190} formatter={(v) => number(Number(v))} />
               ) : (
-                <p className="py-12 text-center text-[11px] text-ink-faint">No status breakdown yet.</p>
+                <p className="py-12 text-center text-sm text-ink-faint">No status breakdown yet.</p>
               )}
             </SectionCard>
 
@@ -123,7 +123,7 @@ export default function MembersAnalyticsPage() {
                   <div className="space-y-2">
                     {genderData.map((entry) => (
                       <div key={entry.name}>
-                        <div className="flex items-center justify-between text-[11px]">
+                        <div className="flex items-center justify-between text-sm">
                           <span className="flex items-center gap-1.5"><span className="size-1.5 rounded-full" style={{ background: entry.color }} />{entry.name}</span>
                           <span className="num text-ink-soft">{number(entry.value)}</span>
                         </div>
@@ -135,9 +135,9 @@ export default function MembersAnalyticsPage() {
                   </div>
                 </div>
               ) : (
-                <p className="py-12 text-center text-[11px] text-ink-faint">Gender data appears with filled member profiles.</p>
+                <p className="py-12 text-center text-sm text-ink-faint">Gender data appears with filled member profiles.</p>
               )}
-              <p className="mt-4 text-[10px] leading-relaxed text-ink-faint">
+              <p className="mt-4 text-xs leading-relaxed text-ink-faint">
                 Members in at least one group attend far more often; belonging precedes behaving.
                 The group roster lives at <Link href="/gatherings/groups" className="text-brand hover:underline">Gatherings · Groups</Link>.
               </p>

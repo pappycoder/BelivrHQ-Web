@@ -83,7 +83,7 @@ export default function FillFormPage({
         icon={<ClipboardList />}
         title="We couldn&apos;t open this form"
         description="It may have been deleted, or the link is old."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href="/library/forms">Back to forms</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/library/forms">Back to forms</Link></Button>}
       />
     );
   }
@@ -94,7 +94,7 @@ export default function FillFormPage({
         icon={<ClipboardList />}
         title={f.status === "closed" ? "This form is closed" : "This form is archived"}
         description="No more answers are being collected. Past responses stay in the inbox."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-xs"><Link href={`/library/forms/${f.id}`}>Back to the form</Link></Button>}
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href={`/library/forms/${f.id}`}>Back to the form</Link></Button>}
       />
     );
   }
@@ -105,14 +105,14 @@ export default function FillFormPage({
         <ChurchFormBranding churchName={f.churchName} churchLogoUrl={f.churchLogoUrl} />
         <CheckCircle2 className={`mx-auto size-12 ${already ? "text-sky" : "text-moss"}`} />
         <h1 className="mt-4 font-display text-2xl font-semibold tracking-tight">{already ? "Already submitted" : "Thank you!"}</h1>
-        <p className="mt-2 text-xs leading-relaxed text-ink-soft">
+        <p className="mt-2 text-sm leading-relaxed text-ink-soft">
           {already
             ? "This form only welcomes one answer per person. Yours is already with the team."
             : "Your answers are with the team that owns this form."}
         </p>
         <div className="mt-5 flex justify-center gap-2">
-          <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-xs"><Link href="/library/forms">All forms</Link></Button>
-          <Button asChild size="sm" className="h-9 rounded-full text-xs"><Link href={`/library/forms/${f.id}`}>Back to the form</Link></Button>
+          <Button asChild variant="outline" size="sm" className="h-9 rounded-full border-line bg-card text-sm"><Link href="/library/forms">All forms</Link></Button>
+          <Button asChild size="sm" className="h-9 rounded-full text-sm"><Link href={`/library/forms/${f.id}`}>Back to the form</Link></Button>
         </div>
       </div>
     );
@@ -133,14 +133,14 @@ export default function FillFormPage({
       />
 
       <div className="mx-auto max-w-2xl space-y-4">
-        <div className="rounded-2xl border border-dashed border-line px-4 py-2.5 text-[11px] text-ink-faint">
+        <div className="rounded-2xl border border-dashed border-line px-4 py-2.5 text-sm text-ink-faint">
           Submitting as a member of your church. Your name travels with the answer.
         </div>
         <SectionCard eyebrow="Your answers" title="Take your time">
           <RequiredFieldsNotice />
           <FormFieldsRenderer validateRequired={missing !== null} fields={f.fields ?? []} disabled={submit.isPending} onChange={setAnswers} />
           {missing?.length ? (
-            <div className="mt-4 rounded-xl border border-rose/40 bg-rose-soft/30 px-4 py-3 text-[11px] text-rose">
+            <div className="mt-4 rounded-xl border border-rose/40 bg-rose-soft/30 px-4 py-3 text-sm text-rose">
               Still needed: {missing.join(", ")}
             </div>
           ) : null}

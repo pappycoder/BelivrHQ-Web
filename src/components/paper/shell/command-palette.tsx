@@ -41,7 +41,7 @@ export function CommandPalette({
     >
       <CommandInput placeholder="Jump to…" />
       <CommandList className="max-h-[420px]">
-        <CommandEmpty className="py-8 text-center text-xs text-ink-faint">
+        <CommandEmpty className="py-8 text-center text-sm text-ink-faint">
           Nothing here. The dock shows everything you can reach.
         </CommandEmpty>
         {areas.map((area) => {
@@ -58,7 +58,7 @@ export function CommandPalette({
                 >
                   <area.icon className="size-3.5 text-ink-faint" />
                   <span className="flex-1">{leaf.title}</span>
-                  <span className="text-[10px] text-ink-faint">{module.title}</span>
+                  <span className="text-xs text-ink-faint">{module.title}</span>
                   <CornerDownLeft className="size-3 opacity-0 group-data-[selected=true]:opacity-50" />
                 </CommandItem>
               ))}
@@ -66,7 +66,7 @@ export function CommandPalette({
           );
         })}
       </CommandList>
-      <div className="flex items-center justify-between border-t border-line px-3 py-2 text-[10px] text-ink-faint">
+      <div className="flex items-center justify-between border-t border-line px-3 py-2 text-xs text-ink-faint">
         <span className="flex items-center gap-2">
           <kbd className="rounded border border-line bg-muted px-1 font-mono">↑↓</kbd>
           to navigate

@@ -48,11 +48,11 @@ export function BreakdownBars({
             <span className="font-medium capitalize">{item.name}</span>
             <span className="flex items-baseline gap-2">
               {labelSuffix && (
-                <span className="text-xs text-muted-foreground capitalize">
+                <span className="text-sm text-muted-foreground capitalize">
                   {labelSuffix(item)}
                 </span>
               )}
-              <span className="text-xs text-muted-foreground">
+              <span className="text-sm text-muted-foreground">
                 {Math.round((item.value / (colorful ? total || 1 : max)) * 100)}
                 %
               </span>

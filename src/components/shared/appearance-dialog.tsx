@@ -30,7 +30,7 @@ export function AppearanceDialog({ open, onOpenChange, returnFocusRef }: {
           <Icon className="size-6" aria-hidden="true" />{title}
         </button>)}
       </div>
-      <p className="text-xs leading-relaxed text-muted-foreground">A consistent teal palette connects every part of your workspace.</p>
+      <p className="text-sm leading-relaxed text-muted-foreground">A consistent teal palette connects every part of your workspace.</p>
       <DialogFooter><Button onClick={() => onOpenChange(false)}>Done</Button></DialogFooter>
     </DialogContent>
   </Dialog>;

@@ -86,8 +86,11 @@ export function useNotificationsList(
 export function useNotification(notificationId: string | null) {
   return useQuery({
     queryKey: ["notifications", "detail", notificationId],
-    queryFn: ({ signal }) => api.get<Notification>(`/notifications/${notificationId}`, { signal }),
+    queryFn: ({ signal }) => api.get<Notification>(`/notifications/${encodeURIComponent(notificationId!)}`, { signal }),
     enabled: !!notificationId,
+    staleTime: 0,
+    retry: false,
+    refetchOnMount: "always",
   });
 }
 
@@ -105,7 +108,8 @@ export function useMarkAsRead() {
   return useMutation({
     mutationFn: (notificationId: string) =>
       api.patch<Notification>(`/notifications/${notificationId}/read`),
-    onSuccess: () => {
+    onSuccess: (notification) => {
+      queryClient.setQueryData(["notifications", "detail", notification.id], notification);
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
       queryClient.invalidateQueries({ queryKey: ["notifications-unread"] });
     },

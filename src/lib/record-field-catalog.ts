@@ -1,5 +1,23 @@
 /** Public API record fields; additional columns start hidden. Never derived from database models. */
 export const RECORD_FIELD_CATALOG: Record<string, readonly string[]> = {
+  service: [
+    "serviceId",
+    "churchId",
+    "branchId",
+    "name",
+    "category",
+    "dayOfWeek",
+    "startTime",
+    "endTime",
+    "recurrence",
+    "startsOn",
+    "endsOn",
+    "isActive",
+    "attendanceCount",
+    "archivedAt",
+    "createdAt",
+    "updatedAt",
+  ],
   event: [
     "eventId",
     "churchId",

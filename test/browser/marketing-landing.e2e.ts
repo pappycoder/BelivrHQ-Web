@@ -60,6 +60,154 @@ test("product preview supports selection and keyboard navigation", async ({
   await expect(page.getByRole("tabpanel")).toContainText("₦845k");
 });
 
+test("product preview rotates with sliding content and glass headers, and pauses for interaction", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.clock.install();
+  await page.goto("/");
+  const first = page.getByRole("tab", { name: "Sunday overview", exact: true });
+  const people = page.getByRole("tab", { name: "People & care", exact: true });
+  const giving = page.getByRole("tab", { name: "Giving & reports", exact: true });
+  await page.getByRole("tabpanel").scrollIntoViewIfNeeded();
+  await page.mouse.move(0, 0);
+  await page.clock.runFor(250);
+  await page.clock.fastForward(5500);
+  await expect(people).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("tabpanel")).toContainText("1,284");
+  const glass = page.locator('[class*="previewTabGlass"]');
+  await expect(glass).toHaveCSS("backdrop-filter", "blur(14px) saturate(1.35)");
+  expect(await people.evaluate(el => getComputedStyle(el).backgroundColor)).toBe("rgba(0, 0, 0, 0)");
+  expect(await page.getByRole("tabpanel").locator('[class*="previewSlide"]').evaluate(el => getComputedStyle(el).animationName)).toContain("previewSlideIn");
+  await page.clock.runFor(100);
+  await page.clock.fastForward(5000);
+  await expect(giving).toHaveAttribute("aria-selected", "true");
+  await page.clock.runFor(100);
+  await page.clock.fastForward(5000);
+  await expect(first).toHaveAttribute("aria-selected", "true");
+
+  await first.hover();
+  await page.clock.runFor(250);
+  await page.clock.fastForward(5500);
+  await expect(first).toHaveAttribute("aria-selected", "true", { timeout: 8000 });
+  await giving.click();
+  await page.mouse.move(0, 0);
+  await page.clock.runFor(100);
+  await page.clock.fastForward(5500);
+  await expect(giving).toHaveAttribute("aria-selected", "true", { timeout: 8000 });
+  await giving.evaluate(el => (el as HTMLElement).blur());
+  await page.getByRole("tabpanel").scrollIntoViewIfNeeded();
+  await page.clock.runFor(250);
+  await page.clock.fastForward(5500);
+  await expect(first).toHaveAttribute("aria-selected", "true", { timeout: 8000 });
+
+  await expect(page.getByRole("button", { name: /(?:Pause|Resume) preview/ })).toHaveCount(0);
+  await expect(page.getByRole("tabpanel").locator('[class*="previewSlide"]')).toHaveCSS("animation-duration", "1.15s");
+  await expect(page.getByRole("tabpanel").locator('[class*="welcomeCard"]')).toHaveCSS("animation-delay", "0.28s");
+});
+
+test("reduced motion keeps the preview steady while clicks still switch views", async ({ page }) => {
+  await page.clock.install();
+  await page.goto("/");
+  const first = page.getByRole("tab", { name: "Sunday overview", exact: true });
+  await page.getByRole("tabpanel").scrollIntoViewIfNeeded();
+  await page.mouse.move(0, 0);
+  await page.clock.fastForward(11000);
+  await expect(first).toHaveAttribute("aria-selected", "true");
+  await page.getByRole("tab", { name: "Giving & reports", exact: true }).click();
+  await expect(page.getByRole("tabpanel")).toContainText("₦845k");
+  expect(await page.getByRole("tabpanel").locator('[class*="previewSlide"]').evaluate(el => getComputedStyle(el).animationName)).toBe("none");
+});
+
+test("feature carousel rotates along an arc and preserves manual selection", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.clock.install();
+  await page.goto("/");
+  const carousel = page.getByRole("region", { name: "Explore church features" });
+  await carousel.scrollIntoViewIfNeeded();
+  await page.mouse.move(0, 0);
+  await page.clock.runFor(300);
+  await expect(carousel.getByRole("button", { name: "Show People & care", exact: true })).toHaveAttribute("aria-pressed", "true");
+  for (const name of ["Attendance", "Giving & records", "Communication", "Teams & groups", "People & care"]) {
+    await page.clock.fastForward(3200);
+    await expect(carousel.getByRole("button", { name: `Show ${name}`, exact: true })).toHaveAttribute("aria-pressed", "true");
+    await page.clock.runFor(150);
+  }
+  await carousel.getByRole("button", { name: "Show Attendance", exact: true }).click();
+  await expect(carousel.getByRole("heading", { name: /A calmer Sunday/ })).toBeVisible();
+  await page.clock.runFor(150);
+  await page.clock.fastForward(7000);
+  await expect(carousel.getByRole("button", { name: "Show Attendance", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await page.keyboard.press("ArrowRight");
+  await expect(carousel.getByRole("heading", { name: /Good stewardship/ })).toBeVisible();
+  await carousel.getByRole("button", { name: "Show Communication", exact: true }).click();
+  await expect(carousel.getByRole("heading", { name: /A thoughtful word/ })).toBeVisible();
+  await carousel.getByRole("button", { name: "Show Giving & records", exact: true }).click();
+  await expect(carousel.getByRole("heading", { name: /Good stewardship/ })).toBeVisible();
+  await carousel.getByRole("button", { name: "View Communication", exact: true }).click();
+  await expect(carousel.getByRole("heading", { name: /A thoughtful word/ })).toBeVisible();
+});
+
+for (const width of [320, 390, 1440]) {
+  test(`feature carousel keeps its focused card readable at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.clock.install();
+    await page.goto("/");
+    const carousel = page.getByRole("region", { name: "Explore church features" });
+    await carousel.scrollIntoViewIfNeeded();
+    for (const name of ["People & care", "Attendance", "Giving & records", "Communication", "Teams & groups"]) {
+      await carousel.getByRole("button", { name: `Show ${name}`, exact: true }).click();
+      const active = carousel.locator('[data-active="true"] article');
+      const box = await active.boundingBox();
+      expect(box!.x).toBeGreaterThanOrEqual(0);
+      expect(box!.x + box!.width).toBeLessThanOrEqual(width);
+      if (width <= 480) {
+        expect(box!.width).toBeLessThanOrEqual(width * .8);
+        for (const position of [-1, 1]) {
+          const neighbor = await carousel.locator(`[data-position="${position}"]`).boundingBox();
+          const visibleWidth = Math.min(width, neighbor!.x + neighbor!.width) - Math.max(0, neighbor!.x);
+          expect(visibleWidth).toBeGreaterThan(30);
+        }
+      }
+      expect(await active.evaluate(el => el.scrollHeight - el.clientHeight)).toBeLessThanOrEqual(1);
+      await expect(carousel.getByRole("heading", { level: 3 })).toHaveCount(1);
+      await expect(carousel.locator('[data-active="true"] [class*="featureCardContent"]')).not.toHaveAttribute("inert");
+    }
+    await carousel.getByRole("button", { name: "Show People & care", exact: true }).click();
+    await page.clock.fastForward(15000);
+    await expect(carousel.getByRole("button", { name: "Show People & care", exact: true })).toHaveAttribute("aria-pressed", "true");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    const controls = carousel.locator('[class*="featureCarouselControls"]');
+    await expect(controls.getByRole("button")).toHaveCount(5);
+    await expect(controls).toHaveText("");
+    await carousel.screenshot({ path: `/tmp/belivrhq-feature-carousel-${width}.png` });
+  });
+}
+
+test("feature carousel supports a touch swipe", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.goto("/");
+  const carousel = page.getByRole("region", { name: "Explore church features" });
+  await carousel.scrollIntoViewIfNeeded();
+  const card = carousel.locator('[data-active="true"]');
+  await card.dispatchEvent("pointerdown", { pointerType: "touch", clientX: 280, clientY: 300 });
+  await card.dispatchEvent("pointerup", { pointerType: "touch", clientX: 100, clientY: 305 });
+  await expect(carousel.getByRole("button", { name: "Show Attendance", exact: true })).toHaveAttribute("aria-pressed", "true");
+});
+
+test("feature cards remain readable without JavaScript", async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 900 } });
+  try {
+    const page = await context.newPage();
+    await page.goto("/");
+    const carousel = page.getByRole("region", { name: "Explore church features" });
+    await expect(carousel.getByRole("heading", { level: 3 })).toHaveCount(5);
+    await expect(carousel.getByRole("group", { name: "Choose a feature" })).toBeHidden();
+    const last = carousel.getByRole("heading", { name: /Many helping hands/ });
+    await last.scrollIntoViewIfNeeded();
+    await expect(last).toBeInViewport();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  } finally { await context.close(); }
+});
+
 test("pricing switches billing periods and reviews a plan without buying anything", async ({
   page,
 }) => {
@@ -125,6 +273,62 @@ test("pricing switches billing periods and reviews a plan without buying anythin
   }
 });
 
+for (const width of [320, 900, 1440]) {
+  test(`pricing cards share comparison rows and fit ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/#pricing");
+    const cards = page.locator('#pricing article');
+    await expect(cards).toHaveCount(4);
+    const geometry = await cards.evaluateAll(elements => elements.map(card => ({
+      top: card.getBoundingClientRect().top,
+      button: card.querySelector('button')!.getBoundingClientRect().top,
+      features: Array.from(card.querySelectorAll('li')).map(item => item.getBoundingClientRect().top),
+      overflow: card.scrollWidth - card.clientWidth,
+    })));
+    const columns = width > 1100 ? 4 : width > 640 ? 2 : 1;
+    for (let group = 0; group < 4; group += columns) {
+      for (let index = group; index < group + columns; index++) {
+        expect(Math.abs(geometry[index].button - geometry[group].button)).toBeLessThan(1);
+        for (let feature = 0; feature < 6; feature++) {
+          expect(Math.abs(geometry[index].features[feature] - geometry[group].features[feature])).toBeLessThan(1);
+        }
+        expect(geometry[index].overflow).toBeLessThanOrEqual(1);
+      }
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await expect(cards.filter({ has: page.getByRole("heading", { name: "Network", exact: true }) })).toHaveCSS("background-image", /linear-gradient/);
+    if (width === 320) {
+      await cards.nth(2).screenshot({ path: "/tmp/belivrhq-pricing-featured-mobile.png", style: "header { visibility: hidden !important; }" });
+    } else {
+      await page.locator('[class*="pricingGrid"]').screenshot({ path: `/tmp/belivrhq-pricing-cards-${width}.png`, style: "header { visibility: hidden !important; }" });
+    }
+  });
+}
+
+test("pricing hover, featured border and price transitions respect motion preferences", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/#pricing");
+  const card = page.locator('#pricing article').filter({ has: page.getByRole("heading", { name: "Network", exact: true }) });
+  await card.hover({ position: { x: 60, y: 100 } });
+  await expect(card).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -6)");
+  await expect.poll(() => card.evaluate(el => getComputedStyle(el, '::before').opacity)).toBe("1");
+  expect(await card.evaluate(el => el.style.getPropertyValue('--spot-x'))).not.toBe("");
+  await expect.poll(() => card.evaluate(el => getComputedStyle(el, '::after').animationPlayState)).toBe("running");
+  await page.mouse.move(0, 0);
+  await expect.poll(() => card.evaluate(el => el.style.getPropertyValue('--spot-x'))).toBe("");
+  await page.getByRole("button", { name: /Yearly Save 10%/ }).click();
+  const price = card.locator('[class*="priceTransition"]');
+  await expect(price).toContainText("USD 432");
+  await expect(price).toHaveCSS("animation-duration", "0.44s");
+  await expect(price).toHaveCSS("animation-name", /pricingAmountIn/);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(price).toHaveCSS("animation-name", "none");
+  expect(await card.evaluate(el => getComputedStyle(el, '::after').animationName)).toBe("none");
+  await card.hover();
+  await expect(card).toHaveCSS("transform", "none");
+});
+
 test("Enterprise has negotiated pricing without an amount or checkout in either billing period", async ({
   page,
 }) => {
@@ -161,11 +365,9 @@ test("Enterprise has negotiated pricing without an amount or checkout in either 
 
 test("FAQs and section links work", async ({ page }) => {
   await page.goto("/");
-  const question = page
-    .locator("summary")
-    .filter({ hasText: "Can we subscribe to these plans today?" });
-  await question.click();
-  await expect(page.getByText(/complete secure checkout/)).toBeVisible();
+  const faq = page.locator("#questions");
+  await faq.getByRole("tab", { name: "Can we subscribe to these plans today?", exact: true }).click();
+  await expect(faq.getByRole("tabpanel")).toContainText("complete secure checkout");
   const missing = await page
     .locator('a[href^="#"]')
     .evaluateAll((anchors) =>
@@ -174,6 +376,79 @@ test("FAQs and section links work", async ({ page }) => {
         .filter((id) => id && !document.getElementById(id)),
     );
   expect(missing).toEqual([]);
+});
+
+for (const width of [320, 768, 1440]) {
+  test(`FAQ reading panel and topic index fit ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/#questions");
+    const faq = page.locator("#questions");
+    const tabs = faq.getByRole("tab");
+    await expect(tabs).toHaveCount(6);
+    await expect(faq.locator('[class*="faqFallback"]')).toBeHidden();
+    for (const tab of await tabs.all()) {
+      await tab.click();
+      const question = await tab.getAttribute("aria-label");
+      const panel = faq.getByRole("tabpanel");
+      await expect(panel.getByRole("heading", { level: 3 })).toHaveText(question!);
+      await expect(tab).toHaveAttribute("aria-selected", "true");
+      expect(await panel.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+      expect(await panel.locator('p').evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(15);
+    }
+    await tabs.first().click();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await expect(faq.getByRole("link", { name: "Explore the plans", exact: true })).toHaveAttribute("href", "#pricing");
+    await faq.screenshot({ path: `/tmp/belivrhq-faq-${width}.png`, style: "header { visibility: hidden !important; }" });
+  });
+}
+
+test("FAQ topics support keyboard navigation and a focusable answer", async ({ page }) => {
+  await page.goto("/#questions");
+  const faq = page.locator("#questions");
+  const tabs = faq.getByRole("tab");
+  await tabs.first().focus();
+  await page.keyboard.press("ArrowDown");
+  await expect(tabs.nth(1)).toBeFocused();
+  await expect(faq.getByRole("tabpanel")).toContainText("branch records and permissions");
+  await page.keyboard.press("End");
+  await expect(tabs.last()).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  await expect(tabs.first()).toBeFocused();
+  await page.keyboard.press("ArrowLeft");
+  await expect(tabs.last()).toBeFocused();
+  await page.keyboard.press("Home");
+  await expect(tabs.first()).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(faq.getByRole("tabpanel")).toBeFocused();
+});
+
+test("FAQ answer changes animate gently and respect reduced motion", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/#questions");
+  const faq = page.locator("#questions");
+  await faq.getByRole("tab").nth(3).click();
+  const content = faq.getByRole("tabpanel").locator('[class*="faqAnswerContent"]');
+  await expect(content).toHaveCSS("animation-name", /faqAnswerIn/);
+  await expect(content).toHaveCSS("animation-duration", "0.38s");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(content).toHaveCSS("animation-name", "none");
+  await faq.getByRole("tab").nth(4).click();
+  await expect(faq.getByRole("tabpanel")).toContainText("HQ status on its own does not grant analytics access");
+});
+
+test("FAQ answers stay accessible without JavaScript", async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 900 } });
+  try {
+    const page = await context.newPage();
+    await page.goto("/#questions");
+    const faq = page.locator("#questions");
+    await expect(faq.locator('summary')).toHaveCount(6);
+    await expect(faq.getByRole('tablist')).toHaveCount(0);
+    await faq.locator('summary').filter({ hasText: "Can we subscribe to these plans today?" }).click();
+    await expect(faq.locator('details').last().locator('p')).toBeVisible();
+    await expect(faq.locator('details').last()).toContainText("complete secure checkout");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  } finally { await context.close(); }
 });
 
 for (const width of [320, 390, 768, 1440])
@@ -274,7 +549,7 @@ test("recurring landing motion follows the visible section and reduced-motion pr
   for (const target of [scribble, scribble.locator("svg").first(), scribble.locator("path").last()]) {
     expect(await target.evaluate(el => el.getAnimations().some(animation => animation.effect?.getTiming().iterations === Infinity))).toBe(true);
   }
-  const card = page.locator("#product article").first();
+  const card = page.getByText("Reach your people", { exact: true }).locator("..");
   await card.scrollIntoViewIfNeeded();
   await expect(card).toHaveCSS("animation-play-state", "running");
   await expect(scribble).toHaveCSS("animation-play-state", "paused");
@@ -300,6 +575,11 @@ for (const width of [320, 390, 1440]) {
     await strip.scrollIntoViewIfNeeded();
     expect(await strip.getByText("People", { exact: true }).evaluate(el => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(15);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await page.getByRole("tab", { name: "Giving & reports", exact: true }).click();
+    const glass = await page.locator('[class*="previewTabGlass"]').boundingBox();
+    const active = await page.getByRole("tab", { name: "Giving & reports", exact: true }).boundingBox();
+    expect(Math.abs(glass!.x - active!.x)).toBeLessThan(1);
+    expect(Math.abs(glass!.width - active!.width)).toBeLessThan(1);
     await page.getByRole("tablist").screenshot({ path: `/tmp/belivrhq-larger-preview-tabs-${width}.png` });
     await strip.screenshot({ path: `/tmp/belivrhq-larger-workspace-strip-${width}.png` });
   });

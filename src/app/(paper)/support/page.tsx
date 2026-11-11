@@ -58,7 +58,7 @@ export default function SupportPage() {
 
       <div className="grid gap-4 lg:grid-cols-3">
         <SectionCard eyebrow="Live chat" title="Talk to a human" className="lg:col-span-1">
-          <p className="text-[11px] leading-relaxed text-ink-soft">
+          <p className="text-sm leading-relaxed text-ink-soft">
             {chatReady
               ? "The chat bubble is ready at the bottom-right of the page."
               : "The chat bubble will appear at the bottom-right once it loads. This may take a moment."}
@@ -69,7 +69,7 @@ export default function SupportPage() {
         </SectionCard>
 
         <SectionCard eyebrow="Help centre" title="Answers before questions" className="lg:col-span-1">
-          <p className="text-[11px] leading-relaxed text-ink-soft">
+          <p className="text-sm leading-relaxed text-ink-soft">
             Twenty articles on members, attendance, giving, events and more. Search without signing in.
           </p>
           <Button asChild variant="outline" className="mt-4 h-10 w-full gap-2 rounded-lg border-line text-sm">
@@ -80,7 +80,7 @@ export default function SupportPage() {
         </SectionCard>
 
         <SectionCard eyebrow="Email" title="The quiet fallback" className="lg:col-span-1">
-          <p className="text-[11px] leading-relaxed text-ink-soft">
+          <p className="text-sm leading-relaxed text-ink-soft">
             Chat not your style? Every message finds the same team, with a thread to keep.
           </p>
           <Button
@@ -101,10 +101,10 @@ export default function SupportPage() {
             <Sparkles className="size-4" />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold">
+            <p className="text-sm font-semibold">
               {profile?.firstName ? `${profile.firstName}, the desk is open.` : "The desk is open."}
             </p>
-            <p className="mt-0.5 text-[10px] text-ink-faint">
+            <p className="mt-0.5 text-xs text-ink-faint">
               Administrators get the live widget; everyone can reach the email thread. Our target for the first reply is {number(1)} working day.
             </p>
           </div>

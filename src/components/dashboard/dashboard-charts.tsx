@@ -104,8 +104,8 @@ function ChartCard({
             <Icon className="size-4" aria-hidden="true" />
           </span>
           <div className="min-w-0 flex-1">
-            <CardTitle className="text-sm font-semibold">{title}</CardTitle>
-            <CardDescription className="mt-1 text-xs">
+            <CardTitle className="text-lg font-semibold">{title}</CardTitle>
+            <CardDescription className="mt-1 text-sm">
               {description}
             </CardDescription>
           </div>
@@ -124,7 +124,7 @@ function ChartCard({
             role="alert"
             className="flex h-54 flex-col items-center justify-center gap-2 text-center"
           >
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Unable to load {title.toLowerCase()}.
             </p>
             <Button
@@ -205,7 +205,7 @@ export function DashboardCharts() {
 
   return (
     <section aria-label="Dashboard charts" className="space-y-5">
-      <div className="flex flex-wrap items-baseline justify-between gap-2"><h2 className="text-base font-semibold">Your church in perspective</h2><p className="text-xs text-muted-foreground">
+      <div className="flex flex-wrap items-baseline justify-between gap-2"><h2 className="text-base font-semibold">Your church in perspective</h2><p className="text-sm text-muted-foreground">
         Last 30 days <span aria-hidden="true">·</span> {scope}
       </p></div>
       <div className="grid gap-5 sm:grid-cols-2 2xl:grid-cols-3">

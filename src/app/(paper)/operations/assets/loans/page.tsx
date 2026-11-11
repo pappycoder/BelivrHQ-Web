@@ -18,7 +18,7 @@ export default function AssetLoansPage() {
         title="Borrowed out, expected back."
         description="Track who borrowed each asset, when it left and when it is due back."
         actions={
-          <Link href="/operations/assets/maintenance" className="flex h-9 items-center gap-1.5 rounded-full border border-line bg-card px-3 text-xs text-ink-soft transition-colors hover:text-ink">
+          <Link href="/operations/assets/maintenance" className="flex h-9 items-center gap-1.5 rounded-full border border-line bg-card px-3 text-sm text-ink-soft transition-colors hover:text-ink">
             <Repeat className="size-3.5" /> Maintenance schedule
           </Link>
         }

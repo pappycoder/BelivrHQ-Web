@@ -23,12 +23,12 @@ export function SubscriptionCurrencySwitcher() {
           ))}
         </select>
       </label>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-sm text-muted-foreground">
         USD base prices. Converted totals are rounded up to a whole currency
         unit. Annual savings apply to the USD base.
       </p>
       {pricing.currency !== "USD" && (
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           {pricing.isError ? (
             "Conversion unavailable. Try again or select USD. "
           ) : pricing.data?.rateUpdatedAt ? (

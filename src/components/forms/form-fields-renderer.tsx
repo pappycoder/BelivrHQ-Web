@@ -70,7 +70,7 @@ export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, 
           >
             {field.label}
             {field.required && <RequiredIndicator />}
-            {showOptional && !field.required && <span className="ml-2 text-xs text-muted-foreground">(optional)</span>}
+            {showOptional && !field.required && <span className="ml-2 text-sm text-muted-foreground">(optional)</span>}
           </Label>
 
           {field.type === "textarea" && (
