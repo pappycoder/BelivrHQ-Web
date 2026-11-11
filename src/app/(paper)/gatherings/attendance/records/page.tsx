@@ -4,6 +4,7 @@ import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import {
   CalendarDays,
+  ChevronDown,
   ArrowUpDown,
   Download,
   LogIn,
@@ -27,6 +28,8 @@ import {
   SortDirectionToggle,
 } from "@/components/paper/primitives";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExportDropdown } from "@/components/shared/export-dropdown";
 import { ConfirmDeleteDialog } from "@/components/pastoral/confirm-delete-dialog";
@@ -108,6 +111,11 @@ export default function AttendanceRecordsPage() {
   );
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
+  const [dateOpen, setDateOpen] = React.useState(false);
+  const dateTriggerRef = React.useRef<HTMLButtonElement>(null);
+  const restoreDateFocus = React.useRef(false);
+  const [dateDraft, setDateDraft] = React.useState({ from: "", to: "" });
+  const invalidRange = !!dateDraft.from && !!dateDraft.to && dateDraft.from > dateDraft.to;
   const [query, setQuery] = React.useState("");
   const [deleteTarget, setDeleteTarget] =
     React.useState<AttendanceRecord | null>(null);
@@ -330,34 +338,56 @@ export default function AttendanceRecordsPage() {
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <label className="flex items-center gap-2 text-[10px] text-ink-faint">
-            From
-            <Input
-              picker="native"
-              type="date"
-              value={startDate}
-              onChange={(e) => {
-                setStartDate(e.target.value);
-                setPage(1);
-              }}
-              className="h-8 w-[155px] rounded-full border-line bg-card px-3 text-[11px] shadow-none"
-              aria-label="From date"
-            />
-          </label>
-          <label className="flex items-center gap-2 text-[10px] text-ink-faint">
-            To
-            <Input
-              picker="native"
-              type="date"
-              value={endDate}
-              onChange={(e) => {
-                setEndDate(e.target.value);
-                setPage(1);
-              }}
-              className="h-8 w-[155px] rounded-full border-line bg-card px-3 text-[11px] shadow-none"
-              aria-label="To date"
-            />
-          </label>
+          <Popover open={dateOpen} onOpenChange={open => {
+            if (open) {
+              restoreDateFocus.current = false;
+              setDateDraft({ from: startDate, to: endDate });
+            }
+            setDateOpen(open);
+          }}>
+            <PopoverTrigger asChild>
+              <Button ref={dateTriggerRef} disableTooltip type="button" variant="outline" size="sm" aria-label={startDate || endDate ? `Date range, ${startDate || "any start"} to ${endDate || "any end"}` : "Date range"}
+                className={`h-8 gap-2 rounded-full border-line text-[11px] ${startDate || endDate ? "bg-brand/10 text-brand" : "bg-card"}`}>
+                <CalendarDays className="size-3.5" />
+                {startDate || endDate ? `${startDate || "Any start"} → ${endDate || "Any end"}` : "Date range"}
+                <ChevronDown className="size-3" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="start" aria-label="Filter attendance dates" className="space-y-4"
+              onEscapeKeyDown={() => { restoreDateFocus.current = true; }}
+              onCloseAutoFocus={event => {
+                if (restoreDateFocus.current) {
+                  event.preventDefault();
+                  dateTriggerRef.current?.focus();
+                  restoreDateFocus.current = false;
+                }
+              }}>
+
+              <p className="text-sm font-medium">Attendance date range</p>
+              <div className="space-y-2">
+                <Label htmlFor="attendance-date-from">From date</Label>
+                <Input id="attendance-date-from" name="fromDate" picker="native" type="date"
+                  value={dateDraft.from} max={dateDraft.to || undefined}
+                  onChange={event => setDateDraft(value => ({ ...value, from: event.target.value }))} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="attendance-date-to">To date</Label>
+                <Input id="attendance-date-to" name="toDate" picker="native" type="date"
+                  value={dateDraft.to} min={dateDraft.from || undefined}
+                  aria-invalid={invalidRange || undefined} aria-describedby={invalidRange ? "attendance-date-error" : undefined}
+                  onChange={event => setDateDraft(value => ({ ...value, to: event.target.value }))} />
+              </div>
+              {invalidRange && <p id="attendance-date-error" role="alert" className="text-xs text-destructive">To date must be on or after From date.</p>}
+              <div className="flex justify-between gap-2 border-t border-line pt-3">
+                <Button type="button" variant="ghost" size="sm" onClick={() => {
+                  setStartDate(""); setEndDate(""); setDateDraft({ from: "", to: "" }); setPage(1); setDateOpen(false);
+                }}>Clear dates</Button>
+                <Button type="button" size="sm" disabled={invalidRange} onClick={() => {
+                  setStartDate(dateDraft.from); setEndDate(dateDraft.to); setPage(1); setDateOpen(false);
+                }}>Apply dates</Button>
+              </div>
+            </PopoverContent>
+          </Popover>
           {(query ||
             serviceId !== "all" ||
             category !== "all" ||
