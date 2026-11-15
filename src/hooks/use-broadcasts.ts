@@ -89,7 +89,7 @@ export const BROADCAST_STATUS_LABELS: Record<BroadcastStatus, string> = {
   draft: "Draft",
   scheduled: "Scheduled",
   sending: "Sending",
-  sent: "Sent",
+  sent: "Queued",
   cancelled: "Cancelled",
   failed: "Failed",
 };

@@ -52,6 +52,11 @@ export function useBillingStatus(registration = false) {
       ? query.data?.registrationChurchId
       : profile?.churchId,
     accessReady: registration ? !query.isPending : ready,
+    canReviewPayments:
+      !registration &&
+      allowed &&
+      !!profile?.role?.includes("super_admin") &&
+      can("billing", "update"),
     canPay: registration
       ? query.isSuccess
       : allowed && can("billing", "update"),

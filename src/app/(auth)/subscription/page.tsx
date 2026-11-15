@@ -1,6 +1,7 @@
 "use client";
 
 import { AuthFormWrapper } from "@/components/shared/auth-form-wrapper";
+import { UnappliedPaymentReview } from "@/components/billing/unapplied-payment-review";
 import { RegistrationCheckout } from "@/components/billing/registration-checkout";
 import { LoadingState } from "@/components/shared/loading-state";
 import { showCheckoutLoading } from "@/lib/checkout-loading";
@@ -93,6 +94,9 @@ export default function SubscriptionPage() {
     React.useState<Exclude<SubscriptionPlan, "enterprise">>("essentials");
   const [cycle, setCycle] = React.useState<BillingCycle>("monthly");
   const gateway: SubscriptionGateway = "flutterwave";
+  const [reviewPayment, setReviewPayment] = React.useState<
+    BillingStatus["payments"][number] | null
+  >(null);
   const [message, setMessage] = React.useState("");
   const [reference, setReference] = React.useState("");
   const [manage, setManage] = React.useState(false);
@@ -1317,6 +1321,22 @@ export default function SubscriptionPage() {
               />
             ) : (
               <>
+                <UnappliedPaymentReview
+                  payment={reviewPayment}
+                  onClose={() => setReviewPayment(null)}
+                  onResolved={(result) => {
+                    client.setQueryData(status.queryKey, result);
+                    void client.invalidateQueries({
+                      queryKey: ["current-profile"],
+                    });
+                    if (status.churchId && reviewPayment)
+                      publishPaymentHint({
+                        churchId: status.churchId,
+                        reference: reviewPayment.reference,
+                      });
+                    void status.refetch();
+                  }}
+                />
                 <ListTable
                   tableId="subscription-payments"
                   label="Subscription payments"
@@ -1360,11 +1380,14 @@ export default function SubscriptionPage() {
                             payment.application_status === "review" ||
                             payment.lifecycle?.access === "review"
                               ? "gold"
-                              : payment.status === "success"
-                                ? "moss"
-                                : payment.status === "failed"
-                                  ? "rose"
-                                  : "neutral"
+                              : payment.application_status === "revoked" ||
+                                  payment.lifecycle?.access === "revoked"
+                                ? "rose"
+                                : payment.status === "success"
+                                  ? "moss"
+                                  : payment.status === "failed"
+                                    ? "rose"
+                                    : "neutral"
                           }
                         >
                           {payment.application_status === "review" ||
@@ -1372,13 +1395,24 @@ export default function SubscriptionPage() {
                             ? "Held for review. Contact support"
                             : payment.lifecycle?.access === "revoked"
                               ? "Access removed"
-                              : payment.checkout_closed_at
-                                ? `Checkout ${payment.checkout_close_reason || "closed"}`
-                                : payment.status}
+                              : payment.application_status === "revoked"
+                                ? "Not applied"
+                                : payment.status === "success" &&
+                                    payment.application_status === "applied"
+                                  ? "Applied"
+                                  : payment.checkout_closed_at
+                                    ? `Checkout ${payment.checkout_close_reason || "closed"}`
+                                    : payment.status}
                         </Tag>
                       </span>
                       <RowActions
                         actions={[
+                          status.canReviewPayments &&
+                            payment.unappliedReview && {
+                              label: "Resolve unapplied payment",
+                              icon: <ShieldCheck />,
+                              onSelect: () => setReviewPayment(payment),
+                            },
                           status.canPay &&
                             ["pending", "failed"].includes(payment.status) && {
                               label: "Check payment",

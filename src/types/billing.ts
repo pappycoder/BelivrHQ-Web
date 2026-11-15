@@ -25,6 +25,7 @@ export interface BillingStatus {
     status: string;
     intent: string;
     application_status: string;
+    unappliedReview?: boolean;
     lifecycle?: {
       access: "clear" | "review" | "revoked";
       refundedAmount: number;

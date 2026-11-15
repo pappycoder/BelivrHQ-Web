@@ -561,11 +561,12 @@ test("member tables preserve default columns and can show every extra business f
   await expect(table.getByRole("columnheader").last()).toHaveText("Manage");
 });
 
-test("bulk member archive uses the existing register action and leaves failures selected", async ({
+test("bulk member archive retries only failed records after partial success", async ({
   page,
   context,
 }) => {
-  const { calls } = await fixture(context, { failArchive: true });
+  const options = { failArchive: true };
+  const { calls } = await fixture(context, options);
   await page.goto("/people/members");
   await page.getByRole("button", { name: "Table", exact: true }).click();
   const table = page.locator('[data-list-table="people-members-1"]');
@@ -583,14 +584,17 @@ test("bulk member archive uses the existing register action and leaves failures 
     .getByRole("button", { name: "Confirm action", exact: true })
     .click();
   await expect(dialog.getByRole("alert")).toContainText("outstanding record");
+  options.failArchive = false;
   await dialog
-    .getByRole("button", { name: "Close", exact: true })
-    .first()
+    .getByRole("button", { name: "Retry failed records", exact: true })
     .click();
-  await expect(table.getByRole("status")).toHaveText("1 selected on this page");
-  expect(calls.filter((call) => call.path.endsWith("/archive"))).toHaveLength(
-    2,
-  );
+  await expect(dialog).toBeHidden();
+  expect(
+    calls.filter((call) => call.path.endsWith("/member-a/archive")),
+  ).toHaveLength(1);
+  expect(
+    calls.filter((call) => call.path.endsWith("/member-b/archive")),
+  ).toHaveLength(2);
 });
 
 test("read-only lists support selected export without exposing mutation actions", async ({

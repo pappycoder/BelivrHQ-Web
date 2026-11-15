@@ -65,11 +65,13 @@ export function BulkManage({
     setFailures([]);
     const succeeded: string[] = [];
     const failed: { name: string; message: string }[] = [];
+    const failedIds = new Set<string>();
     for (const [index, entry] of batch.entries.entries()) {
       try {
         await entry.run({ reason: reason.trim() });
         succeeded.push(entry.id);
       } catch (error) {
+        failedIds.add(entry.id);
         failed.push({
           name: entry.name,
           message: getToastErrorMessage(
@@ -82,6 +84,12 @@ export function BulkManage({
     }
     onResolved(succeeded);
     setFailures(failed);
+    if (failedIds.size) {
+      setBatch({
+        ...batch,
+        entries: batch.entries.filter((entry) => failedIds.has(entry.id)),
+      });
+    }
     setBusy(false);
     busyRef.current = false;
     if (failed.length)
@@ -158,7 +166,7 @@ export function BulkManage({
               <li key={entry.id}>{entry.name}</li>
             ))}
           </ul>
-          {batch?.action.requiresReason && !failures.length && (
+          {batch?.action.requiresReason && (
             <label className="grid gap-2 text-sm">
               Reason
               <Textarea
@@ -195,7 +203,7 @@ export function BulkManage({
             >
               {failures.length ? "Close" : "Cancel"}
             </Button>
-            {!failures.length && (
+            {!!batch?.entries.length && (
               <Button
                 variant={batch?.action.destructive ? "destructive" : "default"}
                 disabled={
@@ -203,7 +211,11 @@ export function BulkManage({
                 }
                 onClick={() => void run()}
               >
-                {busy ? "Processing…" : "Confirm action"}
+                {busy
+                  ? "Processing…"
+                  : failures.length
+                    ? "Retry failed records"
+                    : "Confirm action"}
               </Button>
             )}
           </DialogFooter>
