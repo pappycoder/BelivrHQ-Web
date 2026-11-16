@@ -13,7 +13,7 @@ it('scrubs completed traces before the SDK sends its envelope', async () => {
     traceLifecycle: 'static',
     beforeSendTransaction: redactTelemetry,
     transport: () => ({
-      send: async (envelope) => { envelopes.push(envelope); return {}; },
+      send: async (envelope: unknown) => { envelopes.push(envelope); return {}; },
       flush: async () => true,
     }),
   });
