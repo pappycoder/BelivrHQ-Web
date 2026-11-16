@@ -41,7 +41,9 @@ function TiersInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { can, ready } = usePermissions();
-  const canManage = ready && can("events", "update");
+  const canCreate = ready && can("events:tickets", "create");
+  const canUpdate = ready && can("events:tickets", "update");
+  const canDelete = ready && can("events:tickets", "delete");
 
   const [eventId, setEventId] = React.useState(searchParams.get("event") ?? "");
   const [ticketFilter, setTicketFilter] = React.useState("");
@@ -70,7 +72,7 @@ function TiersInner() {
         title="Pricing and capacity, decided kindly."
         description="Set ticket tiers and prices for each paid event before registration opens."
         actions={
-          canManage && paidEvent ? (
+          canCreate && paidEvent ? (
             <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setFormTarget({ open: true, tier: null })}>
               <Plus className="size-3.5" /> New tier
             </Button>
@@ -119,7 +121,7 @@ function TiersInner() {
             ) : rows.length === 0 ? (
               <div className="px-5 py-10 text-center">
                 <p className="text-sm text-ink-faint">{paidEvent ? "No tiers yet. The first one sets the price of entry." : "Free event: registrations stand in for tickets."}</p>
-                {canManage && paidEvent ? (
+                {canCreate && paidEvent ? (
                   <Button size="sm" variant="outline" className="mt-3 rounded-full border-line text-sm" onClick={() => setFormTarget({ open: true, tier: null })}>Create the first tier</Button>
                 ) : null}
               </div>
@@ -137,15 +139,15 @@ function TiersInner() {
                       <span className="num hidden w-28 text-right text-sm text-ink-soft md:block">
                         {tier.capacity != null ? <>{number(tier.capacity)} seats</> : "uncapped seats"}
                       </span>
-                      {canManage && paidEvent ? (
+                      {(canUpdate || canDelete) && paidEvent ? (
                         <RowActions
                           actions={[
-                            {
+                            canUpdate && {
                               label: `Edit ${tier.name}`,
                               icon: <PencilLine />,
                               onSelect: () => setFormTarget({ open: true, tier }),
                             },
-                            {
+                            canDelete && {
                               label: `Delete ${tier.name}`,
                               icon: <Trash2 />,
                               tone: "danger",
@@ -207,8 +209,8 @@ function TiersInner() {
             onSuccess: () => { toast(existing ? "Tier updated." : "Tier created."); setFormTarget({ open: false, tier: null }); },
             onError: (e: unknown) => toast.error(getToastErrorMessage(e, "Couldn't save the tier. Capacity may already be sold out.")),
           };
-          if (existing) update.mutate({ tierId: existing.id, input: values }, done);
-          else create.mutate(values, done);
+          if (existing && canUpdate) update.mutate({ tierId: existing.id, input: values }, done);
+          else if (!existing && canCreate) create.mutate(values, done);
         }}
       />
 
@@ -221,7 +223,7 @@ function TiersInner() {
         pending={del.isPending}
         pendingLabel="Deleting…"
         onConfirm={() => {
-          if (!deleteTarget) return;
+          if (!canDelete || !deleteTarget) return;
           del.mutate(deleteTarget.id, {
             onSuccess: () => { toast("Tier deleted."); setDeleteTarget(null); },
             onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't delete it. Tickets may already be sold.")),

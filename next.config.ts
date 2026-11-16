@@ -23,6 +23,17 @@ const withSerwist = withSerwistInit({
 // Development stance: legacy workspace routes were deleted outright (no
 // redirect map) — old URLs simply 404 until bookmarks are refreshed.
 const nextConfig: NextConfig = withSerwist({
+  async headers() {
+    return [{
+      source: "/:path*",
+      headers: [
+        { key: "X-Frame-Options", value: "SAMEORIGIN" },
+        { key: "Content-Security-Policy", value: "frame-ancestors 'self'; base-uri 'self'" },
+        { key: "X-Content-Type-Options", value: "nosniff" },
+        { key: "Referrer-Policy", value: "same-origin" },
+      ],
+    }];
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "**.supabase.co", pathname: "/storage/v1/object/public/**" },
