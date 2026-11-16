@@ -1,3 +1,5 @@
+- **2026-11-16 — Audit report integrity.** Reject inconsistent vulnerability totals and malformed array-shaped finding collections instead of treating them as a clean scan. Extended the existing fail-closed parser regressions; three policy cases and the current live dependency audit pass. Backend workflow policy also locks all four existing 80% coverage thresholds and coverage collection.
+
 - **2026-11-16 — Pinned CLI deployment response compatibility.** Inspected installed Vercel CLI 65.9.0 serialization and supported both its standard raw deployment JSON and agent envelope. Error payloads remain rejected and REST candidate identity/readiness checks remain mandatory. Added raw-response success/error refusal regressions; all 23 release/workflow checks pass.
 
 - **2026-11-16 — Clean CI telemetry-test types.** Hosted standalone TypeScript found an implicit-any transport callback that the framework build did not report. Annotated the in-memory envelope as unknown; a clean non-incremental application/test typecheck and actual SDK transport regression pass. CI release gates remained closed on the failed run.
