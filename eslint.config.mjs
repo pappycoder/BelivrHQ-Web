@@ -13,7 +13,13 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
     // These helpers run in Node and are never imported by the application.
-    files: ["scripts/ops/**/*.cjs", "test/ops/**/*.cjs"],
+    files: [
+      "scripts/ops/**/*.cjs",
+      "test/ops/**/*.cjs",
+      "scripts/vercel-env.cjs",
+      "scripts/check-private-env.cjs",
+      "test/env/**/*.cjs",
+    ],
     rules: { "@typescript-eslint/no-require-imports": "off" },
   },
   {

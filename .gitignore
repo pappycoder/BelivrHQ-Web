@@ -62,3 +62,7 @@ next-env.d.ts
 
 # Private operations-console database backups
 .ops/
+.env*
+
+# Private deployment env config, temporary exports and snapshots.
+.env.vercel.json*
