@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
+import { PermissionLink } from "@/components/shared/permission-link";
 import {
   ArrowRight,
   HandCoins,
@@ -65,9 +65,9 @@ export default function GivingOverviewPage() {
               variant="outline"
               className="h-9 gap-1.5 rounded-full border-line bg-card text-sm"
             >
-              <Link href="/giving/statements">
+              <PermissionLink href="/giving/statements">
                 <HeartHandshake className="size-3.5" /> Statements
-              </Link>
+              </PermissionLink>
             </Button>
             {canRecord ? (
               <Button
@@ -176,9 +176,9 @@ export default function GivingOverviewPage() {
                     size="sm"
                     className="h-7 gap-1 rounded-full text-sm text-ink-faint"
                   >
-                    <Link href="/giving/donations">
+                    <PermissionLink href="/giving/donations">
                       All giving records <ArrowRight className="size-3" />
-                    </Link>
+                    </PermissionLink>
                   </Button>
                 }
                 bodyClassName="p-0"
@@ -189,27 +189,27 @@ export default function GivingOverviewPage() {
           </div>
 
           <div className="flex flex-wrap gap-4 text-sm">
-            <Link
+            <PermissionLink
               href="/giving/donations"
               className="text-brand hover:underline"
             >
               Giving records
-            </Link>
-            <Link href="/giving/funds" className="text-brand hover:underline">
+            </PermissionLink>
+            <PermissionLink href="/giving/funds" className="text-brand hover:underline">
               Giving categories
-            </Link>
-            <Link
+            </PermissionLink>
+            <PermissionLink
               href="/giving/schedules"
               className="text-brand hover:underline"
             >
               Recurring schedules
-            </Link>
-            <Link
+            </PermissionLink>
+            <PermissionLink
               href="/insights/analytics/giving"
               className="ml-auto text-ink-faint hover:text-ink"
             >
               Deep analysis →
-            </Link>
+            </PermissionLink>
           </div>
         </>
       )}
@@ -289,12 +289,12 @@ function FundsRail() {
       eyebrow="Giving categories"
       title="Where giving is aimed"
       actions={
-        <Link
+        <PermissionLink
           href="/giving/funds"
           className="text-sm text-brand hover:underline"
         >
           Manage
-        </Link>
+        </PermissionLink>
       }
       bodyClassName="p-0"
     >
@@ -346,12 +346,12 @@ function RecurringRail() {
       eyebrow="Recurring"
       title="The floor under the year"
       actions={
-        <Link
+        <PermissionLink
           href="/giving/schedules"
           className="text-sm text-brand hover:underline"
         >
           Schedules
-        </Link>
+        </PermissionLink>
       }
     >
       <div className="flex items-center gap-4">

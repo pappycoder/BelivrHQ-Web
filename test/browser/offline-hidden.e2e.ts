@@ -1,6 +1,15 @@
 import { test, expect } from '@playwright/test';
 import { mockTawkWidget } from '../fixtures/tawk-widget';
 
+test.use({ serviceWorkers: "block" });
+test.beforeEach(async ({ context }) => {
+  await context.route("**/*", (route) => {
+    const url = new URL(route.request().url());
+    return url.origin === "http://127.0.0.1:3107" ? route.continue() : route.abort();
+  });
+});
+
+
 test.beforeEach(async ({ context }) => {
   await context.addCookies([{ name: 'belivrhq_token', value: 'offline-hidden-fixture', url: 'http://127.0.0.1:3107' }]);
   await context.route('https://embed.tawk.to/**', route => route.fulfill({ contentType: 'application/javascript', body: mockTawkWidget }));
@@ -23,8 +32,8 @@ test.beforeEach(async ({ context }) => {
 
 for (const width of [375, 1440]) test(`offline entry points stay hidden even with permission at ${width}px`, async ({ page }) => {
   await page.setViewportSize({ width, height: 900 });
-  await page.goto('/dashboard');
-  await expect(page.getByRole('heading', { name: 'Dashboard', exact: true })).toBeVisible();
+  await page.goto('/home');
+  await expect(page.getByRole('heading', { name: /Grace/ })).toBeVisible();
   await expect(page.locator('a[href="/offline"]')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Dismiss offline banner' })).toHaveCount(0);
   await expect(page.getByText('Prepare this device to work offline.')).toHaveCount(0);

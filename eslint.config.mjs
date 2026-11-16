@@ -14,7 +14,7 @@ const eslintConfig = [
   {
     // These helpers run in Node and are never imported by the application.
     files: [
-      "scripts/ops/**/*.cjs",
+      "scripts/**/*.cjs",
       "test/ops/**/*.cjs",
       "scripts/vercel-env.cjs",
       "scripts/check-private-env.cjs",
@@ -25,6 +25,8 @@ const eslintConfig = [
   {
     ignores: [
       "node_modules/**",
+      ".ops/**",
+      ".vercel/**",
       ".next/**",
       "out/**",
       "next-env.d.ts",
