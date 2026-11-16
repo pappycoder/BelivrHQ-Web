@@ -15,6 +15,8 @@ if (dsn) {
     release: process.env.SENTRY_RELEASE || undefined,
     tracesSampleRate: 0.1,
     beforeSend: redactTelemetry,
+    // Transaction privacy hooks require static lifecycle in the installed SDK.
+    traceLifecycle: "static",
     beforeSendTransaction: redactTelemetry,
   });
 }

@@ -1,5 +1,8 @@
 name: BelivrHQ Web CI
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: ['**']

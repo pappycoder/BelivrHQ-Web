@@ -31,6 +31,8 @@ export function register() {
 
     // Privacy: never send the raw text/inputs or media to Sentry.
     beforeSend: redactTelemetry,
+    // Transaction privacy hooks require static lifecycle in the installed SDK.
+    traceLifecycle: "static",
     beforeSendTransaction: redactTelemetry,
   });
 }

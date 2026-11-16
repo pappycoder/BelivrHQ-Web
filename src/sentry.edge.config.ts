@@ -16,6 +16,8 @@ if (dsn) {
     // Edge runtime has limited tracing support — keep it minimal.
     tracesSampleRate: 0.1,
     beforeSend: redactTelemetry,
+    // Transaction privacy hooks require static lifecycle in the installed SDK.
+    traceLifecycle: "static",
     beforeSendTransaction: redactTelemetry,
   });
 }
