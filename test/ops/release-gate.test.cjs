@@ -47,7 +47,7 @@ function fake(options = {}) {
     else if (args[0] === 'api')
       output = JSON.stringify({
         id: options.wrongCandidate ? 'dpl_other' : 'dpl_candidate',
-        readyState: 'READY',
+        readyState: options.buildFailure ? 'ERROR' : 'READY',
         projectId: options.wrongProject ? 'prj_other' : 'prj_1xtdjVDsLriFMkG69dCWd2RUnoLi',
         target: options.preview ? null : 'production',
         meta: { readinessReleaseSha: options.wrongCommit ? 'b'.repeat(40) : sha },
@@ -57,7 +57,7 @@ function fake(options = {}) {
         options.unhealthy ? { success: true, data: { status: 'healthy' } } : options.preview ? { success: true, data: { status: 'healthy', service: 'web', backendOrigin: 'https://staging-api.belivrhq.com', siteOrigin: 'https://staging.belivrhq.com' } } : body(),
       );
     const unsupportedPreviewFlag = args[0] === 'deploy' && args[args.indexOf('--environment') + 1] === 'preview' && args.includes('--skip-domain');
-    return { status: unsupportedPreviewFlag || (options.buildFailure && args[0] === 'inspect') ? 1 : 0, stdout: output };
+    return { status: unsupportedPreviewFlag || ((options.buildFailure || options.inspectFailure) && args[0] === 'inspect') ? 1 : 0, stdout: output };
   };
   return { run, calls };
 }
@@ -233,4 +233,38 @@ test('command failures identify only a safe operation and status while withholdi
 test('explicit deployment aliases cannot bypass the checked promotion phase', () => {
   for (const alias of ['staging.example.org', ['staging.example.org'], []])
     assert.throws(() => assertReleaseMode({ git: { deploymentEnabled: false }, alias }));
+});
+
+
+test('Vercel installs the same frozen npm dependency tree as CI', () => {
+  const config = JSON.parse(readFileSync(join(__dirname, '../../vercel.json'), 'utf8'));
+  assert.equal(config.installCommand, 'npm ci');
+  assert.ok(readFileSync(join(__dirname, '../../package-lock.json'), 'utf8'));
+});
+
+test('a failed CLI wait can continue only for a verified READY candidate', async () => {
+  const { run, calls } = fake({ inspectFailure: true });
+  await publish(env, run, async () => {});
+  assert.equal(promotions(calls).length, 1);
+});
+
+test('failed build diagnostics identify the deployment and state without raw logs', async () => {
+  const { run, calls } = fake({ buildFailure: true });
+  await assert.rejects(prepare(env, run, async () => {}), /ERROR; dpl_candidate/);
+  assert.equal(promotions(calls).length, 0);
+});
+
+
+test('Vercel credentials stay before the curl passthrough delimiter', async () => {
+  const { run, calls } = fake();
+  await publish(env, run, async () => {});
+  const probes = calls.filter(([, args]) => args[0] === 'curl');
+  assert.ok(probes.length > 0);
+  for (const [, args] of probes) {
+    const delimiter = args.indexOf('--');
+    assert.ok(delimiter > args.indexOf('--scope'));
+    assert.ok(delimiter > args.indexOf('--token'));
+    assert.ok(!args.slice(delimiter + 1).includes(env.VERCEL_TOKEN));
+    assert.ok(args.slice(delimiter + 1).includes('--fail'));
+  }
 });
