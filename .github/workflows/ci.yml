@@ -75,7 +75,11 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-      - run: npm ci
+      - name: Install locked build dependencies under production settings
+        run: npm ci --include=dev
+        env:
+          NODE_ENV: production
+          NPM_CONFIG_OMIT: dev
       - run: npm run build
 
   test:
