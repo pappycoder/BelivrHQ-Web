@@ -129,7 +129,18 @@ async function prepare(env, runner = spawnSync, wait = delay) {
   if ((wrapped ? deployed.status !== 'ok' : Object.hasOwn(deployed, 'status')) ||
       deployed.error || candidate?.error || candidate?.aliasError || !/^dpl_[a-zA-Z0-9]+$/.test(candidate?.id || ''))
     throw new ReleaseError('Vercel did not return a valid candidate.');
-  vc(['inspect', candidate.id, '--wait', '--timeout', '10m']);
+  try {
+    vc(['inspect', candidate.id, '--wait', '--timeout', '10m']);
+  } catch {
+    // Distinguish a failed build from a CLI wait failure without exposing logs.
+    const info = JSON.parse(vc(['api', `/v13/deployments/${candidate.id}`]));
+    if (info.readyState !== 'READY') {
+      const state = ['ERROR', 'CANCELED', 'BUILDING', 'QUEUED', 'INITIALIZING'].includes(info.readyState)
+        ? info.readyState : 'UNKNOWN';
+      throw new ReleaseError(`Candidate did not become ready (${state}; ${candidate.id}). Check its Vercel build logs; promotion refused.`);
+    }
+    // READY still has to pass every identity and application readiness check below.
+  }
   inspectCandidate(env, candidate.id, vc);
   await checkReadiness(env, candidate.id, vc, wait);
   return { commit: env.GITHUB_SHA, profile: env.RELEASE_PROFILE || 'primary', projectId: env.VERCEL_PROJECT_ID, orgId: env.VERCEL_ORG_ID, deployment: candidate.id, domain: target.domain };
