@@ -36,7 +36,7 @@
     "env:vercel:push:production": "node scripts/vercel-env.cjs production --apply",
     "env:vercel:sync-backend": "node scripts/vercel-env.cjs sync-backend",
     "env:test": "node --test test/env/*.test.cjs",
-    "release:test": "node --test test/ops/release-gate.test.cjs test/ops/workflow-policy.test.cjs",
+    "release:test": "node --test test/ops/release-gate.test.cjs test/ops/workflow-policy.test.cjs test/ops/ci-pull-requests.test.cjs",
     "security:audit": "node scripts/security-audit.cjs",
     "security:test": "node --test test/ops/audit-policy.test.cjs"
   },

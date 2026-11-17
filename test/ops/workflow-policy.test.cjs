@@ -8,7 +8,7 @@ const release = workflow.jobs.prepare;
 test('every validation is required and failures, cancellation or skips block deployment', () => {
   const checks = workflow.jobs.checks;
   assert.equal(checks.if, 'always()');
-  const validations = Object.keys(workflow.jobs).filter((name) => !['checks', 'prepare', 'promote'].includes(name));
+  const validations = Object.keys(workflow.jobs).filter((name) => !['checks', 'prepare', 'promote', 'pull-requests'].includes(name));
   assert.deepEqual([...checks.needs].sort(), validations.sort());
   assert.equal(release.needs, 'checks');
   const command = checks.steps[0].run;
