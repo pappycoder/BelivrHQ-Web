@@ -1,4 +1,5 @@
 "use client";
+import { LoadingState } from "@/components/shared/loading-state";
 
 import { ValidatedForm } from "@/components/ui/validated-form";
 
@@ -285,7 +286,7 @@ export default function EventCheckInPage() {
         {tab === "roster" ? (
           <div className="paper-card rounded-2xl">
 
-            {registrations.isError ? <div role="alert" className="p-4 text-sm">The roster could not be loaded. <Button type="button" variant="outline" onClick={() => registrations.refetch()}>Retry roster</Button></div> : registrations.isLoading ? <p role="status" className="p-4 text-sm">Loading roster…</p> : (
+            {registrations.isError ? <div role="alert" className="p-4 text-sm">The roster could not be loaded. <Button type="button" variant="outline" onClick={() => registrations.refetch()}>Retry roster</Button></div> : registrations.isLoading ? <LoadingState label="Loading roster" variant="table" rows={4} /> : (
               <AttendanceRosterTable
                 rows={rows.map(reg => ({ id: reg.memberId, name: reg.memberName ?? reg.memberId, detail: `${reg.tierName ? `${reg.tierName} · ` : ""}×${reg.quantity}${reg.ticketCode ? ` · ${reg.ticketCode}` : ""}`, recorded: reg.checkedIn, status: "Awaiting" }))}
                 selected={selected}

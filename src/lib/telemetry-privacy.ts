@@ -1,21 +1,44 @@
 import type { Event } from "@sentry/nextjs";
 
+function observationText(value: string): string {
+  return value.split(/[?#]/)[0]
+    .replace(/(https?:\/\/)[^/@\s]+@/gi, "$1[redacted]@")
+    .replace(/((?:forms|intake|register)\/public\/)[^/\s]+/gi, "$1[redacted]");
+}
+
 /** Apply the same request-data policy to browser, server and edge telemetry. */
 export function redactTelemetry<T extends Event>(event: T): T {
   if (event.request) {
-    delete event.request.cookies;
-    delete event.request.data;
-    delete event.request.headers;
-    delete event.request.query_string;
-    if (event.request.url) event.request.url = event.request.url.split("?")[0];
+    event.request = {
+      method: event.request.method,
+      url: event.request.url ? observationText(event.request.url) : undefined,
+    };
   }
+  // The SDK places this separately in the envelope header after event hooks run.
+  const sampling = event.sdkProcessingMetadata?.dynamicSamplingContext;
+  if (sampling?.transaction) sampling.transaction = observationText(sampling.transaction);
   if (event.user) event.user = { id: event.user.id };
   delete event.extra;
-  if (event.transaction) event.transaction = event.transaction.split("?")[0];
-  event.breadcrumbs = event.breadcrumbs?.filter((entry) => !entry.category?.startsWith("ui.") && !/auth|forms\/public/.test(String(entry.data?.url ?? ""))).map((entry) => ({ ...entry, data: entry.data?.url ? { url: String(entry.data.url).split("?")[0] } : undefined }));
+  if (event.contexts) delete event.contexts.request;
+  if (event.contexts?.trace) event.contexts.trace.data = {};
+  if (event.message) event.message = "Application event (details omitted)";
+  if (event.transaction) event.transaction = observationText(event.transaction);
+  for (const [key, value] of Object.entries(event.tags ?? {})) {
+    if (typeof value === "string" && /url|path|transaction/i.test(key))
+      event.tags![key] = observationText(value);
+  }
+  for (const value of event.exception?.values ?? []) {
+    value.value = "Exception details omitted";
+    if (value.mechanism) delete value.mechanism.data;
+    for (const frame of value.stacktrace?.frames ?? []) delete frame.vars;
+  }
+  event.breadcrumbs = event.breadcrumbs?.filter((entry) => !entry.category?.startsWith("ui.")).map((entry) => ({
+    timestamp: entry.timestamp, type: entry.type, category: entry.category, level: entry.level,
+    data: entry.data?.url ? { url: observationText(String(entry.data.url)) } : undefined,
+  }));
   for (const span of event.spans ?? []) {
     span.data = {};
-    if (span.description) span.description = span.description.split("?")[0];
+    if (span.description) span.description = span.op?.startsWith("db") ? "Database operation" : observationText(span.description);
   }
   return event;
 }

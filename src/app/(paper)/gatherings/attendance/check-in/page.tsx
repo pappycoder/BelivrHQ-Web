@@ -1,6 +1,7 @@
 "use client";
 
 import { ValidatedForm } from "@/components/ui/validated-form";
+import { LoadingState } from "@/components/shared/loading-state";
 
 import * as React from "react";
 import Link from "next/link";
@@ -467,9 +468,7 @@ export default function AttendanceCheckInPage() {
                       </Button>
                     </div>
                   ) : roster.isLoading ? (
-                    <p role="status" className="p-4 text-sm">
-                      Loading roster…
-                    </p>
+                    <LoadingState label="Loading roster" variant="table" rows={4} />
                   ) : (
                     <AttendanceRosterTable
                       rows={people.map((member) => ({
@@ -675,9 +674,7 @@ export default function AttendanceCheckInPage() {
                         Arrivals could not be loaded. Refresh to try again.
                       </p>
                     ) : recent.isLoading ? (
-                      <p role="status" className="p-4 text-sm text-ink-muted">
-                        Loading arrivals…
-                      </p>
+                      <LoadingState label="Loading arrivals" variant="table" rows={3} />
                     ) : !recent.data?.data?.length ? (
                       <p className="px-4 py-8 text-center text-sm text-ink-faint">
                         The first one through the door starts the list.

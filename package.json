@@ -35,7 +35,10 @@
     "env:vercel:push:preview": "node scripts/vercel-env.cjs preview --apply",
     "env:vercel:push:production": "node scripts/vercel-env.cjs production --apply",
     "env:vercel:sync-backend": "node scripts/vercel-env.cjs sync-backend",
-    "env:test": "node --test test/env/*.test.cjs"
+    "env:test": "node --test test/env/*.test.cjs",
+    "release:test": "node --test test/ops/release-gate.test.cjs test/ops/workflow-policy.test.cjs",
+    "security:audit": "node scripts/security-audit.cjs",
+    "security:test": "node --test test/ops/audit-policy.test.cjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -89,7 +92,8 @@
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "typescript": "^5",
-    "vitest": "^4.1.12"
+    "vitest": "^4.1.12",
+    "js-yaml": "^4.3.2"
   },
   "overrides": {
     "proxy-addr": "^2.0.8",

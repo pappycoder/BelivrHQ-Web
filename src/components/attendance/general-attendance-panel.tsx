@@ -517,9 +517,7 @@ export function GeneralAttendancePanel({
           )}
         </div>
         {lookingUp && (
-          <p role="status" className="text-sm text-ink-muted">
-            Checking saved attendance for this date…
-          </p>
+          <LoadingState label="Checking saved attendance for this date" variant="inline" />
         )}
         {lookupFailed && (
           <div

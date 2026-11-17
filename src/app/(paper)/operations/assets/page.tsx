@@ -2,7 +2,7 @@
 
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
-import Link from "next/link";
+import { PermissionLink } from "@/components/shared/permission-link";
 import { useRouter } from "next/navigation";
 import { Archive, ArchiveRestore, ArrowUpRight, Boxes, Download, Plus, QrCode } from "lucide-react";
 import { api } from "@/lib/api";
@@ -227,9 +227,9 @@ export default function AssetsPage() {
       )}
 
       <div className="flex flex-wrap gap-4 text-sm">
-        <Link href="/operations/assets/categories" className="flex items-center gap-1.5 text-brand hover:underline"><Boxes className="size-3" /> Categories</Link>
-        <Link href="/operations/assets/maintenance" className="text-brand hover:underline">Maintenance schedule</Link>
-        <Link href="/operations/assets/loans" className="text-brand hover:underline">Loans &amp; checkouts</Link>
+        <PermissionLink href="/operations/assets/categories" className="flex items-center gap-1.5 text-brand hover:underline"><Boxes className="size-3" /> Categories</PermissionLink>
+        <PermissionLink href="/operations/assets/maintenance" className="text-brand hover:underline">Maintenance schedule</PermissionLink>
+        <PermissionLink href="/operations/assets/loans" className="text-brand hover:underline">Loans &amp; checkouts</PermissionLink>
         <Download className="ml-auto size-3 self-center text-ink-faint" />
       </div>
 

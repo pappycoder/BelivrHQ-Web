@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
+import { PermissionLink } from "@/components/shared/permission-link";
 import { useQuery } from "@tanstack/react-query";
 import { Inbox } from "lucide-react";
 import { PageHeader } from "@/components/paper/section";
@@ -24,10 +24,11 @@ import { fetchAllPages, listUrl } from "@/lib/export-all";
 export default function FormsSubmissionsPage() {
   const { can, ready } = usePermissions();
   const canList = ready && can("forms:list", "read");
+  const canPick = canList || (ready && can("forms:submissions", "read"));
   const [formId, setFormId] = React.useState("");
   const forms = useQuery({
     queryKey: ["forms-list", "submission-picker"],
-    enabled: canList,
+    enabled: canPick,
     queryFn: () =>
       fetchAllPages<Form>((page) =>
         api.get<PaginatedResponse<Form>>(
@@ -43,7 +44,7 @@ export default function FormsSubmissionsPage() {
         title="Every answer, one inbox."
         description="Choose a form to search, review and export its submissions."
       />
-      {!canList && ready ? (
+      {!canPick && ready ? (
         <EmptyState
           icon={<Inbox />}
           title="Form directory access is required"
@@ -81,19 +82,19 @@ export default function FormsSubmissionsPage() {
             </SelectContent>
           </Select>
           {selected && (
-            <Link
+            <PermissionLink
               href={`/library/forms/${selected.id}`}
               className="text-sm text-brand hover:underline"
             >
               Form details →
-            </Link>
+            </PermissionLink>
           )}
         </div>
       )}
       {selected ? (
         <SubmissionsRegister key={selected.id} form={selected} />
       ) : (
-        canList &&
+        canPick &&
         !forms.isError &&
         !forms.isLoading && (
           <EmptyState
