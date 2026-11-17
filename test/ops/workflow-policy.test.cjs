@@ -52,3 +52,20 @@ test('deployment credentials are limited to the release commands', () => {
   assert.ok(preflight.env.VERCEL_TOKEN);
   for (const step of release.steps) if (step.run?.includes('npm ')) assert.equal(step.env?.VERCEL_TOKEN, undefined);
 });
+
+test('release preparation checks out the immutable commit for detached Preview candidates', () => {
+  const workflow = yaml.load(fs.readFileSync('.github/workflows/ci.yml', 'utf8'));
+  const checkout = workflow.jobs.prepare.steps.find((step) => step.uses?.startsWith('actions/checkout@'));
+  assert.equal(checkout.with.ref, '${{ github.sha }}');
+});
+
+
+test('build installation includes development tools despite production defaults', () => {
+  const config = JSON.parse(fs.readFileSync('vercel.json', 'utf8'));
+  const steps = workflow.jobs['build'].steps;
+  const install = steps.find((step) => step.run === config.installCommand);
+  assert.ok(install, 'CI must exercise the exact Vercel install command');
+  assert.equal(install.env.NODE_ENV, 'production');
+  assert.equal(install.env.NPM_CONFIG_OMIT, 'dev');
+  assert.ok(steps.findIndex((step) => step.run === config.buildCommand) > steps.indexOf(install));
+});
