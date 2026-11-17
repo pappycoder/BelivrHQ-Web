@@ -14,4 +14,13 @@ Production and staging GitHub environments need VERCEL_PROJECT_ID/VERCEL_ORG_ID 
 
 Validation: 687 unit tests, 18 compiled Chromium checks, production build/types, lint, 23 release/workflow regressions and three audit-policy regressions pass. Fixed separately surfaced UI issues: asset/giving links obey destination permissions; ticket-tier create/update/delete controls use their distinct backend grants; submission-only readers can use the existing authorized form lookup without unrelated directory access. Browser tests use current routes and prevent external network traffic.
 
-No application deployment or main/staging merge was performed. The backend still fails its unchanged coverage gate and its hosted recovery/operational verification remains incomplete. See the backend companion `docs/BACKEND-RELEASE.md` and `docs/PROJECT-SECURITY-AUDIT-2026-11-16.md` for rollout boundaries. Workers remain on hold.
+No application deployment or main/staging merge was performed. The backend now passes its unchanged coverage gate; hosted recovery/operational assurance remains incomplete. See the backend companion `docs/BACKEND-RELEASE.md` and `docs/PROJECT-SECURITY-AUDIT-2026-11-16.md` for rollout boundaries. Workers remain on hold.
+
+
+## Preview CLI compatibility — 2026-11-17
+
+Vercel CLI 65.9.0 accepts `--skip-domain` only for Production. Preparation retains that flag for Production and uses the exact checked SHA in a detached checkout for Preview. The pinned CLI reports that snapshot's Git branch as `HEAD`, so it cannot claim the canonical domain bound to `staging`.
+
+Before any migration or upload, Preview preflight verifies the detached checkout, the canonical staging domain's branch binding, absence of a domain bound to `HEAD`, and standard Preview variables without branch overrides. Both primary projects were checked read-only and satisfy this configuration. The checks run again immediately before upload. Explicit aliases or branch-metadata overrides in `vercel.json` are refused. Standard Preview variables supply the candidate; branch-specific overrides require a separate reviewed release design.
+
+Candidate identity, target, checked SHA, readiness and the separate domain-promotion phase remain required. Error output identifies the command phase and exit status without printing CLI output, tokens or environment values. Actual pinned-CLI dry runs from a disposable detached checkout reproduced the old flag failure and accepted the corrected Preview arguments without creating a deployment.
