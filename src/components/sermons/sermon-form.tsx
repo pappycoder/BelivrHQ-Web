@@ -1,5 +1,7 @@
 "use client";
 
+import { FormActions } from "@/components/shared/form-actions";
+
 import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -582,10 +584,10 @@ export function SermonForm({
             </dl>
             {sermon ? <p className="text-sm text-ink-soft">Editing {stage}. Details, audio and video save independently.</p> : <p className="text-sm text-ink-soft">Save the details first, then attach audio and video in the editor.</p>}
           </CreatePreviewCard>
-          <div className="space-y-2">
+          <FormActions>
             {sermon ? editorActions : <Button type="submit" disabled={saving} loading={saving} className="w-full">Create sermon</Button>}
             <Button asChild variant="ghost" className="w-full"><Link href={sermon ? `/library/sermons/${sermon.sermonId}` : "/library/sermons"}>Cancel</Link></Button>
-          </div>
+          </FormActions>
         </CreatePreviewSidebar>}
         {savingMessage && (
           <p role="status" className="text-sm text-muted-foreground">

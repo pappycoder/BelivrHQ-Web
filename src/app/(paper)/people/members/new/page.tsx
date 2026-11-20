@@ -1,5 +1,7 @@
 "use client";
 
+import { FormActions } from "@/components/shared/form-actions";
+
 import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
 
 
@@ -219,12 +221,12 @@ export default function NewMemberPage() {
                 <RhfField name="city" label="City" />
                 <RhfField name="state" label="State" />
                 <div className="new-member-tour-household space-y-1.5 sm:col-span-2">
-                  <FormLabel className="text-sm">Household</FormLabel>
                   <FormField
                     control={form.control}
                     name="familyId"
                     render={({ field }) => (
                       <FormItem>
+                        <FormLabel className="text-sm">Household</FormLabel>
                         <FormControl>
                           <FamilyCombobox
                             value={field.value ?? ""}
@@ -341,7 +343,7 @@ export default function NewMemberPage() {
                 {familyName ? <p className="text-sm text-ink-soft">Household: <span className="font-medium">{familyName}</span></p> : null}
               </div>
             </CreatePreviewCard>
-            <div className="new-member-tour-save mt-3 space-y-2">
+            <FormActions className="new-member-tour-save">
               <Button type="submit" disabled={saving || !canCreate} className="h-10 w-full rounded-lg text-sm">
                 {saving ? <><Loader2 className="mr-2 size-4 animate-spin" /> Adding…</> : "Create member"}
               </Button>
@@ -356,7 +358,7 @@ export default function NewMemberPage() {
               >
                 Cancel
               </Button>
-            </div>
+            </FormActions>
             {!canCreate && ready ? (
               <p className="mt-3 text-center text-xs text-ink-faint">Your role can view the register but not add to it.</p>
             ) : null}

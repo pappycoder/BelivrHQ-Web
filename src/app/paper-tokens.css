@@ -347,7 +347,18 @@
   border-radius: .8rem;
 }
 :root:has([data-paper-root]) [data-form-dialog] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]), textarea, button[role="combobox"], [data-slot="select-trigger"], select:not([aria-hidden="true"])) {
-  min-height: 2.5rem;
   max-width: 100%;
   border-radius: .8rem;
 }
+:root:has([data-paper-root]) [data-form-dialog] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]), button[role="combobox"], [data-slot="select-trigger"], select:not([aria-hidden="true"])) {
+  min-height: 2.5rem;
+}
+
+/* Preview actions use the same dimensions and spacing in create and edit modes. */
+:root:has([data-paper-root]) [data-form-actions] :is(button, a[data-slot="button"]) {
+  height: 2.5rem;
+  min-height: 2.5rem;
+  border-radius: .8rem;
+  margin-block: 0;
+}
+:root:has([data-paper-root]) [data-form-actions] > :is(button, a[data-slot="button"]) { width: 100%; }

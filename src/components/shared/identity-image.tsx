@@ -19,7 +19,7 @@ export function IdentityImage({ src, alt = "", kind = "person", className }: {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img src={image} alt={alt} width={256} height={256}
-      className={cn("size-full object-cover", image === fallback && "bg-sky-50 object-contain p-[8%]", className)}
+      className={cn("size-full object-cover", image === fallback && "bg-sky-50 dark:bg-sky-950/40 object-contain p-[8%]", className)}
       onError={image !== fallback ? () => setFailedUrl(src ?? null) : undefined} />
   );
 }

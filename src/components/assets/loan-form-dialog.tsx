@@ -101,7 +101,7 @@ export function LoanFormDialog({
       expectedReturnDate: values.expectedReturnDate,
       borrowerMemberId: values.borrowerMemberId || undefined,
       borrowedByName: values.borrowedByName?.trim() || undefined,
-      conditionBefore: values.conditionBefore as AssetCondition | undefined,
+      conditionBefore: (values.conditionBefore || undefined) as AssetCondition | undefined,
       notes: values.notes?.trim() || undefined,
     };
     createMutation.mutate(payload as never, {

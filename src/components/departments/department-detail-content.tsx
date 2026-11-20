@@ -1,5 +1,7 @@
 "use client";
 
+import { DialogFooter, DialogClose } from "@/components/ui/dialog";
+
 import { FormSection } from "@/components/shared/form-section";
 
 import { FormDialogContent } from "@/components/shared/form-dialog";
@@ -317,8 +319,13 @@ export function DepartmentDetailContent({
                           </SelectItem>
                         </SelectContent>
                       </Select>
-                      <Button
-                        className="w-full"
+
+                    </div>
+</FormSection>
+<DialogFooter>
+<DialogClose asChild><Button type="button" variant="outline" disabled={addMember.isPending}>Cancel</Button></DialogClose>
+<Button
+                        className=""
                         onClick={handleAdd}
                         disabled={!memberId || addMember.isPending}
                       >
@@ -326,8 +333,7 @@ export function DepartmentDetailContent({
                           ? "Adding..."
                           : "Add to Department"}
                       </Button>
-                    </div>
-</FormSection>
+</DialogFooter>
                   </FormDialogContent>
                 </Dialog>
               ) : undefined

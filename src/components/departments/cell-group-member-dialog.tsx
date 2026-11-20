@@ -1,5 +1,7 @@
 "use client";
 
+import { useId as useFormFieldId } from "react";
+
 import { FormSection } from "@/components/shared/form-section";
 
 import { FormDialogContent } from "@/components/shared/form-dialog";
@@ -43,6 +45,7 @@ export function CellGroupMemberDialog({
   groupName,
   existingMembers,
 }: CellGroupMemberDialogProps) {
+  const formFieldId = useFormFieldId();
   const addMember = useAddCellGroupMember(groupId);
 
   const [memberId, setMemberId] = React.useState("");
@@ -88,8 +91,8 @@ export function CellGroupMemberDialog({
         <FormSection title="Details">
           <div className="space-y-4">
             <RequiredFieldsNotice className="col-span-full" />
-            <Label required>Member</Label>
-            <MemberCombobox
+            <Label htmlFor={`${formFieldId}-field-1`} required>Member</Label>
+            <MemberCombobox id={`${formFieldId}-field-1`}
               value={memberId}
               onChange={(id, member) => {
                 setMemberId(id);
@@ -99,9 +102,9 @@ export function CellGroupMemberDialog({
               excludeIds={existingMembers.map((m) => m.memberId)}
               placeholder="Select a member..."
             />
-            <Label required>Role</Label>
+            <Label htmlFor={`${formFieldId}-field-2`} required>Role</Label>
             <Select value={role} onValueChange={setRole}>
-              <SelectTrigger>
+              <SelectTrigger id={`${formFieldId}-field-2`}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

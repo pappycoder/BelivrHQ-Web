@@ -1,5 +1,7 @@
 "use client";
 
+import { FormActions } from "@/components/shared/form-actions";
+
 import { FormDialogContent } from "@/components/shared/form-dialog";
 
 import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
@@ -234,6 +236,8 @@ export function AssetFormDialog({
   };
 
   const pending = createMutation.isPending || updateMutation.isPending;
+
+  const Actions = presentation === "page" ? FormActions : DialogFooter;
 
   const editor = (
     <Form {...form}>
@@ -669,7 +673,7 @@ export function AssetFormDialog({
               </dl>
             </CreatePreviewCard>
           )}
-        <DialogFooter className={presentation === "page" ? "flex-col-reverse gap-2 sm:flex-col-reverse [&>button]:w-full" : "pt-2"}>
+        <Actions className={presentation === "page" ? "flex-col-reverse gap-2 sm:flex-col-reverse [&>button]:w-full" : "pt-2"}>
           <Button
             type="button"
             variant="outline"
@@ -687,7 +691,7 @@ export function AssetFormDialog({
                 ? "Save Changes"
                 : "Register Asset"}
           </Button>
-        </DialogFooter>
+        </Actions>
         </CreatePreviewSidebar>
       </ValidatedForm>
     </Form>

@@ -1,5 +1,9 @@
 "use client";
 
+import { DialogFooter, DialogClose } from "@/components/ui/dialog";
+
+import { useId as useFormFieldId } from "react";
+
 import { FormSection } from "@/components/shared/form-section";
 
 import { FormDialogContent } from "@/components/shared/form-dialog";
@@ -326,6 +330,7 @@ function FundFormDialog({
   onSave: (input: FundInput, existing: GivingCategory | null) => void;
   pending: boolean;
 }) {
+  const formFieldId = useFormFieldId();
   const [form, setForm] = React.useState<FundInput>({
     name: "",
     description: "",
@@ -359,8 +364,8 @@ function FundFormDialog({
           <div className="space-y-3">
             <RequiredFieldsNotice className="col-span-full" />
             <div className="space-y-1.5">
-              <Label required className="text-sm">Category name</Label>
-              <Input
+              <Label htmlFor={`${formFieldId}-field-1`} required className="text-sm">Category name</Label>
+              <Input id={`${formFieldId}-field-1`}
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                 placeholder="Building Fund"
@@ -368,8 +373,8 @@ function FundFormDialog({
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-sm">Purpose (optional)</Label>
-              <Input
+              <Label htmlFor={`${formFieldId}-field-2`} className="text-sm">Purpose (optional)</Label>
+              <Input id={`${formFieldId}-field-2`}
                 value={form.description}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, description: e.target.value }))
@@ -409,8 +414,13 @@ function FundFormDialog({
                 {form.isRecurring ? "on" : "off"}
               </span>
             </button>
-            <Button
-              className="h-10 w-full rounded-lg text-sm"
+
+          </div>
+        </FormSection>
+<DialogFooter>
+<DialogClose asChild><Button type="button" variant="outline" disabled={pending}>Cancel</Button></DialogClose>
+<Button
+              className="h-10 rounded-lg text-sm"
               disabled={!valid || pending}
               onClick={() =>
                 onSave(
@@ -429,8 +439,7 @@ function FundFormDialog({
                   ? "Save category"
                   : "Create category"}
             </Button>
-          </div>
-        </FormSection>
+</DialogFooter>
       </FormDialogContent>
     </Dialog>
   );

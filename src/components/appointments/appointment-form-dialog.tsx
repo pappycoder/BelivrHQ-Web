@@ -344,123 +344,125 @@ export function AppointmentFormDialog({
                 name="whoId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Who (Person / Visitor) *</FormLabel>
-                    <FormControl>
-                      <Tabs
-                        value={whoTab}
-                        onValueChange={(v) => {
-                          setWhoTab(v as "profile" | "visitor" | "new");
-                          if (v === "visitor" && !visitorId) {
-                            pickWhoVisitor("");
-                          }
-                        }}
-                      >
-                        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3">
-                          <TabsTrigger value="profile">Person</TabsTrigger>
-                          <TabsTrigger value="visitor">Visitor</TabsTrigger>
-                          {!isEdit && (
-                            <TabsTrigger value="new">New Visitor</TabsTrigger>
-                          )}
-                        </TabsList>
+                    <FormLabel {...(whoTab === "new" ? { htmlFor: "apmt-new-first" } : {})}>Who (Person / Visitor) *</FormLabel>
+                    <Tabs
+                      value={whoTab}
+                      onValueChange={(v) => {
+                        setWhoTab(v as "profile" | "visitor" | "new");
+                        if (v === "visitor" && !visitorId) {
+                          pickWhoVisitor("");
+                        }
+                      }}
+                    >
+                      <TabsList style={{ height: "auto" }} className={`grid w-full ${isEdit ? "grid-cols-2" : "grid-cols-3"}`}>
+                        <TabsTrigger className="min-w-0 whitespace-normal px-1" value="profile">Person</TabsTrigger>
+                        <TabsTrigger className="min-w-0 whitespace-normal px-1" value="visitor">Visitor</TabsTrigger>
+                        {!isEdit && (
+                          <TabsTrigger className="min-w-0 whitespace-normal px-1" value="new">New Visitor</TabsTrigger>
+                        )}
+                      </TabsList>
 
-                        <TabsContent value="profile" className="pt-3 space-y-2">
+                      <TabsContent value="profile" className="pt-3 space-y-2">
+                        <FormControl>
                           <ContactCombobox
                             kind="who"
                             value={field.value ?? ""}
                             onSelect={pickWhoProfile}
                             placeholder="Search staff or members…"
                           />
-                        </TabsContent>
+                        </FormControl>
+                      </TabsContent>
 
-                        <TabsContent value="visitor" className="pt-3 space-y-2">
+                      <TabsContent value="visitor" className="pt-3 space-y-2">
+                        <FormControl>
                           <VisitorCombobox
                             value={visitorId ?? ""}
                             onChange={(id) => handleVisitorChange(id)}
                             placeholder="Search existing visitors…"
                           />
-                        </TabsContent>
+                        </FormControl>
+                      </TabsContent>
 
-                        {!isEdit && (
-                          <TabsContent value="new" className="pt-3 space-y-3">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <Label htmlFor="apmt-new-first">
-                                  First Name *
-                                </Label>
-                                <Input
-                                  id="apmt-new-first"
-                                  placeholder="First name"
-                                  value={newVisitor.firstName}
-                                  onChange={(e) =>
-                                    setNewVisitor({
-                                      ...newVisitor,
-                                      firstName: e.target.value,
-                                    })
-                                  }
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="apmt-new-last">Last Name</Label>
-                                <Input
-                                  id="apmt-new-last"
-                                  placeholder="Last name"
-                                  value={newVisitor.lastName}
-                                  onChange={(e) =>
-                                    setNewVisitor({
-                                      ...newVisitor,
-                                      lastName: e.target.value,
-                                    })
-                                  }
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="apmt-new-phone">Phone</Label>
-                                <Input
-                                  id="apmt-new-phone"
-                                  placeholder="+234..."
-                                  value={newVisitor.phone}
-                                  onChange={(e) =>
-                                    setNewVisitor({
-                                      ...newVisitor,
-                                      phone: e.target.value,
-                                    })
-                                  }
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="apmt-new-email">Email</Label>
-                                <Input
-                                  id="apmt-new-email"
-                                  type="email"
-                                  placeholder="name@example.com"
-                                  value={newVisitor.email}
-                                  onChange={(e) =>
-                                    setNewVisitor({
-                                      ...newVisitor,
-                                      email: e.target.value,
-                                    })
-                                  }
-                                />
-                              </div>
+                      {!isEdit && (
+                        <TabsContent value="new" className="pt-3 space-y-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="apmt-new-first">
+                                First Name *
+                              </Label>
+                              <Input
+                                id="apmt-new-first"
+                                placeholder="First name"
+                                value={newVisitor.firstName}
+                                onChange={(e) =>
+                                  setNewVisitor({
+                                    ...newVisitor,
+                                    firstName: e.target.value,
+                                  })
+                                }
+                              />
                             </div>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              className="w-full"
-                              onClick={submitNewVisitor}
-                              disabled={createVisitor.isPending}
-                            >
-                              {createVisitor.isPending ? (
-                                <Loader2 className="size-4 animate-spin" />
-                              ) : (
-                                <UserPlus className="size-4" />
-                              )}
-                              Create Visitor &amp; Use
-                            </Button>
-                          </TabsContent>
-                        )}
-                      </Tabs>
-                    </FormControl>
+                            <div className="space-y-2">
+                              <Label htmlFor="apmt-new-last">Last Name</Label>
+                              <Input
+                                id="apmt-new-last"
+                                placeholder="Last name"
+                                value={newVisitor.lastName}
+                                onChange={(e) =>
+                                  setNewVisitor({
+                                    ...newVisitor,
+                                    lastName: e.target.value,
+                                  })
+                                }
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="apmt-new-phone">Phone</Label>
+                              <Input
+                                id="apmt-new-phone"
+                                placeholder="+234..."
+                                value={newVisitor.phone}
+                                onChange={(e) =>
+                                  setNewVisitor({
+                                    ...newVisitor,
+                                    phone: e.target.value,
+                                  })
+                                }
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="apmt-new-email">Email</Label>
+                              <Input
+                                id="apmt-new-email"
+                                type="email"
+                                placeholder="name@example.com"
+                                value={newVisitor.email}
+                                onChange={(e) =>
+                                  setNewVisitor({
+                                    ...newVisitor,
+                                    email: e.target.value,
+                                  })
+                                }
+                              />
+                            </div>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="w-full"
+                            onClick={submitNewVisitor}
+                            disabled={createVisitor.isPending}
+                          >
+                            {createVisitor.isPending ? (
+                              <Loader2 className="size-4 animate-spin" />
+                            ) : (
+                              <UserPlus className="size-4" />
+                            )}
+                            Create Visitor &amp; Use
+                          </Button>
+                        </TabsContent>
+                      )}
+                    </Tabs>
                     <FormMessage />
                   </FormItem>
                 )}

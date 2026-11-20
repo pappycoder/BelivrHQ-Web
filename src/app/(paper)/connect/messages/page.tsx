@@ -1,5 +1,9 @@
 "use client";
 
+import { DialogFooter, DialogClose } from "@/components/ui/dialog";
+
+import { useId as useFormFieldId } from "react";
+
 import { FormSection } from "@/components/shared/form-section";
 
 import { FormDialogContent } from "@/components/shared/form-dialog";
@@ -58,6 +62,7 @@ function stamp(value: string) {
 }
 
 export default function MessagesPage() {
+  const formFieldId = useFormFieldId();
   const { can, ready } = usePermissions();
   // Outbound sends ride the `whatsapp` resource (SMS + WhatsApp share it);
   // a "messages" resource was never in the permission catalog.
@@ -186,20 +191,24 @@ export default function MessagesPage() {
           <ValidatedForm onSubmit={submit} className="space-y-4">
             <FormSection title="Details">
               <div className="space-y-1.5">
-                <Label required className="text-sm">To (phone)</Label>
-                <Input required value={draft.to} onChange={(e) => setDraft((d) => ({ ...d, to: e.target.value }))} placeholder="+1 415 555 0100" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Label htmlFor={`${formFieldId}-field-1`} required className="text-sm">To (phone)</Label>
+                <Input id={`${formFieldId}-field-1`} required value={draft.to} onChange={(e) => setDraft((d) => ({ ...d, to: e.target.value }))} placeholder="+1 415 555 0100" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label required className="text-sm">Message</Label>
-                <Textarea required rows={4} value={draft.text} onChange={(e) => setDraft((d) => ({ ...d, text: e.target.value }))} placeholder="Warm, short, and worth a reply…" className="resize-none rounded-lg border-line bg-background text-sm shadow-none" />
+                <Label htmlFor={`${formFieldId}-field-2`} required className="text-sm">Message</Label>
+                <Textarea id={`${formFieldId}-field-2`} required rows={4} value={draft.text} onChange={(e) => setDraft((d) => ({ ...d, text: e.target.value }))} placeholder="Warm, short, and worth a reply…" className="resize-none rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
-              <Button type="submit" disabled={send.isPending} className="h-10 w-full gap-2 rounded-lg text-sm">
-                <Send className="size-4" /> {send.isPending ? "Sending…" : "Send message"}
-              </Button>
+
               <p className="text-center text-xs text-ink-faint">
                 From addresses are managed on {MESSAGE_CHANNELS.join(", ")} in Settings → Integrations.
               </p>
             </FormSection>
+<DialogFooter>
+<DialogClose asChild><Button type="button" variant="outline" disabled={send.isPending}>Cancel</Button></DialogClose>
+<Button type="submit" disabled={send.isPending} className="h-10 gap-2 rounded-lg text-sm">
+                <Send className="size-4" /> {send.isPending ? "Sending…" : "Send message"}
+              </Button>
+</DialogFooter>
           </ValidatedForm>
         </FormDialogContent>
       </Dialog>

@@ -1,5 +1,9 @@
 "use client";
 
+import { DialogFooter, DialogClose } from "@/components/ui/dialog";
+
+import { useId as useFormFieldId } from "react";
+
 import { FormSection } from "@/components/shared/form-section";
 
 import { FormDialogContent } from "@/components/shared/form-dialog";
@@ -87,7 +91,7 @@ function TiersInner() {
         <select
           value={eventId}
           onChange={(e) => { setEventId(e.target.value); router.replace(`/gatherings/events/tiers${e.target.value ? `?event=${e.target.value}` : ""}`); }}
-          className="h-9 rounded-full border border-line bg-card px-3 text-sm outline-none"
+          className="h-9 w-full min-w-0 max-w-full rounded-full border border-line bg-card px-3 text-sm outline-none sm:w-auto"
           aria-label="Event selector"
         >
           <option value="">Choose an event…</option>
@@ -104,7 +108,7 @@ function TiersInner() {
       </div>
 
       {!eventId ? (
-        <EmptyState icon={<Ticket />} title="Pick an event to manage its tickets" description="Tiers, capacity and every issued pass sit on one honest screen." />
+        <EmptyState icon={<Ticket />} title="Pick an event to manage its tickets" description="Tiers, capacity and every issued ticket sit on one honest screen." />
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -137,6 +141,10 @@ function TiersInner() {
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-sm font-semibold">{tier.name}</span>
                         <span className="block truncate text-xs text-ink-faint">{tier.description || "No description"}</span>
+                        <span className="mt-1 flex flex-wrap gap-x-2 text-xs text-ink-soft md:hidden">
+                          <span className="num font-semibold sm:hidden">{formatNaira(tier.price)}</span>
+                          <span>{tier.capacity != null ? `${number(tier.capacity)} seats` : "Uncapped seats"}</span>
+                        </span>
                       </span>
                       <span className="num hidden w-24 text-right text-sm font-semibold sm:block">{formatNaira(tier.price)}</span>
                       <span className="num hidden w-28 text-right text-sm text-ink-soft md:block">
@@ -167,7 +175,7 @@ function TiersInner() {
           </SectionCard>
 
           <SectionCard
-            eyebrow="Issued passes"
+            eyebrow="Issued tickets"
             title="Recent tickets"
             actions={
               <div className="flex items-center gap-2">
@@ -192,7 +200,7 @@ function TiersInner() {
                       <Tag tone={t.usedAt ? "moss" : "neutral"} dot>{t.usedAt ? "used" : "open"}</Tag>
                     </div>
                   ))}
-                {!ticketRows.length ? <p className="px-5 py-8 text-center text-sm text-ink-faint">No passes issued for this event yet.</p> : null}
+                {!ticketRows.length ? <p className="px-5 py-8 text-center text-sm text-ink-faint">No tickets issued for this event yet.</p> : null}
               </div>
             )}
             <div className="border-t border-line px-5 py-2.5 text-xs text-ink-faint">
@@ -252,6 +260,7 @@ function TierFormDialog({
   onSave: (values: TierValues, existing: EventTicketTier | null) => void;
   pending: boolean;
 }) {
+  const formFieldId = useFormFieldId();
   const [form, setForm] = React.useState({ name: "", price: "", capacity: "", description: "" });
 
   React.useEffect(() => {
@@ -276,25 +285,30 @@ function TierFormDialog({
           <div className="space-y-3">
             <RequiredFieldsNotice className="col-span-full" />
             <div className="space-y-1.5">
-              <Label required className="text-sm">Tier name</Label>
-              <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Standard" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              <Label htmlFor={`${formFieldId}-field-1`} required className="text-sm">Tier name</Label>
+              <Input id={`${formFieldId}-field-1`} value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Standard" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label required className="text-sm">Price (₦)</Label>
-                <Input inputMode="numeric" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value.replace(/[^\d]/g, "") }))} placeholder="5000" className="num h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Label htmlFor={`${formFieldId}-field-2`} required className="text-sm">Price (₦)</Label>
+                <Input id={`${formFieldId}-field-2`} inputMode="numeric" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value.replace(/[^\d]/g, "") }))} placeholder="5000" className="num h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm">Capacity (optional)</Label>
-                <Input inputMode="numeric" value={form.capacity} onChange={(e) => setForm((f) => ({ ...f, capacity: e.target.value.replace(/[^\d]/g, "") }))} placeholder="100" className="num h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Label htmlFor={`${formFieldId}-field-3`} className="text-sm">Capacity (optional)</Label>
+                <Input id={`${formFieldId}-field-3`} inputMode="numeric" value={form.capacity} onChange={(e) => setForm((f) => ({ ...f, capacity: e.target.value.replace(/[^\d]/g, "") }))} placeholder="100" className="num h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-sm">Note (optional)</Label>
-              <Input value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="What the ticket covers" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              <Label htmlFor={`${formFieldId}-field-4`} className="text-sm">Note (optional)</Label>
+              <Input id={`${formFieldId}-field-4`} value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="What the ticket covers" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
-            <Button
-              className="h-10 w-full rounded-lg text-sm"
+
+          </div>
+        </FormSection>
+<DialogFooter>
+<DialogClose asChild><Button type="button" variant="outline" disabled={pending}>Cancel</Button></DialogClose>
+<Button
+              className="h-10 rounded-lg text-sm"
               disabled={!valid || pending}
               onClick={() => onSave(
                 {
@@ -308,8 +322,7 @@ function TierFormDialog({
             >
               {pending ? "Saving…" : tier ? "Save tier" : "Create tier"}
             </Button>
-          </div>
-        </FormSection>
+</DialogFooter>
       </FormDialogContent>
     </Dialog>
   );

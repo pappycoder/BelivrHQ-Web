@@ -1,5 +1,7 @@
 "use client";
 
+import { FormActions } from "@/components/shared/form-actions";
+
 import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
 import Link from "next/link";
 
@@ -381,10 +383,10 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
                 {formControl.watch("description") && <div><dt className="rule-label">Description</dt><dd className="mt-1 break-words">{formControl.watch("description")}</dd></div>}
               </dl>
             </CreatePreviewCard>
-            <div className="space-y-2">
+            <FormActions>
               <Button type="submit" form={builderId} disabled={saving} loading={saving} className="w-full">{submitLabel}</Button>
               <Button asChild variant="ghost" className="w-full"><Link href={form ? `/library/forms/${form.id}` : "/library/forms"}>Cancel</Link></Button>
-            </div>
+            </FormActions>
             <details className="min-w-0">
               <summary className="cursor-pointer rounded-xl border border-line bg-card p-3 text-sm font-medium">Preview as a respondent</summary>
             <FormBuilderPreview

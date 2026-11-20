@@ -16,7 +16,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMembersList, useSearchMembers, type Member } from "@/hooks/use-members";
 
-interface MemberComboboxProps {
+interface MemberComboboxProps extends Pick<React.ComponentProps<"button">, "id" | "aria-label" | "aria-labelledby" | "aria-describedby" | "aria-invalid" | "aria-required"> {
   /** Selected member id ("" = none). */
   value: string;
   onChange: (memberId: string, member?: Member) => void;
@@ -37,6 +37,7 @@ export function MemberCombobox({
   excludeIds = [],
   disabled = false,
   branchId,
+  ...accessibilityProps
 }: MemberComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -71,6 +72,7 @@ export function MemberCombobox({
     <Popover open={open && !disabled} onOpenChange={(next) => !disabled && setOpen(next)}>
       <PopoverTrigger asChild>
         <button
+          {...accessibilityProps}
           type="button"
           disabled={disabled}
           className={cn(

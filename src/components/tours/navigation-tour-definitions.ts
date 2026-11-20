@@ -107,16 +107,16 @@ export const NAVIGATION_TOURS: Record<string, NavigationTourDefinition> = {
     steps: [
       step('[aria-label="Event selector"]', "Choose an event", "Choose an event to see its tiers and issued tickets. Review price and capacity before saving a tier; deleting a tier requires confirmation."),
       actions("Use the available ticket actions for this event. Review the event and recipient before confirming any assignment."),
-      records("Read the tiers or issued passes for the selected event. If the view is empty, check the event selector before creating anything.")
+      records("Read the tiers or issued tickets for the selected event. If the view is empty, check the event selector before creating anything.")
     ],
   },
   "/gatherings/events/tickets": {
-    page: "Event passes",
-    introduction: "Review issued passes and assign tickets to the intended event.",
+    page: "Issued tickets",
+    introduction: "Review issued tickets and assign tickets to the intended event.",
     steps: [
-      step('[aria-label="Event selector"]', "Choose an event", "Choose an event first. Check the member, tier and quantity before assigning a pass; printing or viewing a pass does not check the person in."),
+      step('[aria-label="Event selector"]', "Choose an event", "Choose an event first. Check the member, tier and quantity before assigning a ticket; printing or viewing a ticket does not check the person in."),
       actions("Use the available ticket actions for this event. Review the event and recipient before confirming any assignment."),
-      records("Read the tiers or issued passes for the selected event. If the view is empty, check the event selector before creating anything.")
+      records("Read the tiers or issued tickets for the selected event. If the view is empty, check the event selector before creating anything.")
     ],
   },
   "/gatherings/groups": {

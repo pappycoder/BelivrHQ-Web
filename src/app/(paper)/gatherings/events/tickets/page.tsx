@@ -1,5 +1,7 @@
 "use client";
 
+import { DialogFooter, DialogClose } from "@/components/ui/dialog";
+
 import { FormSection } from "@/components/shared/form-section";
 
 import { FormDialogContent } from "@/components/shared/form-dialog";
@@ -64,7 +66,7 @@ function TicketsInner() {
     try {
       await generateTicketPDF(ticket);
     } catch (e) {
-      toast.error("Couldn't build the pass", { description: getToastErrorMessage(e, "Try again shortly.") });
+      toast.error("Couldn't build the ticket", { description: getToastErrorMessage(e, "Try again shortly.") });
     } finally {
       setPdfBusy(null);
     }
@@ -76,7 +78,7 @@ function TicketsInner() {
       { eventId, input: { memberId: assignMember.id, tierId: paidEvent && assignTier ? assignTier : undefined } },
       {
         onSuccess: () => {
-          toast.success(`Pass assigned to ${assignMember.name}.`);
+          toast.success(`Ticket assigned to ${assignMember.name}.`);
           setAssignOpen(false);
           setAssignMember(null);
           setAssignTier("");
@@ -90,7 +92,7 @@ function TicketsInner() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Gatherings · Events"
-        title="Passes in hand."
+        title="Issued tickets."
         description="Assign, print and track tickets to keep event entry running smoothly."
         actions={
           canAssign && eventId ? (
@@ -105,7 +107,7 @@ function TicketsInner() {
 <select
           value={eventId}
           onChange={(e) => { setEventId(e.target.value); setPage(1); router.replace(`/gatherings/events/tickets${e.target.value ? `?event=${e.target.value}` : ""}`); }}
-          className="h-9 rounded-full border border-line bg-card px-3 text-sm outline-none"
+          className="h-9 w-full min-w-0 max-w-full rounded-full border border-line bg-card px-3 text-sm outline-none sm:w-auto"
           aria-label="Event selector"
         >
           <option value="">Choose an event…</option>
@@ -131,7 +133,7 @@ function TicketsInner() {
       {eventId ? (
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <StatCard label="Passes issued" value={total} tone="brand" icon={<Ticket className="size-4" />} />
+            <StatCard label="Tickets issued" value={total} tone="brand" icon={<Ticket className="size-4" />} />
             <StatCard label="Used this page" value={usedCount} tone="moss" deltaLabel={rows.length ? `${Math.round((usedCount / rows.length) * 100)}%` : "Not available"} />
             <StatCard label="Open this page" value={rows.length - usedCount} tone="gold" />
             <StatCard label="Capacity" value={selected?.capacity ?? 0} tone="sky" deltaLabel="event seats" />
@@ -142,7 +144,7 @@ function TicketsInner() {
           ) : rows.length === 0 ? (
             <EmptyState
               icon={<Users />}
-              title="No passes yet"
+              title="No tickets issued yet"
               description={paidEvent ? "Sales appear here automatically; you can also seat someone by hand." : "Free events still track attendance at the desk. Claim happens member-side."}
               action={canAssign ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => setAssignOpen(true)}>Assign the first</Button> : undefined}
             />
@@ -154,7 +156,7 @@ function TicketsInner() {
                 <span>Tier</span>
                 <span>Status</span>
                 <span className="text-right">Issued</span>
-                <span className="text-right">Pass</span>
+                <span className="text-right">Ticket</span>
               </div>
               {rows.map((ticket) => (
                 <div key={ticket.ticketId} className="grid grid-cols-[minmax(0,1.6fr)_1fr_0.8fr_1fr_0.8fr_auto] items-center gap-3 px-5 py-3">
@@ -191,7 +193,7 @@ function TicketsInner() {
                 total={total}
                 onPageChange={setPage}
                 onPerPageChange={setPerPage}
-                itemName="passes"
+                itemName="tickets"
                 pending={tickets.isFetching}
               />
             </ListTable>
@@ -200,8 +202,8 @@ function TicketsInner() {
       ) : (
         <EmptyState
           icon={<Ticket />}
-          title="Choose an event to work its passes"
-          description="Review issued tickets, seat counts and printable A5 event passes."
+          title="Choose an event to review its tickets"
+          description="Review issued tickets, seat counts and printable A5 event tickets."
         />
       )}
 
@@ -209,7 +211,7 @@ function TicketsInner() {
         <FormDialogContent className="rounded-2xl border-line bg-card">
           <DialogHeader>
             <DialogTitle className="font-display">Seat someone by hand</DialogTitle>
-            <DialogDescription className="text-sm">Create a named pass to help attendees get through the queue.</DialogDescription>
+            <DialogDescription className="text-sm">Create a named ticket to help attendees get through the queue.</DialogDescription>
           </DialogHeader>
           <FormSection title="Details">
             <div className="space-y-3">
@@ -230,11 +232,15 @@ function TicketsInner() {
                   </select>
                 </div>
               ) : null}
-              <Button className="h-10 w-full gap-2 rounded-lg text-sm" disabled={!assignMember || createTicket.isPending} onClick={assign}>
-                <UserPlus className="size-4" /> {createTicket.isPending ? "Assigning…" : "Assign pass"}
-              </Button>
+
             </div>
           </FormSection>
+<DialogFooter>
+<DialogClose asChild><Button type="button" variant="outline" disabled={createTicket.isPending}>Cancel</Button></DialogClose>
+<Button className="h-10 gap-2 rounded-lg text-sm" disabled={!assignMember || createTicket.isPending} onClick={assign}>
+                <UserPlus className="size-4" /> {createTicket.isPending ? "Assigning…" : "Assign ticket"}
+              </Button>
+</DialogFooter>
         </FormDialogContent>
       </Dialog>
     </div>

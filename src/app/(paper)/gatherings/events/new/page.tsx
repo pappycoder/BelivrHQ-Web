@@ -1,5 +1,7 @@
 "use client";
 
+import { FormActions } from "@/components/shared/form-actions";
+
 import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
 
 
@@ -282,14 +284,14 @@ export default function NewEventPage() {
                 </p>
               </div>
             </CreatePreviewCard>
-            <div className="space-y-2">
+            <FormActions>
               <Button type="submit" disabled={createEvent.isPending} className="new-event-tour-submit mt-4 h-10 w-full gap-2 rounded-lg text-sm">
                 <CalendarPlus className="size-4" /> {createEvent.isPending ? "Creating…" : "Create event"}
               </Button>
               <Button asChild variant="ghost" className="new-event-tour-cancel mt-2 h-9 w-full rounded-lg text-sm text-ink-soft">
                 <Link href="/gatherings/events">Cancel</Link>
               </Button>
-            </div>
+            </FormActions>
           </CreatePreviewSidebar>
         </ValidatedForm>
       )}

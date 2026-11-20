@@ -1,5 +1,7 @@
 "use client";
 
+import { DialogFooter } from "@/components/ui/dialog";
+
 import { FormSection } from "@/components/shared/form-section";
 
 import { FormDialogContent } from "@/components/shared/form-dialog";
@@ -757,7 +759,11 @@ function ProviderAccounts({
                       {notice}
                     </p>
                   )}
-                  <div className="flex flex-wrap justify-end gap-2">
+
+                </fieldset>
+              </FormSection>
+<fieldset disabled={busy} className="contents">
+<DialogFooter>
                     <Button
                       type="button"
                       variant="outline"
@@ -773,9 +779,9 @@ function ProviderAccounts({
                     >
                       Save provider account
                     </Button>
-                  </div>
-                </fieldset>
-              </FormSection>
+
+</DialogFooter>
+</fieldset>
             </ValidatedForm>
           </FormDialogContent>
         </Dialog>

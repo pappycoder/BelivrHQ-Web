@@ -1,5 +1,9 @@
 "use client";
 
+import { useId as useFormFieldId } from "react";
+
+
+
 import { FormSection } from "@/components/shared/form-section";
 
 import { FormDialogContent } from "@/components/shared/form-dialog";
@@ -305,6 +309,8 @@ const RULE_FIELDS = ["Status", "Branch", "Gender", "Joined", "Last seen", "Givin
 const RULE_OPS = ["is", "is not", "after", "before", "greater than"] as const;
 
 function NewSegmentDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+  const formFieldId = useFormFieldId();
+
   const [name, setName] = React.useState("");
   const [field, setField] = React.useState<(typeof RULE_FIELDS)[number]>("Status");
   const [op, setOp] = React.useState<(typeof RULE_OPS)[number]>("is");
@@ -323,12 +329,12 @@ function NewSegmentDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
         <FormSection title="Details">
           <div className="space-y-3">
             <div className="space-y-1.5">
-              <Label className="text-sm">Name</Label>
-              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Night-shift workers" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              <Label htmlFor={`${formFieldId}-field-1`} className="text-sm">Name</Label>
+              <Input id={`${formFieldId}-field-1`} value={name} onChange={(e) => setName(e.target.value)} placeholder="Night-shift workers" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-sm">First rule</Label>
-              <div className="grid grid-cols-3 gap-2">
+              <Label id={`${formFieldId}-field-2`} className="text-sm">First rule</Label>
+              <div role="group" aria-labelledby={`${formFieldId}-field-2`} className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                 <select value={field} onChange={(e) => setField(e.target.value as typeof field)} className="h-10 rounded-lg border border-line bg-background px-2 text-sm outline-none" aria-label="Rule field">
                   {RULE_FIELDS.map((f) => <option key={f}>{f}</option>)}
                 </select>

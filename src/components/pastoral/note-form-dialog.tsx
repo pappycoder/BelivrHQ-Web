@@ -175,7 +175,7 @@ export function NoteFormDialog({
                   <FormItem>
                     <FormLabel>Member</FormLabel>
                     {isEdit && note ? (
-                      <div className="flex h-10 items-center rounded-md border border-transparent bg-gray-50 px-3 py-2 text-sm">
+                      <div className="flex h-10 items-center rounded-md border border-input bg-muted text-foreground px-3 py-2 text-sm">
                         {note.memberFirstName} {note.memberLastName}
                       </div>
                     ) : (

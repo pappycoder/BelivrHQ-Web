@@ -1,5 +1,7 @@
 "use client";
 
+import { FormActions } from "@/components/shared/form-actions";
+
 import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
 import { RequiredIndicator } from "@/components/ui/required-fields";
 import { ValidatedForm } from "@/components/ui/validated-form";
@@ -300,12 +302,12 @@ export default function EditEventPage({
               <div><dt className="rule-label">Branch</dt><dd className="mt-1 break-words">{branches.data?.data?.find(branch => branch.branchId === form.branchId)?.name || profile?.branch?.name || "Select a branch"}</dd></div>
             </dl>
           </CreatePreviewCard>
-          <div className="space-y-2">
+          <FormActions>
           <Button type="submit" className="h-11 w-full gap-2 rounded-xl text-sm" disabled={updateEvent.isPending}>
             <Save className="size-4" /> {updateEvent.isPending ? "Saving…" : "Save changes"}
           </Button>
           <Button asChild variant="ghost" className="w-full"><Link href={`/gatherings/events/${eventId}`}>Cancel</Link></Button>
-          </div>
+          </FormActions>
         </CreatePreviewSidebar>
       </ValidatedForm>
     </div>

@@ -82,13 +82,13 @@ export function DenominationCombobox({
           id={id}
           aria-expanded={open}
           className={cn(
-            "flex h-10 w-full items-center justify-between rounded-md border bg-background px-3 py-2 text-sm",
-            "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+            "flex h-10 min-w-0 w-full items-center justify-between rounded-md border bg-background px-3 py-2 text-sm",
+            "hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
             "disabled:cursor-not-allowed disabled:opacity-50",
             className,
           )}
         >
-          <span className={cn("truncate", !value && "text-gray-400")}>
+          <span className={cn("truncate", !value && "text-muted-foreground")}>
             {value || placeholder}
           </span>
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

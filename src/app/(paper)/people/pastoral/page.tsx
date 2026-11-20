@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { PermissionLink } from "@/components/shared/permission-link";
 import { HeartHandshake, Lock, PencilLine, Plus, Search } from "lucide-react";
 import { PageHeader, SectionCard } from "@/components/paper/section";
 import { StatCard, Tag } from "@/components/paper/stat";
@@ -197,13 +198,14 @@ export default function PastoralNotesPage() {
             <p className="mb-1 font-display text-sm font-semibold text-ink">A note on notes</p>
             Record what was said, not what you concluded. Pastoral notes outlive the moment. Write the way you&apos;d want your own story written.
           </div>
-          <SectionCard eyebrow="Coming in this wave" title="More of People" bodyClassName="p-3">
-            <ul className="space-y-1.5 text-sm text-ink-soft">
-              <li>· Care calendar &amp; risk radar</li>
-              <li>· Life events &amp; engagement</li>
-              <li>· Visitor follow-up board</li>
+          <SectionCard eyebrow="People workspaces" title="Continue providing care" bodyClassName="p-3">
+            <ul className="space-y-2 text-sm">
+              <li><PermissionLink href="/people/pastoral/care" className="text-brand hover:underline">Care calendar</PermissionLink></li>
+              <li><PermissionLink href="/people/pastoral/life-events" className="text-brand hover:underline">Life events</PermissionLink></li>
+              <li><PermissionLink href="/people/pastoral/risk" className="text-brand hover:underline">Risk radar</PermissionLink></li>
+              <li><PermissionLink href="/people/pastoral/engagement" className="text-brand hover:underline">Engagement</PermissionLink></li>
+              <li><PermissionLink href="/people/visitors/follow-up" className="text-brand hover:underline">Visitor follow-up</PermissionLink></li>
             </ul>
-            <p className="mt-2 text-xs text-ink-faint">The existing pages remain available as these features are updated.</p>
           </SectionCard>
         </aside>
       </div>

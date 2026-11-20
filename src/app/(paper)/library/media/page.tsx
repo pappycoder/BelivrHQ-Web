@@ -1,5 +1,9 @@
 "use client";
 
+import { DialogFooter, DialogClose } from "@/components/ui/dialog";
+
+import { useId as useFormFieldId } from "react";
+
 import { FormSection } from "@/components/shared/form-section";
 
 import { FormDialogContent } from "@/components/shared/form-dialog";
@@ -330,8 +334,12 @@ function MediaInner() {
                 </FilterChip>
               ))}
             </div>
-            <Button
-              className="h-10 w-full rounded-lg text-sm"
+
+          </FormSection>
+<DialogFooter>
+<DialogClose asChild><Button type="button" variant="outline" disabled={updatePerms.isPending}>Cancel</Button></DialogClose>
+<Button
+              className="h-10 rounded-lg text-sm"
               disabled={updatePerms.isPending || !permTarget || permTarget.permissions === permValue}
               onClick={() => {
                 if (!permTarget) return;
@@ -343,7 +351,7 @@ function MediaInner() {
             >
               Save visibility
             </Button>
-          </FormSection>
+</DialogFooter>
         </FormDialogContent>
       </Dialog>
 
@@ -390,6 +398,7 @@ function MediaPreviewBody({ asset }: { asset: MediaAsset }) {
 }
 
 function UploadDialog({ open, onOpenChange, folders }: { open: boolean; onOpenChange: (o: boolean) => void; folders: string[] }) {
+  const formFieldId = useFormFieldId();
   const upload = useUploadMediaFile();
   const [files, setFiles] = React.useState<File[]>([]);
   const [folder, setFolder] = React.useState("uploads");
@@ -461,24 +470,28 @@ function UploadDialog({ open, onOpenChange, folders }: { open: boolean; onOpenCh
             ) : null}
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label className="text-sm">Folder</Label>
-                <select value={folder} onChange={(e) => setFolder(e.target.value)} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
+                <Label htmlFor={`${formFieldId}-field-1`} className="text-sm">Folder</Label>
+                <select id={`${formFieldId}-field-1`} value={folder} onChange={(e) => setFolder(e.target.value)} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                   {Array.from(new Set(["uploads", ...folders])).map((f) => <option key={f} value={f}>{f}</option>)}
                 </select>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm">…or new folder</Label>
-                <Input value={newFolder} onChange={(e) => setNewFolder(e.target.value)} placeholder="Advent 2026" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Label htmlFor={`${formFieldId}-field-2`} className="text-sm">…or new folder</Label>
+                <Input id={`${formFieldId}-field-2`} value={newFolder} onChange={(e) => setNewFolder(e.target.value)} placeholder="Advent 2026" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
             </div>
             <div>
               {upload.isPending ? <p className="num mb-1 text-xs text-ink-faint">{done}/{files.length} uploaded…</p> : null}
-              <Button className="h-10 w-full gap-2 rounded-lg text-sm" onClick={submit} disabled={upload.isPending}>
-                <UploadCloud className="size-4" /> Upload {files.length ? `${files.length} file${files.length === 1 ? "" : "s"}` : ""}
-              </Button>
+
             </div>
           </div>
         </FormSection>
+<DialogFooter>
+<DialogClose asChild><Button type="button" variant="outline" disabled={upload.isPending}>Cancel</Button></DialogClose>
+<Button className="h-10 gap-2 rounded-lg text-sm" onClick={submit} disabled={upload.isPending}>
+                <UploadCloud className="size-4" /> Upload {files.length ? `${files.length} file${files.length === 1 ? "" : "s"}` : ""}
+              </Button>
+</DialogFooter>
       </FormDialogContent>
     </Dialog>
   );

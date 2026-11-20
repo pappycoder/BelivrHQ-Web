@@ -1,5 +1,7 @@
 "use client";
 
+import { useId as useFormFieldId } from "react";
+
 import { FormSection } from "@/components/shared/form-section";
 
 import { FormDialogContent } from "@/components/shared/form-dialog";
@@ -47,6 +49,7 @@ export function ComposeEmailDialog({
   initialBody = "",
   initialRecipients = EMPTY_RECIPIENTS,
 }: ComposeEmailDialogProps) {
+  const formFieldId = useFormFieldId();
   const [selected, setSelected] = React.useState<EmailContact[]>([]);
   const [subject, setSubject] = React.useState("");
   const [body, setBody] = React.useState("");
@@ -115,7 +118,7 @@ export function ComposeEmailDialog({
             <RequiredFieldsNotice className="col-span-full" />
             {/* Recipients */}
             <div className="space-y-2">
-              <Label required>To</Label>
+              <Label htmlFor={`${formFieldId}-field-1`} required>To</Label>
               {selected.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   {selected.map((c) => (
@@ -133,7 +136,7 @@ export function ComposeEmailDialog({
                 </div>
               )}
 
-              <RecipientCombobox
+              <RecipientCombobox id={`${formFieldId}-field-1`}
                 excludeIds={selected.map((s) => s.id)}
                 onToggle={toggleSelect}
                 placeholder="Click to add recipients…"
@@ -156,8 +159,9 @@ export function ComposeEmailDialog({
               <Label required htmlFor="email-body">Message</Label>
               <Textarea
                 id="email-body"
-                rows={4}
-                className="sm:min-h-[160px]"
+                rows={8}
+                className="resize-y"
+                style={{ minHeight: 240, fieldSizing: "fixed" }}
                 placeholder="Write your message…"
                 value={body}
                 onChange={(e) => setBody(e.target.value)}

@@ -132,7 +132,7 @@ export const PAPER_AREAS: PaperArea[] = [
           { title: "Check-in", href: "/gatherings/events/check-in", description: "Kiosk mode", permission: "events:checkin:create", live: true, planPath: "/events/check-in" },
           { title: "Registrations", href: "/gatherings/events/registrations", description: "Who's coming", permission: "events:registrations:read", live: true, planPath: "/events/registrations" },
           { title: "Ticket tiers", href: "/gatherings/events/tiers", description: "Pricing and capacity", permission: "events:tickets:read", live: true, planPath: "/events/management" },
-          { title: "Passes", href: "/gatherings/events/tickets", description: "Assign, print, track", permission: "events:tickets:read", live: true, planPath: "/events/management" },
+          { title: "Issued tickets", href: "/gatherings/events/tickets", description: "Assign, print, track", permission: "events:tickets:read", live: true, planPath: "/events/management" },
         ],
       },
       {

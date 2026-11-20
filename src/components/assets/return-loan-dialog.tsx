@@ -95,7 +95,7 @@ export function ReturnLoanDialog({
   const onSubmit = (values: ReturnFormValues) => {
     const payload = {
       actualReturnDate: values.actualReturnDate,
-      conditionAfter: values.conditionAfter as AssetCondition | undefined,
+      conditionAfter: (values.conditionAfter || undefined) as AssetCondition | undefined,
       notes: values.notes?.trim() || undefined,
     };
     returnMutation.mutate(payload as never, {

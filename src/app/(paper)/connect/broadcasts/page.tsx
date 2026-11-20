@@ -1,5 +1,9 @@
 "use client";
 
+import { DialogFooter, DialogClose } from "@/components/ui/dialog";
+
+import { useId as useFormFieldId } from "react";
+
 import { FormSection } from "@/components/shared/form-section";
 
 import { FormDialogContent } from "@/components/shared/form-dialog";
@@ -82,6 +86,7 @@ interface Draft {
 const BLANK: Draft = { name: "", channel: "whatsapp", templateId: "", audienceStatus: "", audienceBranch: "", audienceGender: "", scheduledAt: "" };
 
 export default function BroadcastsPage() {
+  const formFieldId = useFormFieldId();
   const { can, ready } = usePermissions();
   const { data: profile } = useCurrentProfile();
   const isHq = !!profile?.isAdminHq;
@@ -179,7 +184,7 @@ export default function BroadcastsPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Broadcasts" value={broadcasts.data?.meta?.total ?? rows.length} tone="brand" icon={<Megaphone className="size-4" />} />
         <StatCard label="Recipients on page" value={reach} tone="moss" deltaLabel="from sent sends" />
         <StatCard label="Scheduled on page" value={rows.filter((b) => b.status === "scheduled").length} tone="sky" icon={<CalendarClock className="size-4" />} />
@@ -208,7 +213,7 @@ export default function BroadcastsPage() {
           {rows.map(b => <article key={b.broadcastId} className="paper-card flex flex-col gap-4 rounded-2xl p-5">
             <div className="flex flex-wrap items-center justify-between gap-2"><Tag tone={b.channel === "whatsapp" ? "moss" : b.channel === "sms" ? "sky" : "gold"}>{BROADCAST_CHANNEL_LABELS[b.channel]}</Tag><Tag tone={STATUS_TONES[b.status] ?? "neutral"} dot>{BROADCAST_STATUS_LABELS[b.status]}</Tag></div>
             <div><h2 className="break-words font-display text-lg font-semibold">{b.name}</h2><p className="mt-1 text-sm text-ink-soft">{b.templateName}</p></div>
-            <dl className="grid grid-cols-2 gap-3 text-sm"><div><dt className="text-ink-faint">Recipients</dt><dd className="mt-1 font-semibold num">{b.totalRecipients}</dd></div><div><dt className="text-ink-faint">{b.scheduledAt ? "Scheduled" : "Sent / added"}</dt><dd className="mt-1">{stamp(b.scheduledAt ?? b.sentAt ?? b.createdAt)}</dd></div></dl>
+            <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 text-sm"><div><dt className="text-ink-faint">Recipients</dt><dd className="mt-1 font-semibold num">{b.totalRecipients}</dd></div><div><dt className="text-ink-faint">{b.scheduledAt ? "Scheduled" : "Sent / added"}</dt><dd className="mt-1">{stamp(b.scheduledAt ?? b.sentAt ?? b.createdAt)}</dd></div></dl>
             <div className="mt-auto flex items-center justify-between gap-2 border-t border-line pt-3"><span className="text-sm text-ink-faint">{b.branchName ?? "All branches"}</span>{actionsFor(b, false)}</div>
           </article>)}
         </div>
@@ -264,22 +269,22 @@ export default function BroadcastsPage() {
           </DialogHeader>
           <ValidatedForm onSubmit={submit} className="space-y-4">
             <FormSection title="Details">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label required className="text-sm">Name</Label>
-                  <Input required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="November news" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                  <Label htmlFor={`${formFieldId}-field-1`} required className="text-sm">Name</Label>
+                  <Input id={`${formFieldId}-field-1`} required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="November news" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label required className="text-sm">Channel</Label>
-                  <select required value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as BroadcastChannel, templateId: "" }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
+                  <Label htmlFor={`${formFieldId}-field-2`} required className="text-sm">Channel</Label>
+                  <select id={`${formFieldId}-field-2`} required value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as BroadcastChannel, templateId: "" }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                     {BROADCAST_CHANNELS.map((c) => <option key={c} value={c}>{BROADCAST_CHANNEL_LABELS[c]}</option>)}
                   </select>
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label required className="text-sm">Template ({TEMPLATE_CHANNEL_LABELS[draft.channel as TemplateChannel] ?? draft.channel} · published only)</Label>
+                <Label htmlFor={`${formFieldId}-field-3`} required className="text-sm">Template ({TEMPLATE_CHANNEL_LABELS[draft.channel as TemplateChannel] ?? draft.channel} · published only)</Label>
                 {channelTemplates.length ? (
-                  <select required value={draft.templateId} onChange={(e) => setDraft((d) => ({ ...d, templateId: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
+                  <select id={`${formFieldId}-field-3`} required value={draft.templateId} onChange={(e) => setDraft((d) => ({ ...d, templateId: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                     <option value="">Choose a template…</option>
                     {channelTemplates.map((t) => <option key={t.templateId} value={t.templateId}>{t.name}</option>)}
                   </select>
@@ -290,24 +295,24 @@ export default function BroadcastsPage() {
                   </p>
                 )}
               </div>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-3">
                 <div className="space-y-1.5">
-                  <Label className="text-sm">Audience</Label>
-                  <select value={draft.audienceStatus} onChange={(e) => setDraft((d) => ({ ...d, audienceStatus: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
+                  <Label htmlFor={`${formFieldId}-field-4`} className="text-sm">Audience</Label>
+                  <select id={`${formFieldId}-field-4`} value={draft.audienceStatus} onChange={(e) => setDraft((d) => ({ ...d, audienceStatus: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                     <option value="">Everyone</option>
                     {Object.entries(MEMBER_STATUS_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <Label required className="text-sm">Branch</Label>
-                  <select required disabled={!isHq} value={draft.audienceBranch} onChange={(e) => setDraft((d) => ({ ...d, audienceBranch: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none disabled:opacity-50">
+                  <Label htmlFor={`${formFieldId}-field-5`} required className="text-sm">Branch</Label>
+                  <select id={`${formFieldId}-field-5`} required disabled={!isHq} value={draft.audienceBranch} onChange={(e) => setDraft((d) => ({ ...d, audienceBranch: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none disabled:opacity-50">
                     <option value="">Select a branch</option>
                     {(branches.data?.data ?? []).map((b) => <option key={b.branchId} value={b.branchId}>{b.name}</option>)}
                   </select>
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-sm">Gender</Label>
-                  <select value={draft.audienceGender} onChange={(e) => setDraft((d) => ({ ...d, audienceGender: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
+                  <Label htmlFor={`${formFieldId}-field-6`} className="text-sm">Gender</Label>
+                  <select id={`${formFieldId}-field-6`} value={draft.audienceGender} onChange={(e) => setDraft((d) => ({ ...d, audienceGender: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                     <option value="">Any</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -315,14 +320,18 @@ export default function BroadcastsPage() {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm">Send later? (optional)</Label>
-                <Input picker="wheel" type="datetime-local" value={draft.scheduledAt} onChange={(e) => setDraft((d) => ({ ...d, scheduledAt: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Label htmlFor={`${formFieldId}-field-7`} className="text-sm">Send later? (optional)</Label>
+                <Input id={`${formFieldId}-field-7`} picker="wheel" type="datetime-local" value={draft.scheduledAt} onChange={(e) => setDraft((d) => ({ ...d, scheduledAt: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
               <BotProtection path="/broadcasts" authenticated />
-              <Button type="submit" disabled={createBroadcast.isPending || !captchaReady} className="h-10 w-full gap-2 rounded-lg text-sm">
+
+            </FormSection>
+<DialogFooter>
+<DialogClose asChild><Button type="button" variant="outline" disabled={createBroadcast.isPending}>Cancel</Button></DialogClose>
+<Button type="submit" disabled={createBroadcast.isPending || !captchaReady} className="h-10 gap-2 rounded-lg text-sm">
                 <Send className="size-4" /> {createBroadcast.isPending ? "Queueing…" : draft.scheduledAt ? "Schedule broadcast" : "Send now"}
               </Button>
-            </FormSection>
+</DialogFooter>
           </ValidatedForm>
         </FormDialogContent>
       </Dialog>
