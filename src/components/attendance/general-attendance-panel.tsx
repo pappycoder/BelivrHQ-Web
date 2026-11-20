@@ -821,7 +821,7 @@ export function GeneralAttendancePanel({
                   </Label>
                   <Input
                     id={`headcount-filter-${fieldId}-from`}
-                    picker="native"
+                    picker="popover"
                     type="date"
                     value={dateDraft.from}
                     max={dateDraft.to || undefined}
@@ -840,7 +840,7 @@ export function GeneralAttendancePanel({
                   </Label>
                   <Input
                     id={`headcount-filter-${fieldId}-to`}
-                    picker="native"
+                    picker="popover"
                     type="date"
                     value={dateDraft.to}
                     min={dateDraft.from || undefined}

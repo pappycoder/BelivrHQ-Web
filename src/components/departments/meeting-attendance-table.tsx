@@ -189,7 +189,7 @@ export function MeetingAttendanceTable({
           <label className="flex items-center gap-2 text-xs text-ink-faint">
             Meeting date
             <Input
-              picker="native"
+              picker="popover"
               aria-label={`${title} meeting date`}
               type="date"
               value={date}

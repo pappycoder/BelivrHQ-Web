@@ -477,13 +477,13 @@ export default function EventsListPage() {
               <p className="text-sm font-medium">Event date range</p>
               <div className="space-y-2">
                 <Label htmlFor="event-date-from">From date</Label>
-                <Input id="event-date-from" name="fromDate" picker="native" type="date"
+                <Input id="event-date-from" name="fromDate" picker="popover" type="date"
                   value={dateDraft.from} max={dateDraft.to || undefined}
                   onChange={event => setDateDraft(value => ({ ...value, from: event.target.value }))} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="event-date-to">To date</Label>
-                <Input id="event-date-to" name="toDate" picker="native" type="date"
+                <Input id="event-date-to" name="toDate" picker="popover" type="date"
                   value={dateDraft.to} min={dateDraft.from || undefined}
                   aria-invalid={invalidRange || undefined} aria-describedby={invalidRange ? "event-date-error" : undefined}
                   onChange={event => setDateDraft(value => ({ ...value, to: event.target.value }))} />

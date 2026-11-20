@@ -369,13 +369,13 @@ export default function AttendanceRecordsPage() {
               <p className="text-sm font-medium">Attendance date range</p>
               <div className="space-y-2">
                 <Label htmlFor="attendance-date-from">From date</Label>
-                <Input id="attendance-date-from" name="fromDate" picker="native" type="date"
+                <Input id="attendance-date-from" name="fromDate" picker="popover" type="date"
                   value={dateDraft.from} max={dateDraft.to || undefined}
                   onChange={event => setDateDraft(value => ({ ...value, from: event.target.value }))} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="attendance-date-to">To date</Label>
-                <Input id="attendance-date-to" name="toDate" picker="native" type="date"
+                <Input id="attendance-date-to" name="toDate" picker="popover" type="date"
                   value={dateDraft.to} min={dateDraft.from || undefined}
                   aria-invalid={invalidRange || undefined} aria-describedby={invalidRange ? "attendance-date-error" : undefined}
                   onChange={event => setDateDraft(value => ({ ...value, to: event.target.value }))} />

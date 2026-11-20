@@ -1,17 +1,17 @@
 import * as React from "react"
 
-import { WheelPickerInput } from "@/components/ui/wheel-date-time-picker"
+import { FormDateTimeInput } from "@/components/ui/form-date-time-picker"
 
 import { isWheelPickerType } from "@/lib/wheel-date-time"
 
 import { cn } from "@/lib/utils"
 
 type InputProps = React.ComponentProps<"input"> & {
-  /** Form date/time fields opt into wheels; filters and navigation stay native. */
-  picker?: "native" | "wheel"
+  /** Date/time fields share the calendar picker; native controls remain an explicit escape hatch. */
+  picker?: "native" | "calendar" | "wheel" | "popover"
 }
 
-function Input({ className, type, picker = "native", ...props }: InputProps) {
+function Input({ className, type, picker = "calendar", ...props }: InputProps) {
   const input = (
     <input
       type={type}
@@ -25,8 +25,8 @@ function Input({ className, type, picker = "native", ...props }: InputProps) {
       {...props}
     />
   )
-  return picker === "wheel" && isWheelPickerType(type)
-    ? <WheelPickerInput type={type}>{input}</WheelPickerInput>
+  return picker !== "native" && isWheelPickerType(type)
+    ? <FormDateTimeInput type={type} compact={picker === "popover"}>{input}</FormDateTimeInput>
     : input
 }
 
