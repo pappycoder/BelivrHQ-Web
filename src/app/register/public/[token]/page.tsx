@@ -1,5 +1,7 @@
 "use client";
 
+import { retryPage } from "@/lib/retry-page";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 import { useState, type FormEvent } from "react";
 import { useParams } from "next/navigation";
@@ -87,7 +89,7 @@ function Registration({ token }: { token: string }) {
           <p role="alert" className="text-sm leading-6 text-muted-foreground">
             This registration link may be unavailable.
           </p>
-          <Button variant="outline" onClick={() => void form.refetch()}>
+          <Button variant="outline" onClick={() => void retryPage()}>
             Try again
           </Button>
         </div>

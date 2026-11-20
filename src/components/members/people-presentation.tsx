@@ -1,5 +1,7 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
 import * as React from "react";
 import {
   Archive,
@@ -132,8 +134,8 @@ export function PeopleSectionHeading({
   icon?: LucideIcon;
 }) {
   return (
-    <span className="flex items-center gap-2 text-sm font-semibold">
-      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-violet-500/8 text-violet-600 dark:text-violet-300">
+    <span className="flex items-center gap-2 font-display text-lg font-semibold">
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-brand">
         <Icon className="size-3.5" aria-hidden="true" />
       </span>
       {children}
@@ -151,17 +153,7 @@ export function PeopleFormSection({
   icon?: LucideIcon;
   description?: string;
 }) {
-  return (
-    <fieldset className="min-w-0 space-y-4 rounded-xl border border-border/70 p-4">
-      <legend className="px-1">
-        <PeopleSectionHeading icon={icon}>{title}</PeopleSectionHeading>
-      </legend>
-      {description && (
-        <p className="text-sm text-muted-foreground">{description}</p>
-      )}
-      {children}
-    </fieldset>
-  );
+  return <FormSection title={<PeopleSectionHeading icon={icon}>{title}</PeopleSectionHeading>} description={description}>{children}</FormSection>;
 }
 
 export function PeopleMoreFilters({

@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import * as React from "react";
@@ -9,7 +13,6 @@ import { z } from "zod";
 import { toast } from "@/lib/toast";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -108,7 +111,7 @@ export function CategoryFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
+      <FormDialogContent
         onCloseAutoFocus={
           returnFocusRef
             ? (event) => {
@@ -133,36 +136,38 @@ export function CategoryFormDialog({
 
         <Form {...form}>
           <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField required
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Category Name *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g. Sound Equipment" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="e.g. Microphones, mixers, speakers"
-                      rows={2}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormSection title="Category details">
+              <FormField required
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category Name *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. Sound Equipment" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="e.g. Microphones, mixers, speakers"
+                        rows={2}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormSection>
             <DialogFooter className="pt-2">
               <Button
                 type="button"
@@ -182,7 +187,7 @@ export function CategoryFormDialog({
             </DialogFooter>
           </ValidatedForm>
         </Form>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

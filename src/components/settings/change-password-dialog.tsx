@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import { BotProtection } from "@/components/shared/bot-protection";
@@ -22,7 +26,6 @@ import { ActionTooltip } from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -116,7 +119,7 @@ export function ChangePasswordDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <FormDialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <KeyRound className="h-4 w-4" />
@@ -128,60 +131,62 @@ export function ChangePasswordDialog({
         </DialogHeader>
         <Form {...form}>
           <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField required
-              control={form.control}
-              name="currentPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Current Password</FormLabel>
-                  <FormControl>
-                    <PasswordInputField
-                      {...field}
-                      show={showFields.current}
-                      onToggle={() => toggle("current")}
-                      autoComplete="current-password"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField required
-              control={form.control}
-              name="newPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>New Password</FormLabel>
-                  <FormControl>
-                    <PasswordInputField
-                      {...field}
-                      show={showFields.next}
-                      onToggle={() => toggle("next")}
-                      autoComplete="new-password"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField required
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirm New Password</FormLabel>
-                  <FormControl>
-                    <PasswordInputField
-                      {...field}
-                      show={showFields.confirm}
-                      onToggle={() => toggle("confirm")}
-                      autoComplete="new-password"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormSection title="Password details">
+              <FormField required
+                control={form.control}
+                name="currentPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Current Password</FormLabel>
+                    <FormControl>
+                      <PasswordInputField
+                        {...field}
+                        show={showFields.current}
+                        onToggle={() => toggle("current")}
+                        autoComplete="current-password"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField required
+                control={form.control}
+                name="newPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>New Password</FormLabel>
+                    <FormControl>
+                      <PasswordInputField
+                        {...field}
+                        show={showFields.next}
+                        onToggle={() => toggle("next")}
+                        autoComplete="new-password"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField required
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm New Password</FormLabel>
+                    <FormControl>
+                      <PasswordInputField
+                        {...field}
+                        show={showFields.confirm}
+                        onToggle={() => toggle("confirm")}
+                        autoComplete="new-password"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormSection>
             <BotProtection path="/auth/password" method="PUT" authenticated />
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
@@ -193,7 +198,7 @@ export function ChangePasswordDialog({
             </DialogFooter>
           </ValidatedForm>
         </Form>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

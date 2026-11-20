@@ -1,5 +1,7 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import {
@@ -228,60 +230,15 @@ export default function AttendanceRecordsPage() {
         aria-label="Attendance record filters"
         className="space-y-3"
       >
-        <div className="flex flex-wrap items-center gap-2">
-          <SearchField
+        <ListToolbar
+ search={<SearchField
             value={query}
             onChange={setQuery}
             placeholder="Search by name…"
             className="w-full max-w-xs"
-          />
-          <div className="ml-auto flex max-w-full flex-wrap items-center gap-2">
-            <Select
-              value={serviceId}
-              onValueChange={(value) => {
-                setServiceId(value);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger
-                aria-label="Gathering"
-                disabled={services.isLoading || services.isError}
-                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All gatherings</SelectItem>
-                {(services.data?.data ?? []).map((service) => (
-                  <SelectItem key={service.serviceId} value={service.serviceId}>
-                    {service.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select
-              value={category}
-              onValueChange={(value) => {
-                setCategory(value as typeof category);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger
-                aria-label="Attendance category"
-                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All categories</SelectItem>
-                {ATTENDANCE_CATEGORIES.map((item) => (
-                  <SelectItem key={item.value} value={item.value}>
-                    {item.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {isHq && (
+          />}
+ controls={<>
+{isHq && (
               <Select
                 value={branchId}
                 onValueChange={(value) => {
@@ -308,7 +265,7 @@ export default function AttendanceRecordsPage() {
                 </SelectContent>
               </Select>
             )}
-            <Select
+<Select
               value={sortBy}
               onValueChange={(value) => {
                 setSortBy(value as typeof sortBy);
@@ -328,15 +285,61 @@ export default function AttendanceRecordsPage() {
                 <SelectItem value="createdAt">Date added</SelectItem>
               </SelectContent>
             </Select>
-            <SortDirectionToggle
+<SortDirectionToggle
               ascending={sortOrder === "asc"}
               onToggle={() => {
                 setSortOrder((value) => (value === "asc" ? "desc" : "asc"));
                 setPage(1);
               }}
             />
-          </div>
-        </div>
+</>}
+>
+<Select
+              value={serviceId}
+              onValueChange={(value) => {
+                setServiceId(value);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger
+                aria-label="Gathering"
+                disabled={services.isLoading || services.isError}
+                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All gatherings</SelectItem>
+                {(services.data?.data ?? []).map((service) => (
+                  <SelectItem key={service.serviceId} value={service.serviceId}>
+                    {service.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+<Select
+              value={category}
+              onValueChange={(value) => {
+                setCategory(value as typeof category);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger
+                aria-label="Attendance category"
+                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All categories</SelectItem>
+                {ATTENDANCE_CATEGORIES.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+</ListToolbar>
         <div className="flex flex-wrap items-center gap-3">
           <Popover open={dateOpen} onOpenChange={open => {
             if (open) {

@@ -3,7 +3,7 @@
 import { directMediaUpload } from "@/lib/direct-media-upload";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { format } from "date-fns";
+import { formatRecordDate } from "@/lib/record-date";
 import { usePermissions } from "@/hooks/use-permissions";
 import { api } from "@/lib/api";
 
@@ -112,10 +112,7 @@ export function formatBytes(bytes: number): string {
 }
 
 export function formatDate(createdAt: string | undefined): string {
-  if (!createdAt) return "No date";
-  const date = new Date(createdAt);
-  if (Number.isNaN(date.getTime())) return "No date";
-  return format(date, "MMM d, yyyy");
+  return formatRecordDate(createdAt);
 }
 
 // ─── Helpers ─────────────────────────────────────────────

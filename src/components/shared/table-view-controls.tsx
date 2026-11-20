@@ -70,8 +70,8 @@ export function TableViewControls({
           </div>
         </div>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Compact text uses ellipses. Headers stay full size, and number and currency columns keep
-          their width.
+          Compact rows reduce spacing. Compact columns shorten long text; expand columns
+          when you need more room.
         </p>
       </PopoverContent>
     </Popover>

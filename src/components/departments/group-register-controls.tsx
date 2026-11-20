@@ -1,5 +1,7 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import * as React from "react";
 import { ArrowUpDown, LayoutGrid, Rows3 } from "lucide-react";
 import {
@@ -119,12 +121,8 @@ export function GroupRegisterControls({
     </Select>
   );
   return (
-    <div
-      role="group"
-      aria-label={`${kind === "department" ? "Department" : "Cell group"} list filters`}
-      className="flex flex-wrap items-center gap-2"
-    >
-      <SearchField
+    <ListToolbar role="group" aria-label={`${kind === "department" ? "Department" : "Cell group"} list filters`}
+ search={<SearchField
         value={c.search}
         onChange={(value) => {
           c.setSearch(value);
@@ -134,9 +132,9 @@ export function GroupRegisterControls({
           kind === "department" ? "Search departments…" : "Search cell groups…"
         }
         className="w-full max-w-xs"
-      />
-      <div className="ml-auto flex max-w-full flex-wrap items-center gap-2">
-        <FilterChip
+      />}
+ controls={<>
+<FilterChip
           active={archived}
           onClick={() => {
             onArchivedChange(!archived);
@@ -145,12 +143,41 @@ export function GroupRegisterControls({
         >
           Archived
         </FilterChip>
-        {hq &&
+{hq &&
           select("Branch", c.branch, c.setBranch, [
             { value: "all", label: "All branches" },
             ...c.branches,
           ])}
-        {select("Leadership", c.leadership, c.setLeadership, [
+{select(
+          "Sort groups",
+          c.sort,
+          (value) => c.setSort(value as GroupSort),
+          [
+            { value: "name", label: "Name" },
+            { value: "createdAt", label: "Date added" },
+            { value: "leadership", label: "Leadership" },
+          ],
+          true,
+        )}
+<SortDirectionToggle
+          ascending={c.ascending}
+          onToggle={() => {
+            c.setAscending((value) => !value);
+            onResetPage();
+          }}
+        />
+<ViewToggle
+          value={c.view}
+          onChange={c.setView}
+          options={[
+            { value: "table", label: "List view", icon: <Rows3 /> },
+            { value: "cards", label: "Card view", icon: <LayoutGrid /> },
+          ]}
+        />
+</>}
+>
+
+{select("Leadership", c.leadership, c.setLeadership, [
           { value: "all", label: "All leadership" },
           {
             value: "assigned",
@@ -161,7 +188,7 @@ export function GroupRegisterControls({
             label: kind === "department" ? "Needs a head" : "Needs a leader",
           },
         ])}
-        {kind === "cell group" &&
+{kind === "cell group" &&
           select("Meeting day", c.day, c.setDay, [
             { value: "all", label: "Any meeting day" },
             ...[
@@ -174,33 +201,7 @@ export function GroupRegisterControls({
               "Saturday",
             ].map((day) => ({ value: day, label: day })),
           ])}
-        {select(
-          "Sort groups",
-          c.sort,
-          (value) => c.setSort(value as GroupSort),
-          [
-            { value: "name", label: "Name" },
-            { value: "createdAt", label: "Date added" },
-            { value: "leadership", label: "Leadership" },
-          ],
-          true,
-        )}
-        <SortDirectionToggle
-          ascending={c.ascending}
-          onToggle={() => {
-            c.setAscending((value) => !value);
-            onResetPage();
-          }}
-        />
-        <ViewToggle
-          value={c.view}
-          onChange={c.setView}
-          options={[
-            { value: "table", label: "List view", icon: <Rows3 /> },
-            { value: "cards", label: "Card view", icon: <LayoutGrid /> },
-          ]}
-        />
-        {(c.search ||
+{(c.search ||
           c.branch !== "all" ||
           c.leadership !== "all" ||
           c.day !== "all" ||
@@ -219,7 +220,6 @@ export function GroupRegisterControls({
             Clear filters
           </button>
         )}
-      </div>
-    </div>
+</ListToolbar>
   );
 }

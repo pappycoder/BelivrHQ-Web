@@ -13,6 +13,8 @@ import {
   Users,
 } from "lucide-react";
 import { SectionCard } from "@/components/paper/section";
+import { PageTour, type TourStep } from "@/components/tours/page-tour";
+import { useCurrentProfile } from "@/hooks/use-profile";
 import { Tag } from "@/components/paper/stat";
 import { FilterChip, PersonAvatar } from "@/components/paper/primitives";
 import { Input } from "@/components/ui/input";
@@ -27,6 +29,18 @@ import { formatDate } from "@/hooks/use-media";
 
 const SCOPES = ["All", "People", "Gatherings", "Library"] as const;
 type Scope = (typeof SCOPES)[number];
+
+const SEARCH_TOUR_STEPS: TourStep[] = [
+  { target: ".search-tour-heading", title: "Find people and records", description: "Search brings together the records your account can read. This guide explains how to search and narrow the results. It will keep you on this page." },
+  { target: ".search-tour-input", title: "Start with two characters", description: "After the tour, enter at least two characters. Results update after a short pause as you type; you do not need to press Enter. Clear the box to return to the starting view." },
+  { target: ".search-tour-scopes", title: "Narrow your search", description: "All searches every available category. People includes members and visitors, Gatherings includes events, and Library includes sermons and forms. Results still depend on your permissions and branch access." },
+  { target: ".search-tour-recent", title: "Reuse a recent search", description: "Up to four recent search terms are saved in this browser. They appear when the search box is empty. Select one to run it again with your current category." },
+  { target: ".search-tour-browse button", title: "Choose where to look", description: "The category cards set where your next search looks. This People card searches members and visitors; the other cards select Gatherings or Library. Choose a card, then enter a search term. It does not open or change records." },
+  { target: ".search-tour-hint", title: "Search within your access", description: "Searches only include records your account is allowed to read. Try another spelling or choose All if a match is missing. Giving transactions and services are not included on this search page." },
+  { target: ".search-tour-results", title: "Read the search results", description: "Matches are grouped by record type. This is a short list: up to six members, four visitors, four events, three sermons and three forms. A result count describes the matches shown, rather than every possible record." },
+  { target: ".search-results a", title: "Open a matching record", description: "After the tour, select a result to open its details. Check the name, category and supporting information to make sure it is the record you want. The tour does not open results for you." },
+  { target: ".search-tour-empty", title: "Try a different search", description: "No visible records matched this search. Try a shorter term, check the spelling or switch to All. A record may also be outside your account's permissions or branch access." },
+];
 
 const RECENT_KEY = "belivrhq:search-recent";
 
@@ -174,19 +188,19 @@ function FormRail({ search, onSettled }: RailProps) {
 function SearchInner() {
   const searchParams = useSearchParams();
   const { can, ready } = usePermissions();
+  const { data: profile } = useCurrentProfile();
 
   const [query, setQuery] = React.useState(searchParams.get("q") ?? "");
   const [search, setSearch] = React.useState("");
   const [scope, setScope] = React.useState<Scope>("All");
   const [recent, setRecent] = React.useState<string[]>([]);
-  const [settled, setSettled] = React.useState<Record<string, number>>({});
+  const [settled, setSettled] = React.useState<{ query: string; counts: Record<string, number> }>({ query: "", counts: {} });
 
   React.useEffect(() => setRecent(readRecent()), []);
   React.useEffect(() => {
     const t = setTimeout(() => {
       const next = query.trim();
       setSearch(next);
-      setSettled({});
       if (next.length >= 2) { writeRecent(next); setRecent(readRecent()); }
     }, 350);
     return () => clearTimeout(t);
@@ -211,23 +225,29 @@ function SearchInner() {
     showForms && "forms",
   ].filter(Boolean) as string[];
 
-  const settledNames = Object.keys(settled);
-  const allSettled = expected.every((name) => settledNames.includes(name));
-  const total = settledNames.reduce((sum, name) => sum + (settled[name] ?? 0), 0);
+  const counts = settled.query === search ? settled.counts : {};
+  const allSettled = expected.every((name) => name in counts);
+  const total = expected.reduce((sum, name) => sum + (counts[name] ?? 0), 0);
 
-  const onSettled = React.useCallback(
-    (name: string) => (count: number) => setSettled((current) => ({ ...current, [name]: count })),
-    [],
-  );
+  const onSettled = React.useMemo(() => {
+    const report = (name: string) => (count: number) => setSettled((current) => {
+      const previous = current.query === search ? current.counts : {};
+      return previous[name] === count ? current : { query: search, counts: { ...previous, [name]: count } };
+    });
+    return { members: report("members"), visitors: report("visitors"), events: report("events"), sermons: report("sermons"), forms: report("forms") };
+  }, [search]);
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-end">
+        <PageTour page="Search" account={profile ? `${profile.churchId}:${profile.profileId}` : undefined} ready={ready && (!active || allSettled)} steps={SEARCH_TOUR_STEPS} />
+      </div>
       <div className="pt-4">
         <p className="rule-label text-center">Everything, one box</p>
-        <h1 className="mt-2 text-center font-display text-[clamp(1.6rem,3vw,2.3rem)] font-semibold tracking-tight">
+        <h1 className="search-tour-heading mt-2 text-center font-display text-[clamp(1.6rem,3vw,2.3rem)] font-semibold tracking-tight">
           Who or what are you looking for?
         </h1>
-        <div className="relative mx-auto mt-6 max-w-2xl">
+        <div className="search-tour-input relative mx-auto mt-6 max-w-2xl">
           <SearchIcon className="pointer-events-none absolute left-5 top-1/2 size-5 -translate-y-1/2 text-ink-faint" />
           <Input
             value={query}
@@ -238,7 +258,7 @@ function SearchInner() {
           />
         </div>
         {recent.length && !query ? (
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-1.5">
+          <div className="search-tour-recent mt-3 flex flex-wrap items-center justify-center gap-1.5">
             <span className="text-xs text-ink-faint">Recent:</span>
             {recent.map((item) => (
               <button key={item} type="button" onClick={() => setQuery(item)} className="rounded-full border border-line bg-card px-2.5 py-1 text-xs text-ink-soft hover:border-ink/20 hover:text-ink">
@@ -247,41 +267,44 @@ function SearchInner() {
             ))}
           </div>
         ) : null}
-        <div className="mt-4 flex justify-center gap-1.5">
+        <div className="search-tour-scopes mt-4 flex flex-wrap justify-center gap-1.5">
           {SCOPES.map((item) => (
             <FilterChip key={item} active={scope === item} onClick={() => setScope(item)}>{item}</FilterChip>
           ))}
         </div>
       </div>
 
-      {active && (!ready || !allSettled) ? (
-        <div className="mx-auto max-w-3xl space-y-3">
-          {Array.from({ length: Math.min(3, Math.max(1, expected.length)) }).map((_, i) => <Skeleton key={i} className="h-16 rounded-2xl" />)}
-        </div>
-      ) : active && allSettled && total === 0 ? (
-        <div className="mx-auto max-w-3xl">
-          <div className="paper-card rounded-2xl px-5 py-10 text-center">
-            <p className="font-display text-sm font-semibold">Nothing answers to &ldquo;{search}&rdquo;</p>
-            <p className="mt-1 text-sm text-ink-faint">Searches only reach what your role can read. A person may exist in a branch you don&apos;t see, or sit behind a grant you don&apos;t hold.</p>
+      {active ? (
+        <div className="search-results mx-auto max-w-3xl space-y-4">
+          <div className="search-tour-results space-y-1">
+            <h2 className="font-display text-lg font-semibold">Search results</h2>
+            <p role="status" className="text-sm text-ink-soft">
+              {!ready || !allSettled ? "Searching the records you can access…" : `${total} result${total === 1 ? "" : "s"} shown · only records your account can read.`}
+            </p>
           </div>
-        </div>
-      ) : active ? (
-        <div className="mx-auto max-w-3xl space-y-4">
-          {showMembers ? <MemberRail search={search} onSettled={onSettled("members")} /> : null}
-          {showVisitors ? <VisitorRail search={search} onSettled={onSettled("visitors")} /> : null}
-          {showEvents ? <EventRail search={search} onSettled={onSettled("events")} /> : null}
-          {showSermons ? <SermonRail search={search} onSettled={onSettled("sermons")} /> : null}
-          {showForms ? <FormRail search={search} onSettled={onSettled("forms")} /> : null}
-          <p className="text-center text-xs text-ink-faint">
-            {total} result{total === 1 ? "" : "s"} · every rail runs only on the grants your role holds.
-          </p>
+          {!ready || !allSettled ? (
+            <div className="space-y-3">
+              {Array.from({ length: Math.min(3, Math.max(1, expected.length)) }).map((_, i) => <Skeleton key={i} className="h-16 rounded-2xl" />)}
+            </div>
+          ) : null}
+          {showMembers ? <MemberRail key={`members:${search}`} search={search} onSettled={onSettled.members} /> : null}
+          {showVisitors ? <VisitorRail key={`visitors:${search}`} search={search} onSettled={onSettled.visitors} /> : null}
+          {showEvents ? <EventRail key={`events:${search}`} search={search} onSettled={onSettled.events} /> : null}
+          {showSermons ? <SermonRail key={`sermons:${search}`} search={search} onSettled={onSettled.sermons} /> : null}
+          {showForms ? <FormRail key={`forms:${search}`} search={search} onSettled={onSettled.forms} /> : null}
+          {ready && allSettled && total === 0 ? (
+            <div className="search-tour-empty paper-card rounded-2xl px-5 py-10 text-center">
+              <p className="font-display text-sm font-semibold">Nothing answers to &ldquo;{search}&rdquo;</p>
+              <p className="mt-1 text-sm text-ink-faint">Searches only reach what your role can read. Try another term or choose All to search more categories.</p>
+            </div>
+          ) : null}
         </div>
       ) : (
         <div className="mx-auto max-w-2xl">
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="search-tour-browse grid gap-3 sm:grid-cols-3">
             {[
               { icon: Users, title: "People" as Scope, line: "Members and guests, by name or number." },
-              { icon: CalendarDays, title: "Gatherings" as Scope, line: "Services and events, dated and titled." },
+              { icon: CalendarDays, title: "Gatherings" as Scope, line: "Events, dated and titled." },
               { icon: BookOpen, title: "Library" as Scope, line: "Sermons and forms, found by memory." },
             ].map((card) => (
               <button key={card.title} type="button" onClick={() => setScope(card.title)} className="paper-card lift flex flex-col items-start gap-2 rounded-2xl p-4 text-left">
@@ -293,9 +316,9 @@ function SearchInner() {
               </button>
             ))}
           </div>
-          <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-ink-faint">
+          <p className="search-tour-hint mt-4 flex items-center justify-center gap-1.5 text-xs text-ink-faint">
             <UserRound className="size-3" />
-            Two characters start the hunt. Giving rows join once the ledger grant is yours.
+            Type at least two characters. Results only include records your account can read.
           </p>
         </div>
       )}

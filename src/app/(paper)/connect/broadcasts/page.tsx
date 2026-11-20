@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import { CommunicationRegisterControls, useCommunicationRegister } from "@/components/communication/register-controls";
@@ -26,7 +30,6 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
@@ -252,7 +255,7 @@ export default function BroadcastsPage() {
       {!broadcasts.isError && <ListPaginationFooter page={controls.page} perPage={controls.perPage} total={total} onPageChange={controls.setPage} onPerPageChange={value => { controls.setPerPage(value); controls.setPage(1); }} perPageOptions={[12, 24, 48]} itemName="broadcasts" />}
 
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="rounded-2xl border-line bg-card sm:max-w-[520px]">
+        <FormDialogContent className="rounded-2xl border-line bg-card sm:max-w-[520px]">
           <DialogHeader>
             <DialogTitle className="font-display">Compose a broadcast</DialogTitle>
             <DialogDescription className="text-sm">
@@ -260,66 +263,68 @@ export default function BroadcastsPage() {
             </DialogDescription>
           </DialogHeader>
           <ValidatedForm onSubmit={submit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label required className="text-sm">Name</Label>
-                <Input required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="November news" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+            <FormSection title="Details">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label required className="text-sm">Name</Label>
+                  <Input required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="November news" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label required className="text-sm">Channel</Label>
+                  <select required value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as BroadcastChannel, templateId: "" }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
+                    {BROADCAST_CHANNELS.map((c) => <option key={c} value={c}>{BROADCAST_CHANNEL_LABELS[c]}</option>)}
+                  </select>
+                </div>
               </div>
               <div className="space-y-1.5">
-                <Label required className="text-sm">Channel</Label>
-                <select required value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as BroadcastChannel, templateId: "" }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
-                  {BROADCAST_CHANNELS.map((c) => <option key={c} value={c}>{BROADCAST_CHANNEL_LABELS[c]}</option>)}
-                </select>
+                <Label required className="text-sm">Template ({TEMPLATE_CHANNEL_LABELS[draft.channel as TemplateChannel] ?? draft.channel} · published only)</Label>
+                {channelTemplates.length ? (
+                  <select required value={draft.templateId} onChange={(e) => setDraft((d) => ({ ...d, templateId: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
+                    <option value="">Choose a template…</option>
+                    {channelTemplates.map((t) => <option key={t.templateId} value={t.templateId}>{t.name}</option>)}
+                  </select>
+                ) : (
+                  <p className="rounded-lg border border-dashed border-line px-3 py-2.5 text-sm text-ink-faint">
+                    No published {draft.channel} templates yet.{" "}
+                    <Link href="/connect/templates" className="text-brand underline">publish one first</Link>.
+                  </p>
+                )}
               </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label required className="text-sm">Template ({TEMPLATE_CHANNEL_LABELS[draft.channel as TemplateChannel] ?? draft.channel} · published only)</Label>
-              {channelTemplates.length ? (
-                <select required value={draft.templateId} onChange={(e) => setDraft((d) => ({ ...d, templateId: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
-                  <option value="">Choose a template…</option>
-                  {channelTemplates.map((t) => <option key={t.templateId} value={t.templateId}>{t.name}</option>)}
-                </select>
-              ) : (
-                <p className="rounded-lg border border-dashed border-line px-3 py-2.5 text-sm text-ink-faint">
-                  No published {draft.channel} templates yet.{" "}
-                  <Link href="/connect/templates" className="text-brand underline">publish one first</Link>.
-                </p>
-              )}
-            </div>
-            <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Audience</Label>
+                  <select value={draft.audienceStatus} onChange={(e) => setDraft((d) => ({ ...d, audienceStatus: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
+                    <option value="">Everyone</option>
+                    {Object.entries(MEMBER_STATUS_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label required className="text-sm">Branch</Label>
+                  <select required disabled={!isHq} value={draft.audienceBranch} onChange={(e) => setDraft((d) => ({ ...d, audienceBranch: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none disabled:opacity-50">
+                    <option value="">Select a branch</option>
+                    {(branches.data?.data ?? []).map((b) => <option key={b.branchId} value={b.branchId}>{b.name}</option>)}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Gender</Label>
+                  <select value={draft.audienceGender} onChange={(e) => setDraft((d) => ({ ...d, audienceGender: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
+                    <option value="">Any</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+              </div>
               <div className="space-y-1.5">
-                <Label className="text-sm">Audience</Label>
-                <select value={draft.audienceStatus} onChange={(e) => setDraft((d) => ({ ...d, audienceStatus: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
-                  <option value="">Everyone</option>
-                  {Object.entries(MEMBER_STATUS_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                </select>
+                <Label className="text-sm">Send later? (optional)</Label>
+                <Input picker="wheel" type="datetime-local" value={draft.scheduledAt} onChange={(e) => setDraft((d) => ({ ...d, scheduledAt: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
               </div>
-              <div className="space-y-1.5">
-                <Label required className="text-sm">Branch</Label>
-                <select required disabled={!isHq} value={draft.audienceBranch} onChange={(e) => setDraft((d) => ({ ...d, audienceBranch: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none disabled:opacity-50">
-                  <option value="">Select a branch</option>
-                  {(branches.data?.data ?? []).map((b) => <option key={b.branchId} value={b.branchId}>{b.name}</option>)}
-                </select>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-sm">Gender</Label>
-                <select value={draft.audienceGender} onChange={(e) => setDraft((d) => ({ ...d, audienceGender: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
-                  <option value="">Any</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-sm">Send later? (optional)</Label>
-              <Input picker="wheel" type="datetime-local" value={draft.scheduledAt} onChange={(e) => setDraft((d) => ({ ...d, scheduledAt: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
-            </div>
-            <BotProtection path="/broadcasts" authenticated />
-            <Button type="submit" disabled={createBroadcast.isPending || !captchaReady} className="h-10 w-full gap-2 rounded-lg text-sm">
-              <Send className="size-4" /> {createBroadcast.isPending ? "Queueing…" : draft.scheduledAt ? "Schedule broadcast" : "Send now"}
-            </Button>
+              <BotProtection path="/broadcasts" authenticated />
+              <Button type="submit" disabled={createBroadcast.isPending || !captchaReady} className="h-10 w-full gap-2 rounded-lg text-sm">
+                <Send className="size-4" /> {createBroadcast.isPending ? "Queueing…" : draft.scheduledAt ? "Schedule broadcast" : "Send now"}
+              </Button>
+            </FormSection>
           </ValidatedForm>
-        </DialogContent>
+        </FormDialogContent>
       </Dialog>
     </div>
   );

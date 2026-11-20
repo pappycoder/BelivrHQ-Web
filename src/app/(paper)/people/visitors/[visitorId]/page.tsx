@@ -1,5 +1,9 @@
 "use client";
 
+import { formatRecordDate } from "@/lib/record-date";
+
+import { DetailNavigation, DetailHeading } from "@/components/paper/section";
+
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
 
 import * as React from "react";
@@ -46,10 +50,7 @@ const FOLLOW_UP_OPTIONS: { value: FollowUpStatus; label: string }[] = [
 ];
 
 function formatDate(value?: string) {
-  if (!value) return "Not available";
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return value.slice(0, 10);
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  return formatRecordDate(value);
 }
 
 export default function VisitorDetailPage({
@@ -104,12 +105,12 @@ export default function VisitorDetailPage({
   return (
     <div className="space-y-6">
       {dialog}
-      <Link
+      <DetailNavigation><Link
         href="/people/visitors"
         className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink"
       >
         <ArrowLeft className="size-3" /> People · Visitors
-      </Link>
+      </Link></DetailNavigation>
 
       <div className="paper-card rounded-2xl p-5 md:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -117,7 +118,7 @@ export default function VisitorDetailPage({
             <PersonAvatar name={fullName} size="xl" />
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="font-display text-2xl font-semibold tracking-tight">{fullName}</h1>
+                <DetailHeading>{fullName}</DetailHeading>
                 <Tag tone={v.followUpStatus === "converted" ? "moss" : v.followUpStatus === "dropped_off" ? "neutral" : "gold"} dot>
                   {FOLLOW_UP_OPTIONS.find((o) => o.value === v.followUpStatus)?.label ?? v.followUpStatus}
                 </Tag>

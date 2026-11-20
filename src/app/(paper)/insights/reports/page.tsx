@@ -1,5 +1,7 @@
 "use client";
 
+import { PageHeader } from "@/components/paper/section";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -228,22 +230,15 @@ export default function ReportsStudioPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <Link href="/insights/analytics" className="flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
+      <PageHeader eyebrow={<Link href="/insights/analytics" className="flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
             <ArrowLeft className="size-3" /> Insights
-          </Link>
-          <h1 className="mt-1 font-display text-[clamp(1.65rem,2.4vw,2.15rem)] font-semibold tracking-tight">Report studio</h1>
-          <p className="text-sm text-ink-soft">Prepare a report using your church&apos;s recorded figures.</p>
-        </div>
-        <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={handleGenerate} disabled={exporting || loadingBlocks}>
+          </Link>} title="Report studio" description="Prepare a report using your church’s recorded figures." actions={<Button className="h-9 gap-1.5 rounded-full text-sm" onClick={handleGenerate} disabled={exporting || loadingBlocks}>
           {exporting ? <Loader2 className="size-3.5 animate-spin" /> : <Download className="size-3.5" />} Export {format}
-        </Button>
-      </div>
+        </Button>} />
 
       <div className="grid gap-4 xl:grid-cols-[220px_1fr_280px]">
         {/* Palette */}
-        <aside className="paper-card h-max rounded-2xl p-4 xl:sticky xl:top-20">
+        <aside data-tour-report-palette className="paper-card h-max rounded-2xl p-4 xl:sticky xl:top-20">
           <p className="rule-label mb-3">Blocks</p>
           <div className="flex gap-2 overflow-x-auto no-scrollbar xl:flex-col xl:overflow-visible">
             {BLOCKS.map((block) => (
@@ -276,7 +271,7 @@ export default function ReportsStudioPage() {
         </aside>
 
         {/* Sheet */}
-        <main className="min-w-0">
+        <main data-tour-report-preview className="min-w-0">
           <div className="paper-card mx-auto max-w-[720px] rounded-2xl p-6 md:p-8">
             <header className="border-b border-line pb-5">
               <div className="flex items-center justify-between">
@@ -394,7 +389,7 @@ export default function ReportsStudioPage() {
         </main>
 
         {/* Settings */}
-        <aside className="space-y-4 xl:sticky xl:top-20 xl:self-start">
+        <aside data-tour-report-settings className="space-y-4 xl:sticky xl:top-20 xl:self-start">
           <div className="paper-card rounded-2xl p-4">
             <p className="rule-label mb-3">Report settings</p>
             <div className="space-y-3">

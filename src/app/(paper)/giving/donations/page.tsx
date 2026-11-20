@@ -1,5 +1,7 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
 
 import { ListTable } from "@/components/shared/list-table";
@@ -318,11 +320,11 @@ export default function GivingDonationsPage() {
         />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <FilterChip active={!anyFilter} onClick={clearFilters}>
+      <ListToolbar>
+<FilterChip active={!anyFilter} onClick={clearFilters}>
           All gifts
         </FilterChip>
-        {(["success", "pending", "failed", "reversed"] as const).map((s) => (
+{(["success", "pending", "failed", "reversed"] as const).map((s) => (
           <FilterChip
             key={s}
             active={status === s}
@@ -334,13 +336,13 @@ export default function GivingDonationsPage() {
             {s}
           </FilterChip>
         ))}
-        <select
+<select
           value={type}
           onChange={(e) => {
             setType(e.target.value);
             setPage(1);
           }}
-          className="h-8 rounded-full border border-line bg-card px-3 text-sm outline-none"
+          className="h-9 rounded-full border border-line bg-card px-3 text-sm outline-none"
           aria-label="Method filter"
         >
           <option value="">Any method</option>
@@ -348,13 +350,13 @@ export default function GivingDonationsPage() {
           <option value="bank_transfer">Bank</option>
           <option value="digital">Online</option>
         </select>
-        <select
+<select
           value={categoryId}
           onChange={(e) => {
             setCategoryId(e.target.value);
             setPage(1);
           }}
-          className="h-8 rounded-full border border-line bg-card px-3 text-sm outline-none"
+          className="h-9 rounded-full border border-line bg-card px-3 text-sm outline-none"
           aria-label="Category filter"
         >
           <option value="">All categories</option>
@@ -364,7 +366,7 @@ export default function GivingDonationsPage() {
             </option>
           ))}
         </select>
-        <Popover open={dateOpen} onOpenChange={open => {
+<Popover open={dateOpen} onOpenChange={open => {
           if (open) setDateDraft({ from: startDate, to: endDate });
           setDateOpen(open);
         }}>
@@ -402,7 +404,7 @@ export default function GivingDonationsPage() {
             </div>
           </PopoverContent>
         </Popover>
-      </div>
+</ListToolbar>
 
       {transactions.isLoading ? (
         <div className="space-y-2">

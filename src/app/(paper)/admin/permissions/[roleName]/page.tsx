@@ -1,5 +1,7 @@
 "use client";
 
+import { DetailNavigation, DetailHeading } from "@/components/paper/section";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -146,11 +148,11 @@ export default function RoleMatrixPage({
   return (
     <div className="space-y-6 pb-24">
       <div>
-        <Link href="/admin/permissions" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
+        <DetailNavigation><Link href="/admin/permissions" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
           <ArrowLeft className="size-3" /> Admin · Roles
-        </Link>
+        </Link></DetailNavigation>
         <div className="mt-1 flex flex-wrap items-center gap-2">
-          <h1 className="font-display text-[clamp(1.5rem,2.6vw,2.1rem)] font-semibold tracking-tight">{label}</h1>
+          <DetailHeading>{label}</DetailHeading>
           {locked ? <Tag tone="neutral">Locked</Tag> : null}
           {isOwned ? <Tag tone="sky">Custom</Tag> : role.data.isCustomized ? <Tag tone="gold">Customized</Tag> : <Tag tone="moss">Default</Tag>}
         </div>
@@ -166,7 +168,7 @@ export default function RoleMatrixPage({
 
       <div className="paper-card rounded-2xl p-5">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-          <p className="rule-label">Permission matrix</p>
+          <p data-tour-role-matrix className="rule-label">Permission matrix</p>
           <p className="text-xs text-ink-faint">
             {locked
               ? "The platform admin holds everything. This view is read-only."

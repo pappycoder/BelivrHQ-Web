@@ -12,21 +12,13 @@ import * as React from "react";
 import { isRecordOpenLabel } from "@/lib/record-row-navigation";
 import Link from "next/link";
 import { ChevronDown, Search, X } from "lucide-react";
+import { IdentityImage } from "@/components/shared/identity-image";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ActionTooltip } from "@/components/ui/tooltip";
 
 export { Tag } from "./stat";
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
 
 const sizes = {
   xs: "size-6 text-xs",
@@ -38,7 +30,6 @@ const sizes = {
 
 export function PersonAvatar({
   name,
-  hue,
   size = "md",
   className,
   ring = false,
@@ -51,40 +42,9 @@ export function PersonAvatar({
   ring?: boolean;
   src?: string;
 }) {
-  const resolvedHue =
-    hue ??
-    Array.from(name).reduce((acc, char) => acc + char.charCodeAt(0), 0) % 360;
-  if (src) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={src}
-        alt={name}
-        className={cn(
-          "inline-block shrink-0 rounded-full object-cover",
-          sizes[size],
-          ring && "ring-2 ring-card",
-          className,
-        )}
-      />
-    );
-  }
   return (
-    <span
-      className={cn(
-        "inline-grid shrink-0 place-items-center rounded-full font-semibold uppercase tracking-wide text-white/95",
-        sizes[size],
-        ring && "ring-2 ring-card",
-        className,
-      )}
-      style={{
-        background: `linear-gradient(145deg, hsl(${resolvedHue} 52% 52%), hsl(${
-          (resolvedHue + 28) % 360
-        } 46% 38%))`,
-      }}
-      aria-hidden
-    >
-      {initials(name)}
+    <span className={cn("inline-block shrink-0 overflow-hidden rounded-full", sizes[size], ring && "ring-2 ring-card", className)}>
+      <IdentityImage src={src} alt={name} />
     </span>
   );
 }
@@ -132,16 +92,19 @@ export function SearchField({
   onChange,
   placeholder = "Search…",
   className,
+  "aria-label": ariaLabel,
 }: {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   className?: string;
+  "aria-label"?: string;
 }) {
   return (
-    <div className={cn("relative", className)}>
+    <div data-tour-search className={cn("relative", className)}>
       <Search className="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-ink-faint" />
       <Input
+        aria-label={ariaLabel ?? placeholder}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
@@ -388,6 +351,7 @@ export function FilterChip({
 }) {
   return (
     <Button
+      data-tour-filter
       type="button"
       variant="outline"
       size="sm"
@@ -461,8 +425,9 @@ export function EmptyState({
 }) {
   return (
     <div
+      data-tour-empty
       className={cn(
-        "flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-line px-6 py-14 text-center",
+        "paper-card bg-card flex flex-col items-center justify-center gap-3 rounded-2xl border border-line px-6 py-14 text-center",
         className,
       )}
     >
@@ -522,92 +487,4 @@ export function DataList({
  * control and Prev/Next. Server-paginated pages drive it from their hook params;
  * client-sliced lists pass their computed window.
  */
-export function ListPaginationFooter({
-  page,
-  perPage,
-  total,
-  onPageChange,
-  onPerPageChange,
-  perPageOptions = [10, 15, 25, 50],
-  itemName = "items",
-  pending = false,
-}: {
-  page: number;
-  perPage: number;
-  total: number;
-  onPageChange: (page: number) => void;
-  onPerPageChange?: (perPage: number) => void;
-  perPageOptions?: number[];
-  itemName?: string;
-  pending?: boolean;
-}) {
-  const totalPages = Math.max(1, Math.ceil(total / Math.max(1, perPage)));
-  const from = total === 0 ? 0 : (page - 1) * perPage + 1;
-  const to = Math.min(total, page * perPage);
-  return (
-    <div
-      className={cn(
-        "col-span-full flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-line px-5 py-2.5 text-sm text-ink-faint",
-        pending && "opacity-60",
-      )}
-      aria-label="Pagination"
-    >
-      <span>
-        Showing{" "}
-        <span className="num font-medium text-ink">
-          {from}–{to}
-        </span>{" "}
-        of{" "}
-        <span className="num font-medium text-ink">
-          {total.toLocaleString()}
-        </span>{" "}
-        {itemName}
-      </span>
-      <div className="flex flex-wrap items-center gap-3">
-        {onPerPageChange ? (
-          <label className="flex items-center gap-1.5 whitespace-nowrap">
-            <span>Rows per page</span>
-            <select
-              value={perPage}
-              onChange={(event) => {
-                onPerPageChange(Number(event.target.value));
-                onPageChange(1);
-              }}
-              className="h-7 rounded-full border border-line bg-card px-2 text-sm outline-none"
-              aria-label="Rows per page"
-            >
-              {perPageOptions.map((size) => (
-                <option key={size} value={size}>
-                  {size}
-                </option>
-              ))}
-            </select>
-          </label>
-        ) : null}
-        <div className="flex items-center gap-1.5">
-          <Button
-            variant="outline"
-            size="xs"
-            disabled={page <= 1}
-            onClick={() => onPageChange(page - 1)}
-            className="rounded-full border-line bg-card"
-          >
-            Prev
-          </Button>
-          <span className="num whitespace-nowrap">
-            {page} / {totalPages}
-          </span>
-          <Button
-            variant="outline"
-            size="xs"
-            disabled={page >= totalPages}
-            onClick={() => onPageChange(page + 1)}
-            className="rounded-full border-line bg-card"
-          >
-            Next
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-}
+export { ListPaginationFooter } from "@/components/shared/list-pagination";

@@ -1,5 +1,7 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
@@ -157,14 +159,8 @@ export default function AdminRolesPage() {
         />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <FilterChip active={!onlyCustom} onClick={() => setOnlyCustom(false)}>
-          All roles
-        </FilterChip>
-        <FilterChip active={onlyCustom} onClick={() => setOnlyCustom(true)}>
-          Custom & tweaked
-        </FilterChip>
-        <span className="ml-auto">
+      <ListToolbar controls={<>
+<span className="ml-auto">
           <ViewToggle
             value={view}
             onChange={setView}
@@ -174,7 +170,14 @@ export default function AdminRolesPage() {
             ]}
           />
         </span>
-      </div>
+</>}>
+<FilterChip active={!onlyCustom} onClick={() => setOnlyCustom(false)}>
+          All roles
+        </FilterChip>
+<FilterChip active={onlyCustom} onClick={() => setOnlyCustom(true)}>
+          Custom & tweaked
+        </FilterChip>
+</ListToolbar>
 
       {roles.isLoading ? (
         <div className="space-y-2">

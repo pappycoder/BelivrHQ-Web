@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { useAnalyticsMembers } from "./use-analytics";
+import { useAnalyticsDashboard, useAnalyticsMembers } from "./use-analytics";
 
 const mocks = vi.hoisted(() => ({
   query: vi.fn(),
@@ -46,5 +46,27 @@ describe("member analytics query", () => {
     useAnalyticsMembers({ branchId: "branch-b" });
     expect(mocks.query.mock.calls[0][0].enabled).toBe(false);
     expect(mocks.can).toHaveBeenCalledWith("analytics:members", "read");
+  });
+});
+
+
+describe("dashboard analytics query contract", () => {
+  beforeEach(() => { vi.clearAllMocks(); mocks.can.mockReturnValue(true); });
+
+  it("keeps an unfiltered aggregate request valid", async () => {
+    useAnalyticsDashboard();
+    await mocks.query.mock.calls[0][0].queryFn({ signal: undefined });
+    expect(mocks.get).toHaveBeenCalledWith("/analytics/dashboard", { signal: undefined });
+  });
+
+  it("omits trend-only options from aggregate requests and cache keys", async () => {
+    const scope = { startDate: "2026-01-01", endDate: "2026-11-20", branchId: "branch-a" };
+    useAnalyticsDashboard({ ...scope, groupBy: "week", currency: "NGN" });
+    useAnalyticsDashboard({ ...scope, groupBy: "month", currency: "USD" });
+    const first = mocks.query.mock.calls[0][0];
+    expect(first.queryKey).toEqual(mocks.query.mock.calls[1][0].queryKey);
+    const signal = new AbortController().signal;
+    await first.queryFn({ signal });
+    expect(mocks.get).toHaveBeenCalledWith("/analytics/dashboard?startDate=2026-01-01&endDate=2026-11-20&branchId=branch-a", { signal });
   });
 });

@@ -10,6 +10,8 @@ import {
   Users,
 } from "lucide-react";
 import { PageHeader, SectionCard } from "@/components/paper/section";
+import { PageTour, type TourStep } from "@/components/tours/page-tour";
+import { useCurrentProfile } from "@/hooks/use-profile";
 import { StatCard, Tag } from "@/components/paper/stat";
 import { EmptyState, PersonAvatar } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
@@ -26,6 +28,19 @@ import {
 } from "@/hooks/use-attendance";
 import { number } from "@/lib/paper/format";
 
+const ATTENDANCE_OVERVIEW_TOUR_STEPS: TourStep[] = [
+  { target: ".attendance-overview-tour-heading", title: "Explore attendance at a glance", description: "Review named check-ins over time, recent arrivals and active services within your account's access. This tour explains the overview without recording attendance or changing a service." },
+  { target: ".attendance-overview-tour-summary", title: "Read the check-in totals", description: "Check-ins, Members and Visitors count attendance records in the displayed 30-day summary window, not unique people. A person attending several gatherings can contribute several check-ins. Reported room headcounts stay separate from these named records." },
+  { target: ".attendance-overview-tour-average", title: "Understand the daily average", description: "Daily average is the mean total across the dates returned by the trend data. Dates without check-ins are not included. It is not the total divided by 30. Trend figures also require access to attendance reports." },
+  { target: ".attendance-overview-tour-trend", title: "Compare member and visitor trends", description: "Compare named member and visitor check-ins by date. Hover for values. Reported headcounts stay separate. Empty charts may reflect report access." },
+  { target: ".attendance-overview-tour-mix", title: "Review how arrivals are recorded", description: "Source groups the summary's check-ins by their recorded source. The bars show their share of the summary total. Age split shows recorded attendance categories, which can include mixed groups; it is not a complete age breakdown for everyone present." },
+  { target: ".attendance-overview-tour-recent", title: "Review recent check-in records", description: "Up to eight recent check-ins appear here, including dates outside the 30-day summary. All records opens the full register." },
+  { target: ".attendance-overview-tour-services", title: "Review active services", description: "Up to six active, unarchived services are listed here. Each shows its category, start time when set and all-time attendance count. Select a service to open its record. Manage services opens the service register; these counts are not limited to the 30-day summary." },
+  { target: ".attendance-overview-tour-records", title: "Open the attendance register", description: "Records opens the full attendance register for searching and reviewing individual records. Its filters are separate from this overview. The destination enforces your account's access, and opening it does not change attendance." },
+  { target: ".attendance-overview-tour-checkin", title: "Continue to live check-in", description: "Live check-in opens the service attendance desk. Confirm the gathering and occurrence date there before recording people or headcounts. Opening the desk alone records nothing; available actions depend on your permissions." },
+  { target: ".attendance-overview-tour-access", title: "When overview access is unavailable", description: "The attendance overview requires dashboard access. This message explains when your account cannot read it. The tour does not grant permissions; visible shortcuts have their own access rules." },
+];
+
 function isoDaysAgo(days: number) {
   const d = new Date();
   d.setDate(d.getDate() - days);
@@ -40,6 +55,7 @@ function stamp(value: string) {
 
 export default function AttendanceDashboardPage() {
   const { can, canAny, ready } = usePermissions();
+  const { data: profile } = useCurrentProfile();
   const canDash = ready && can("attendance:dashboard", "read");
   const canSeeRecords = ready && canAny("attendance:records:read");
 
@@ -55,17 +71,19 @@ export default function AttendanceDashboardPage() {
   return (
     <div className="space-y-6">
       <PageHeader
+        className="attendance-overview-tour-heading"
         eyebrow="Gatherings · Attendance"
         title="Who gathers, week by week."
         description="Track attendance over time and notice when someone may need a check-in."
         actions={
           <>
-            <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-sm">
+            <PageTour page="Attendance overview" account={profile ? `${profile.churchId}:${profile.profileId}` : undefined} ready={ready && (!canDash || summary.isSuccess)} steps={ATTENDANCE_OVERVIEW_TOUR_STEPS} />
+            <Button asChild variant="outline" className="attendance-overview-tour-records h-9 gap-1.5 rounded-full border-line bg-card text-sm">
               <Link href="/gatherings/attendance/records">
                 <CalendarCheck className="size-3.5" /> Records
               </Link>
             </Button>
-            <Button asChild className="h-9 gap-1.5 rounded-full text-sm">
+            <Button asChild className="attendance-overview-tour-checkin h-9 gap-1.5 rounded-full text-sm">
               <Link href="/gatherings/attendance/check-in">
                 <ScanLine className="size-3.5" /> Live check-in
               </Link>
@@ -74,22 +92,22 @@ export default function AttendanceDashboardPage() {
         }
       />
 
-      <StaggerGroup className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <StaggerGroup className="attendance-overview-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StaggerItem><StatCard label="Check-ins · 30 days" value={data?.totalCheckIns ?? 0} tone="brand" icon={<Users className="size-4" />} /></StaggerItem>
         <StaggerItem><StatCard label="Members" value={data?.memberCheckIns ?? 0} tone="moss" /></StaggerItem>
         <StaggerItem><StatCard label="Visitors" value={data?.visitorCheckIns ?? 0} tone="gold" deltaLabel="new faces" /></StaggerItem>
-        <StaggerItem><StatCard label="Daily average" value={avg} decimals={1} tone="sky" icon={<TrendingUp className="size-4" />} /></StaggerItem>
+        <StaggerItem className="attendance-overview-tour-average"><StatCard label="Daily average" value={avg} decimals={1} tone="sky" icon={<TrendingUp className="size-4" />} deltaLabel="days with check-ins" /></StaggerItem>
       </StaggerGroup>
 
       {!canDash ? (
-        <EmptyState
+        <div className="attendance-overview-tour-access"><EmptyState
           icon={<CalendarCheck />}
           title="Attendance is outside your access"
           description="Ask a church admin for the attendance:dashboard grant if you need it."
-        />
+        /></div>
       ) : (
         <div className="grid gap-4 lg:grid-cols-12">
-          <SectionCard className="lg:col-span-7" eyebrow="Trend" title="Thirty days of doors opening" description="View member and visitor attendance separately, alongside the total headcount.">
+          <SectionCard className="attendance-overview-tour-trend lg:col-span-7" eyebrow="Trend" title="Thirty days of doors opening" description="Compare named member and visitor check-ins over the reporting window.">
             {trends.isLoading || summary.isLoading ? (
               <Skeleton className="h-[220px]" />
             ) : trends.data?.length ? (
@@ -111,7 +129,7 @@ export default function AttendanceDashboardPage() {
             )}
           </SectionCard>
 
-          <SectionCard className="lg:col-span-5" eyebrow="Mix" title="How people arrive" bodyClassName="p-5">
+          <SectionCard className="attendance-overview-tour-mix lg:col-span-5" eyebrow="Mix" title="How people arrive" bodyClassName="p-5">
             {data ? (
               <div className="space-y-4">
                 <div>
@@ -150,7 +168,7 @@ export default function AttendanceDashboardPage() {
 
           {canSeeRecords ? (
             <SectionCard
-              className="lg:col-span-7"
+              className="attendance-overview-tour-recent lg:col-span-7"
               eyebrow="Last in"
               title="Most recent check-ins"
               actions={
@@ -179,7 +197,7 @@ export default function AttendanceDashboardPage() {
             </SectionCard>
           ) : null}
 
-          <SectionCard className="lg:col-span-5" eyebrow="Rhythm" title="Weekly services" bodyClassName="p-0">
+          <SectionCard className="attendance-overview-tour-services lg:col-span-5" eyebrow="Rhythm" title="Active services" bodyClassName="p-0">
             <div className="divide-y divide-line/70">
               {(services.data?.data ?? []).map((service) => (
                 <Link

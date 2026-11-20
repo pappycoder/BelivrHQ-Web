@@ -1,5 +1,7 @@
 "use client";
 
+import { DetailNavigation, DetailHeading } from "@/components/paper/section";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -114,9 +116,9 @@ export default function EventDetailPage({
 
   return (
     <div className="space-y-6">
-      <Link href="/gatherings/events" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
+      <DetailNavigation><Link href="/gatherings/events" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
         <ArrowLeft className="size-3" /> Gatherings · Events
-      </Link>
+      </Link></DetailNavigation>
 
       <div className="paper-card overflow-hidden rounded-2xl">
         <div className="h-2 bg-[linear-gradient(90deg,var(--brand),var(--gold)_55%,var(--moss))]" />
@@ -128,7 +130,7 @@ export default function EventDetailPage({
               {e.branchName ? <Tag tone="sky">{e.branchName}</Tag> : null}
               {e.archivedAt ? <Tag tone="rose">Archived</Tag> : null}
             </div>
-            <h1 className="font-display text-[clamp(1.5rem,2.6vw,2.1rem)] font-semibold tracking-tight">{e.title}</h1>
+            <DetailHeading>{e.title}</DetailHeading>
             <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-soft">
               <span>{fullDate(e.startDate)}{e.endDate && timeOf(e.endDate) ? ` → ${timeOf(e.endDate)}` : ""}</span>
               <span className="flex items-center gap-1"><MapPin className="size-3" /> {e.location ?? "Location to be announced"}</span>
@@ -147,7 +149,7 @@ export default function EventDetailPage({
               <p className="max-w-2xl text-sm leading-relaxed text-ink-soft">{e.description}</p>
             ) : null}
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div data-tour-actions className="flex flex-wrap gap-2">
             {canCheckIn ? (
               <Button asChild size="sm" className="h-8 gap-1.5 rounded-full text-sm">
                 <Link href={`/gatherings/events/check-in?event=${encodeURIComponent(e.eventId)}`}>
@@ -173,7 +175,7 @@ export default function EventDetailPage({
           </div>
         </div>
         {e.capacity ? (
-          <div className="border-t border-line px-5 py-3 md:px-6">
+          <div data-tour-event-capacity className="border-t border-line px-5 py-3 md:px-6">
             <div className="flex items-center justify-between text-sm text-ink-soft">
               <span className="num">{e.registrationCount ?? 0} registered of {e.capacity}</span>
               <span className="num">{e.capacity - (e.registrationCount ?? 0)} seats left</span>

@@ -1,5 +1,7 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
@@ -172,13 +174,10 @@ export default function AdminTeamPage() {
         <StatCard label="Admin HQ" value={rows.filter((u) => u.isAdminHq).length} tone="sky" deltaLabel="cross-branch readers" />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={query} onChange={setQuery} placeholder="Search name or email…" className="w-full max-w-xs" />
-        <FilterChip active={status === ""} onClick={() => { setStatus(""); setPage(1); }}>All</FilterChip>
-        <FilterChip active={status === "active"} onClick={() => { setStatus("active"); setPage(1); }}>Active</FilterChip>
-        <FilterChip active={status === "inactive"} onClick={() => { setStatus("inactive"); setPage(1); }}>Paused</FilterChip>
-        <span className="ml-auto">
-          <ViewToggle
+      <ListToolbar
+ search={<SearchField value={query} onChange={setQuery} placeholder="Search name or email…" className="w-full max-w-xs" />}
+ controls={<>
+<ViewToggle
             value={view}
             onChange={setView}
             options={[
@@ -186,8 +185,12 @@ export default function AdminTeamPage() {
               { value: "cards", label: "Cards", icon: <LayoutGrid /> },
             ]}
           />
-        </span>
-      </div>
+</>}
+>
+<FilterChip active={status === ""} onClick={() => { setStatus(""); setPage(1); }}>All</FilterChip>
+<FilterChip active={status === "active"} onClick={() => { setStatus("active"); setPage(1); }}>Active</FilterChip>
+<FilterChip active={status === "inactive"} onClick={() => { setStatus("inactive"); setPage(1); }}>Paused</FilterChip>
+</ListToolbar>
 
       {users.isLoading ? (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-32 rounded-2xl" />)}</div>

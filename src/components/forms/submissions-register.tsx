@@ -1,5 +1,7 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import * as React from "react";
 import {
   CheckCheck,
@@ -253,12 +255,8 @@ export function SubmissionsRegister({ form }: { form: Form }) {
           }
         />
       </div>
-      <div
-        role="group"
-        aria-label="Submission list controls"
-        className="flex flex-wrap items-center gap-2"
-      >
-        <SearchField
+      <ListToolbar role="group" aria-label="Submission list controls"
+ search={<SearchField
           value={query}
           onChange={(value) => {
             setQuery(value);
@@ -266,9 +264,36 @@ export function SubmissionsRegister({ form }: { form: Form }) {
           }}
           placeholder="Search answers or reference…"
           className="w-full max-w-xs"
-        />
-        <div className="ml-auto flex max-w-full flex-wrap items-center gap-2">
-          {select(
+        />}
+ controls={<>
+{select(
+            "Sort submissions",
+            sortBy,
+            (value) => setSortBy(value as typeof sortBy),
+            [
+              { value: "createdAt", label: "Date submitted" },
+              { value: "status", label: "Status" },
+              { value: "id", label: "Reference" },
+            ],
+          )}
+<SortDirectionToggle
+            ascending={ascending}
+            onToggle={() => {
+              setAscending((value) => !value);
+              setPage(1);
+            }}
+          />
+<ViewToggle
+            value={view}
+            onChange={setView}
+            options={[
+              { value: "table", label: "List view", icon: <Rows3 /> },
+              { value: "cards", label: "Card view", icon: <LayoutGrid /> },
+            ]}
+          />
+</>}
+>
+{select(
             "Submission status",
             status,
             (value) => setStatus(value as typeof status),
@@ -279,7 +304,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
               ),
             ],
           )}
-          {select(
+{select(
             "Submission source",
             source,
             (value) => setSource(value as typeof source),
@@ -289,32 +314,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
               { value: "member", label: "Signed in" },
             ],
           )}
-          {select(
-            "Sort submissions",
-            sortBy,
-            (value) => setSortBy(value as typeof sortBy),
-            [
-              { value: "createdAt", label: "Date submitted" },
-              { value: "status", label: "Status" },
-              { value: "id", label: "Reference" },
-            ],
-          )}
-          <SortDirectionToggle
-            ascending={ascending}
-            onToggle={() => {
-              setAscending((value) => !value);
-              setPage(1);
-            }}
-          />
-          <ViewToggle
-            value={view}
-            onChange={setView}
-            options={[
-              { value: "table", label: "List view", icon: <Rows3 /> },
-              { value: "cards", label: "Card view", icon: <LayoutGrid /> },
-            ]}
-          />
-          {filtered && (
+{filtered && (
             <button
               type="button"
               onClick={clear}
@@ -323,8 +323,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
               Clear filters
             </button>
           )}
-        </div>
-      </div>
+</ListToolbar>
       {submissions.isError ? (
         <EmptyState
           icon={<Inbox />}

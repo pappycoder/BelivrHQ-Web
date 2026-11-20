@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { RequiredFieldsNotice } from "@/components/ui/required-fields";
 
 import * as React from "react";
@@ -30,7 +34,6 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
@@ -342,7 +345,7 @@ function FundFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-2xl border-line bg-card">
+      <FormDialogContent className="rounded-2xl border-line bg-card">
         <DialogHeader>
           <DialogTitle className="font-display">
             {category ? `Edit ${category.name}` : "New giving category"}
@@ -352,81 +355,83 @@ function FundFormDialog({
             Offering or Building Fund.
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-3">
-          <RequiredFieldsNotice className="col-span-full" />
-          <div className="space-y-1.5">
-            <Label required className="text-sm">Category name</Label>
-            <Input
-              value={form.name}
-              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              placeholder="Building Fund"
-              className="h-10 rounded-lg border-line bg-background text-sm shadow-none"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <Label className="text-sm">Purpose (optional)</Label>
-            <Input
-              value={form.description}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, description: e.target.value }))
+        <FormSection title="Details">
+          <div className="space-y-3">
+            <RequiredFieldsNotice className="col-span-full" />
+            <div className="space-y-1.5">
+              <Label required className="text-sm">Category name</Label>
+              <Input
+                value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                placeholder="Building Fund"
+                className="h-10 rounded-lg border-line bg-background text-sm shadow-none"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-sm">Purpose (optional)</Label>
+              <Input
+                value={form.description}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, description: e.target.value }))
+                }
+                placeholder="What the money is for, in one line"
+                className="h-10 rounded-lg border-line bg-background text-sm shadow-none"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() =>
+                setForm((f) => ({ ...f, isRecurring: !f.isRecurring }))
               }
-              placeholder="What the money is for, in one line"
-              className="h-10 rounded-lg border-line bg-background text-sm shadow-none"
-            />
-          </div>
-          <button
-            type="button"
-            onClick={() =>
-              setForm((f) => ({ ...f, isRecurring: !f.isRecurring }))
-            }
-            className={cn(
-              "flex w-full items-center justify-between rounded-xl border px-3 py-2.5 text-left text-sm transition-colors",
-              form.isRecurring
-                ? "border-brand/50 bg-brand-soft/40"
-                : "border-line hover:border-ink/20",
-            )}
-          >
-            <span>
-              <span className="block font-medium">
-                Accepts recurring schedules
-              </span>
-              <span className="block text-xs text-ink-faint">
-                Monthly givers can point their standing order here.
-              </span>
-            </span>
-            <span
               className={cn(
-                "rounded-full px-2 py-0.5 text-xs font-semibold uppercase tracking-wider",
+                "flex w-full items-center justify-between rounded-xl border px-3 py-2.5 text-left text-sm transition-colors",
                 form.isRecurring
-                  ? "bg-brand text-paper"
-                  : "bg-muted text-ink-faint",
+                  ? "border-brand/50 bg-brand-soft/40"
+                  : "border-line hover:border-ink/20",
               )}
             >
-              {form.isRecurring ? "on" : "off"}
-            </span>
-          </button>
-          <Button
-            className="h-10 w-full rounded-lg text-sm"
-            disabled={!valid || pending}
-            onClick={() =>
-              onSave(
-                {
-                  name: form.name.trim(),
-                  description: form.description.trim(),
-                  isRecurring: form.isRecurring,
-                },
-                category,
-              )
-            }
-          >
-            {pending
-              ? "Saving…"
-              : category
-                ? "Save category"
-                : "Create category"}
-          </Button>
-        </div>
-      </DialogContent>
+              <span>
+                <span className="block font-medium">
+                  Accepts recurring schedules
+                </span>
+                <span className="block text-xs text-ink-faint">
+                  Monthly givers can point their standing order here.
+                </span>
+              </span>
+              <span
+                className={cn(
+                  "rounded-full px-2 py-0.5 text-xs font-semibold uppercase tracking-wider",
+                  form.isRecurring
+                    ? "bg-brand text-paper"
+                    : "bg-muted text-ink-faint",
+                )}
+              >
+                {form.isRecurring ? "on" : "off"}
+              </span>
+            </button>
+            <Button
+              className="h-10 w-full rounded-lg text-sm"
+              disabled={!valid || pending}
+              onClick={() =>
+                onSave(
+                  {
+                    name: form.name.trim(),
+                    description: form.description.trim(),
+                    isRecurring: form.isRecurring,
+                  },
+                  category,
+                )
+              }
+            >
+              {pending
+                ? "Saving…"
+                : category
+                  ? "Save category"
+                  : "Create category"}
+            </Button>
+          </div>
+        </FormSection>
+      </FormDialogContent>
     </Dialog>
   );
 }

@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { RequiredFieldsNotice } from "@/components/ui/required-fields";
 
 import * as React from "react";
@@ -17,7 +21,6 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
@@ -264,48 +267,50 @@ function TierFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-2xl border-line bg-card">
+      <FormDialogContent className="rounded-2xl border-line bg-card">
         <DialogHeader>
           <DialogTitle className="font-display">{tier ? `Edit ${tier.name}` : "Set a new tier"}</DialogTitle>
           <DialogDescription className="text-sm">Name the ticket the way the congregation would say it.</DialogDescription>
         </DialogHeader>
-        <div className="space-y-3">
-          <RequiredFieldsNotice className="col-span-full" />
-          <div className="space-y-1.5">
-            <Label required className="text-sm">Tier name</Label>
-            <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Standard" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
+        <FormSection title="Details">
+          <div className="space-y-3">
+            <RequiredFieldsNotice className="col-span-full" />
             <div className="space-y-1.5">
-              <Label required className="text-sm">Price (₦)</Label>
-              <Input inputMode="numeric" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value.replace(/[^\d]/g, "") }))} placeholder="5000" className="num h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              <Label required className="text-sm">Tier name</Label>
+              <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Standard" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label required className="text-sm">Price (₦)</Label>
+                <Input inputMode="numeric" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value.replace(/[^\d]/g, "") }))} placeholder="5000" className="num h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-sm">Capacity (optional)</Label>
+                <Input inputMode="numeric" value={form.capacity} onChange={(e) => setForm((f) => ({ ...f, capacity: e.target.value.replace(/[^\d]/g, "") }))} placeholder="100" className="num h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              </div>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-sm">Capacity (optional)</Label>
-              <Input inputMode="numeric" value={form.capacity} onChange={(e) => setForm((f) => ({ ...f, capacity: e.target.value.replace(/[^\d]/g, "") }))} placeholder="100" className="num h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              <Label className="text-sm">Note (optional)</Label>
+              <Input value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="What the ticket covers" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
+            <Button
+              className="h-10 w-full rounded-lg text-sm"
+              disabled={!valid || pending}
+              onClick={() => onSave(
+                {
+                  name: form.name.trim(),
+                  price: Number(form.price || 0),
+                  capacity: form.capacity ? Number(form.capacity) : undefined,
+                  description: form.description.trim() || undefined,
+                },
+                tier,
+              )}
+            >
+              {pending ? "Saving…" : tier ? "Save tier" : "Create tier"}
+            </Button>
           </div>
-          <div className="space-y-1.5">
-            <Label className="text-sm">Note (optional)</Label>
-            <Input value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="What the ticket covers" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
-          </div>
-          <Button
-            className="h-10 w-full rounded-lg text-sm"
-            disabled={!valid || pending}
-            onClick={() => onSave(
-              {
-                name: form.name.trim(),
-                price: Number(form.price || 0),
-                capacity: form.capacity ? Number(form.capacity) : undefined,
-                description: form.description.trim() || undefined,
-              },
-              tier,
-            )}
-          >
-            {pending ? "Saving…" : tier ? "Save tier" : "Create tier"}
-          </Button>
-        </div>
-      </DialogContent>
+        </FormSection>
+      </FormDialogContent>
     </Dialog>
   );
 }

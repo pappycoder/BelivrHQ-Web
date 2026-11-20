@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import * as React from "react";
@@ -29,7 +33,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
-  DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -288,52 +291,54 @@ export default function TemplatesPage() {
       {!templates.isError && <ListPaginationFooter page={controls.page} perPage={controls.perPage} total={total} onPageChange={controls.setPage} onPerPageChange={value => { controls.setPerPage(value); controls.setPage(1); }} perPageOptions={[12, 24, 48]} itemName="templates" />}
 
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="rounded-2xl border-line bg-card sm:max-w-[520px]">
+        <FormDialogContent className="rounded-2xl border-line bg-card sm:max-w-[520px]">
           <DialogHeader>
             <DialogTitle className="font-display">{editing ? `Edit ${editing.name}` : "New template"}</DialogTitle>
           </DialogHeader>
           <ValidatedForm onSubmit={submit} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label required className="text-sm">Name</Label>
-              <Input required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="First-time guest welcome" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
-            </div>
-            <div className="grid grid-cols-3 gap-3">
+            <FormSection title="Details">
               <div className="space-y-1.5">
-                <Label required className="text-sm">Channel</Label>
-                <select required value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as TemplateChannel }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
-                  {TEMPLATE_CHANNELS.map((c) => <option key={c} value={c}>{TEMPLATE_CHANNEL_LABELS[c]}</option>)}
-                </select>
+                <Label required className="text-sm">Name</Label>
+                <Input required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="First-time guest welcome" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-1.5">
+                  <Label required className="text-sm">Channel</Label>
+                  <select required value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as TemplateChannel }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
+                    {TEMPLATE_CHANNELS.map((c) => <option key={c} value={c}>{TEMPLATE_CHANNEL_LABELS[c]}</option>)}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Category</Label>
+                  <select value={draft.category} onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
+                    <option value="MARKETING">Marketing</option>
+                    <option value="UTILITY">Utility</option>
+                    <option value="AUTHENTICATION">Authentication</option>
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Language</Label>
+                  <Input value={draft.language} onChange={(e) => setDraft((d) => ({ ...d, language: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                </div>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm">Category</Label>
-                <select value={draft.category} onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
-                  <option value="MARKETING">Marketing</option>
-                  <option value="UTILITY">Utility</option>
-                  <option value="AUTHENTICATION">Authentication</option>
-                </select>
+                <Label required className="text-sm">Content</Label>
+                <Textarea required rows={5} value={draft.content} onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))} placeholder="Hi {{first_name}}, it was lovely to meet you on Sunday…" className="resize-none rounded-lg border-line bg-background font-mono text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm">Language</Label>
-                <Input value={draft.language} onChange={(e) => setDraft((d) => ({ ...d, language: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Label className="text-sm">Variables (comma separated)</Label>
+                <Input value={draft.variables} onChange={(e) => setDraft((d) => ({ ...d, variables: e.target.value }))} placeholder="first_name, church" className="h-10 rounded-lg border-line bg-background font-mono text-sm shadow-none" />
               </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label required className="text-sm">Content</Label>
-              <Textarea required rows={5} value={draft.content} onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))} placeholder="Hi {{first_name}}, it was lovely to meet you on Sunday…" className="resize-none rounded-lg border-line bg-background font-mono text-sm shadow-none" />
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-sm">Variables (comma separated)</Label>
-              <Input value={draft.variables} onChange={(e) => setDraft((d) => ({ ...d, variables: e.target.value }))} placeholder="first_name, church" className="h-10 rounded-lg border-line bg-background font-mono text-sm shadow-none" />
-            </div>
-            <label className="flex items-center justify-between rounded-lg border border-line px-3 py-2.5">
-              <span className="text-sm">Published (usable in broadcasts)</span>
-              <input type="checkbox" checked={draft.publish} onChange={(e) => setDraft((d) => ({ ...d, publish: e.target.checked }))} />
-            </label>
-            <Button type="submit" disabled={createTemplate.isPending || updateTemplate.isPending} className="h-10 w-full rounded-lg text-sm">
-              {editing ? "Save template" : "Create template"}
-            </Button>
+              <label className="flex items-center justify-between rounded-lg border border-line px-3 py-2.5">
+                <span className="text-sm">Published (usable in broadcasts)</span>
+                <input type="checkbox" checked={draft.publish} onChange={(e) => setDraft((d) => ({ ...d, publish: e.target.checked }))} />
+              </label>
+              <Button type="submit" disabled={createTemplate.isPending || updateTemplate.isPending} className="h-10 w-full rounded-lg text-sm">
+                {editing ? "Save template" : "Create template"}
+              </Button>
+            </FormSection>
           </ValidatedForm>
-        </DialogContent>
+        </FormDialogContent>
       </Dialog>
 
       <ConfirmDeleteDialog

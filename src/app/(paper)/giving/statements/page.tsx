@@ -191,7 +191,7 @@ export default function GivingStatementsPage() {
         <select
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
-          className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-sm outline-none"
+          className="ml-auto h-9 rounded-full border border-line bg-card px-3 text-sm outline-none"
           aria-label="Fund filter"
         >
           <option value="">All funds</option>

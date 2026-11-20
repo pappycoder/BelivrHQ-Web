@@ -1,5 +1,9 @@
 "use client";
 
+import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import {
@@ -69,12 +73,14 @@ const sermonSchema = z.object({
 type SermonFormValues = z.infer<typeof sermonSchema>;
 
 interface SermonFormProps {
+  withPreview?: boolean;
   sermon?: Sermon;
   onSubmit: (input: CreateSermonInput) => Promise<Sermon>;
   onSaveRecording?: (input: UpdateSermonInput) => Promise<Sermon>;
 }
 
 export function SermonForm({
+  withPreview = false,
   sermon,
   onSubmit,
   onSaveRecording,
@@ -253,6 +259,23 @@ export function SermonForm({
     }
   };
 
+  const editorActions = (
+    <div className={cn("flex gap-3", withPreview ? "flex-col" : "flex-wrap items-center justify-between")}>
+      <div className={cn("flex gap-2", withPreview && "w-full [&>button]:flex-1")}>
+        {stage !== "details" && (
+          <Button type="button" variant="outline" disabled={saving} onClick={() => setStage(stage === "video" ? "audio" : "details")}>Back</Button>
+        )}
+        {sermon && stage !== "video" && (
+          <Button type="button" variant="outline" disabled={saving} onClick={() => void nextStage()}>Next</Button>
+        )}
+      </div>
+      <Button type="submit" disabled={saving} className={withPreview ? "w-full" : undefined}>
+        {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {saving ? "Saving…" : stage === "details" ? "Save Details" : stage === "audio" ? "Save Audio" : "Save Video"}
+      </Button>
+    </div>
+  );
+
   return (
     <Form {...form}>
       <ValidatedForm schemaValidation
@@ -264,7 +287,7 @@ export function SermonForm({
           }
         }}
         data-sermon-editor
-        className={`${sermonWorkspaceClass} space-y-4`}
+        className={cn(sermonWorkspaceClass, withPreview ? CREATE_FORM_LAYOUT : "space-y-4")}
         aria-busy={saving}
       >
         <fieldset disabled={saving} className="min-w-0 space-y-4">
@@ -547,41 +570,23 @@ export function SermonForm({
               </Card>
             </TabsContent>
           </Tabs>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex gap-2">
-              {stage !== "details" && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() =>
-                    setStage(stage === "video" ? "audio" : "details")
-                  }
-                >
-                  Back
-                </Button>
-              )}
-              {sermon && stage !== "video" && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => void nextStage()}
-                >
-                  Next
-                </Button>
-              )}
-            </div>
-            <Button type="submit" disabled={saving}>
-              {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {saving
-                ? "Saving…"
-                : stage === "details"
-                  ? "Save Details"
-                  : stage === "audio"
-                    ? "Save Audio"
-                    : "Save Video"}
-            </Button>
-          </div>
+          {!withPreview && editorActions}
         </fieldset>
+        {withPreview && <CreatePreviewSidebar>
+          <CreatePreviewCard editing={!!sermon} eyebrow="Sermon preview" title={form.watch("title") || "Untitled sermon"}>
+            <dl className="space-y-3 text-sm">
+              <div><dt className="rule-label">Speaker</dt><dd className="mt-1 break-words">{form.watch("speaker") || "Not entered yet"}</dd></div>
+              <div><dt className="rule-label">Date</dt><dd className="mt-1">{form.watch("sermonDate") || "Not selected yet"}</dd></div>
+              <div><dt className="rule-label">Scripture</dt><dd className="mt-1 break-words">{form.watch("scriptureReference") || "Not entered yet"}</dd></div>
+              <div><dt className="rule-label">Series</dt><dd className="mt-1 break-words">{form.watch("seriesName") || "No series"}</dd></div>
+            </dl>
+            {sermon ? <p className="text-sm text-ink-soft">Editing {stage}. Details, audio and video save independently.</p> : <p className="text-sm text-ink-soft">Save the details first, then attach audio and video in the editor.</p>}
+          </CreatePreviewCard>
+          <div className="space-y-2">
+            {sermon ? editorActions : <Button type="submit" disabled={saving} loading={saving} className="w-full">Create sermon</Button>}
+            <Button asChild variant="ghost" className="w-full"><Link href={sermon ? `/library/sermons/${sermon.sermonId}` : "/library/sermons"}>Cancel</Link></Button>
+          </div>
+        </CreatePreviewSidebar>}
         {savingMessage && (
           <p role="status" className="text-sm text-muted-foreground">
             {savingMessage}

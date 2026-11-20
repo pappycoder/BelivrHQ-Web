@@ -1,5 +1,7 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
@@ -111,11 +113,11 @@ export default function AdminBranchesPage() {
         <StatCard label="Locations named" value={rows.filter((b) => b.city).length} tone="sky" />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={query} onChange={setQuery} placeholder="Search name, city or address…" className="w-full max-w-xs" />
-        <FilterChip active={archivedView} onClick={() => setArchivedView((v) => !v)}>Archived</FilterChip>
-        <span className="ml-auto">
-          <ViewToggle
+      <ListToolbar
+ search={<SearchField value={query} onChange={setQuery} placeholder="Search name, city or address…" className="w-full max-w-xs" />}
+ controls={<>
+<FilterChip active={archivedView} onClick={() => setArchivedView((v) => !v)}>Archived</FilterChip>
+<ViewToggle
             value={view}
             onChange={setView}
             options={[
@@ -123,8 +125,10 @@ export default function AdminBranchesPage() {
               { value: "cards", label: "Cards", icon: <LayoutGrid /> },
             ]}
           />
-        </span>
-      </div>
+</>}
+>
+
+</ListToolbar>
 
       {branches.isLoading ? (
         <div className="space-y-2">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-xl" />)}</div>

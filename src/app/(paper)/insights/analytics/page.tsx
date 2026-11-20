@@ -95,7 +95,7 @@ export default function AnalyticsOverviewPage() {
         {PERIODS.map((item, index) => (
           <FilterChip key={item.label} active={period === index} onClick={() => setPeriod(index)}>{item.label}</FilterChip>
         ))}
-        <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Branch filter">
+        <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="ml-auto h-9 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Branch filter">
           <option value="">All branches</option>
           {(branches.data?.data ?? []).map((branch) => <option key={branch.branchId} value={branch.branchId}>{branch.name}</option>)}
         </select>

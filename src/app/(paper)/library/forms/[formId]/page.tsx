@@ -1,5 +1,7 @@
 "use client";
 
+import { DetailNavigation, DetailHeading } from "@/components/paper/section";
+
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
 
 import * as React from "react";
@@ -80,9 +82,9 @@ export default function FormDetailPage({
   return (
     <div className="space-y-6">
       {dialog}
-      <Link href="/library/forms" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
+      <DetailNavigation><Link href="/library/forms" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
         <ArrowLeft className="size-3" /> Library · Forms
-      </Link>
+      </Link></DetailNavigation>
 
       <div className="paper-card rounded-2xl p-5 md:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -93,7 +95,7 @@ export default function FormDetailPage({
               {f.archivedAt ? <Tag tone="rose">Archived</Tag> : null}
               {f.branchName ? <Tag tone="sky">{f.branchName}</Tag> : null}
             </div>
-            <h1 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight">{f.title}</h1>
+            <DetailHeading>{f.title}</DetailHeading>
             {f.description ? <p className="max-w-2xl text-sm leading-relaxed text-ink-soft">{f.description}</p> : null}
           </div>
           <div className="flex flex-wrap gap-2">

@@ -1,5 +1,9 @@
 "use client";
 
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
+import { FormSection } from "@/components/shared/form-section";
+
 import { RequiredFieldsNotice, RequiredIndicator } from "@/components/ui/required-fields";
 import { GivingFormSection as StyledGivingFormSection } from "./giving-presentation";
 
@@ -8,7 +12,6 @@ import { format } from "date-fns";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -243,7 +246,7 @@ export function RecordCashDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
+      <FormDialogContent
         className={`${presentationClassName ?? ""} sm:max-w-[560px] max-h-[90vh] overflow-y-auto`}
       >
         <DialogHeader>
@@ -384,7 +387,7 @@ export function RecordCashDialog({
           <GivingFormSection title="Giver & context">
             <div className="space-y-1.5">
               <p className="text-sm font-medium">Linked to</p>
-              <div className="flex gap-1 rounded-md border p-1 w-fit">
+              <div className="flex w-full flex-wrap gap-1 rounded-xl border border-line bg-card p-1">
                 {LINK_TABS.filter(
                   (tab) => tab.value !== "event" || canReadEvents,
                 ).map((tab) => (
@@ -495,16 +498,17 @@ export function RecordCashDialog({
             {pending ? "Recording..." : "Record Giving"}
           </Button>
         </DialogFooter>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }
 
 function PlainSection({
+  title,
   children,
 }: {
   title: string;
   children: React.ReactNode;
 }) {
-  return <div className="space-y-4">{children}</div>;
+  return <FormSection title={title}>{children}</FormSection>;
 }

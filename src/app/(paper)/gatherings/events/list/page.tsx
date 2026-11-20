@@ -1,5 +1,9 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
+import { formatRecordDateTime } from "@/lib/record-date";
+
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
@@ -15,6 +19,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { PageHeader } from "@/components/paper/section";
+import { PageTour, type TourStep } from "@/components/tours/page-tour";
 import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
@@ -55,19 +60,32 @@ import {
 } from "@/hooks/use-events";
 import { toast } from "@/lib/toast";
 
+const EVENTS_LIST_TOUR_STEPS: TourStep[] = [
+  { target: ".events-list-tour-heading", title: "Explore the event register", description: "Find event schedules, branches and registration counts in one register. This guide explains the controls without changing any event. Replay it anytime with Take a tour." },
+  { target: ".events-list-tour-summary", title: "Understand the totals and scope", description: "Matching events counts all events matching your current filters. On this page counts the rows currently displayed. Scope shows the selected branch or your account's assigned scope." },
+  { target: ".events-list-tour-search", title: "Find an event", description: "After the tour, type a search term. The register updates after a short pause and returns to page one. Search combines with the time, type, branch, archive and date filters." },
+  { target: ".events-list-tour-status", title: "Choose the time window", description: "All, Upcoming and Past filter event records by their schedule. They do not change event status. All removes only this time filter; your other filter choices still apply." },
+  { target: ".events-list-tour-archive", title: "Review archived events", description: "Archived switches to archived event records. Turn it off to return to the regular register. Archiving retains registrations and attendance history; authorised users can restore the event." },
+  { target: ".events-list-tour-type", title: "Narrow the event type", description: "Choose an event type or All types. This works together with the other filters and returns to the first page. The event register is separate from the active service register." },
+  { target: ".events-list-tour-branch", title: "Choose a branch", description: "HQ accounts can choose a branch or All branches. Other accounts remain within their assigned access. Scope above reflects the branch choice. Changing this filter does not move an event between branches." },
+  { target: ".events-list-tour-sort", title: "Arrange the matching events", description: "Sort by Start date, Title or Date added. Use the direction button to reverse the order. Sorting returns to page one and changes only how the matching records are displayed." },
+  { target: ".events-list-tour-dates", title: "Apply a date range", description: "Date range filters event start dates. Set From, To or both boundaries. Apply dates updates the register; Clear dates removes only the date filter. A To date before From is rejected. Closing the popover without applying discards the draft." },
+  { target: "[data-list-table='events-list'] > [data-export-ignore]", title: "Columns and selected events", description: "Columns chooses the visible fields. Checkboxes select events on this page and reveal the actions available to your account, plus selected-row exports. Selection alone makes no changes. Review any bulk confirmation before proceeding." },
+  { target: ".events-list-tour-record", title: "Read an event record", description: "The row shows the event title, location, type, schedule, branch and registration count. Select the title to open the full event record. Opening it does not edit the event or register anyone." },
+  { target: ".events-list-tour-manage", title: "Understand the management actions", description: "Hover a row or focus its controls to reveal available actions. Open views the record. Edit, Archive and Restore depend on your permissions. Delete is permanent and is blocked for events with registrations or attendance history; archive those instead." },
+  { target: ".events-list-tour-empty", title: "When no events match", description: "Try a different search or loosen the filters. Clear filters resets search, time window, type, branch, Archived and date range and returns to page one. Your account's access still applies." },
+  { target: ".events-list-tour-page [aria-label='Pagination']", title: "Browse more results", description: "Prev and Next move through the filtered register. Rows per page changes how many events are shown. The displayed range and total follow your filters; navigation is disabled when there are no more pages." },
+  { target: ".events-list-tour-calendar", title: "Return to the calendar", description: "Calendar opens the shared events and services calendar with its own date selection and filters. Your register filters are not automatically applied to that page." },
+  { target: ".events-list-tour-new", title: "Create an event", description: "New event opens the creation page for accounts with create access. Review the event details, schedule and registration settings before saving. The tour does not open or submit the form." },
+];
+
 function dateBoundary(value: string, end = false) {
   return value
     ? new Date(`${value}T${end ? "23:59:59.999" : "00:00:00"}`).toISOString()
     : undefined;
 }
 function dateLabel(value: string) {
-  return new Date(value).toLocaleString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return formatRecordDateTime(value);
 }
 
 export default function EventsListPage() {
@@ -243,18 +261,20 @@ export default function EventsListPage() {
       />
     );
   return (
-    <div className="space-y-6">
+    <div className="events-list-tour-page space-y-6">
       <PageHeader
+        className="events-list-tour-heading"
         eyebrow="Gatherings · Events"
         title="Every event, in one place."
         description="Browse schedules, registrations and event records across your church."
         actions={
           <>
+            <PageTour page="Event register" account={profile ? `${profile.churchId}:${profile.profileId}` : undefined} ready={ready && list.isSuccess && !dateOpen} steps={EVENTS_LIST_TOUR_STEPS} />
             {ready && can("events:calendar", "read") && (
               <Button
                 asChild
                 variant="outline"
-                className="h-9 rounded-full border-line bg-card text-sm"
+                className="events-list-tour-calendar h-9 rounded-full border-line bg-card text-sm"
               >
                 <Link href="/gatherings/events">
                   <CalendarDays className="size-3.5" /> Calendar
@@ -262,7 +282,7 @@ export default function EventsListPage() {
               </Button>
             )}
             {canCreate && (
-              <Button asChild className="h-9 rounded-full text-sm">
+              <Button asChild className="events-list-tour-new h-9 rounded-full text-sm">
                 <Link href="/gatherings/events/new">
                   <Plus className="size-3.5" /> New event
                 </Link>
@@ -271,7 +291,7 @@ export default function EventsListPage() {
           </>
         }
       />
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+      <div className="events-list-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-3">
         {list.isLoading || !ready ? (
           <Skeleton className="h-32 rounded-2xl" />
         ) : list.isError ? (
@@ -304,32 +324,15 @@ export default function EventsListPage() {
         </div>
       </div>
       <div role="group" aria-label="Event list filters" className="space-y-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <SearchField
+        <ListToolbar
+ search={<SearchField
             value={searchInput}
             onChange={setSearchInput}
             placeholder="Search events…"
-            className="w-full max-w-xs"
-          />
-          <div className="flex flex-wrap gap-1.5">
-            {[
-              ["all", "All"],
-              ["upcoming", "Upcoming"],
-              ["past", "Past"],
-            ].map(([value, label]) => (
-              <FilterChip
-                key={value}
-                active={status === value}
-                onClick={() => {
-                  setStatus(value);
-                  setPage(1);
-                }}
-              >
-                {label}
-              </FilterChip>
-            ))}
-          </div>
-          <div className="ml-auto flex max-w-full flex-wrap items-center gap-2">
+            className="events-list-tour-search w-full max-w-xs"
+          />}
+ controls={<>
+<div className="events-list-tour-archive inline-flex">
             <FilterChip
               active={archived}
               onClick={() => {
@@ -339,29 +342,8 @@ export default function EventsListPage() {
             >
               Archived
             </FilterChip>
-            <Select
-              value={type}
-              onValueChange={(value) => {
-                setType(value as EventType | "all");
-                setPage(1);
-              }}
-            >
-              <SelectTrigger
-                aria-label="Event type"
-                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All types</SelectItem>
-                {EVENT_TYPES.map((item) => (
-                  <SelectItem key={item.value} value={item.value}>
-                    {item.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {isHq && (
+            </div>
+{isHq && (
               <Select
                 value={branchId}
                 onValueChange={(value) => {
@@ -373,7 +355,7 @@ export default function EventsListPage() {
                   aria-label="Event branch"
                   data-prefix-icon="building"
                   disabled={branches.isLoading || branches.isError}
-                  className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
+                  className="events-list-tour-branch h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
                 >
                   <SelectValue placeholder="All branches" />
                 </SelectTrigger>
@@ -387,6 +369,7 @@ export default function EventsListPage() {
                 </SelectContent>
               </Select>
             )}
+<div className="events-list-tour-sort flex flex-wrap items-center gap-2">
             <Select
               value={sortBy}
               onValueChange={(value) => {
@@ -421,8 +404,50 @@ export default function EventsListPage() {
                 setPage(1);
               }}
             />
+            </div>
+</>}
+>
+<div className="events-list-tour-status flex flex-wrap gap-1.5" role="group" aria-label="Event time filters">
+            {[
+              ["all", "All"],
+              ["upcoming", "Upcoming"],
+              ["past", "Past"],
+            ].map(([value, label]) => (
+              <FilterChip
+                key={value}
+                active={status === value}
+                onClick={() => {
+                  setStatus(value);
+                  setPage(1);
+                }}
+              >
+                {label}
+              </FilterChip>
+            ))}
           </div>
-        </div>
+<Select
+              value={type}
+              onValueChange={(value) => {
+                setType(value as EventType | "all");
+                setPage(1);
+              }}
+            >
+              <SelectTrigger
+                aria-label="Event type"
+                className="events-list-tour-type h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All types</SelectItem>
+                {EVENT_TYPES.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+</ListToolbar>
         <div className="flex flex-wrap items-center gap-3 text-sm text-ink-faint">
           <Popover open={dateOpen} onOpenChange={open => {
             if (open) {
@@ -433,7 +458,7 @@ export default function EventsListPage() {
           }}>
             <PopoverTrigger asChild>
               <Button ref={dateTriggerRef} disableTooltip type="button" variant="outline" size="sm" aria-label={fromDate || toDate ? `Date range, ${fromDate || "any start"} to ${toDate || "any end"}` : "Date range"}
-                className={`h-9 max-w-full gap-2 rounded-full border-line text-sm ${fromDate || toDate ? "bg-brand/10 text-brand" : "bg-card"}`}>
+                className={`events-list-tour-dates h-9 max-w-full gap-2 rounded-full border-line text-sm ${fromDate || toDate ? "bg-brand/10 text-brand" : "bg-card"}`}>
                 <CalendarDays className="size-3.5" />
                 <span className="min-w-0 truncate">{fromDate || toDate ? `${fromDate || "Any start"} → ${toDate || "Any end"}` : "Date range"}</span>
                 <ChevronDown className="size-3" />
@@ -509,6 +534,7 @@ export default function EventsListPage() {
         </div>
       ) : (
         <div className="paper-card overflow-hidden rounded-2xl">
+          <div className="overflow-x-auto">
           <ListTable
             tableId="events-list"
             label="Event register"
@@ -523,7 +549,7 @@ export default function EventsListPage() {
               <span>Schedule</span>
               <span>Branch</span>
               <span>Registered</span>
-              <ManageHeading />
+              <div className="events-list-tour-manage text-right"><ManageHeading /></div>
             </div>
             <div className="divide-y divide-line/70">
               {rows.map((event) => (
@@ -533,7 +559,7 @@ export default function EventsListPage() {
                 >
                   <Link
                     href={`/gatherings/events/${event.eventId}`}
-                    className="min-w-0"
+                    className="events-list-tour-record min-w-0"
                   >
                     <span className="block truncate text-sm font-semibold">
                       {event.title}
@@ -568,8 +594,10 @@ export default function EventsListPage() {
                 </div>
               ))}
             </div>
+          </ListTable>
+          </div>
             {!rows.length && (
-              <div className="p-6">
+              <div className="events-list-tour-empty p-6">
                 <EmptyState
                   icon={<CalendarDays />}
                   title="No events match"
@@ -588,7 +616,6 @@ export default function EventsListPage() {
                 />
               </div>
             )}
-          </ListTable>
           <ListPaginationFooter
             page={page}
             perPage={perPage}

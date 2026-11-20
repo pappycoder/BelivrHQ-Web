@@ -1,5 +1,20 @@
 import * as React from "react";
+import { NavigationPageTour } from "@/components/tours/navigation-page-tour";
 import { cn } from "@/lib/utils";
+
+export function DetailHeading({ className, ...props }: React.ComponentProps<"h1">) {
+  return <h1 {...props} className={cn("font-display text-[clamp(1.65rem,2.4vw,2.15rem)] leading-[1.1] font-semibold tracking-tight text-balance", className)} />;
+}
+
+/** Keep back navigation, record actions and the tour together on detail pages. */
+export function DetailNavigation({ children }: { children: React.ReactNode }) {
+  return (
+    <nav aria-label="Record navigation" className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex min-w-0 flex-1 flex-wrap items-center justify-between gap-3">{children}</div>
+      <div data-tour-actions className="flex max-w-full flex-wrap items-center gap-2"><NavigationPageTour /></div>
+    </nav>
+  );
+}
 
 export function PageHeader({
   eyebrow,
@@ -39,9 +54,9 @@ export function PageHeader({
             </p>
           ) : null}
         </div>
-        {actions ? (
-          <div className="flex max-w-full shrink-0 flex-wrap items-center gap-2">{actions}</div>
-        ) : null}
+        <div data-tour-actions className="flex max-w-full shrink-0 flex-wrap items-center gap-2 empty:hidden">
+          {actions}<NavigationPageTour />
+        </div>
       </div>
       {children}
     </header>
@@ -69,6 +84,7 @@ export function SectionCard({
 }) {
   return (
     <Tag
+      data-tour-section={typeof title === "string" ? title : undefined}
       className={cn(
         "paper-card overflow-hidden rounded-2xl",
         className,

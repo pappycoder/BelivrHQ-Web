@@ -116,7 +116,7 @@ export default function PastoralNotesPage() {
             <StaggerGroup className="space-y-3">
               {rows.map((note) => (
                 <StaggerItem key={note.id}>
-                  <article className="paper-card lift rounded-2xl p-4">
+                  <article data-tour-records className="paper-card lift rounded-2xl p-4">
                     <div className="flex flex-wrap items-center gap-2">
                       <Tag tone={CONF_TONES[note.confidentiality]} dot>
                         {CONFIDENTIALITY_LABELS[note.confidentiality]}

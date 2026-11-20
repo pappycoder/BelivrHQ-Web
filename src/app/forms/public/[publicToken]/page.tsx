@@ -1,5 +1,7 @@
 "use client";
 
+import { retryPage } from "@/lib/retry-page";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import { BotProtection } from "@/components/shared/bot-protection";
@@ -59,10 +61,8 @@ function PublicFormContent({ token }: { token: string }) {
   const [form, setForm] = React.useState<PublicFormPayload | null>(null);
   const [isPending, setPending] = React.useState(true);
   const [error, setError] = React.useState(false);
-  const [attempt, setAttempt] = React.useState(0);
   const [sending, setSending] = React.useState(false);
   const inFlight = React.useRef(false);
-  const refetch = () => setAttempt((previous) => previous + 1);
   React.useEffect(() => {
     const controller = new AbortController();
     setPending(true);
@@ -84,7 +84,7 @@ function PublicFormContent({ token }: { token: string }) {
         if (!controller.signal.aborted) setPending(false);
       });
     return () => controller.abort();
-  }, [token, attempt]);
+  }, [token]);
   const required = form?.fields.filter((field) => field.required) ?? [];
   const completed = form?.fields.filter((field) => answered(answers[field.key])).length ?? 0;
   const requiredDone = required.filter((field) => answered(answers[field.key])).length;
@@ -227,7 +227,7 @@ function PublicFormContent({ token }: { token: string }) {
               <p role="alert" className="text-sm leading-6 text-muted-foreground">
                 Check that you have the complete link, or contact the person who shared it.
               </p>
-              <Button variant="outline" onClick={() => void refetch()}>
+              <Button variant="outline" onClick={() => void retryPage()}>
                 <RotateCcw className="size-4" />
                 Try again
               </Button>

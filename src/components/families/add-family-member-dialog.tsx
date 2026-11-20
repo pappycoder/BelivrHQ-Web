@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import * as React from "react";
@@ -7,7 +11,6 @@ import { peopleWorkspaceClass } from "@/components/members/people-presentation";
 import { toast } from "@/lib/toast";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -105,7 +108,7 @@ export function AddFamilyMemberDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
+      <FormDialogContent
         className={`${peopleWorkspaceClass} sm:max-w-[460px] rounded-2xl`}
       >
         <DialogHeader>
@@ -117,85 +120,87 @@ export function AddFamilyMemberDialog({
 
         <Form {...form}>
           <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField required
-              control={form.control}
-              name="memberId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Member *</FormLabel>
-                  <FormControl>
-                    <div>
-                      <MemberCombobox
-                        value={field.value}
-                        onChange={(memberId, member) => {
-                          field.onChange(memberId);
-                          setMemberName(
-                            member
-                              ? `${member.firstName} ${member.lastName}`
-                              : "",
-                          );
-                        }}
-                        selectedName={memberName}
-                        placeholder="Search members..."
-                        excludeIds={excludeIds}
-                      />
-                      {excludeIds.length > 0 && (
-                        <p className="text-sm text-muted-foreground mt-1.5">
-                          Members already in this family are hidden.
-                        </p>
-                      )}
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField required
-              control={form.control}
-              name="relationship"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Relationship to Head *</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+            <FormSection title="Family membership">
+              <FormField required
+                control={form.control}
+                name="memberId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Member *</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select relationship" />
-                      </SelectTrigger>
+                      <div>
+                        <MemberCombobox
+                          value={field.value}
+                          onChange={(memberId, member) => {
+                            field.onChange(memberId);
+                            setMemberName(
+                              member
+                                ? `${member.firstName} ${member.lastName}`
+                                : "",
+                            );
+                          }}
+                          selectedName={memberName}
+                          placeholder="Search members..."
+                          excludeIds={excludeIds}
+                        />
+                        {excludeIds.length > 0 && (
+                          <p className="text-sm text-muted-foreground mt-1.5">
+                            Members already in this family are hidden.
+                          </p>
+                        )}
+                      </div>
                     </FormControl>
-                    <SelectContent>
-                      {RELATIONSHIP_OPTIONS.map((rel) => (
-                        <SelectItem key={rel} value={rel}>
-                          {rel.charAt(0).toUpperCase() + rel.slice(1)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="isHead"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex items-center justify-between rounded-md border p-3">
-                    <div>
-                      <FormLabel>Head of Family</FormLabel>
-                      <p className="text-sm text-muted-foreground mt-0.5">
-                        Mark this member as the family head.
-                      </p>
+              <FormField required
+                control={form.control}
+                name="relationship"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Relationship to Head *</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select relationship" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {RELATIONSHIP_OPTIONS.map((rel) => (
+                          <SelectItem key={rel} value={rel}>
+                            {rel.charAt(0).toUpperCase() + rel.slice(1)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="isHead"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-center justify-between rounded-md border p-3">
+                      <div>
+                        <FormLabel>Head of Family</FormLabel>
+                        <p className="text-sm text-muted-foreground mt-0.5">
+                          Mark this member as the family head.
+                        </p>
+                      </div>
+                      <Switch
+                        checked={!!field.value}
+                        onCheckedChange={field.onChange}
+                      />
                     </div>
-                    <Switch
-                      checked={!!field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </div>
-                </FormItem>
-              )}
-            />
+                  </FormItem>
+                )}
+              />
+            </FormSection>
 
             <DialogFooter className="pt-2">
               <Button
@@ -216,7 +221,7 @@ export function AddFamilyMemberDialog({
             </DialogFooter>
           </ValidatedForm>
         </Form>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

@@ -1,12 +1,15 @@
 "use client";
 
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
+import { FormSection } from "@/components/shared/form-section";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 import { GivingFormSection as StyledGivingFormSection } from "./giving-presentation";
 
 import { useEffect, useState } from "react";
 import {
   Dialog,
-  DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
@@ -115,7 +118,7 @@ export function RecurringGivingDialog({
   );
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
+      <FormDialogContent
         className={`${presentationClassName ?? ""} sm:max-w-[540px] max-h-[90vh] overflow-y-auto`}
       >
         <DialogHeader>
@@ -305,16 +308,17 @@ export function RecurringGivingDialog({
             </Button>
           </DialogFooter>
         </ValidatedForm>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }
 
 function PlainSection({
+  title,
   children,
 }: {
   title: string;
   children: React.ReactNode;
 }) {
-  return <div className="space-y-4">{children}</div>;
+  return <FormSection title={title}>{children}</FormSection>;
 }

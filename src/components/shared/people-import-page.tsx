@@ -8,11 +8,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { confirmDiscardChanges } from "@/hooks/use-unsaved-changes";
 
+import { PageTour } from "@/components/tours/page-tour";
+import { MEMBER_IMPORT_TOUR_STEPS } from "@/components/tours/member-import-steps";
+import { VISITOR_IMPORT_TOUR_STEPS } from "@/components/tours/visitor-import-steps";
 import { VisibleDataExport } from "@/components/shared/visible-data-export";
 
 import * as React from "react";
 import {
-  PeopleHeader,
   PeopleImportProgress,
   peopleWorkspaceClass,
 } from "@/components/members/people-presentation";
@@ -30,7 +32,7 @@ import {
 } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
-import { PageHeader } from "@/components/shared/page-header";
+import { PageHeader } from "@/components/paper/section";
 import {
   Card,
   CardContent,
@@ -115,15 +117,23 @@ function autoMap(
 export function PeopleImportPage({
   kind,
   presentationClassName,
-  compactProgress = false,
+  heading,
+  introduction,
+  tourPage,
+  returnHref,
 }: {
   kind: "members" | "visitors";
   presentationClassName?: string;
-  compactProgress?: boolean;
+  heading?: Omit<React.ComponentProps<typeof PageHeader>, "actions" | "children">;
+  introduction?: React.ReactNode;
+  tourPage?: string;
+  returnHref?: string;
 }) {
   const visitor = kind === "visitors";
   const plural = visitor ? "Visitors" : "Members";
   const singular = visitor ? "visitor" : "member";
+  const directoryHref = returnHref ?? `/${kind}`;
+  const stageLabels = { upload: "Upload", map: "Map columns", review: "Review", done: "Complete" };
   const TARGET_FIELDS = visitor ? VISITOR_IMPORT_FIELDS : MEMBER_FIELDS;
   const qc = useQueryClient();
   const { can } = usePermissions();
@@ -461,9 +471,6 @@ export function PeopleImportPage({
       </p>
     );
 
-  const ImportHeader =
-    kind === "members" || compactProgress ? PeopleHeader : PageHeader;
-
   return (
     <div
       className={cn(
@@ -472,51 +479,30 @@ export function PeopleImportPage({
         presentationClassName,
       )}
     >
-      <ImportHeader
+      <PageHeader
         title={`Import ${plural}`}
-        breadcrumbs={[
-          { label: "Home", href: "/home" },
-          { label: plural, href: `/${kind}` },
-          { label: "Import" },
-        ]}
-        action={
+        {...heading}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+          {tourPage ? <PageTour key={step} page={`${tourPage} · ${stageLabels[step]}`} account={currentProfile ? `${currentProfile.churchId}:${currentProfile.profileId}` : undefined} ready={allowed && !parsing && !dryRunning && !importing} steps={visitor ? VISITOR_IMPORT_TOUR_STEPS : MEMBER_IMPORT_TOUR_STEPS} /> : null}
           <Button
+            className="people-import-back"
             variant="outline"
             onClick={() => {
-              if (confirmDiscardChanges()) router.push(`/${kind}`);
+              if (confirmDiscardChanges()) router.push(directoryHref);
             }}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to {plural}
           </Button>
+          </div>
         }
       />
 
-      {/* Step indicator */}
-      {kind === "members" || compactProgress ? (
+      {introduction}
+      <div className="people-import-progress">
         <PeopleImportProgress step={step} />
-      ) : (
-        <div className="flex items-center gap-2 text-sm">
-          {(["upload", "map", "review", "done"] as ImportStep[]).map((s, i) => (
-            <React.Fragment key={s}>
-              {i > 0 && <span className="text-muted-foreground">→</span>}
-              <span
-                className={
-                  step === s
-                    ? "font-medium text-foreground"
-                    : "text-muted-foreground capitalize"
-                }
-              >
-                {i + 1}.{" "}
-                {s === "upload"
-                  ? "Upload"
-                  : s.charAt(0).toUpperCase() + s.slice(1)}
-              </span>
-            </React.Fragment>
-          ))}
-        </div>
-      )}
-
+      </div>
       {/* Step 1: Upload */}
       {step === "upload" && (
         <div className="grid gap-4 lg:grid-cols-3">
@@ -533,7 +519,7 @@ export function PeopleImportPage({
             <CardContent className="space-y-3">
               <label
                 className={cn(
-                  "flex flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed py-16 cursor-pointer transition-colors",
+                  "people-import-upload flex flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed py-16 cursor-pointer transition-colors",
                   isDragging
                     ? "border-primary bg-primary/5"
                     : "border-muted-foreground/25 hover:bg-muted/40",
@@ -588,7 +574,7 @@ export function PeopleImportPage({
                   </p>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  {["CSV", "XLSX", "XLS"].map((fmt) => (
+                  {["CSV", "XLSX"].map((fmt) => (
                     <Badge
                       key={fmt}
                       variant="secondary"
@@ -632,7 +618,7 @@ export function PeopleImportPage({
             </CardHeader>
             <CardContent className="mt-auto space-y-4">
               <div>
-                <p className="text-sm font-medium text-muted-foreground mb-2">
+                <p className="people-import-columns text-sm font-medium text-muted-foreground mb-2">
                   Supported columns
                 </p>
                 <div className="flex flex-wrap gap-1.5">
@@ -648,7 +634,7 @@ export function PeopleImportPage({
                 </div>
               </div>
               <Button
-                className="w-full"
+                className="people-import-template w-full"
                 onClick={() => void downloadTemplate()}
               >
                 <Download className="h-4 w-4 mr-2" />
@@ -666,7 +652,7 @@ export function PeopleImportPage({
 
       {/* Step 2: Map columns */}
       {step === "map" && (
-        <Card>
+        <Card className="people-import-map">
           <CardHeader>
             <CardTitle>Map columns</CardTitle>
             <CardDescription>
@@ -678,7 +664,7 @@ export function PeopleImportPage({
             <RequiredFieldsNotice />
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {TARGET_FIELDS.map((field) => (
-                <div key={field.key}>
+                <div key={field.key} data-import-field={field.key}>
                   <label className="text-sm font-medium mb-1.5 block">
                     {field.label.replace(/ \*$/, "")} {field.required && <RequiredIndicator />}
                   </label>
@@ -725,7 +711,7 @@ export function PeopleImportPage({
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-2">
+            <div className="people-import-map-actions flex flex-wrap items-center justify-between gap-2 pt-2">
               <Button variant="outline" onClick={resetAll}>
                 Choose Another File
               </Button>
@@ -757,7 +743,7 @@ export function PeopleImportPage({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="people-import-review-summary grid gap-4 sm:grid-cols-2">
               <div className="rounded-md border p-4">
                 <p className="flex items-center gap-2 font-medium text-green-600 dark:text-green-400">
                   <CheckCircle2 className="h-5 w-5" />
@@ -789,6 +775,7 @@ export function PeopleImportPage({
 
             {dryRunResult.errors.length > 0 && (
               <div className="rounded-md border overflow-hidden">
+                <p className="people-import-error-heading border-b p-3 text-sm font-medium">Review the row numbers and validation messages below.</p>
                 <Table records={dryRunResult.errors.slice(0,25).map((error,index)=>({...error,__rowKey:`${error.row}-${index}`}))} recordKey="__rowKey" recordType="importError">
                   <TableHeader>
                     <TableRow>
@@ -820,7 +807,7 @@ export function PeopleImportPage({
               </div>
             )}
 
-            <div className="flex items-center justify-between pt-2">
+            <div className="people-import-review-actions flex flex-wrap items-center justify-between gap-2 pt-2">
               <Button variant="outline" onClick={() => setStep("map")}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Mapping
@@ -859,7 +846,7 @@ export function PeopleImportPage({
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-16 gap-4">
             <CheckCircle2 className="h-14 w-14 text-green-500" />
-            <div className="text-center">
+            <div className="people-import-complete text-center">
               <p className="text-lg font-semibold">Import finished</p>
               <p className="text-muted-foreground mt-1">
                 {finalResult.created} {kind} were created.
@@ -879,13 +866,13 @@ export function PeopleImportPage({
                 </ul>
               </>
             )}
-            <div className="flex gap-2">
+            <div className="people-import-complete-actions flex flex-wrap gap-2">
               <Button variant="outline" onClick={resetAll}>
                 Import Another File
               </Button>
               <Button
                 onClick={() => {
-                  if (confirmDiscardChanges()) router.push(`/${kind}`);
+                  if (confirmDiscardChanges()) router.push(directoryHref);
                 }}
               >
                 Go to {plural}

@@ -1,3 +1,5 @@
+import { formatRecordDate } from "@/lib/record-date";
+import { DetailHeading } from "@/components/paper/section";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { WorkspaceAvatar } from "@/components/workspace/workspace-presentation";
@@ -56,9 +58,9 @@ export function UserDetailSidebar({ user }: UserDetailSidebarProps) {
           photoUrl={user.avatarUrl ?? user.member?.photoUrl}
           className="mx-auto size-14"
         />
-        <h1 className="mt-2 text-xl font-semibold">
+        <DetailHeading className="mt-2">
           {user.firstName} {user.lastName}
-        </h1>
+        </DetailHeading>
         <div className="flex justify-center gap-2 mt-1">
           <Badge variant={user.status === "active" ? "default" : "destructive"}>
             {user.status}
@@ -124,11 +126,7 @@ export function UserDetailSidebar({ user }: UserDetailSidebarProps) {
         <InfoRow
           icon={<Calendar className="h-4 w-4" />}
           label="Joined"
-          value={new Date(user.createdAt).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
+          value={formatRecordDate(user.createdAt)}
         />
       </CardContent>
     </Card>

@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import * as React from "react";
@@ -25,7 +29,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
@@ -173,7 +176,7 @@ export default function MessagesPage() {
       )}
 
       <Dialog open={sendOpen} onOpenChange={setSendOpen}>
-        <DialogContent className="rounded-2xl border-line bg-card">
+        <FormDialogContent className="rounded-2xl border-line bg-card">
           <DialogHeader>
             <DialogTitle className="font-display">Send a text</DialogTitle>
             <DialogDescription className="text-sm">
@@ -181,22 +184,24 @@ export default function MessagesPage() {
             </DialogDescription>
           </DialogHeader>
           <ValidatedForm onSubmit={submit} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label required className="text-sm">To (phone)</Label>
-              <Input required value={draft.to} onChange={(e) => setDraft((d) => ({ ...d, to: e.target.value }))} placeholder="+1 415 555 0100" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
-            </div>
-            <div className="space-y-1.5">
-              <Label required className="text-sm">Message</Label>
-              <Textarea required rows={4} value={draft.text} onChange={(e) => setDraft((d) => ({ ...d, text: e.target.value }))} placeholder="Warm, short, and worth a reply…" className="resize-none rounded-lg border-line bg-background text-sm shadow-none" />
-            </div>
-            <Button type="submit" disabled={send.isPending} className="h-10 w-full gap-2 rounded-lg text-sm">
-              <Send className="size-4" /> {send.isPending ? "Sending…" : "Send message"}
-            </Button>
-            <p className="text-center text-xs text-ink-faint">
-              From addresses are managed on {MESSAGE_CHANNELS.join(", ")} in Settings → Integrations.
-            </p>
+            <FormSection title="Details">
+              <div className="space-y-1.5">
+                <Label required className="text-sm">To (phone)</Label>
+                <Input required value={draft.to} onChange={(e) => setDraft((d) => ({ ...d, to: e.target.value }))} placeholder="+1 415 555 0100" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              </div>
+              <div className="space-y-1.5">
+                <Label required className="text-sm">Message</Label>
+                <Textarea required rows={4} value={draft.text} onChange={(e) => setDraft((d) => ({ ...d, text: e.target.value }))} placeholder="Warm, short, and worth a reply…" className="resize-none rounded-lg border-line bg-background text-sm shadow-none" />
+              </div>
+              <Button type="submit" disabled={send.isPending} className="h-10 w-full gap-2 rounded-lg text-sm">
+                <Send className="size-4" /> {send.isPending ? "Sending…" : "Send message"}
+              </Button>
+              <p className="text-center text-xs text-ink-faint">
+                From addresses are managed on {MESSAGE_CHANNELS.join(", ")} in Settings → Integrations.
+              </p>
+            </FormSection>
           </ValidatedForm>
-        </DialogContent>
+        </FormDialogContent>
       </Dialog>
     </div>
   );

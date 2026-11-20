@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { RequiredIndicator } from "@/components/ui/required-fields";
 import { ValidatedForm } from "@/components/ui/validated-form";
 
@@ -8,7 +12,6 @@ import { Loader2, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -84,7 +87,7 @@ export function RegisterAttendeeButton({ event }: { event: EventItem }) {
         <UserPlus className="mr-2 h-4 w-4" />
         {full ? "Event Full" : "Register Attendee"}
       </Button>
-      <DialogContent showCloseButton={!registration.isPending}>
+      <FormDialogContent showCloseButton={!registration.isPending}>
         <DialogHeader>
           <DialogTitle>Register Attendee</DialogTitle>
           <DialogDescription>
@@ -100,29 +103,31 @@ export function RegisterAttendeeButton({ event }: { event: EventItem }) {
           }}
           className="space-y-4"
         >
-          <fieldset disabled={registration.isPending} className="space-y-2">
-            <p className="text-sm font-medium">Member <RequiredIndicator /></p>
-            <MemberCombobox
-              value={memberId}
-              selectedName={memberName}
-              disabled={registration.isPending}
-              excludeIds={(registrations.data ?? []).map(
-                (item) => item.memberId,
-              )}
-              onChange={(id, member) => {
-                setMemberId(id);
-                setMemberName(
-                  member ? `${member.firstName} ${member.lastName}`.trim() : "",
-                );
-                setError("");
-              }}
-            />
-          </fieldset>
-          {error && (
-            <p role="alert" className="text-sm text-destructive">
-              {error}
-            </p>
-          )}
+          <FormSection title="Details">
+            <fieldset disabled={registration.isPending} className="space-y-2">
+              <p className="text-sm font-medium">Member <RequiredIndicator /></p>
+              <MemberCombobox
+                value={memberId}
+                selectedName={memberName}
+                disabled={registration.isPending}
+                excludeIds={(registrations.data ?? []).map(
+                  (item) => item.memberId,
+                )}
+                onChange={(id, member) => {
+                  setMemberId(id);
+                  setMemberName(
+                    member ? `${member.firstName} ${member.lastName}`.trim() : "",
+                  );
+                  setError("");
+                }}
+              />
+            </fieldset>
+            {error && (
+              <p role="alert" className="text-sm text-destructive">
+                {error}
+              </p>
+            )}
+          </FormSection>
           <DialogFooter>
             <Button
               type="button"
@@ -143,7 +148,7 @@ export function RegisterAttendeeButton({ event }: { event: EventItem }) {
             </Button>
           </DialogFooter>
         </ValidatedForm>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

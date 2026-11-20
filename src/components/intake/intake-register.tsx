@@ -1,5 +1,10 @@
 "use client";
 
+import { FormDialogContent } from "@/components/shared/form-dialog";
+import { FormSection } from "@/components/shared/form-section";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { RequiredFieldsNotice, RequiredIndicator } from "@/components/ui/required-fields";
 
 import { ArrowUpDown, Check, ClipboardList, Eye, X } from "lucide-react";
@@ -139,7 +144,7 @@ export function PublicRegistrationLink({ kind }: { kind: Kind }) {
         Public registration link
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <FormDialogContent>
           <DialogHeader>
             <DialogTitle>
               {kind === "members" ? "Member" : "Visitor"} registration link
@@ -149,7 +154,8 @@ export function PublicRegistrationLink({ kind }: { kind: Kind }) {
               review.
             </DialogDescription>
           </DialogHeader>
-          <RequiredFieldsNotice />
+          <FormSection title="Registration link details">
+<RequiredFieldsNotice />
           {profile?.isAdminHq ? (
             <label className="grid gap-2 text-sm">
               <span>Branch <RequiredIndicator /></span>
@@ -222,7 +228,8 @@ export function PublicRegistrationLink({ kind }: { kind: Kind }) {
               </div>
             </div>
           )}
-        </DialogContent>
+</FormSection>
+        </FormDialogContent>
       </Dialog>
     </>
   );
@@ -392,15 +399,15 @@ export function IntakeRegister({
             <span className="font-display text-lg font-semibold leading-tight">{scopeName}</span>
           </div>
         </section>
-        <div aria-label="Pending registration filters" role="group" className="flex flex-wrap items-center gap-2">
-          <SearchField
+        <ListToolbar aria-label="Pending registration filters" role="group"
+ search={<SearchField
             value={searchInput}
             onChange={setSearchInput}
             placeholder="Search name, email or phone…"
             className="w-full max-w-xs"
-          />
-          <div className="ml-auto flex max-w-full flex-wrap items-center gap-2">
-            {profile?.isAdminHq && (
+          />}
+ controls={<>
+{profile?.isAdminHq && (
               <Select value={branchId || "all"} onValueChange={(value) => { setBranchId(value === "all" ? "" : value); setPage(1); }}>
                 <SelectTrigger aria-label="Filter registrations by branch" data-prefix-icon="building" className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none" disabled={branches.isLoading || branches.isError}>
                   <SelectValue placeholder="All branches" />
@@ -411,16 +418,17 @@ export function IntakeRegister({
                 </SelectContent>
               </Select>
             )}
-            <Select value={sortBy} onValueChange={(value) => { setSortBy(value); setPage(1); }}>
+<Select value={sortBy} onValueChange={(value) => { setSortBy(value); setPage(1); }}>
               <SelectTrigger aria-label="Sort registrations" data-prefix-icon="none" className="h-9 w-40 rounded-full border-line bg-card text-sm shadow-none">
                 <ArrowUpDown className="size-3 shrink-0" /> <SelectValue />
               </SelectTrigger>
               <SelectContent>{[["createdAt", "Date added"], ["firstName", "First name"], ["lastName", "Last name"], ["email", "Email"], ["phone", "Phone"], ["branch", "Branch"]].map(([value, label]) => <SelectItem key={value} value={value}>{label}</SelectItem>)}</SelectContent>
             </Select>
-            <SortDirectionToggle ascending={sortOrder === "asc"} onToggle={() => { setSortOrder((order) => order === "asc" ? "desc" : "asc"); setPage(1); }} />
-            {hasFilters && <Button size="sm" variant="ghost" className="h-8 rounded-full text-sm" onClick={clearFilters}>Clear filters</Button>}
-          </div>
-        </div>
+<SortDirectionToggle ascending={sortOrder === "asc"} onToggle={() => { setSortOrder((order) => order === "asc" ? "desc" : "asc"); setPage(1); }} />
+</>}
+>
+{hasFilters && <Button size="sm" variant="ghost" className="h-8 rounded-full text-sm" onClick={clearFilters}>Clear filters</Button>}
+</ListToolbar>
         {profile?.isAdminHq && branches.isError && <p role="alert" className="text-sm text-destructive">Could not load branch filters. <Button size="sm" variant="link" className="h-auto p-0 text-sm" onClick={() => void branches.refetch()}>Retry branches</Button></p>}
         {list.isLoading ? (
           <LoadingState label="Loading registrations" variant="table" />

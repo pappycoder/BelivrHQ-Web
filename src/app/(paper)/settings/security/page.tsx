@@ -58,7 +58,7 @@ function PasswordCard() {
   };
 
   return (
-    <SectionCard eyebrow="Password" title="Something you'd never type aloud">
+    <div data-tour-security-password><SectionCard eyebrow="Password" title="Something you'd never type aloud">
       <div className="grid gap-4 sm:grid-cols-2">
           <RequiredFieldsNotice className="col-span-full" />
         <div className="space-y-1.5">
@@ -131,7 +131,7 @@ function PasswordCard() {
           {change.isPending ? "Updating…" : "Update password"}
         </Button>
       </div>
-    </SectionCard>
+    </SectionCard></div>
   );
 }
 

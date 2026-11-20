@@ -1,5 +1,7 @@
 "use client";
 
+import { DetailNavigation, DetailHeading } from "@/components/paper/section";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -88,9 +90,9 @@ export default function ServiceDetailPage({
 
   return (
     <div className="space-y-6">
-      <Link href="/gatherings/attendance/services" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
+      <DetailNavigation><Link href="/gatherings/attendance/services" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
         <ArrowLeft className="size-3" /> Gatherings · Attendance · Services
-      </Link>
+      </Link></DetailNavigation>
 
       <div className="paper-card rounded-2xl p-5 md:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -101,7 +103,7 @@ export default function ServiceDetailPage({
               {!s.isActive ? <Tag tone="neutral">Paused</Tag> : null}
               {s.archivedAt ? <Tag tone="rose">Archived</Tag> : null}
             </div>
-            <h1 className="font-display text-[clamp(1.4rem,2.4vw,2rem)] font-semibold tracking-tight">{s.name}</h1>
+            <DetailHeading>{s.name}</DetailHeading>
             <p className="text-sm text-ink-soft">
               {s.recurrence === "one_time" && s.startsOn
                 ? formatDay(s.startsOn)
@@ -111,7 +113,7 @@ export default function ServiceDetailPage({
               {s.startTime ? <span className="num"> · {timeLabel(s.startTime)}{s.endTime ? ` – ${timeLabel(s.endTime)}` : ""}</span> : null}
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-3 text-center sm:grid-cols-3">
+          <div data-tour-service-summary className="grid grid-cols-2 gap-3 text-center sm:grid-cols-3">
             <div className="rounded-xl bg-muted/40 px-4 py-3">
               <p className="num font-display text-xl font-semibold">{number(s.attendanceCount ?? 0)}</p>
               <p className="text-xs uppercase tracking-wider text-ink-faint">all-time check-ins</p>

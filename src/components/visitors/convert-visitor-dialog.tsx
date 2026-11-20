@@ -1,5 +1,9 @@
 "use client";
 
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
+import { FormSection } from "@/components/shared/form-section";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import * as React from "react";
@@ -11,7 +15,6 @@ import { getToastErrorMessage, toast } from "@/lib/toast";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -48,12 +51,13 @@ const convertSchema = z.object({
 type ConvertFormValues = z.infer<typeof convertSchema>;
 
 function PlainSection({
+  title,
   children,
 }: {
   title: string;
   children: React.ReactNode;
 }) {
-  return <div className="space-y-4">{children}</div>;
+  return <FormSection title={title}>{children}</FormSection>;
 }
 
 export function ConvertVisitorDialog({
@@ -132,7 +136,7 @@ export function ConvertVisitorDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
+      <FormDialogContent
         className={`${presentationClassName ?? ""} ${presentationClassName ? "max-h-[90dvh] overflow-y-auto" : ""} sm:max-w-[520px]`}
         onCloseAutoFocus={
           returnFocusRef
@@ -263,7 +267,7 @@ export function ConvertVisitorDialog({
             </DialogFooter>
           </ValidatedForm>
         </Form>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

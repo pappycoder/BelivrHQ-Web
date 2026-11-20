@@ -1,5 +1,7 @@
 "use client";
 
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 import { WorkspaceFormSection } from "@/components/workspace/workspace-presentation";
 
@@ -11,7 +13,6 @@ import { getToastErrorMessage, toast } from "@/lib/toast";
 import { Loader2, UserPlus } from "lucide-react";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -302,7 +303,7 @@ export function AppointmentFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[620px] max-h-[90vh] overflow-y-auto">
+      <FormDialogContent className="sm:max-w-[620px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {isEdit ? "Edit Appointment" : "New Appointment"}
@@ -586,7 +587,7 @@ export function AppointmentFormDialog({
             </DialogFooter>
           </ValidatedForm>
         </Form>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

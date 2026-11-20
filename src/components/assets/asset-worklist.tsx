@@ -4,9 +4,16 @@ import { LoadingState } from "@/components/shared/loading-state";
 
 import * as React from "react";
 import Link from "next/link";
-import { WorkspaceHeader as PageHeader } from "@/components/workspace/workspace-presentation";
+import { PageHeader } from "@/components/paper/section";
+import { EmptyState, FilterChip, ListPaginationFooter, ManageHeading, RowActions, SearchField } from "@/components/paper/primitives";
+import { StatCard, Tag } from "@/components/paper/stat";
+import { ListToolbar } from "@/components/shared/list-toolbar";
+import { ListTable } from "@/components/shared/list-table";
+import { VisibleDataExport } from "@/components/shared/visible-data-export";
+import { useCurrentProfile } from "@/hooks/use-profile";
+import { ArrowUpRight, RotateCcw, Wrench } from "lucide-react";
+import { formatRecordDate } from "@/lib/record-date";
 import { ErrorState } from "@/components/shared/error-state";
-import { TableCard } from "@/components/shared/table-card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,14 +23,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import { usePermissions } from "@/hooks/use-permissions";
 import {
   useAssetsList,
@@ -36,7 +36,7 @@ import { MaintenanceFormDialog } from "./maintenance-form-dialog";
 import { ReturnLoanDialog } from "./return-loan-dialog";
 
 function date(value?: string) {
-  return value ? new Date(value).toLocaleDateString() : "Not available";
+  return formatRecordDate(value);
 }
 
 function AssetPicker({ onSelect }: { onSelect: (asset: Asset) => void }) {
@@ -97,8 +97,10 @@ function AssetPicker({ onSelect }: { onSelect: (asset: Asset) => void }) {
   );
 }
 
-export function AssetWorklist({ kind }: { kind: "loans" | "maintenance" }) {
+export function AssetWorklist({ kind, heading }: { kind: "loans" | "maintenance"; heading?: Omit<React.ComponentProps<typeof PageHeader>, "children"> }) {
   const { can } = usePermissions();
+  const { data: profile } = useCurrentProfile();
+  const tableRoot = React.useRef<HTMLDivElement>(null);
   const [search, setSearch] = React.useState("");
   const [page, setPage] = React.useState(1);
   const [limit, setLimit] = React.useState(15);
@@ -127,190 +129,62 @@ export function AssetWorklist({ kind }: { kind: "loans" | "maintenance" }) {
   return (
     <div className="space-y-6">
       <PageHeader
-        count={query.data?.meta.total ?? 0}
         title={isLoan ? "Asset loans" : "Asset maintenance"}
-        breadcrumbs={[
-          { label: "Assets", href: "/operations/assets" },
-          { label: isLoan ? "Loans" : "Maintenance" },
-        ]}
-        action={
-          canCreate && (
-            <Button onClick={() => setPickerOpen(true)}>
+        {...heading}
+        actions={<>
+          {heading?.actions}
+          <VisibleDataExport getRoot={() => tableRoot.current} />
+          {canCreate && (
+            <Button size="sm" className="h-9 rounded-full" onClick={() => setPickerOpen(true)}>
               {isLoan ? "Loan an asset" : "Schedule maintenance"}
             </Button>
-          )
-        }
+          )}
+        </>}
       />
-      <TableCard
-        title={isLoan ? "Loan records" : "Maintenance jobs"}
-        description={
-          isLoan
-            ? "Borrowers, expected returns and completed loans across your permitted branches. Overdue is based on the expected return date."
-            : "Scheduled, ongoing and completed work across your permitted branches, including archived equipment history."
-        }
-        page={page}
-        perPage={limit}
-        total={query.data?.meta.total ?? 0}
-        onPageChange={setPage}
-        onPerPageChange={(size) => {
-          setLimit(size);
-          setPage(1);
-        }}
-        itemName={isLoan ? "loans" : "jobs"}
-        toolbar={
-          <div className="flex flex-wrap items-center gap-3">
-            <label className="flex items-center gap-2 text-sm">
-              Status
-              <select
-                aria-label="Worklist status"
-                className="h-9 rounded-md border bg-background px-3"
-                value={status}
-                onChange={(event) => {
-                  setStatus(event.target.value);
-                  setPage(1);
-                }}
-              >
-                <option value="">All records</option>
-                {(isLoan
-                  ? ["active", "borrowed", "overdue", "returned"]
-                  : ["scheduled", "in_progress", "completed", "cancelled"]
-                ).map((value) => (
-                  <option key={value} value={value}>
-                    {value.replaceAll("_", " ")}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <Input
-              className="max-w-sm"
-              aria-label="Search asset worklist"
-              placeholder="Search asset name or tag…"
-              value={search}
-              onChange={(event) => {
-                setSearch(event.target.value);
-                setPage(1);
-              }}
-            />
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setStatus("");
-                setSearch("");
-                setPage(1);
-              }}
-            >
-              Reset filters
-            </Button>
-          </div>
-        }
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+        <StatCard label={isLoan ? "Loan records" : "Maintenance jobs"} value={query.data?.meta.total ?? 0} tone="brand" deltaLabel="matching filters" />
+        <StatCard label="On this page" value={query.data?.data.length ?? 0} tone="neutral" />
+        <div className="paper-card flex flex-col justify-between gap-4 rounded-2xl p-5"><span className="rule-label">Scope</span><span className="font-display text-lg font-semibold leading-tight">{profile?.isAdminHq ? "All branches" : profile?.branch?.name ?? "Your permitted branches"}</span></div>
+      </div>
+      <ListToolbar
+        search={<SearchField className="w-full max-w-xs" aria-label="Search asset worklist" placeholder="Search asset name or tag…" value={search} onChange={(value) => { setSearch(value); setPage(1); }} />}
+        controls={search || status ? <Button variant="outline" size="sm" className="h-9 rounded-full" onClick={() => { setStatus(""); setSearch(""); setPage(1); }}>Clear filters</Button> : undefined}
       >
-        {query.error ? (
-          <ErrorState
-            title={`Unable to load ${isLoan ? "loans" : "maintenance jobs"}`}
-          />
-        ) : query.isLoading ? (
-          <LoadingState label="Loading records" variant="table" />
-        ) : (
-          <Table exportable records={query.data?.data ?? []} recordKey="id" recordType="assetWorklist">
-            <TableHeader>
-              <TableRow>
-                <TableHead>Asset</TableHead>
-                <TableHead>{isLoan ? "Borrower" : "Work / provider"}</TableHead>
-                <TableHead>{isLoan ? "Loan date" : "Scheduled"}</TableHead>
-                <TableHead>
-                  {isLoan ? "Expected return" : "Completed"}
-                </TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {!query.data?.data.length && (
-                <TableRow>
-                  <TableCell colSpan={6} className="p-8 text-center">
-                    {search
-                      ? "No records match this search."
-                      : `No ${isLoan ? "loans" : "maintenance jobs"} recorded.`}
-                  </TableCell>
-                </TableRow>
-              )}
-              {query.data?.data.map((record) => {
-                const loan = "loanDate" in record ? record : null;
-                const job = "scheduledDate" in record ? record : null;
-                const overdue =
-                  loan &&
-                  loan.status !== "returned" &&
-                  new Date(loan.expectedReturnDate).getTime() < Date.now();
-                return (
-                  <TableRow key={record.id}>
-                    <TableCell>
-                      {canReadAsset ? (
-                        <Link
-                          className="font-medium underline underline-offset-4"
-                          href={`/operations/assets/${record.assetId}`}
-                        >
-                          {record.assetName}
-                        </Link>
-                      ) : (
-                        record.assetName
-                      )}
-                      <p className="text-sm text-muted-foreground">
-                        {record.assetTag}
-                        {record.assetArchived ? " · Archived asset" : ""}
-                      </p>
-                    </TableCell>
-                    <TableCell>
-                      {loan?.borrowerName ?? job?.type ?? "Not available"}
-                      {job?.performedBy && (
-                        <p className="text-sm text-muted-foreground">
-                          {job.performedBy}
-                        </p>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {date(loan?.loanDate ?? job?.scheduledDate)}
-                    </TableCell>
-                    <TableCell>
-                      {date(loan?.expectedReturnDate ?? job?.completedDate)}
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={
-                          overdue
-                            ? "font-medium text-destructive"
-                            : "capitalize"
-                        }
-                      >
-                        {overdue
-                          ? "Overdue"
-                          : record.status.replaceAll("_", " ")}
-                      </span>
-                      {loan?.actualReturnDate && (
-                        <p className="text-sm">
-                          Returned {date(loan.actualReturnDate)}
-                        </p>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {canUpdate &&
-                        !record.assetArchived &&
-                        (job || loan?.status !== "returned") && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setEditing(record)}
-                          >
-                            {isLoan ? "Record return" : "Update job"}
-                          </Button>
-                        )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        )}
-      </TableCard>
+        <div role="group" aria-label="Worklist status filters" className="flex flex-wrap gap-1.5">
+          <FilterChip active={!status} onClick={() => { setStatus(""); setPage(1); }}>All</FilterChip>
+          {(isLoan ? ["active", "borrowed", "overdue", "returned"] : ["scheduled", "in_progress", "completed", "cancelled"]).map((value) => <FilterChip key={value} active={status === value} onClick={() => { setStatus(value); setPage(1); }}><span className="capitalize">{value.replaceAll("_", " ")}</span></FilterChip>)}
+        </div>
+      </ListToolbar>
+      {query.error ? <ErrorState title={`Unable to load ${isLoan ? "loans" : "maintenance jobs"}`} onRetry={() => void query.refetch()} /> : query.isLoading ? <LoadingState label="Loading records" variant="table" /> : !query.data?.data.length ? (
+        <EmptyState title={isLoan ? "No loans recorded" : "No maintenance jobs recorded"} description={search || status ? "Try another search or clear the filters." : isLoan ? "Loan an asset to track its borrower and expected return." : "Schedule maintenance to track the next service and its progress."} action={search || status ? <Button variant="outline" size="sm" className="rounded-full" onClick={() => { setStatus(""); setSearch(""); setPage(1); }}>Clear filters</Button> : undefined} />
+      ) : (
+        <div className="paper-card overflow-hidden rounded-2xl">
+          <div ref={tableRoot} className="overflow-x-auto">
+            <ListTable tableId={`asset-${kind}`} className="min-w-[880px]" records={query.data.data} recordKey="id" recordType="assetWorklist">
+              <div className="rule-label grid grid-cols-[minmax(0,1.8fr)_1.2fr_0.9fr_0.9fr_0.8fr_auto] items-center gap-4 border-b border-line px-5 py-2.5"><span>Asset</span><span>{isLoan ? "Borrower" : "Work / provider"}</span><span>{isLoan ? "Loan date" : "Scheduled"}</span><span>{isLoan ? "Expected return" : "Completed"}</span><span>Status</span><ManageHeading /></div>
+              <div className="divide-y divide-line/70">
+                {query.data.data.map((record) => {
+                  const loan = "loanDate" in record ? record : null;
+                  const job = "scheduledDate" in record ? record : null;
+                  const overdue = !!loan && loan.status !== "returned" && new Date(loan.expectedReturnDate).getTime() < Date.now();
+                  return <div key={record.id} className="group grid grid-cols-[minmax(0,1.8fr)_1.2fr_0.9fr_0.9fr_0.8fr_auto] items-center gap-4 px-5 py-3 text-sm transition-colors hover:bg-muted/40">
+                    <div className="min-w-0">{canReadAsset ? <Link className="block truncate font-semibold" href={`/operations/assets/${record.assetId}`}>{record.assetName}</Link> : <span className="block truncate font-semibold">{record.assetName}</span>}<span className="block truncate text-ink-faint">{record.assetTag}{record.assetArchived ? " · Archived asset" : ""}</span></div>
+                    <div className="min-w-0 text-ink-soft"><span className="block truncate">{loan?.borrowerName ?? job?.type ?? "Not available"}</span>{job?.performedBy && <span className="block truncate text-ink-faint">{job.performedBy}</span>}</div>
+                    <span className="num text-ink-soft">{date(loan?.loanDate ?? job?.scheduledDate)}</span>
+                    <span className="num text-ink-soft">{date(loan?.expectedReturnDate ?? job?.completedDate)}</span>
+                    <div><Tag tone={overdue ? "rose" : record.status === "returned" || record.status === "completed" ? "moss" : "neutral"} dot>{overdue ? "Overdue" : record.status.replaceAll("_", " ")}</Tag>{loan?.actualReturnDate && <span className="mt-1 block text-xs text-ink-faint">Returned {date(loan.actualReturnDate)}</span>}</div>
+                    <div className="flex justify-end"><RowActions actions={[
+                      canReadAsset && { label: "Open asset", href: `/operations/assets/${record.assetId}`, icon: <ArrowUpRight /> },
+                      canUpdate && !record.assetArchived && (job || loan?.status !== "returned") && { label: isLoan ? "Record return" : "Update job", onSelect: () => setEditing(record), icon: isLoan ? <RotateCcw /> : <Wrench /> },
+                    ]} /></div>
+                  </div>;
+                })}
+              </div>
+            </ListTable>
+          </div>
+          <ListPaginationFooter page={page} perPage={limit} total={query.data.meta.total} onPageChange={setPage} onPerPageChange={(size) => { setLimit(size); setPage(1); }} itemName={isLoan ? "loans" : "jobs"} pending={query.isFetching} />
+        </div>
+      )}
       <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
         <DialogContent>
           <DialogHeader>

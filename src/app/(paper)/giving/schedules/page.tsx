@@ -1,5 +1,7 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import { Ban, CalendarClock, Pause, PlayCircle, Repeat, ShieldOff } from "lucide-react";
@@ -86,12 +88,12 @@ export default function GivingSchedulesPage() {
         <StatCard label="Needing attention" value={rows.filter((r) => r.failedAttemptCount > 0).length} tone="rose" icon={<ShieldOff className="size-4" />} deltaLabel="failed attempts" />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <FilterChip active={activeFilter === ""} onClick={() => { setActiveFilter(""); setPage(1); }}>All</FilterChip>
-        <FilterChip active={activeFilter === "true"} onClick={() => { setActiveFilter("true"); setPage(1); }}>Active</FilterChip>
-        <FilterChip active={activeFilter === "false"} onClick={() => { setActiveFilter("false"); setPage(1); }}>Paused & ended</FilterChip>
-        <span className="ml-auto text-xs text-ink-faint">New recurring gifts are set up online by the giver.</span>
-      </div>
+      <ListToolbar>
+<FilterChip active={activeFilter === ""} onClick={() => { setActiveFilter(""); setPage(1); }}>All</FilterChip>
+<FilterChip active={activeFilter === "true"} onClick={() => { setActiveFilter("true"); setPage(1); }}>Active</FilterChip>
+<FilterChip active={activeFilter === "false"} onClick={() => { setActiveFilter("false"); setPage(1); }}>Paused & ended</FilterChip>
+<span className="ml-auto text-xs text-ink-faint">New recurring gifts are set up online by the giver.</span>
+</ListToolbar>
 
       {recurring.isLoading ? (
         <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}</div>

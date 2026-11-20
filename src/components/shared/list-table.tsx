@@ -2,8 +2,7 @@
 
 import * as React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
-import { ColumnSelector } from "@/components/shared/column-selector";
+import { RegisterTableToolbar } from "@/components/shared/register-table-toolbar";
 import { VisibleDataExport } from "@/components/shared/visible-data-export";
 import { BulkManage } from "@/components/shared/bulk-manage";
 import {
@@ -22,6 +21,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useColumnAlignment } from "@/hooks/use-column-alignment";
 import { ManageHeading } from "@/components/paper/primitives";
+import { splitListPagination } from "./list-table-content";
 
 interface NodeProps {
   children?: React.ReactNode;
@@ -73,7 +73,7 @@ export function gridTracks(source: string): string[] {
 
 /** React-owned enhancement for Paper grid registers; preserves existing cell content and handlers. */
 export function ListTable({
-  children,
+  children: content,
   className,
   tableId,
   label = "Records",
@@ -91,6 +91,7 @@ export function ListTable({
   recordType?: string;
   fields?: readonly { key: string; label: string }[];
 }) {
+  const { rows: children, pagination } = splitListPagination(content);
   const root = React.useRef<HTMLDivElement>(null);
   useColumnAlignment(root);
   function findHeader(
@@ -169,6 +170,9 @@ export function ListTable({
     });
   }
   collect(children);
+  const [compactRows, setCompactRows] = React.useState(false);
+  const [compactColumns, setCompactColumns] = React.useState(false);
+  const [widths, setWidths] = React.useState<Record<string, "compact" | "expanded">>({});
   const tracks = gridTracks(source);
   const gridTemplateColumns = [
     "40px",
@@ -176,9 +180,13 @@ export function ListTable({
       state.hidden.includes(column.id)
         ? []
         : [
-            column.id.startsWith("field:")
-              ? "160px"
-              : (tracks[Number(column.id.slice(7))] ?? "minmax(0,1fr)"),
+            widths[column.id] === "compact" || (!widths[column.id] && compactColumns)
+              ? "minmax(6rem,max-content)"
+              : widths[column.id] === "expanded"
+                ? "minmax(12rem,1fr)"
+                : column.id.startsWith("field:")
+                  ? "160px"
+                  : (tracks[Number(column.id.slice(7))] ?? "minmax(0,1fr)"),
           ],
     ),
   ].join(" ");
@@ -230,6 +238,7 @@ export function ListTable({
               hidden={state.hidden.includes(column.id)}
               className={cn(
                 "list-table-cell min-w-0",
+                !isHeader && (widths[column.id] === "compact" || (!widths[column.id] && compactColumns)) && "overflow-hidden text-ellipsis whitespace-nowrap",
                 isHeader &&
                   index >= 0 &&
                   React.isValidElement<NodeProps>(headings[index])
@@ -361,61 +370,34 @@ export function ListTable({
   }, [visibleSignature]);
   const allSelected =
     visibleIds.length > 0 && visibleIds.every((id) => selected.includes(id));
-  if (!header) return <div className={className}>{children}</div>;
+  if (!header) return <div className={className}>{content}</div>;
   return (
     <BulkRegistryContext.Provider value={registry}>
       <div
         ref={root}
         data-list-table={tableId}
+        data-register-table
+        data-compact-rows={compactRows}
         className={cn(
-          "w-full overflow-x-auto",
+          "w-full min-w-0 overflow-hidden",
           className?.replace(/min-w-\[[^\]]+\]|\bdivide-\S+/g, ""),
         )}
       >
-        <div
-          data-export-ignore
-          className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-2"
-        >
-          <Checkbox
-            disabled={!visibleIds.length}
-            aria-label="Select all visible records"
-            checked={
-              allSelected ? true : selected.length ? "indeterminate" : false
-            }
-            onCheckedChange={() => setSelected(allSelected ? [] : visibleIds)}
-          />
-          <span className="mr-auto text-sm text-muted-foreground" role="status">
-            {selected.length
-              ? `${selected.length} selected on this page`
-              : `${visibleIds.length} records on this page`}
-          </span>
-          <BulkManage
-            selected={selected}
-            rows={rows}
-            onResolved={(ids) =>
-              setSelected((previous) =>
-                previous.filter((id) => !ids.includes(id)),
-              )
-            }
-          />
-          {!!selected.length && (
-            <>
-              <VisibleDataExport
-                getRoot={() => root.current}
-                selectedOnly
-                label="Export selected rows"
-              />
-              <Button size="sm" variant="ghost" onClick={() => setSelected([])}>
-                Clear selection
-              </Button>
-            </>
-          )}
-          <ColumnSelector
-            columns={columns}
-            hidden={state.hidden}
-            onChange={state.setHidden}
-          />
-        </div>
+        <RegisterTableToolbar
+          visibleCount={visibleIds.length}
+          selectedCount={selected.length}
+          allSelected={allSelected}
+          onToggleAll={() => setSelected(allSelected ? [] : visibleIds)}
+          onClearSelection={() => setSelected([])}
+          bulkActions={<BulkManage selected={selected} rows={rows} onResolved={(ids) => setSelected((previous) => previous.filter((id) => !ids.includes(id)))} />}
+          selectionExport={<VisibleDataExport getRoot={() => root.current} selectedOnly label="Export selected rows" />}
+          columns={columns}
+          hidden={state.hidden}
+          onHiddenChange={state.setHidden}
+          view={{ compactRows, compactColumns, onRowsChange: setCompactRows, onColumnsChange: (compact) => { setCompactColumns(compact); setWidths({}); } }}
+          onWidthChange={(ids, size) => setWidths((previous) => ({ ...previous, ...Object.fromEntries(ids.map((id) => [id, size])) }))}
+        />
+        <div data-list-scroll role="region" aria-label={`Scrollable ${label} table`} tabIndex={0} className="relative min-w-0 w-full overflow-x-auto overscroll-x-contain outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40">
         <div
           role="table"
           aria-label={label}
@@ -437,6 +419,8 @@ export function ListTable({
         >
           {enhanced}
         </div>
+        </div>
+        {pagination.map((footer, index) => <React.Fragment key={footer.key ?? index}>{footer}</React.Fragment>)}
       </div>
     </BulkRegistryContext.Provider>
   );

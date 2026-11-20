@@ -1,5 +1,7 @@
 "use client";
 
+import { DetailNavigation, DetailHeading } from "@/components/paper/section";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -84,7 +86,7 @@ export default function BranchDetailPage({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <DetailNavigation>
         <Link href="/admin/locations" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
           <ArrowLeft className="size-3" /> Admin · Locations
         </Link>
@@ -117,14 +119,14 @@ export default function BranchDetailPage({
             </DropdownMenu>
           </div>
         ) : null}
-      </div>
+      </DetailNavigation>
 
       <div className="paper-card rounded-2xl p-5 md:p-6">
         <div className="flex flex-wrap items-center gap-4">
           <PersonAvatar name={branch.name} size="lg" />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="font-display text-[clamp(1.4rem,2.4vw,2rem)] font-semibold tracking-tight">{branch.name}</h1>
+              <DetailHeading>{branch.name}</DetailHeading>
               {branch.isHeadquarters ? <Tag tone="gold">Headquarters</Tag> : null}
               {branch.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
             </div>

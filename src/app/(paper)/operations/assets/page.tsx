@@ -1,5 +1,7 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import { PermissionLink } from "@/components/shared/permission-link";
@@ -143,18 +145,21 @@ export default function AssetsPage() {
         <StatCard label="Needs service" value={maintenanceTotal} tone="gold" deltaLabel="see schedule" />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={query} onChange={setQuery} placeholder="Search name, tag or serial…" className="w-full max-w-xs" />
-        <FilterChip active={status === ""} onClick={() => { setStatus(""); setPage(1); }}>All</FilterChip>
-        {(Object.keys(ASSET_STATUS_LABELS) as AssetStatus[]).map((s) => (
+      <ListToolbar
+ search={<SearchField value={query} onChange={setQuery} placeholder="Search name, tag or serial…" className="w-full max-w-xs" />}
+ controls={<>
+<FilterChip active={archivedView} onClick={() => { setArchivedView((v) => !v); setPage(1); }}>Archived</FilterChip>
+</>}
+>
+<FilterChip active={status === ""} onClick={() => { setStatus(""); setPage(1); }}>All</FilterChip>
+{(Object.keys(ASSET_STATUS_LABELS) as AssetStatus[]).map((s) => (
           <FilterChip key={s} active={status === s} onClick={() => { setStatus(s); setPage(1); }}>{ASSET_STATUS_LABELS[s]}</FilterChip>
         ))}
-        <select value={categoryId} onChange={(e) => { setCategoryId(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Category filter">
+<select value={categoryId} onChange={(e) => { setCategoryId(e.target.value); setPage(1); }} className="h-9 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Category filter">
           <option value="">All categories</option>
           {(categories.data ?? []).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
-        <FilterChip active={archivedView} onClick={() => { setArchivedView((v) => !v); setPage(1); }}>Archived</FilterChip>
-      </div>
+</ListToolbar>
 
       {assets.isLoading ? (
         <div className="space-y-2">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}</div>

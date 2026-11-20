@@ -55,7 +55,7 @@ export function FormFieldsEditor({
   };
 
   return (
-    <div className="space-y-3">
+    <div data-tour-form-editor className="space-y-3">
       <p className="text-sm text-muted-foreground">
         Choose a question to edit. Use Move up or Move down to change the order.
       </p>

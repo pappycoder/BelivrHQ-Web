@@ -1,5 +1,7 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { FormStatusDialog } from "@/components/forms/form-status-dialog";
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
@@ -259,21 +261,13 @@ export default function FormsListPage() {
         <StatCard label="Answers this page" value={rows.reduce((sum, f) => sum + (f.submissionCount ?? 0), 0)} tone="gold" />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={searchInput} onChange={setSearchInput} placeholder="Search forms…" className="w-full max-w-xs" />
-        <div className="flex flex-wrap gap-1.5">
-          <FilterChip active={status === ""} onClick={() => { setStatus(""); setPage(1); }}>Any state</FilterChip>
-          {(["draft", "published", "closed"] as const).map((s) => (
-            <FilterChip key={s} active={status === s} onClick={() => { setStatus(s); setPage(1); }}>
-              {FORM_STATUS_LABELS[s]}
-            </FilterChip>
-          ))}
-        </div>
-        <div className="ml-auto flex flex-wrap items-center gap-2">
-          <FilterChip active={archivedView} onClick={() => { setArchivedView((v) => !v); setPage(1); }}>
+      <ListToolbar
+ search={<SearchField value={searchInput} onChange={setSearchInput} placeholder="Search forms…" className="w-full max-w-xs" />}
+ controls={<>
+<FilterChip active={archivedView} onClick={() => { setArchivedView((v) => !v); setPage(1); }}>
             Archived
           </FilterChip>
-          {isHq ? (
+{isHq ? (
             <Select value={branchId} onValueChange={(value) => { setBranchId(value); setPage(1); }}>
               <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
                 <SelectValue placeholder="All branches" />
@@ -288,7 +282,26 @@ export default function FormsListPage() {
               </SelectContent>
             </Select>
           ) : null}
-          <Select value={sortBy} onValueChange={(value) => { setSortBy(value as SortValue); setPage(1); }}>
+<SortDirectionToggle ascending={sortOrder === "asc"} onToggle={() => { setSortOrder((o) => (o === "asc" ? "desc" : "asc")); setPage(1); }} />
+<ViewToggle
+            value={view}
+            onChange={setView}
+            options={[
+              { value: "table", label: "Table", icon: <Rows3 /> },
+              { value: "cards", label: "Cards", icon: <LayoutGrid /> },
+            ]}
+          />
+</>}
+>
+<div className="flex flex-wrap gap-1.5">
+          <FilterChip active={status === ""} onClick={() => { setStatus(""); setPage(1); }}>Any state</FilterChip>
+          {(["draft", "published", "closed"] as const).map((s) => (
+            <FilterChip key={s} active={status === s} onClick={() => { setStatus(s); setPage(1); }}>
+              {FORM_STATUS_LABELS[s]}
+            </FilterChip>
+          ))}
+        </div>
+<Select value={sortBy} onValueChange={(value) => { setSortBy(value as SortValue); setPage(1); }}>
             <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
               <ArrowUpDownIcon /> <SelectValue />
             </SelectTrigger>
@@ -298,17 +311,7 @@ export default function FormsListPage() {
               ))}
             </SelectContent>
           </Select>
-          <SortDirectionToggle ascending={sortOrder === "asc"} onToggle={() => { setSortOrder((o) => (o === "asc" ? "desc" : "asc")); setPage(1); }} />
-          <ViewToggle
-            value={view}
-            onChange={setView}
-            options={[
-              { value: "table", label: "Table", icon: <Rows3 /> },
-              { value: "cards", label: "Cards", icon: <LayoutGrid /> },
-            ]}
-          />
-        </div>
-      </div>
+</ListToolbar>
 
       {forms.isError ? (
         <EmptyState

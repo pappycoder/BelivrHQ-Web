@@ -1,5 +1,7 @@
 "use client";
 
+import { retryPage } from "@/lib/retry-page";
+
 import { AuthFormWrapper } from "@/components/shared/auth-form-wrapper";
 import { RegistrationCheckout } from "@/components/billing/registration-checkout";
 import { LoadingState } from "@/components/shared/loading-state";
@@ -529,7 +531,7 @@ export default function SubscriptionPage() {
           <button
             type="button"
             className="text-primary underline"
-            onClick={() => void status.refetch()}
+            onClick={() => void retryPage()}
           >
             try loading checkout again
           </button>
@@ -623,7 +625,7 @@ export default function SubscriptionPage() {
           title="Billing could not be loaded"
           description={status.error.message}
           action={
-            <Button variant="outline" onClick={() => void status.refetch()}>
+            <Button variant="outline" onClick={() => void retryPage()}>
               Try again
             </Button>
           }

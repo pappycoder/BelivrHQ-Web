@@ -80,6 +80,7 @@ export function StatCard({
   const flat = delta === 0 || delta === undefined;
   return (
     <div
+      data-tour-stat={label}
       className={cn(
         "paper-card lift group relative flex flex-col justify-between gap-4 overflow-hidden rounded-2xl p-5",
         className,

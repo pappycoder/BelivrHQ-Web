@@ -14,6 +14,7 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { DonutChart, TrendChart } from "@/components/paper/charts";
 import { Button } from "@/components/ui/button";
+import { PageTour, SectionHelp, type TourStep } from "@/components/tours/page-tour";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/paper/primitives";
 import { useCurrentProfile } from "@/hooks/use-profile";
@@ -55,9 +56,21 @@ export default function PaperHomePage() {
   const memberTotal = members.data?.total ?? 0;
   const givingCurrency = giving.data?.currency;
 
+  const tourSteps = React.useMemo<TourStep[]>(() => [
+    { target: ".home-tour-welcome", title: "Your day, at a glance", description: "Home brings together the parts of your workspace you can access. Use Next and Previous to explore. You can skip at any time and return with Take a tour." },
+    { target: ".home-tour-metrics", title: "Read your summary", description: "These cards summarise people, recorded giving, gatherings and unread notifications. The cards you see depend on your permissions. Use the sections below to explore the details." },
+    ...(canAny("giving:dashboard:read") ? [{ target: ".home-tour-giving", title: "Understand giving", description: "Compare recorded giving across the dates shown in the chart. Hover or tap a point for its value. Open Ledger when you want to review the giving workspace." }] : []),
+    ...(canAny("members:all:read") ? [{ target: ".home-tour-people", title: "Understand your congregation", description: "The ring and legend group members by their current status. Use this breakdown to understand the people represented in your total." }] : []),
+    ...(canAny("events:calendar:read") ? [{ target: ".home-tour-events", title: "Find a gathering", description: "Review the listed gatherings, dates and locations. Select a gathering to open its details, or use Calendar to explore events. The tour itself will keep you on Home." }] : []),
+    { target: ".home-tour-signals", title: "Catch up on activity", description: "This list shows your latest notifications. A coloured dot indicates an unread item. Use All or Notifications at the top of Home to review the full list." },
+    ...(canAny("members:all:read") && members.data?.growth?.length ? [{ target: ".home-tour-growth", title: "Follow membership growth", description: "Compare the member and visitor series across the dates shown. Hover or tap the chart to inspect a point. This section appears when growth data is available." }] : []),
+    { target: ".home-tour-shortcut", title: "Find your next page", description: "Press Command K on Mac or Control K on Windows and Linux to search for a page you have access to. The navigation also groups pages by area. Use the question-mark icons for quick explanations, or Take a tour to replay this guide." },
+  ], [canAny, members.data?.growth?.length]);
+
   return (
     <div className="space-y-7">
       <PageHeader
+        className="home-tour-welcome"
         eyebrow={
           <span className="flex items-center gap-2">
             <Sparkles className="size-3 text-brand" />
@@ -71,14 +84,19 @@ export default function PaperHomePage() {
         }
         description="See giving, gatherings and people who need a follow-up in one place."
         actions={
+          <>
+          <PageTour page="Home" account={profile ? `${profile.churchId}:${profile.profileId}` : undefined} ready={ready && !members.isLoading && !giving.isLoading && !notifications.isLoading} steps={tourSteps} />
           <Button variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-sm" asChild>
             <Link href="/notifications">
               Notifications <ArrowRight className="size-3.5" />
             </Link>
           </Button>
+          </>
         }
       />
 
+      <div className="home-tour-metrics space-y-2">
+      <div className="flex items-center gap-1 text-sm font-medium">Your summary <SectionHelp title="Your summary">People counts members in your scope. Giving shows the total and gift count supplied by the giving dashboard for its reporting period. Gatherings is the calendar total. Unread signals counts your unread notifications. Only permitted metrics appear.</SectionHelp></div>
       <StaggerGroup className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <GatedMetric ready={ready} show={canAny("members:all:read")}>
           <StatCard label="People" value={memberTotal} tone="moss" icon={<Users className="size-4" />} deltaLabel="known by name" />
@@ -106,13 +124,14 @@ export default function PaperHomePage() {
           />
         </StaggerItem>
       </StaggerGroup>
+      </div>
 
       <div className="grid gap-4 lg:grid-cols-12">
         {ready && canAny("giving:dashboard:read") ? (
           <SectionCard
-            className="lg:col-span-7"
+            className="home-tour-giving lg:col-span-7"
             eyebrow="Generosity"
-            title="Giving, month by month"
+            title={<span className="inline-flex items-center gap-1">Giving, month by month <SectionHelp title="Giving over time">This chart plots recorded giving on the dates shown, in the dashboard currency. Hover or tap a point to inspect its value. Open Ledger to review giving in detail.</SectionHelp></span>}
             actions={
               <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-full text-sm text-ink-faint" asChild>
                 <Link href="/giving">Ledger <ArrowRight className="size-3" /></Link>
@@ -139,9 +158,9 @@ export default function PaperHomePage() {
 
         {ready && canAny("members:all:read") ? (
           <SectionCard
-            className="lg:col-span-5"
+            className="home-tour-people lg:col-span-5"
             eyebrow="Congregation"
-            title="How the room is made up"
+            title={<span className="inline-flex items-center gap-1">How the room is made up <SectionHelp title="Membership status">The total and legend show members grouped by status, such as active or inactive, within the scope your account can access.</SectionHelp></span>}
           >
             {members.isLoading ? (
               <Skeleton className="h-[200px]" />
@@ -177,9 +196,9 @@ export default function PaperHomePage() {
         {ready && canAny("events:calendar:read") ? <UpcomingEvents className="lg:col-span-5" /> : null}
 
         <SectionCard
-          className="lg:col-span-7"
+          className="home-tour-signals lg:col-span-7"
           eyebrow="Signals"
-          title="What happened while you were away"
+          title={<span className="inline-flex items-center gap-1">What happened while you were away <SectionHelp title="Recent activity">Your five latest notifications appear here. Coloured dots mark unread items. All opens the full notifications page.</SectionHelp></span>}
           actions={
             <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-full text-sm text-ink-faint" asChild>
               <Link href="/notifications">All <ArrowRight className="size-3" /></Link>
@@ -215,7 +234,7 @@ export default function PaperHomePage() {
         </SectionCard>
 
         {ready && canAny("members:all:read") && members.data?.growth?.length ? (
-          <SectionCard className="lg:col-span-12" eyebrow="Becoming" title="Membership growth">
+          <SectionCard className="home-tour-growth lg:col-span-12" eyebrow="Becoming" title={<span className="inline-flex items-center gap-1">Membership growth <SectionHelp title="Membership growth">Compare the member and visitor series over the dates shown. Hover or tap a chart point for its values.</SectionHelp></span>}>
             <TrendChart
               data={members.data.growth.map((point) => ({
                 label: shortDate(point.date),
@@ -233,8 +252,8 @@ export default function PaperHomePage() {
         ) : null}
       </div>
 
-      <p className="text-xs text-ink-faint">
-        Press ⌘K anywhere to jump to a page you have access to.
+      <p className="home-tour-shortcut text-xs text-ink-faint">
+        Press ⌘K on Mac or Ctrl K on Windows and Linux to jump to a page you have access to.
       </p>
     </div>
   );
@@ -284,9 +303,9 @@ function UpcomingEvents({ className }: { className?: string }) {
 
   return (
     <SectionCard
-      className={className}
+      className={`home-tour-events ${className ?? ""}`}
       eyebrow="Gatherings"
-      title="Next up"
+      title={<span className="inline-flex items-center gap-1">Next up <SectionHelp title="Gatherings">This list shows up to four unarchived gatherings ordered by start date. Check each date before planning: past gatherings may still appear. Select a gathering to view its details, or open Calendar.</SectionHelp></span>}
       actions={
         <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-full text-sm text-ink-faint" asChild>
           <Link href="/events">Calendar <ArrowRight className="size-3" /></Link>

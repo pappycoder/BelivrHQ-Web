@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import { LoadingState } from "@/components/shared/loading-state";
@@ -30,7 +34,6 @@ import {
 } from "@/components/paper/primitives";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
@@ -636,7 +639,7 @@ function ProviderAccounts({
             if (!open) closeAdd();
           }}
         >
-          <DialogContent
+          <FormDialogContent
             className="max-h-[85vh] overflow-y-auto border-line bg-card sm:max-w-xl"
             showCloseButton={!busy}
             onEscapeKeyDown={(event) => {
@@ -666,113 +669,115 @@ function ProviderAccounts({
               data-sentry-block
               className="mt-4 space-y-4 rounded-xl border border-line bg-background/40 p-4"
             >
-              <fieldset disabled={busy} className="space-y-4">
-                <legend className="sr-only">New account</legend>
-                <div className="space-y-1.5">
-                  <Label htmlFor="integration-provider" className="text-sm">
-                    Provider
-                  </Label>
-                  <select
-                    id="integration-provider"
-                    value={provider.id}
-                    onChange={(event) => {
-                      if (
-                        !draft ||
-                        window.confirm(
-                          "Change provider and discard the entered account details?",
-                        )
-                      ) {
-                        setProviderId(event.currentTarget.value);
-                        setDraft(false);
-                        setNotice("");
-                      }
-                    }}
-                    className={fieldClass}
-                  >
-                    {data.providers.map((item) => (
-                      <option key={item.id} value={item.id}>
-                        {item.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <p className="text-sm leading-relaxed text-ink-soft">
-                  {provider.help}
-                </p>
-                <div className="space-y-1.5">
-                  <Label required htmlFor="account-label" className="text-sm">
-                    Account name
-                  </Label>
-                  <Input
-                    id="account-label"
-                    name="label"
-                    required
-                    maxLength={80}
-                    placeholder="For example: Church office account"
-                    className="h-10 rounded-lg border-line bg-background text-sm shadow-none"
-                  />
-                </div>
-                {provider.fields.map((field) => (
-                  <div className="space-y-1.5" key={field.key}>
-                    <Label required={!field.optional}
-                      htmlFor={`credential-${field.key}`}
-                      className="text-sm"
-                    >
-                      {field.label}
-                      {field.optional ? " (optional)" : ""}
+              <FormSection title="Details">
+                <fieldset disabled={busy} className="space-y-4">
+                  <legend className="sr-only">New account</legend>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="integration-provider" className="text-sm">
+                      Provider
                     </Label>
-                    {field.options ? (
-                      <select
-                        id={`credential-${field.key}`}
-                        name={field.key}
-                        required={!field.optional}
-                        className={fieldClass}
-                      >
-                        {field.options.map((value) => (
-                          <option key={value} value={value}>
-                            {value}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <Input
-                        id={`credential-${field.key}`}
-                        name={field.key}
-                        type={field.secret ? "password" : "text"}
-                        required={!field.optional}
-                        maxLength={2048}
-                        autoComplete={field.secret ? "new-password" : "off"}
-                        spellCheck={false}
-                        className="h-10 rounded-lg border-line bg-background text-sm shadow-none"
-                      />
-                    )}
+                    <select
+                      id="integration-provider"
+                      value={provider.id}
+                      onChange={(event) => {
+                        if (
+                          !draft ||
+                          window.confirm(
+                            "Change provider and discard the entered account details?",
+                          )
+                        ) {
+                          setProviderId(event.currentTarget.value);
+                          setDraft(false);
+                          setNotice("");
+                        }
+                      }}
+                      className={fieldClass}
+                    >
+                      {data.providers.map((item) => (
+                        <option key={item.id} value={item.id}>
+                          {item.label}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                ))}
-                {notice && (
-                  <p role="alert" className="text-sm text-destructive">
-                    {notice}
+                  <p className="text-sm leading-relaxed text-ink-soft">
+                    {provider.help}
                   </p>
-                )}
-                <div className="flex flex-wrap justify-end gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="rounded-full"
-                    onClick={closeAdd}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    className="h-9 rounded-full text-sm"
-                    loading={busy}
-                  >
-                    Save provider account
-                  </Button>
-                </div>
-              </fieldset>
+                  <div className="space-y-1.5">
+                    <Label required htmlFor="account-label" className="text-sm">
+                      Account name
+                    </Label>
+                    <Input
+                      id="account-label"
+                      name="label"
+                      required
+                      maxLength={80}
+                      placeholder="For example: Church office account"
+                      className="h-10 rounded-lg border-line bg-background text-sm shadow-none"
+                    />
+                  </div>
+                  {provider.fields.map((field) => (
+                    <div className="space-y-1.5" key={field.key}>
+                      <Label required={!field.optional}
+                        htmlFor={`credential-${field.key}`}
+                        className="text-sm"
+                      >
+                        {field.label}
+                        {field.optional ? " (optional)" : ""}
+                      </Label>
+                      {field.options ? (
+                        <select
+                          id={`credential-${field.key}`}
+                          name={field.key}
+                          required={!field.optional}
+                          className={fieldClass}
+                        >
+                          {field.options.map((value) => (
+                            <option key={value} value={value}>
+                              {value}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <Input
+                          id={`credential-${field.key}`}
+                          name={field.key}
+                          type={field.secret ? "password" : "text"}
+                          required={!field.optional}
+                          maxLength={2048}
+                          autoComplete={field.secret ? "new-password" : "off"}
+                          spellCheck={false}
+                          className="h-10 rounded-lg border-line bg-background text-sm shadow-none"
+                        />
+                      )}
+                    </div>
+                  ))}
+                  {notice && (
+                    <p role="alert" className="text-sm text-destructive">
+                      {notice}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap justify-end gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="rounded-full"
+                      onClick={closeAdd}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="h-9 rounded-full text-sm"
+                      loading={busy}
+                    >
+                      Save provider account
+                    </Button>
+                  </div>
+                </fieldset>
+              </FormSection>
             </ValidatedForm>
-          </DialogContent>
+          </FormDialogContent>
         </Dialog>
       )}
       <ConfirmDeleteDialog

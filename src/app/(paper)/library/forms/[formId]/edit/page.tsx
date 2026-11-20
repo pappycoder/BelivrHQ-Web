@@ -82,7 +82,7 @@ export default function EditFormPage({
           </Button>
         }
       />
-      <FormForm form={form.data} onSubmit={onSubmit} submitLabel="Save changes" />
+      <FormForm withPreview form={form.data} onSubmit={onSubmit} submitLabel="Save changes" />
     </div>
   );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import { useRouter } from "next/navigation";
@@ -159,15 +161,29 @@ export function SermonAggregateBrowser({
         <StatCard label="Most active" value={rows.reduce((max, s) => Math.max(max, s.count), 0)} tone="sky" deltaLabel={`${nounSingular.toLowerCase()} with the most`} />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField
+      <ListToolbar
+ search={<SearchField
           value={query}
           onChange={(value) => { setQuery(value); setPage(1); }}
           placeholder={`Search ${nounPlural.toLowerCase()}…`}
           className="w-full max-w-xs"
-        />
-        <div className="ml-auto flex flex-wrap items-center gap-2">
-          <Select value={sortBy} onValueChange={(value) => { setSortBy(value as SortValue); setPage(1); }}>
+        />}
+ controls={<>
+<SortDirectionToggle
+            ascending={sortOrder === "asc"}
+            onToggle={() => { setSortOrder((o) => (o === "asc" ? "desc" : "asc")); setPage(1); }}
+          />
+<ViewToggle
+            value={view}
+            onChange={setView}
+            options={[
+              { value: "table", label: "Table", icon: <Rows3 /> },
+              { value: "cards", label: "Cards", icon: <LayoutGrid /> },
+            ]}
+          />
+</>}
+>
+<Select value={sortBy} onValueChange={(value) => { setSortBy(value as SortValue); setPage(1); }}>
             <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
               <ArrowUpDownIcon /> <SelectValue />
             </SelectTrigger>
@@ -177,20 +193,7 @@ export function SermonAggregateBrowser({
               <SelectItem value="lastDate">Recently active</SelectItem>
             </SelectContent>
           </Select>
-          <SortDirectionToggle
-            ascending={sortOrder === "asc"}
-            onToggle={() => { setSortOrder((o) => (o === "asc" ? "desc" : "asc")); setPage(1); }}
-          />
-          <ViewToggle
-            value={view}
-            onChange={setView}
-            options={[
-              { value: "table", label: "Table", icon: <Rows3 /> },
-              { value: "cards", label: "Cards", icon: <LayoutGrid /> },
-            ]}
-          />
-        </div>
-      </div>
+</ListToolbar>
 
       {isLoading ? (
         <div className={view === "cards" ? "grid gap-3 sm:grid-cols-2 lg:grid-cols-3" : "space-y-2"}>
@@ -247,7 +250,7 @@ export function SermonAggregateBrowser({
         </div>
       ) : (
         <>
-          <StaggerGroup className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <StaggerGroup className="navigation-tour-records grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {rowsPage.map((item) => (
               <StaggerItem key={item.name}>{renderCard(item, () => open(item))}</StaggerItem>
             ))}

@@ -1,5 +1,6 @@
 "use client";
 
+import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
 import { RequiredIndicator } from "@/components/ui/required-fields";
 import { ValidatedForm } from "@/components/ui/validated-form";
 
@@ -177,13 +178,13 @@ export default function EditEventPage({
         description="Change what needs changing. The calendar, the roster and the tickets all follow."
       />
 
-      <ValidatedForm onSubmit={submit} className="grid gap-4 lg:grid-cols-[1fr_320px]">
+      <ValidatedForm onSubmit={submit} className={CREATE_FORM_LAYOUT}>
         <div className="min-w-0 space-y-4">
           <SectionCard eyebrow="Details" title="What is it?">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5 sm:col-span-2">
-                <Label required className="text-sm">Title</Label>
-                <Input required value={form.title} onChange={(e) => set("title", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                <Label required className="text-sm" htmlFor="edit-event-title">Title</Label>
+                <Input id="edit-event-title" required value={form.title} onChange={(e) => set("title", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
               </div>
               <div className="space-y-1.5 sm:col-span-2">
                 <Label className="text-sm">Type</Label>
@@ -205,8 +206,8 @@ export default function EditEventPage({
                 </div>
               </div>
               <div className="space-y-1.5 sm:col-span-2">
-                <Label className="text-sm">Description</Label>
-                <Textarea rows={3} value={form.description} onChange={(e) => set("description", e.target.value)} className="resize-none rounded-lg border-line bg-card text-sm shadow-none" />
+                <Label className="text-sm" htmlFor="edit-event-description">Description</Label>
+                <Textarea id="edit-event-description" rows={3} value={form.description} onChange={(e) => set("description", e.target.value)} className="resize-none rounded-lg border-line bg-card text-sm shadow-none" />
               </div>
             </div>
           </SectionCard>
@@ -241,32 +242,29 @@ export default function EditEventPage({
                 </p>
               </div>
               <div className="space-y-1.5">
-                <Label required className="text-sm">Starts</Label>
-                <Input required picker="wheel" type="datetime-local" value={form.start} onChange={(e) => set("start", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                <Label required className="text-sm" htmlFor="edit-event-start">Starts</Label>
+                <Input id="edit-event-start" required picker="wheel" type="datetime-local" value={form.start} onChange={(e) => set("start", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label required={form.recurrence === "multi_day"} className="text-sm">
+                <Label htmlFor="edit-event-end" required={form.recurrence === "multi_day"} className="text-sm">
                   {form.recurrence === "one_time"
                     ? "Ends (same day)"
                     : form.recurrence === "multi_day"
                       ? "Ends"
                       : "Until (optional)"}
                 </Label>
-                <Input required={form.recurrence === "multi_day"} picker="wheel" type="datetime-local" value={form.end} onChange={(e) => set("end", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                <Input id="edit-event-end" required={form.recurrence === "multi_day"} picker="wheel" type="datetime-local" value={form.end} onChange={(e) => set("end", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm">Location</Label>
-                <Input value={form.location} onChange={(e) => set("location", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                <Label className="text-sm" htmlFor="edit-event-location">Location</Label>
+                <Input id="edit-event-location" value={form.location} onChange={(e) => set("location", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm">Capacity</Label>
-                <Input disabled={!canCreatePaidEvents} inputMode="numeric" value={form.capacity} onChange={(e) => set("capacity", e.target.value.replace(/[^\d]/g, ""))} className="num h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                <Label className="text-sm" htmlFor="edit-event-capacity">Capacity</Label>
+                <Input id="edit-event-capacity" disabled={!canCreatePaidEvents} inputMode="numeric" value={form.capacity} onChange={(e) => set("capacity", e.target.value.replace(/[^\d]/g, ""))} className="num h-10 rounded-lg border-line bg-card text-sm shadow-none" />
               </div>
             </div>
           </SectionCard>
-        </div>
-
-        <aside className="space-y-4">
           <SectionCard eyebrow="Access" title="Free or ticketed">
             <label className="flex items-center justify-between gap-3 rounded-lg border border-line px-3 py-2.5">
               <span className="text-sm">Free entry</span>
@@ -275,8 +273,8 @@ export default function EditEventPage({
             {!canCreatePaidEvents && <p className="mt-3 text-sm leading-relaxed text-ink-muted">Your plan includes free events. Paid event pricing requires Network or Enterprise.</p>}
             {!form.isFree ? (
               <div className="mt-3 space-y-1.5">
-                <Label className="text-sm">Ticket price (₦)</Label>
-                <Input disabled={!canCreatePaidEvents} inputMode="numeric" value={form.price} onChange={(e) => set("price", e.target.value.replace(/[^\d]/g, ""))} className="num h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                <Label className="text-sm" htmlFor="edit-event-price">Ticket price (₦)</Label>
+                <Input id="edit-event-price" disabled={!canCreatePaidEvents} inputMode="numeric" value={form.price} onChange={(e) => set("price", e.target.value.replace(/[^\d]/g, ""))} className="num h-10 rounded-lg border-line bg-card text-sm shadow-none" />
                 <p className="text-xs leading-relaxed text-ink-faint">Tiers per ticket type are managed on the Tiers page.</p>
               </div>
             ) : null}
@@ -291,10 +289,24 @@ export default function EditEventPage({
             </SectionCard>
           ) : null}
 
+        </div>
+        <CreatePreviewSidebar>
+          <CreatePreviewCard editing eyebrow="Calendar preview" title={form.title || "Untitled gathering"}>
+            <dl className="space-y-3 text-sm">
+              <div><dt className="rule-label">Schedule</dt><dd className="mt-1">{form.start ? new Date(form.start).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" }) : "Date not set"}</dd></div>
+              <div><dt className="rule-label">Location</dt><dd className="mt-1 break-words">{form.location || "Not entered yet"}</dd></div>
+              <div><dt className="rule-label">Repeats</dt><dd className="mt-1">{EVENT_RECURRENCE_LABELS[form.recurrence]}</dd></div>
+              <div><dt className="rule-label">Admission</dt><dd className="mt-1">{form.isFree ? "Free" : form.price ? `₦${form.price} per seat` : "Priced"}{form.capacity ? ` · capacity ${form.capacity}` : ""}</dd></div>
+              <div><dt className="rule-label">Branch</dt><dd className="mt-1 break-words">{branches.data?.data?.find(branch => branch.branchId === form.branchId)?.name || profile?.branch?.name || "Select a branch"}</dd></div>
+            </dl>
+          </CreatePreviewCard>
+          <div className="space-y-2">
           <Button type="submit" className="h-11 w-full gap-2 rounded-xl text-sm" disabled={updateEvent.isPending}>
             <Save className="size-4" /> {updateEvent.isPending ? "Saving…" : "Save changes"}
           </Button>
-        </aside>
+          <Button asChild variant="ghost" className="w-full"><Link href={`/gatherings/events/${eventId}`}>Cancel</Link></Button>
+          </div>
+        </CreatePreviewSidebar>
       </ValidatedForm>
     </div>
   );

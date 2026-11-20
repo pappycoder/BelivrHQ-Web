@@ -1,5 +1,7 @@
 "use client";
 
+import { DetailNavigation } from "@/components/paper/section";
+
 import * as React from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -20,9 +22,9 @@ export default function UserDetailPage({
 
   return (
     <div className="space-y-4">
-      <Link href="/admin/team" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
+      <DetailNavigation><Link href="/admin/team" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
         <ArrowLeft className="size-3" /> Admin · Team
-      </Link>
+      </Link></DetailNavigation>
       {user.isLoading ? (
         <div className="space-y-3">
           <Skeleton className="h-20 rounded-2xl" />

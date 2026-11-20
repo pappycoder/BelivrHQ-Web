@@ -101,7 +101,7 @@ export default function AttendanceReportsPage() {
         {PERIODS.map((item) => (
           <FilterChip key={item} active={period === item} onClick={() => setPeriod(item)}>{item}</FilterChip>
         ))}
-        <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Branch filter">
+        <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="ml-auto h-9 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Branch filter">
           <option value="">All branches</option>
           {(branches.data?.data ?? []).map((b) => <option key={b.branchId} value={b.branchId}>{b.name}</option>)}
         </select>

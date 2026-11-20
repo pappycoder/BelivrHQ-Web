@@ -88,7 +88,7 @@ export default function SettingsBillingPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div data-tour-billing className="space-y-6">
       <PageHeader
         eyebrow="Settings · Billing"
         title="The plainest receipt the church ever kept."
@@ -97,7 +97,7 @@ export default function SettingsBillingPage() {
 
       {/* ── Current plan band ─────────────────────────────────────────── */}
       <div className="paper-card overflow-hidden rounded-2xl">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line bg-muted/30 px-5 py-4">
+        <div data-tour-billing-plan className="flex flex-wrap items-center justify-between gap-4 border-b border-line bg-muted/30 px-5 py-4">
           <div className="flex items-center gap-3">
             <span className="grid size-10 place-items-center rounded-xl bg-brand-soft text-brand">
               <Sparkles className="size-4" />
@@ -149,7 +149,7 @@ export default function SettingsBillingPage() {
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <div className="space-y-4">
           <div className="paper-card rounded-2xl p-5">
-            <p className="rule-label mb-3">Change your plan when your church needs more room</p>
+            <p data-tour-billing-compare className="rule-label mb-3">Change your plan when your church needs more room</p>
             <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
               {d.catalog.map((entry) => {
                 const current = sub?.plan === entry.id;
@@ -182,7 +182,7 @@ export default function SettingsBillingPage() {
                   </div>
                 );
               })}
-              <div className="rounded-xl border border-line p-4">
+              <div className="paper-card rounded-2xl p-4">
                 <p className="flex items-center justify-between text-sm font-semibold">
                   Enterprise
                   <Tag tone="gold">By agreement</Tag>
@@ -205,7 +205,7 @@ export default function SettingsBillingPage() {
           {/* ── Payments ledger ─────────────────────────────────────── */}
           <div className="paper-card overflow-hidden rounded-2xl">
             <div className="flex items-center justify-between border-b border-line px-5 py-3.5">
-              <p className="font-display text-sm font-semibold">Payment history</p>
+              <p data-tour-billing-history className="font-display text-sm font-semibold">Payment history</p>
               <span className="text-xs text-ink-faint">Every invoice is church-business receipts-ready.</span>
             </div>
             {d.payments.length === 0 ? (

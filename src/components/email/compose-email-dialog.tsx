@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { RequiredFieldsNotice } from "@/components/ui/required-fields";
 
 import * as React from "react";
@@ -12,7 +16,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -99,7 +102,7 @@ export function ComposeEmailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
+      <FormDialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{replyToId ? "Reply" : "Compose"}</DialogTitle>
           <DialogDescription>
@@ -107,59 +110,61 @@ export function ComposeEmailDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <RequiredFieldsNotice className="col-span-full" />
-          {/* Recipients */}
-          <div className="space-y-2">
-            <Label required>To</Label>
-            {selected.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {selected.map((c) => (
-                  <Badge
-                    key={c.id}
-                    variant="secondary"
-                    className="gap-1 pr-1.5"
-                  >
-                    {c.name}
-                    <button type="button" aria-label={`Remove ${c.name}`} onClick={() => toggleSelect(c)} className="text-muted-foreground hover:text-foreground">
-                      <X className="size-3" />
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            )}
+        <FormSection title="Message details">
+          <div className="space-y-4">
+            <RequiredFieldsNotice className="col-span-full" />
+            {/* Recipients */}
+            <div className="space-y-2">
+              <Label required>To</Label>
+              {selected.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {selected.map((c) => (
+                    <Badge
+                      key={c.id}
+                      variant="secondary"
+                      className="gap-1 pr-1.5"
+                    >
+                      {c.name}
+                      <button type="button" aria-label={`Remove ${c.name}`} onClick={() => toggleSelect(c)} className="text-muted-foreground hover:text-foreground">
+                        <X className="size-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
 
-            <RecipientCombobox
-              excludeIds={selected.map((s) => s.id)}
-              onToggle={toggleSelect}
-              placeholder="Click to add recipients…"
-            />
-          </div>
+              <RecipientCombobox
+                excludeIds={selected.map((s) => s.id)}
+                onToggle={toggleSelect}
+                placeholder="Click to add recipients…"
+              />
+            </div>
 
-          {/* Subject */}
-          <div className="space-y-2">
-            <Label required htmlFor="email-subject">Subject</Label>
-            <Input
-              id="email-subject"
-              placeholder={replySubject ? `Re: ${replySubject}` : "Subject"}
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-            />
-          </div>
+            {/* Subject */}
+            <div className="space-y-2">
+              <Label required htmlFor="email-subject">Subject</Label>
+              <Input
+                id="email-subject"
+                placeholder={replySubject ? `Re: ${replySubject}` : "Subject"}
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+              />
+            </div>
 
-          {/* Body */}
-          <div className="space-y-2">
-            <Label required htmlFor="email-body">Message</Label>
-            <Textarea
-              id="email-body"
-              rows={4}
-              className="sm:min-h-[160px]"
-              placeholder="Write your message…"
-              value={body}
-              onChange={(e) => setBody(e.target.value)}
-            />
+            {/* Body */}
+            <div className="space-y-2">
+              <Label required htmlFor="email-body">Message</Label>
+              <Textarea
+                id="email-body"
+                rows={4}
+                className="sm:min-h-[160px]"
+                placeholder="Write your message…"
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
+        </FormSection>
 
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
@@ -178,7 +183,7 @@ export function ComposeEmailDialog({
             {replyToId ? "Send Reply" : "Send"}
           </Button>
         </DialogFooter>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

@@ -81,7 +81,7 @@ export default function EditSermonPage({
           </Button>
         }
       />
-      <SermonForm sermon={sermon.data} onSubmit={handleSubmit} onSaveRecording={handleSubmit} />
+      <SermonForm withPreview sermon={sermon.data} onSubmit={handleSubmit} onSaveRecording={handleSubmit} />
     </div>
   );
 }

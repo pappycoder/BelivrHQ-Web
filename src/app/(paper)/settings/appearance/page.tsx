@@ -42,7 +42,7 @@ export default function SettingsAppearancePage() {
   const isDefault = brand.presetId === "teal";
 
   return (
-    <div className="space-y-6">
+    <div data-tour-appearance className="space-y-6">
       <PageHeader
         eyebrow="Settings · Appearance"
         title="The light you work in, the colour you lead with."

@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { RequiredFieldsNotice } from "@/components/ui/required-fields";
 
 import * as React from "react";
@@ -7,7 +11,6 @@ import { toast } from "@/lib/toast";
 import { UserPlus } from "lucide-react";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -74,7 +77,7 @@ export function CellGroupMemberDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[440px]">
+      <FormDialogContent className="sm:max-w-[440px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserPlus className="h-4 w-4" /> Add Member
@@ -82,31 +85,33 @@ export function CellGroupMemberDialog({
           <DialogDescription>Add a member to {groupName}.</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <RequiredFieldsNotice className="col-span-full" />
-          <Label required>Member</Label>
-          <MemberCombobox
-            value={memberId}
-            onChange={(id, member) => {
-              setMemberId(id);
-              setMemberName(member ? `${member.firstName} ${member.lastName}` : "");
-            }}
-            selectedName={memberName}
-            excludeIds={existingMembers.map((m) => m.memberId)}
-            placeholder="Select a member..."
-          />
-          <Label required>Role</Label>
-          <Select value={role} onValueChange={setRole}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="member">Member</SelectItem>
-              <SelectItem value="leader">Leader</SelectItem>
-              <SelectItem value="assistant_leader">Assistant Leader</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <FormSection title="Details">
+          <div className="space-y-4">
+            <RequiredFieldsNotice className="col-span-full" />
+            <Label required>Member</Label>
+            <MemberCombobox
+              value={memberId}
+              onChange={(id, member) => {
+                setMemberId(id);
+                setMemberName(member ? `${member.firstName} ${member.lastName}` : "");
+              }}
+              selectedName={memberName}
+              excludeIds={existingMembers.map((m) => m.memberId)}
+              placeholder="Select a member..."
+            />
+            <Label required>Role</Label>
+            <Select value={role} onValueChange={setRole}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="member">Member</SelectItem>
+                <SelectItem value="leader">Leader</SelectItem>
+                <SelectItem value="assistant_leader">Assistant Leader</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </FormSection>
 
         <DialogFooter>
           <Button
@@ -121,7 +126,7 @@ export function CellGroupMemberDialog({
             {addMember.isPending ? "Adding..." : "Add to Group"}
           </Button>
         </DialogFooter>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

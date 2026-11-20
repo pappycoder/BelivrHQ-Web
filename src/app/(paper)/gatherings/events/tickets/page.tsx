@@ -1,5 +1,11 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
@@ -14,7 +20,6 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
@@ -96,8 +101,8 @@ function TicketsInner() {
         }
       />
 
-      <div className="flex flex-wrap items-center gap-2">
-        <select
+      <ListToolbar>
+<select
           value={eventId}
           onChange={(e) => { setEventId(e.target.value); setPage(1); router.replace(`/gatherings/events/tickets${e.target.value ? `?event=${e.target.value}` : ""}`); }}
           className="h-9 rounded-full border border-line bg-card px-3 text-sm outline-none"
@@ -110,18 +115,18 @@ function TicketsInner() {
             </option>
           ))}
         </select>
-        {selected ? (
+{selected ? (
           <span className="flex items-center gap-1.5 text-xs text-ink-faint">
             {paidEvent ? <Tag tone="gold">paid</Tag> : <Tag tone="moss">free</Tag>}
             {(tiers.data ?? []).length ? <span>{(tiers.data ?? []).length} tiers</span> : paidEvent ? <span>no tiers (flat price)</span> : null}
           </span>
         ) : null}
-        {eventId ? (
+{eventId ? (
           <Link href={`/gatherings/events/tiers?event=${encodeURIComponent(eventId)}`} className="ml-auto text-sm text-brand hover:underline">
             Manage tiers →
           </Link>
         ) : null}
-      </div>
+</ListToolbar>
 
       {eventId ? (
         <>
@@ -201,34 +206,36 @@ function TicketsInner() {
       )}
 
       <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
-        <DialogContent className="rounded-2xl border-line bg-card">
+        <FormDialogContent className="rounded-2xl border-line bg-card">
           <DialogHeader>
             <DialogTitle className="font-display">Seat someone by hand</DialogTitle>
             <DialogDescription className="text-sm">Create a named pass to help attendees get through the queue.</DialogDescription>
           </DialogHeader>
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <p className="text-sm font-medium">Member</p>
-              <MemberCombobox
-                value={assignMember?.id ?? ""}
-                onChange={(id, member) => setAssignMember(id ? { id, name: `${member?.firstName ?? ""} ${member?.lastName ?? ""}`.trim() || "the member" } : null)}
-                placeholder="Search a member…"
-              />
-            </div>
-            {paidEvent && (tiers.data ?? []).length ? (
+          <FormSection title="Details">
+            <div className="space-y-3">
               <div className="space-y-1.5">
-                <p className="text-sm font-medium">Tier</p>
-                <select value={assignTier} onChange={(e) => setAssignTier(e.target.value)} className="h-10 w-full rounded-lg border border-line bg-card px-2 text-sm outline-none" aria-label="Tier">
-                  <option value="">General (no tier)</option>
-                  {(tiers.data ?? []).map((t) => <option key={t.id} value={t.id}>{t.name} · {formatNaira(t.price)}</option>)}
-                </select>
+                <p className="text-sm font-medium">Member</p>
+                <MemberCombobox
+                  value={assignMember?.id ?? ""}
+                  onChange={(id, member) => setAssignMember(id ? { id, name: `${member?.firstName ?? ""} ${member?.lastName ?? ""}`.trim() || "the member" } : null)}
+                  placeholder="Search a member…"
+                />
               </div>
-            ) : null}
-            <Button className="h-10 w-full gap-2 rounded-lg text-sm" disabled={!assignMember || createTicket.isPending} onClick={assign}>
-              <UserPlus className="size-4" /> {createTicket.isPending ? "Assigning…" : "Assign pass"}
-            </Button>
-          </div>
-        </DialogContent>
+              {paidEvent && (tiers.data ?? []).length ? (
+                <div className="space-y-1.5">
+                  <p className="text-sm font-medium">Tier</p>
+                  <select value={assignTier} onChange={(e) => setAssignTier(e.target.value)} className="h-10 w-full rounded-lg border border-line bg-card px-2 text-sm outline-none" aria-label="Tier">
+                    <option value="">General (no tier)</option>
+                    {(tiers.data ?? []).map((t) => <option key={t.id} value={t.id}>{t.name} · {formatNaira(t.price)}</option>)}
+                  </select>
+                </div>
+              ) : null}
+              <Button className="h-10 w-full gap-2 rounded-lg text-sm" disabled={!assignMember || createTicket.isPending} onClick={assign}>
+                <UserPlus className="size-4" /> {createTicket.isPending ? "Assigning…" : "Assign pass"}
+              </Button>
+            </div>
+          </FormSection>
+        </FormDialogContent>
       </Dialog>
     </div>
   );

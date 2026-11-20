@@ -1,5 +1,9 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
+import { formatRecordDate } from "@/lib/record-date";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import { IntakeRegister, PublicRegistrationLink } from "@/components/intake/intake-register";
@@ -21,6 +25,7 @@ import { api } from "@/lib/api";
 import { fetchAllPages, listUrl } from "@/lib/export-all";
 import type { ExportColumn } from "@/lib/export-utils";
 import { PageHeader } from "@/components/paper/section";
+import { PageTour, type TourStep } from "@/components/tours/page-tour";
 import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
@@ -64,6 +69,26 @@ import {
 } from "@/hooks/use-members";
 
 const PAGE_SIZE = 15;
+
+const DIRECTORY_TOUR_STEPS: TourStep[] = [
+  { target: ".members-tour-heading", title: "Get to know your directory", description: "Find and review the members your account can access. This guide explains the controls while keeping records unchanged. You can replay it with Take a tour." },
+  { target: ".members-tour-intake [role='tablist']", title: "Records and pending registrations", description: "Records contains existing members. Pending registrations contains public form responses waiting for review. The pending count is shown on its tab. Review controls appear only for accounts with the required access." },
+  { target: ".members-tour-summary", title: "Understand the totals", description: "In the register counts members matching the current filters. On this page counts the records currently shown. Scope tells you which branch or branches the directory is showing." },
+  { target: ".members-tour-search", title: "Find a person", description: "After the tour, type a name, email address or phone number. The directory updates after a short pause. Search works together with the status, branch and archive filters and returns to page one." },
+  { target: ".members-tour-status", title: "Filter by member status", description: "Choose Active, Inactive, Suspended or Transferred to narrow the directory. All removes only the status filter; your search, branch and archive choices still apply." },
+  { target: ".members-tour-scope", title: "Choose the register and branch", description: "Archived switches to archived member records; turn it off to return to the regular register. HQ accounts can also choose a branch. Other accounts remain within their assigned scope." },
+  { target: ".members-tour-display", title: "Arrange the directory", description: "Choose a sort field and use the direction button to reverse its order. Table and Cards show the same filtered records. Cards can be easier on small screens; tables can scroll horizontally." },
+  { target: "[data-list-table='people-members-1'] > [data-export-ignore]", title: "Columns and selected records", description: "Columns lets you choose which fields to show. The checkboxes select records on this page and reveal available bulk actions. Selecting a row alone changes nothing. Review the confirmation before applying any bulk action." },
+  { target: ".members-tour-preview", title: "Preview a member", description: "After the tour, select a person's name for a side preview. Full profile opens the detailed record. Depending on your permissions, Manage may also offer Edit, Archive, Restore or Deactivate. These are separate actions from viewing." },
+  { target: ".members-tour-empty", title: "When nobody matches", description: "Try another search or loosen the filters. Clear filters resets the search, status, branch and archived view so you can start again. Your account's access restrictions still apply." },
+  { target: ".members-tour-intake [aria-label='Pending registration summary']", title: "Review your registration queue", description: "These totals describe registrations waiting for review and the current branch scope. A pending response is not yet a member record. Use Records to return to the existing member directory." },
+  { target: ".members-tour-intake [aria-label='Pending registration filters']", title: "Find a pending registration", description: "Search submitted names, email addresses or phone numbers. Use the available branch and sorting controls to narrow and arrange the queue. These filters are separate from the Records tab." },
+  { target: ".members-tour-intake [data-list-table='pending-members'] > [data-export-ignore]", title: "Review before making a decision", description: "Open a response to review its details before deciding. Approval adds a member to the registration's original branch. Declining permanently removes the response. Selection and Columns help you review the queue; the tour does not approve or decline anything." },
+  { target: ".members-tour-intake [aria-label='Pagination']", title: "Browse the rest of the list", description: "Prev and Next move through the matching records. Rows per page changes how many are shown. The range and total reflect the current filters, and page controls are disabled when there is nowhere else to go." },
+  { target: ".members-tour-export button", title: "Export the filtered directory", description: "Export offers PDF, Excel and CSV. It fetches all members matching the directory filters, rather than only this page. Review the filters before downloading. The button is disabled when no matching rows are shown." },
+  { target: ".members-tour-add", title: "Add a person", description: "Use Add a person to enter a member directly. Review and save the form to create the record. This control appears only if your account can create members. The tour does not open or submit a form." },
+  { target: ".members-tour-public button", title: "Collect a public registration", description: "Public registration link lets an authorised user obtain a branch-specific form link. HQ accounts choose a branch first. Submitted responses go to Pending registrations for review before they become member records." },
+];
 
 const STATUS_OPTIONS: { value: "all" | MemberStatus; label: string }[] = [
   { value: "all", label: "All" },
@@ -114,7 +139,7 @@ function buildExportRows(
 }
 
 export default function PeopleMembersPage() {
-  const { open, close: closeInspector } = useInspector();
+  const { open, close: closeInspector, isOpen: inspectorOpen } = useInspector();
   const { can, canAny, ready } = usePermissions();
   const { data: profile } = useCurrentProfile();
   const canUpdate = ready && can("members:all", "update");
@@ -195,7 +220,7 @@ export default function PeopleMembersPage() {
             {member.city || member.state ? (
               <FieldRow label="Location">{[member.city, member.state].filter(Boolean).join(", ")}</FieldRow>
             ) : null}
-            <FieldRow label="Member since">{member.memberSince ?? "Not available"}</FieldRow>
+            <FieldRow label="Member since">{formatRecordDate(member.memberSince)}</FieldRow>
             {member.dateOfBirth ? <FieldRow label="Birthday">{member.dateOfBirth}</FieldRow> : null}
           </DataList>
           {member.notes ? (
@@ -287,12 +312,15 @@ export default function PeopleMembersPage() {
   return (
     <div className="space-y-6">
       <PageHeader
+        className="members-tour-heading"
         eyebrow="People · Members"
         title="Everyone, held in one place."
         description="Find people, households and member details in one church directory."
         actions={
           <>
-            <PublicRegistrationLink kind="members" />
+            <PageTour page="Member directory" account={profile ? `${profile.churchId}:${profile.profileId}` : undefined} ready={ready && list.isSuccess && !formOpen && !deactivateTarget && !inspectorOpen} steps={DIRECTORY_TOUR_STEPS} />
+            <div className="members-tour-public inline-flex"><PublicRegistrationLink kind="members" /></div>
+            <div className="members-tour-export inline-flex">
             <ExportDropdown
               tableId="members"
               columns={EXPORT_COLUMNS}
@@ -302,8 +330,9 @@ export default function PeopleMembersPage() {
               disabled={!rows.length}
               fetchAllRows={fetchAllExportRows}
             />
+            </div>
             {canCreate ? (
-              <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => { setEditTarget(null); setFormOpen(true); }}>
+              <Button className="members-tour-add h-9 gap-1.5 rounded-full text-sm" onClick={() => { setEditTarget(null); setFormOpen(true); }}>
                 <UserRoundPlus className="size-3.5" /> Add a person
               </Button>
             ) : null}
@@ -311,8 +340,9 @@ export default function PeopleMembersPage() {
         }
       />
 
+      <div className="members-tour-intake">
       <IntakeRegister kind="members">
-      <StaggerGroup className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+      <StaggerGroup className="members-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-3">
         <StaggerItem><StatCard label="In the register" value={total} tone="brand" icon={<Rows3 className="size-4" />} deltaLabel={archivedView ? "archived view" : "matching filters"} /></StaggerItem>
         <StaggerItem>
           <div className="paper-card flex h-full flex-col justify-between gap-4 rounded-2xl p-5">
@@ -330,22 +360,16 @@ export default function PeopleMembersPage() {
         </StaggerItem>
       </StaggerGroup>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={searchInput} onChange={setSearchInput} placeholder="Search name, email or phone…" className="w-full max-w-xs" />
-        <div className="flex flex-wrap gap-1.5">
-          {STATUS_OPTIONS.map((item) => (
-            <FilterChip key={item.value} active={status === item.value} onClick={() => { setStatus(item.value); setPage(1); }}>
-              {item.label}
-            </FilterChip>
-          ))}
-        </div>
-        <div className="ml-auto flex flex-wrap items-center gap-2">
+      <ListToolbar
+ search={<SearchField value={searchInput} onChange={setSearchInput} placeholder="Search name, email or phone…" className="members-tour-search w-full max-w-xs" />}
+ controls={<>
+<div className="members-tour-scope flex flex-wrap items-center gap-2">
           <FilterChip active={archivedView} onClick={() => { setArchivedView((v) => !v); setPage(1); }} count={undefined}>
             Archived
           </FilterChip>
           {isHq ? (
             <Select value={branchId} onValueChange={(value) => { setBranchId(value); setPage(1); }}>
-              <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
+              <SelectTrigger aria-label="Filter members by branch" className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
                 <SelectValue placeholder="All branches" />
               </SelectTrigger>
               <SelectContent>
@@ -358,8 +382,10 @@ export default function PeopleMembersPage() {
               </SelectContent>
             </Select>
           ) : null}
+          </div>
+<div className="members-tour-display flex flex-wrap items-center gap-2">
           <Select value={sortBy} onValueChange={(value) => { setSortBy(value as typeof sortBy); setPage(1); }}>
-            <SelectTrigger className="h-9 w-40 rounded-full border-line bg-card text-sm shadow-none">
+            <SelectTrigger aria-label="Sort members" className="h-9 w-40 rounded-full border-line bg-card text-sm shadow-none">
               <ArrowUpDownIcon /> <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -377,8 +403,17 @@ export default function PeopleMembersPage() {
               { value: "cards", label: "Cards", icon: <LayoutGrid /> },
             ]}
           />
+          </div>
+</>}
+>
+<div className="members-tour-status flex flex-wrap gap-1.5" role="group" aria-label="Member status filters">
+          {STATUS_OPTIONS.map((item) => (
+            <FilterChip key={item.value} active={status === item.value} onClick={() => { setStatus(item.value); setPage(1); }}>
+              {item.label}
+            </FilterChip>
+          ))}
         </div>
-      </div>
+</ListToolbar>
 
       {list.isError ? (
         <EmptyState
@@ -394,6 +429,7 @@ export default function PeopleMembersPage() {
           ))}
         </div>
       ) : rows.length === 0 ? (
+        <div className="members-tour-empty">
         <EmptyState
           icon={<Rows3 />}
           title="Nobody matches that"
@@ -404,6 +440,7 @@ export default function PeopleMembersPage() {
             </Button>
           }
         />
+        </div>
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
           <div className="overflow-x-auto">
@@ -421,7 +458,7 @@ export default function PeopleMembersPage() {
                     key={member.memberId}
                     className="group grid grid-cols-[minmax(0,2fr)_1fr_1.1fr_0.9fr_auto] items-center gap-4 px-5 py-3 transition-colors hover:bg-muted/40"
                   >
-                    <button type="button" onClick={() => peek(member)} className="flex min-w-0 items-center gap-3 text-left">
+                    <button type="button" onClick={() => peek(member)} className="members-tour-preview flex min-w-0 items-center gap-3 text-left">
                       <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.photoUrl} size="sm" />
                       <span className="min-w-0">
                         <span className="block truncate text-sm font-semibold">
@@ -438,7 +475,7 @@ export default function PeopleMembersPage() {
                     <span className="truncate text-sm text-ink-soft">
                       {(member.branchId && branchNames.get(member.branchId)) ?? (isHq ? "Not available" : profile?.branch?.name ?? "Not available")}
                     </span>
-                    <span className="num text-sm text-ink-soft">{member.memberSince ?? "Not available"}</span>
+                    <span className="num text-sm text-ink-soft">{formatRecordDate(member.memberSince)}</span>
                     <div className="flex items-center justify-end">
                       <RowActions actions={manageActions(member)} />
                     </div>
@@ -464,7 +501,7 @@ export default function PeopleMembersPage() {
               <StaggerItem key={member.memberId}>
                 <div className="paper-card lift flex h-full flex-col rounded-2xl p-4">
                   <div className="flex items-start justify-between gap-2">
-                    <button type="button" onClick={() => peek(member)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
+                    <button type="button" onClick={() => peek(member)} className="members-tour-preview flex min-w-0 flex-1 items-center gap-3 text-left">
                       <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.photoUrl} size="md" />
                       <div className="min-w-0">
                         <p className="truncate text-sm font-semibold">{member.firstName} {member.lastName}</p>
@@ -475,7 +512,7 @@ export default function PeopleMembersPage() {
                   </div>
                   <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
                     <Tag tone={STATUS_TONES[member.status]}>{member.status}</Tag>
-                    <span className="num">{member.memberSince ?? ""}</span>
+                    <span className="num">{formatRecordDate(member.memberSince)}</span>
                   </div>
                 </div>
               </StaggerItem>
@@ -496,6 +533,7 @@ export default function PeopleMembersPage() {
       )}
 
       </IntakeRegister>
+      </div>
 
       <MemberFormDialog
         open={formOpen}
