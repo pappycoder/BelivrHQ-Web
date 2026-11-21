@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -379,7 +381,7 @@ export default function EventsCalendarPage() {
                       type="button"
                       key={key}
                       data-calendar-day={key}
-                      aria-label={`${d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}, ${entries.length} gatherings`}
+                      aria-label={`${d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}, ${entries.length} ${collectionLabel(entries.length, "gatherings")}`}
                       aria-pressed={isSelected}
                       onClick={() => setSelected(d)}
                       className={cn(

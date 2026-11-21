@@ -1,5 +1,8 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
 import { formatRecordDate } from "@/lib/record-date";
 
 import { DetailNavigation, DetailHeading } from "@/components/paper/section";
@@ -144,7 +147,7 @@ export default function MemberDetail({
                 <DetailHeading>
                   {fullName}
                 </DetailHeading>
-                <Tag tone={STATUS_TONES[data.status]} dot>{data.status}</Tag>
+                <Tag tone={STATUS_TONES[data.status]} dot>{formatStatusLabel(data.status)}</Tag>
                 {data.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
               </div>
               <p className="text-sm text-ink-soft">
@@ -265,7 +268,7 @@ export default function MemberDetail({
             <DataList>
               <FieldRow label="Address">{data.address ?? "Not available"}</FieldRow>
               <FieldRow label="City / State">{[data.city, data.state].filter(Boolean).join(", ") || "Not available"}</FieldRow>
-              <FieldRow label="Status">{data.status}</FieldRow>
+              <FieldRow label="Status">{formatStatusLabel(data.status)}</FieldRow>
               <FieldRow label="Member since">{formatRecordDate(data.memberSince)}</FieldRow>
             </DataList>
           </SectionCard>
@@ -345,7 +348,7 @@ export default function MemberDetail({
                     </span>
                     <span className="text-sm text-ink-soft">{formatDate(record.givingDate ?? record.createdAt)}</span>
                     <span className="ml-auto">
-                      <Tag tone={record.status === "success" ? "moss" : record.status === "pending" ? "gold" : "rose"}>{record.status}</Tag>
+                      <Tag tone={record.status === "success" ? "moss" : record.status === "pending" ? "gold" : "rose"}>{formatStatusLabel(record.status)}</Tag>
                     </span>
                   </div>
                 ))}

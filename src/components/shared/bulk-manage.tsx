@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { useRef, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -86,7 +88,7 @@ export function BulkManage({
     busyRef.current = false;
     if (failed.length)
       toast.error(
-        `${failed.length} of ${batch.entries.length} records could not be processed`,
+        `${failed.length} of ${batch.entries.length} ${collectionLabel(batch.entries.length, "records")} could not be processed`,
         {
           description: failed
             .slice(0, 5)
@@ -95,7 +97,7 @@ export function BulkManage({
         },
       );
     else {
-      toast.success(`${succeeded.length} records processed`);
+      toast.success(`${succeeded.length} ${collectionLabel(succeeded.length, "records")} processed`);
       setBatch(null);
     }
   }
@@ -144,7 +146,7 @@ export function BulkManage({
           <DialogHeader>
             <DialogTitle>{batch?.action.label}?</DialogTitle>
             <DialogDescription>
-              Apply this action to {batch?.entries.length} selected records on
+              Apply this action to {batch?.entries.length} selected {collectionLabel(batch?.entries.length ?? 0, "records")} on
               this page. Records that cannot be processed will be reported for
               review.
               {batch?.action.description ? ` ${batch.action.description}` : ""}

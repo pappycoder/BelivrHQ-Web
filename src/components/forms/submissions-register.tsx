@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import * as React from "react";
@@ -22,7 +24,7 @@ import {
   SortDirectionToggle,
   ViewToggle,
 } from "@/components/paper/primitives";
-import { Tag } from "@/components/paper/stat";
+import { SubmissionStatusBadge } from "./submission-status-badge";
 import {
   Select,
   SelectContent,
@@ -231,7 +233,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
         <div>
           <h2 className="font-display text-lg font-semibold">Submissions</h2>
           <p className="mt-1 text-sm text-ink-soft">
-            {total} matching responses · {form.title}
+            {total} matching {collectionLabel(total, "responses")} · {form.title}
           </p>
         </div>
         <ExportDropdown
@@ -406,17 +408,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
                   {answers(row, form)}
                 </span>
                 <span>
-                  <Tag
-                    tone={
-                      row.status === "approved"
-                        ? "moss"
-                        : row.status === "rejected"
-                          ? "rose"
-                          : "gold"
-                    }
-                  >
-                    {SUBMISSION_STATUS_LABELS[row.status]}
-                  </Tag>
+                  <SubmissionStatusBadge status={row.status} />
                 </span>
                 <span className="text-ink-soft">
                   {row.submittedBy ? "Signed in" : "Public"}
@@ -442,17 +434,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
                 {answers(row, form)}
               </p>
               <div className="flex flex-wrap items-center gap-2">
-                <Tag
-                  tone={
-                    row.status === "approved"
-                      ? "moss"
-                      : row.status === "rejected"
-                        ? "rose"
-                        : "gold"
-                  }
-                >
-                  {SUBMISSION_STATUS_LABELS[row.status]}
-                </Tag>
+                <SubmissionStatusBadge status={row.status} />
                 <span className="text-sm text-ink-faint">
                   {formatDate(row.createdAt)}
                 </span>

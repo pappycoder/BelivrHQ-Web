@@ -1,5 +1,7 @@
 "use client";
 
+import { formatRecordDate } from "@/lib/record-date";
+
 import { FormDialogContent } from "@/components/shared/form-dialog";
 import { FormSection } from "@/components/shared/form-section";
 
@@ -455,7 +457,7 @@ export function IntakeRegister({
                       </button>
                       <span className="text-sm text-ink-soft"><span className="block truncate">{String(row.data.phone ?? row.data.whatsappNumber ?? "Not available")}</span><span className="block truncate text-ink-faint">{String(row.data.email ?? "")}</span></span>
                       <span className="truncate text-sm text-ink-soft">{row.branchName}</span>
-                      <span className="num text-sm text-ink-soft">{new Date(row.createdAt).toLocaleDateString()}</span>
+                      <span className="num text-sm text-ink-soft">{formatRecordDate(new Date(row.createdAt))}</span>
                       <RowActions reveal={false} actions={manageActions(row)} />
                     </div>;
                   })}

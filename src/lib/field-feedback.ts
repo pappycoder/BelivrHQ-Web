@@ -25,7 +25,7 @@ export const FIELD_ICON_PATHS = {
 } as const;
 export type FieldIcon = keyof typeof FIELD_ICON_PATHS;
 
-export function resolveFieldIcon(type: string, label: string): FieldIcon {
+export function resolveFieldIcon(type: string, label: string, placeholder = ""): FieldIcon {
   const typeIcon: Partial<Record<string, FieldIcon>> = {
     password: "lock",
     email: "mail",
@@ -39,7 +39,7 @@ export function resolveFieldIcon(type: string, label: string): FieldIcon {
     week: "calendar",
   };
   if (typeIcon[type]) return typeIcon[type]!;
-  const words = label.replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase();
+  const words = (label.trim() || placeholder).replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase();
   if (
     type === "password" ||
     /password|secret|credential|api.?key|access.?token/.test(words)

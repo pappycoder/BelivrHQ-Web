@@ -1,6 +1,7 @@
 "use client";
 
 import type { ComponentProps, ReactNode } from "react";
+import { collectionLabel } from "@/lib/collection-label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnSelector } from "./column-selector";
@@ -36,7 +37,7 @@ export function RegisterTableToolbar({
         onCheckedChange={onToggleAll}
       />}
       <span className="mr-auto text-sm text-ink-soft" role="status">
-        {selectedCount ? `${selectedCount} selected on this page` : `${visibleCount} records on this page`}
+        {selectedCount ? `${selectedCount} selected on this page` : `${visibleCount} ${collectionLabel(visibleCount, "records")} on this page`}
       </span>
       {bulkActions}
       {selectedCount > 0 && <>

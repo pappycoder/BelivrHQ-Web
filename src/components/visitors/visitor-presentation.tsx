@@ -1,4 +1,7 @@
 "use client";
+
+import { formatStatusLabel } from "@/lib/status-label";
+
 import * as React from "react";
 import { DetailManagementMenu } from "@/components/shared/detail-management-menu";
 import { Badge } from "@/components/ui/badge";
@@ -52,7 +55,7 @@ export function VisitorStatusBadge({ status }: { status: FollowUpStatus }) {
     >
       <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
       {FOLLOW_UP_STATUSES.find((item) => item.value === status)?.label ??
-        status}
+        formatStatusLabel(status)}
     </Badge>
   );
 }

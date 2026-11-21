@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -17,7 +19,7 @@ import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives"
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CHART_COLORS, DonutChart, TrendChart } from "@/components/paper/charts";
-import { number, percent } from "@/lib/paper/format";
+import { engagementLabel, number, percent } from "@/lib/paper/format";
 import {
   formatNaira,
   periodLabel,
@@ -71,7 +73,7 @@ export default function AnalyticsOverviewPage() {
     members: point.total,
   }));
   const engagementData = Object.entries(d?.engagementDistribution ?? {}).map(([name, value], index) => ({
-    name,
+    name: engagementLabel(name),
     value,
     color: CHART_COLORS[index % CHART_COLORS.length],
   }));
@@ -124,17 +126,20 @@ export default function AnalyticsOverviewPage() {
             </SectionCard>
 
             <SectionCard className="lg:col-span-5" eyebrow="Engagement" title="Where people are plugged in">
-              {engagementData.length ? (
-                <DonutChart data={engagementData} centerValue={number(d.activeMembers)} centerLabel="active" height={180} formatter={(v) => `${v} people`} />
+              {engagementData.some(entry => entry.value > 0) ? (
+                <DonutChart data={engagementData} centerValue={number(d.activeMembers)} centerLabel="active" height={180} formatter={(v) => `${v} ${collectionLabel(Number(v), "people")}`} />
               ) : (
-                <p className="py-10 text-center text-sm text-ink-faint">Engagement data needs a little more history.</p>
+                <div className="py-8 text-center text-sm">
+                  <p className="font-medium text-ink">No engagement scores yet</p>
+                  <p className="mt-1 text-ink-soft">Scores will appear after engagement is calculated.</p>
+                </div>
               )}
               <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
                 {engagementData.slice(0, 6).map((entry) => (
-                  <div key={entry.name} className="flex items-center gap-1.5 text-xs">
-                    <span className="size-1.5 rounded-full" style={{ background: entry.color }} />
-                    <span className="truncate text-ink-soft">{entry.name}</span>
-                    <span className="num ml-auto text-ink-faint">{number(entry.value)}</span>
+                  <div key={entry.name} className="flex min-w-0 items-center gap-1.5 text-xs">
+                    <span className="size-1.5 shrink-0 rounded-full" style={{ background: entry.color }} />
+                    <span className="min-w-0 text-ink-soft">{entry.name}</span>
+                    <span className="num ml-auto shrink-0 text-ink-faint">{number(entry.value)}</span>
                   </div>
                 ))}
               </div>
@@ -142,7 +147,7 @@ export default function AnalyticsOverviewPage() {
 
             <SectionCard className="lg:col-span-7" eyebrow="Gathering" title="In the room: members and guests">
               {attendanceRows.length ? (
-                <TrendChart
+                <TrendChart integerAxis
                   data={attendanceRows}
                   series={[
                     { key: "members", label: "Members", color: "var(--chart-2)" },
@@ -158,7 +163,7 @@ export default function AnalyticsOverviewPage() {
 
             <SectionCard className="lg:col-span-5" eyebrow="Becoming" title="Membership growth">
               {growthRows.length ? (
-                <TrendChart data={growthRows} series={[{ key: "members", label: "Members", color: "var(--chart-2)" }]} height={200} formatter={(v) => number(Number(v))} />
+                <TrendChart integerAxis data={growthRows} series={[{ key: "members", label: "Members", color: "var(--chart-2)" }]} height={200} formatter={(v) => number(Number(v))} />
               ) : (
                 <p className="py-10 text-center text-sm text-ink-faint">Growth appears after the first records.</p>
               )}
@@ -167,8 +172,8 @@ export default function AnalyticsOverviewPage() {
 
           <StaggerGroup className="grid gap-3 md:grid-cols-3">
             {[
-              { title: "Giving", line: `${formatNaira(giving.data?.total ?? 0)} in this period, across ${number(giving.data?.count ?? 0)} gifts.`, tone: "brand" as const, href: "/insights/analytics/giving", cta: "Open giving analysis" },
-              { title: "Attendance", line: `${number(attendance.data?.visitors ?? 0)} guest visits, ${number(attendance.data?.firstTimeVisitors ?? 0)} of them first-timers.`, tone: "sky" as const, href: "/insights/analytics/attendance", cta: "Open attendance analysis" },
+              { title: "Giving", line: `${formatNaira(giving.data?.total ?? 0)} in this period, across ${number(giving.data?.count ?? 0)} ${collectionLabel(giving.data?.count ?? 0, "gifts")}.`, tone: "brand" as const, href: "/insights/analytics/giving", cta: "Open giving analysis" },
+              { title: "Attendance", line: `${number(attendance.data?.visitors ?? 0)} guest ${collectionLabel(attendance.data?.visitors ?? 0, "visits")}, including ${number(attendance.data?.firstTimeVisitors ?? 0)} ${collectionLabel(attendance.data?.firstTimeVisitors ?? 0, "first-time visitors")}.`, tone: "sky" as const, href: "/insights/analytics/attendance", cta: "Open attendance analysis" },
               { title: "Members", line: `${number(d.totalMembers)} on the roll, ${percent(d.activeMembers, d.totalMembers)}% active.`, tone: "moss" as const, href: "/insights/analytics/members", cta: "Open membership analysis" },
             ].map((insight) => (
               <StaggerItem key={insight.title}>
@@ -184,15 +189,15 @@ export default function AnalyticsOverviewPage() {
           <div className="grid grid-cols-2 gap-3 text-sm lg:grid-cols-4">
             <div className="paper-card flex items-center gap-3 rounded-2xl px-4 py-3">
               <Inbox className="size-4 text-gold" />
-              <span><span className="num font-display text-sm font-semibold">{number(d.pendingSubmissions)}</span><span className="block text-ink-faint">answers waiting review</span></span>
+              <span><span className="num font-display text-sm font-semibold">{number(d.pendingSubmissions)}</span><span className="block text-ink-faint">{collectionLabel(d.pendingSubmissions, "answers")} waiting review</span></span>
             </div>
             <div className="paper-card flex items-center gap-3 rounded-2xl px-4 py-3">
               <CalendarCheck className="size-4 text-moss" />
-              <span><span className="num font-display text-sm font-semibold">{number(d.upcomingEvents)}</span><span className="block text-ink-faint">services ahead</span></span>
+              <span><span className="num font-display text-sm font-semibold">{number(d.upcomingEvents)}</span><span className="block text-ink-faint">{collectionLabel(d.upcomingEvents, "services")} ahead</span></span>
             </div>
             <div className="paper-card flex items-center gap-3 rounded-2xl px-4 py-3">
               <Users className="size-4 text-sky" />
-              <span><span className="num font-display text-sm font-semibold">{number(d.totalBranches)}</span><span className="block text-ink-faint">branches counting</span></span>
+              <span><span className="num font-display text-sm font-semibold">{number(d.totalBranches)}</span><span className="block text-ink-faint">{collectionLabel(d.totalBranches, "branches")} counting</span></span>
             </div>
             <Link href="/people/pastoral/risk" className="paper-card lift flex items-center gap-3 rounded-2xl px-4 py-3 hover:border-rose/40">
               <span className="text-rose">•</span>

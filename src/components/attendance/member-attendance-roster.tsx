@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { AttendanceSelectionBar } from "./attendance-selection-bar";
 import { LoadingState } from "@/components/shared/loading-state";
 
@@ -86,7 +88,7 @@ export function MemberAttendanceRoster({
         );
       }
       setEditable(false);
-      toast.success(`${recorded} attendance records saved`, {
+      toast.success(`${recorded} attendance ${collectionLabel(recorded, "records")} saved`, {
         description: skipped
           ? `${skipped} already recorded and skipped.`
           : undefined,

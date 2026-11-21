@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { useState } from "react";
 import { Columns3, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -151,7 +153,7 @@ export function TableColumnActions({
           ))}
         </div>
         <p role="status" className="text-sm text-muted-foreground">
-          {selected.length} columns selected
+          {selected.length} {collectionLabel(selected.length, "columns")} selected
         </p>
         <div className="grid grid-cols-2 gap-2">
           <Button

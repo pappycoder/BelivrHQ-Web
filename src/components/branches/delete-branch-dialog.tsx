@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import { toast } from "@/lib/toast";
 import {
@@ -62,7 +64,7 @@ export function DeleteBranchDialog({
           if (done === branches.length) {
             if (!single && branches.length > 3 && failed > 0) {
               toast.warning(
-                `Deleted ${succeeded} of ${branches.length} branches`,
+                `Deleted ${succeeded} of ${branches.length} ${collectionLabel(branches.length, "branches")}`,
                 {
                   description: `${failed} could not be deleted (they may still have members assigned).`,
                 },
@@ -111,7 +113,7 @@ export function DeleteBranchDialog({
             <AlertTriangle className="h-6 w-6 text-destructive" />
           </div>
           <DialogTitle className="text-center">
-            {single ? "Delete Branch" : `Delete ${branches.length} Branches`}
+            {single ? "Delete Branch" : `Delete ${branches.length} ${collectionLabel(branches.length, "Branches")}`}
           </DialogTitle>
           <DialogDescription className="text-center">
             {single ? (
@@ -127,7 +129,7 @@ export function DeleteBranchDialog({
               <>
                 Are you sure you want to permanently delete{" "}
                 <span className="font-medium text-foreground">
-                  {branches.length} branches
+                  {branches.length} {collectionLabel(branches.length, "branches")}
                 </span>
                 ? This cannot be undone. Branches with members assigned cannot
                 be deleted.

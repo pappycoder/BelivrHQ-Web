@@ -363,8 +363,8 @@ export default function AdminRolesPage() {
         </p>
         Template roles are additive. Ticks grant extras for this church; global
         defaults can&apos;t be revoked from here. Church-owned roles edit their
-        own full set, revocations included. The matrix editor opens in the
-        classic surface while the Paper version matures.
+        own full set, revocations included. Open a role to review its permissions;
+        changes take effect when you save.
       </div>
 
       <CreateRoleDialog

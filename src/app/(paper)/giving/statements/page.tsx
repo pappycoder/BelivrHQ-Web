@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import { givingSource } from "@/lib/giving-source";
 import {
@@ -235,7 +237,7 @@ export default function GivingStatementsPage() {
               prefix="₦"
               tone="brand"
               icon={<HandCoins className="size-4" />}
-              deltaLabel={`${number(rows.length)} gifts`}
+              deltaLabel={`${number(rows.length)} ${collectionLabel(rows.length, "gifts")}`}
             />
             <StatCard
               label="Average gift"
@@ -355,7 +357,7 @@ export default function GivingStatementsPage() {
                         {giver.name}
                       </span>
                       <span className="block text-xs text-ink-faint">
-                        {number(giver.count)} gifts
+                        {number(giver.count)} {collectionLabel(giver.count, "gifts")}
                       </span>
                     </span>
                     <span

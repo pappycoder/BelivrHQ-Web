@@ -1,5 +1,8 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { formatRecordDate } from "@/lib/record-date";
@@ -209,7 +212,7 @@ export default function PeopleMembersPage() {
           <div className="flex items-center gap-4">
             <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.photoUrl} size="lg" />
             <div className="space-y-1.5">
-              <Tag tone={STATUS_TONES[member.status]} dot>{member.status}</Tag>
+              <Tag tone={STATUS_TONES[member.status]} dot>{formatStatusLabel(member.status)}</Tag>
               {member.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
             </div>
           </div>
@@ -385,7 +388,7 @@ export default function PeopleMembersPage() {
           </div>
 <div className="members-tour-display flex flex-wrap items-center gap-2">
           <Select value={sortBy} onValueChange={(value) => { setSortBy(value as typeof sortBy); setPage(1); }}>
-            <SelectTrigger aria-label="Sort members" className="h-9 w-40 rounded-full border-line bg-card text-sm shadow-none">
+            <SelectTrigger aria-label="Sort members" className="h-9 w-48 rounded-full border-line bg-card text-sm shadow-none">
               <ArrowUpDownIcon /> <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -470,7 +473,7 @@ export default function PeopleMembersPage() {
                       </span>
                     </button>
                     <span>
-                      <Tag tone={STATUS_TONES[member.status]} dot>{member.status}</Tag>
+                      <Tag tone={STATUS_TONES[member.status]} dot>{formatStatusLabel(member.status)}</Tag>
                     </span>
                     <span className="truncate text-sm text-ink-soft">
                       {(member.branchId && branchNames.get(member.branchId)) ?? (isHq ? "Not available" : profile?.branch?.name ?? "Not available")}
@@ -511,7 +514,7 @@ export default function PeopleMembersPage() {
                     <RowActions reveal={false} actions={manageActions(member)} />
                   </div>
                   <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
-                    <Tag tone={STATUS_TONES[member.status]}>{member.status}</Tag>
+                    <Tag tone={STATUS_TONES[member.status]}>{formatStatusLabel(member.status)}</Tag>
                     <span className="num">{formatRecordDate(member.memberSince)}</span>
                   </div>
                 </div>

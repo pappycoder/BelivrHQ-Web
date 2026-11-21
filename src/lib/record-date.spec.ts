@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatRecordDate, formatRecordDateTime } from "./record-date";
+import { formatRecordDate, formatRecordDateTime, formatRecordDateRange } from "./record-date";
 
 describe("record date presentation", () => {
   it("preserves calendar days rather than shifting them with a timestamp offset", () => {
@@ -19,4 +19,17 @@ describe("record date presentation", () => {
     expect(formatRecordDateTime("bad-date", "UTC")).toBe("Not available");
     expect(formatRecordDateTime(null, "UTC")).toBe("Not available");
   });
+});
+
+it("formats Date objects using their local calendar day", () => {
+  expect(formatRecordDate(new Date(2026, 10, 20, 23, 30))).toBe("20 Nov 2026");
+  expect(formatRecordDate(new Date("invalid"))).toBe("Not available");
+});
+it("uses the same record-date presentation for report bounds", () => {
+  expect(formatRecordDateRange("2026-01-01", "2026-11-21")).toBe("1 Jan 2026 → 21 Nov 2026");
+  expect(formatRecordDateRange("2024-02-29", "2024-03-01")).toBe("29 Feb 2024 → 1 Mar 2024");
+  expect(formatRecordDateRange()).toBe("All time");
+  expect(formatRecordDateRange("2026-11-20")).toBe("20 Nov 2026 → …");
+  expect(formatRecordDateRange(undefined, "2026-11-20")).toBe("… → 20 Nov 2026");
+  expect(formatRecordDateRange("invalid", "2026-11-20")).toBe("Not available → 20 Nov 2026");
 });

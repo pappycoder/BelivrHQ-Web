@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import Link from "next/link";
 import { Check, Clock3, ShieldCheck } from "lucide-react";
 import { AuthFormWrapper } from "@/components/shared/auth-form-wrapper";
@@ -177,7 +179,7 @@ export function RegistrationCheckout(props: Props) {
                     </span>
                     <span className="mt-0.5 block text-sm leading-relaxed text-muted-foreground">
                       {limits
-                        ? `${limits.members.toLocaleString()} members · ${limits.locations} ${limits.locations === 1 ? "location" : "locations"} · ${limits.staff} staff`
+                        ? `${limits.members.toLocaleString()} ${collectionLabel(limits.members, "members")} · ${limits.locations} ${limits.locations === 1 ? "location" : "locations"} · ${limits.staff} staff`
                         : item.capacity}
                     </span>
                   </span>

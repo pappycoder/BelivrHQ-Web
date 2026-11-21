@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { DetailNavigation, DetailHeading } from "@/components/paper/section";
 
 import * as React from "react";
@@ -198,7 +200,7 @@ export default function ServiceDetailPage({
               ) : (
                 <>
                   <p className="num font-display text-lg font-semibold">{formatNaira(giftTotal)}</p>
-                  <p className="text-xs text-ink-faint">{number(giftRows.length)} gifts · full ledger at <Link href="/giving/donations" className="text-brand hover:underline">Donations</Link></p>
+                  <p className="text-xs text-ink-faint">{number(giftRows.length)} {collectionLabel(giftRows.length, "gifts")} · full ledger at <Link href="/giving/donations" className="text-brand hover:underline">Donations</Link></p>
                   <div className="mt-3 space-y-2">
                     {topCategories.map(([name, value]) => (
                       <div key={name}>

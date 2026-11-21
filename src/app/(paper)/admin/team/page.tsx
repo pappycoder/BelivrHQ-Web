@@ -1,5 +1,7 @@
 "use client";
 
+import { UserStatusBadge } from "@/components/users/user-status-badge";
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { ListTable } from "@/components/shared/list-table";
@@ -230,7 +232,7 @@ export default function AdminTeamPage() {
                         </span>
                         <span className="truncate text-sm text-ink-soft">{member.branch?.name ?? "Not available"}</span>
                         <span>
-                          <Tag tone={member.status === "active" ? "moss" : "rose"} dot>{member.status === "active" ? "Active" : "Paused"}</Tag>
+                          <UserStatusBadge status={member.status} />
                           {member.isAdminHq ? <Tag tone="sky" className="ml-1">HQ</Tag> : null}
                         </span>
                         <span className="num text-xs text-ink-faint">
@@ -263,7 +265,7 @@ export default function AdminTeamPage() {
                     <p className="mt-2 truncate text-xs text-ink-faint">{member.email ?? "No email on file"}</p>
                     <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
                       <span className="flex items-center gap-1.5">
-                        <Tag tone={member.status === "active" ? "moss" : "rose"} dot>{member.status === "active" ? "Active" : "Paused"}</Tag>
+                        <UserStatusBadge status={member.status} />
                         {member.isAdminHq ? <Tag tone="sky">HQ</Tag> : null}
                         {member.branch ? <span className="truncate">· {member.branch.name}</span> : null}
                       </span>

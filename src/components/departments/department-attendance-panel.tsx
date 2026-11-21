@@ -1,5 +1,7 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
 import { FormSection } from "@/components/shared/form-section";
 
 import { FormDialogContent } from "@/components/shared/form-dialog";
@@ -153,7 +155,7 @@ export function DepartmentAttendancePanel({
                   >
                     {["present", "late", "absent", "excused"].map((value) => (
                       <option key={value} value={value}>
-                        {value}
+                        {formatStatusLabel(value)}
                       </option>
                     ))}
                   </select>

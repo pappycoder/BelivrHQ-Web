@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { useId as useFormFieldId } from "react";
 
 
@@ -164,7 +166,7 @@ export default function SegmentsPage() {
                   tourTarget="active"
                   title="The active roll"
                   blurb="Members whose membership status is active."
-                  rules={["Status", "is", "active"]}
+                  rules={["Status", "is", "Active"]}
                   count={active.data?.meta?.total ?? 0}
                   href="/people/members"
                   cta="Browse the roll"
@@ -179,7 +181,7 @@ export default function SegmentsPage() {
                   tourTarget="inactive"
                   title="Inactive members"
                   blurb="Inactive members who may need a follow-up."
-                  rules={["Status", "is", "inactive"]}
+                  rules={["Status", "is", "Inactive"]}
                   count={quiet.data?.meta?.total ?? 0}
                   href="/people/pastoral"
                   cta="Open pastoral notes"
@@ -222,7 +224,7 @@ export default function SegmentsPage() {
                   tone="brand"
                   tourTarget="giving"
                   title="Giving this year"
-                  blurb={`Gifts recorded since January: ${giving.data ? `${number(giving.data.count)} gifts counted` : "the ledger is waiting"}.`}
+                  blurb={`Gifts recorded since January: ${giving.data ? `${number(giving.data.count)} ${collectionLabel(giving.data.count, "gifts")} counted` : "the ledger is waiting"}.`}
                   rules={["Gift date", "after", "Jan 1"]}
                   count={giving.data?.count ?? 0}
                   href="/insights/analytics/giving"

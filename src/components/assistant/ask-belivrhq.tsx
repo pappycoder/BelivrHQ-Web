@@ -1,5 +1,10 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { collectionLabel } from "@/lib/collection-label";
+
 import { LoadingState } from "@/components/shared/loading-state";
 
 import { useEffect, useRef, useState } from "react";
@@ -147,7 +152,7 @@ function AssistantPanel({ profile }: { profile: CurrentProfile }) {
               <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{turn.reply.mode === "ai" ? "AI-assisted answer" : "Verified BelivrHQ guidance"}</p>
               {turn.reply.notice && <p role="status" className="rounded-lg bg-muted p-3 text-sm">{turn.reply.notice}</p>}
               <p className="whitespace-pre-wrap break-words text-sm leading-7">{turn.reply.answer}</p>
-              {turn.reply.access.length > 0 && <details className="rounded-xl border p-3"><summary className="cursor-pointer text-sm font-medium">Verified access checks</summary><ul className="mt-3 space-y-3">{turn.reply.access.map((item, index) => <li key={index} className="text-sm"><p className="flex items-start gap-2 font-medium"><CheckCircle2 className="mt-0.5 size-3 shrink-0" /><span className="break-all">{item.label} · {item.status.replaceAll("_", " ")}</span></p><p className="mt-1 leading-5 text-muted-foreground">{item.detail}</p></li>)}</ul></details>}
+              {turn.reply.access.length > 0 && <details className="rounded-xl border p-3"><summary className="cursor-pointer text-sm font-medium">Verified access checks</summary><ul className="mt-3 space-y-3">{turn.reply.access.map((item, index) => <li key={index} className="text-sm"><p className="flex items-start gap-2 font-medium"><CheckCircle2 className="mt-0.5 size-3 shrink-0" /><span className="break-all">{item.label} · {formatStatusLabel(item.status)}</span></p><p className="mt-1 leading-5 text-muted-foreground">{item.detail}</p></li>)}</ul></details>}
               {turn.reply.navigation.filter(item => safeNavigation(item.path)).length > 0 && <div className="flex flex-wrap gap-2">{turn.reply.navigation.filter(item => safeNavigation(item.path)).map(item => <Button key={item.path} asChild variant="outline" size="sm"><Link href={item.path} onClick={() => setOpen(false)} title={item.trail}>Open {item.title}</Link></Button>)}</div>}
               {turn.reply.sources.length > 0 && <div className="space-y-2 border-t pt-3"><p className="flex items-center gap-1.5 text-sm font-medium"><BookOpen className="size-3" />References</p>{turn.reply.sources.map(source => source.path && /^\/help(?:\/[a-z0-9-]+)?$/.test(source.path) ? <Link key={source.id} href={source.path} onClick={() => setOpen(false)} className="block text-sm leading-5 text-primary underline underline-offset-2">{source.title}</Link> : <p key={source.id} className="text-sm leading-5 text-muted-foreground">{source.title} · BelivrHQ product reference</p>)}</div>}
             </div>}
@@ -160,7 +165,7 @@ function AssistantPanel({ profile }: { profile: CurrentProfile }) {
           <Textarea id="belivrhq-question" aria-describedby="belivrhq-question-hint" value={question} onChange={event => setQuestion(event.target.value)} maxLength={1200} placeholder="Ask about BelivrHQ…" disabled={!context || pending} className="max-h-32 min-h-20 resize-none" onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); void send(); } }} />
           <div id="belivrhq-question-hint" className="text-sm text-muted-foreground">{!context ? (contextError ? "Retry assistant access to send a question." : <LoadingState label="Checking access before you can send" variant="inline" />) : pending ? <LoadingState label="Waiting for an answer" variant="inline" /> : question.trim().length === 0 ? "Type a question to send." : "Press Enter to send, or Shift+Enter for a new line."}</div>
           <div className="flex items-center justify-between gap-2"><Button type="button" variant="ghost" size="sm" onClick={reset} disabled={!turns.length}><RotateCcw className="size-3.5" />New conversation</Button><Button type="submit" size="sm" disabled={!context || pending || question.trim().length === 0} aria-label="Send BelivrHQ question"><ArrowUp className="size-4" />Send</Button></div>
-          <p className="text-sm leading-4 text-muted-foreground">{context?.mode === "ai" ? `AI allowance: up to ${context.limits.userDailyQuestions} questions per person and ${context.limits.churchDailyQuestions} per church daily, subject to shared availability. ` : "Answers use BelivrHQ product references. "}Conversation stays in this tab and clears when your access changes.</p>
+          <p className="text-sm leading-4 text-muted-foreground">{context?.mode === "ai" ? `AI allowance: up to ${context.limits.userDailyQuestions} ${collectionLabel(context.limits.userDailyQuestions, "questions")} per person and ${context.limits.churchDailyQuestions} per church daily, subject to shared availability. ` : "Answers use BelivrHQ product references. "}Conversation stays in this tab and clears when your access changes.</p>
         </form>
       </div>
     </SheetContent>

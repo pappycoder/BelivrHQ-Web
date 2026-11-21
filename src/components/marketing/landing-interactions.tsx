@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { BRAND_NAME } from "@/lib/brand/identity";
 
 import * as React from "react";
@@ -227,7 +229,7 @@ export function FaqSection({ questions }: { questions: readonly (readonly [strin
       <div className={styles.faqDesk} hidden={!enhanced}>
         <div className={styles.faqDeskHeader}>
           <span><CircleHelp size={16} /> THE BELIVRHQ GUIDE</span>
-          <span>{String(questions.length).padStart(2, "0")} QUESTIONS, EXPLAINED</span>
+          <span>{String(questions.length).padStart(2, "0")} {collectionLabel(questions.length, "questions").toUpperCase()}, EXPLAINED</span>
         </div>
         <div className={styles.faqQuestionRail}>
           <span className={styles.faqRailLabel}>CHOOSE A TOPIC</span>

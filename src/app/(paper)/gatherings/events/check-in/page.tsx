@@ -1,4 +1,6 @@
 "use client";
+
+import { EventPicker, useEventPickerEvents } from "@/components/events/event-picker";
 import { LoadingState } from "@/components/shared/loading-state";
 
 import { ValidatedForm } from "@/components/ui/validated-form";
@@ -33,7 +35,6 @@ import { GeneralAttendancePanel } from "@/components/attendance/general-attendan
 import { usePermissions } from "@/hooks/use-permissions";
 import { useCanViewGeneralAttendance } from "@/hooks/use-attendance";
 import {
-  useEventsList,
   useEventRegistrations,
   useEventAttendance,
   useBulkCheckIn,
@@ -87,10 +88,7 @@ export default function EventCheckInPage() {
   const [savingRoster, setSavingRoster] = React.useState(false);
   const [walkIn, setWalkIn] = React.useState({ firstName: "", lastName: "", phone: "", email: "", gender: "" });
 
-  const events = useEventsList(
-    { limit: 100, sortBy: "startDate", sortOrder: "desc" },
-    { enabled: ready && can("events:list", "read") },
-  );
+  const events = useEventPickerEvents();
   const eventList = React.useMemo(() => {
     const today = todayKey();
     const distance = (event: EventItem) => {
@@ -269,25 +267,14 @@ export default function EventCheckInPage() {
               label="Event date"
               disabled={!activeEvent || saving}
             />
-            <select
-              value={activeId}
-              disabled={saving}
-              onChange={(event) => changeContext(() => setEventId(event.target.value))}
-              className="event-checkin-tour-event h-9 w-full min-w-[220px] rounded-full border border-line bg-card px-3 text-sm outline-none"
-              aria-label="Choose event"
-            >
-              {eventList.map((event) => (
-                <option key={event.eventId} value={event.eventId}>
-                  {event.title} · {new Date(event.startDate).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
-                </option>
-              ))}
-              {!eventList.length && activeEvent ? <option>{activeEvent.title}</option> : null}
-            </select>
+            <EventPicker query={events} items={eventList} value={activeId}
+              disabled={saving} label="Choose event" className="event-checkin-tour-event"
+              onValueChange={value => changeContext(() => setEventId(value))} />
           </div>
         }
       />
 
-      <div className="event-checkin-tour-workspace">
+      {activeEvent ? <div className="event-checkin-tour-workspace">
       <AttendanceWorkspace name={activeEvent?.title ?? "Choose a gathering"} scope="Event" canSeeHeadcount={canSeeReported} busy={saving}>
         <TabsContent value="individual" forceMount className="data-[state=inactive]:hidden">
           <div className="space-y-4">
@@ -420,7 +407,7 @@ export default function EventCheckInPage() {
           </TabsContent>
         ) : null}
       </AttendanceWorkspace>
-      </div>
+      </div> : null}
     </div>
   );
 }

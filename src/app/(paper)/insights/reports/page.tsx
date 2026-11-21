@@ -1,5 +1,10 @@
 "use client";
 
+import { REPORT_RANGES as RANGES, reportRangeParams as rangeParams } from "@/lib/report-range";
+import { formatRecordDate, formatRecordDateRange } from "@/lib/record-date";
+
+import { collectionLabel } from "@/lib/collection-label";
+
 import { PageHeader } from "@/components/paper/section";
 
 import * as React from "react";
@@ -36,7 +41,6 @@ import {
   useAttendanceReport,
   useFinancialReport,
   useMemberReport,
-  type ReportQueryParams,
 } from "@/hooks/use-reports";
 import { useBranchesList } from "@/hooks/use-branches";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -50,19 +54,6 @@ const BLOCKS: { id: BlockId; title: string; description: string; icon: React.Ele
   { id: "members", title: "Membership summary", description: "Growth and demographics.", icon: BarChart3, permission: ["reports:members", "read"] },
 ];
 
-const RANGES = ["This month", "This quarter", "Year to date", "All time"] as const;
-
-function rangeParams(range: (typeof RANGES)[number]): ReportQueryParams {
-  const now = new Date();
-  const iso = (d: Date) => d.toISOString().slice(0, 10);
-  if (range === "This month") return { startDate: iso(new Date(now.getFullYear(), now.getMonth(), 1)), endDate: iso(now) };
-  if (range === "This quarter") {
-    const q = Math.floor(now.getMonth() / 3) * 3;
-    return { startDate: iso(new Date(now.getFullYear(), q, 1)), endDate: iso(now) };
-  }
-  if (range === "Year to date") return { startDate: `${now.getFullYear()}-01-01`, endDate: iso(now) };
-  return {};
-}
 
 export default function ReportsStudioPage() {
   const { can, ready } = usePermissions();
@@ -83,7 +74,7 @@ export default function ReportsStudioPage() {
   const branchLabel = branchId
     ? (branches.data?.data ?? []).find((b) => b.branchId === branchId)?.name ?? "Selected branch"
     : "All branches";
-  const rangeLabel = params.startDate || params.endDate ? `${params.startDate ?? "…"} → ${params.endDate ?? "…"}` : "All time";
+  const rangeLabel = formatRecordDateRange(params.startDate, params.endDate);
 
   const toggleBlock = (id: BlockId) => {
     const block = BLOCKS.find((b) => b.id === id)!;
@@ -236,9 +227,9 @@ export default function ReportsStudioPage() {
           {exporting ? <Loader2 className="size-3.5 animate-spin" /> : <Download className="size-3.5" />} Export {format}
         </Button>} />
 
-      <div className="grid gap-4 xl:grid-cols-[220px_1fr_280px]">
+      <div className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-[220px_minmax(0,1fr)_280px]">
         {/* Palette */}
-        <aside data-tour-report-palette className="paper-card h-max rounded-2xl p-4 xl:sticky xl:top-20">
+        <aside data-tour-report-palette className="paper-card h-max min-w-0 rounded-2xl p-4 xl:sticky xl:top-20">
           <p className="rule-label mb-3">Blocks</p>
           <div className="flex gap-2 overflow-x-auto no-scrollbar xl:flex-col xl:overflow-visible">
             {BLOCKS.map((block) => (
@@ -272,7 +263,7 @@ export default function ReportsStudioPage() {
 
         {/* Sheet */}
         <main data-tour-report-preview className="min-w-0">
-          <div className="paper-card mx-auto max-w-[720px] rounded-2xl p-6 md:p-8">
+          <div className="paper-card mx-auto min-w-0 max-w-[720px] rounded-2xl p-4 sm:p-6 md:p-8">
             <header className="border-b border-line pb-5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
@@ -289,12 +280,12 @@ export default function ReportsStudioPage() {
               <p className="mt-2 text-sm text-ink-soft">{rangeLabel}</p>
             </header>
 
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              {fin ? <StatCard label="Giving" value={fin.grandTotal} prefix="₦" tone="brand" deltaLabel={`${number(fin.transactionCount)} transactions`} /> : null}
+            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {fin ? <StatCard label="Giving" value={fin.grandTotal} prefix="₦" tone="brand" deltaLabel={`${number(fin.transactionCount)} ${collectionLabel(fin.transactionCount, "transactions")}`} /> : null}
               {att ? <StatCard label="Attendance" value={att.totalAttendance} tone="moss" deltaLabel={`avg ${number(Math.round(att.averagePerService))}/service`} /> : null}
               {mem ? <StatCard label="Members" value={mem.totalMembers} tone="sky" deltaLabel={`${number(mem.newMembersInPeriod)} new in period`} /> : null}
               {!fin && !att && !mem ? (
-                <div className="col-span-2 space-y-2">
+                <div className="space-y-2 sm:col-span-2">
                   {loadingBlocks ? Array.from({ length: 2 }).map((_, i) => <Skeleton key={i} className="h-24 rounded-2xl" />) : null}
                 </div>
               ) : null}
@@ -311,21 +302,21 @@ export default function ReportsStudioPage() {
                 if (!data) return null;
                 return (
                   <section key={id} className="relative rounded-xl border border-line p-4">
-                    <div className="absolute -top-2.5 left-3">
+                    <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
                       <span className="rounded-full bg-card px-2 text-xs font-semibold uppercase tracking-wider text-ink-faint ring-1 ring-line">
                         {index + 1} · {block.title}
                       </span>
-                    </div>
-                    <div className="absolute -top-2.5 right-3 flex gap-0.5">
-                      <ActionTooltip label="Move block up">
-                        <button type="button" aria-label="Move up" onClick={() => move(index, -1)} className="grid size-5 place-items-center rounded-full bg-card text-ink-faint ring-1 ring-line hover:text-ink"><ArrowUp className="size-2.5" /></button>
-                      </ActionTooltip>
-                      <ActionTooltip label="Move block down">
-                        <button type="button" aria-label="Move down" onClick={() => move(index, 1)} className="grid size-5 place-items-center rounded-full bg-card text-ink-faint ring-1 ring-line hover:text-ink"><ArrowDown className="size-2.5" /></button>
-                      </ActionTooltip>
-                      <ActionTooltip label="Remove block">
-                        <button type="button" aria-label="Remove" onClick={() => setBlocks((current) => current.filter((item) => item !== id))} className="grid size-5 place-items-center rounded-full bg-card text-ink-faint ring-1 ring-line hover:text-rose"><X className="size-2.5" /></button>
-                      </ActionTooltip>
+                      <div className="ml-auto flex shrink-0 gap-0.5">
+                        <ActionTooltip label="Move block up">
+                          <button type="button" aria-label="Move up" onClick={() => move(index, -1)} className="grid size-5 place-items-center rounded-full bg-card text-ink-faint ring-1 ring-line hover:text-ink"><ArrowUp className="size-2.5" /></button>
+                        </ActionTooltip>
+                        <ActionTooltip label="Move block down">
+                          <button type="button" aria-label="Move down" onClick={() => move(index, 1)} className="grid size-5 place-items-center rounded-full bg-card text-ink-faint ring-1 ring-line hover:text-ink"><ArrowDown className="size-2.5" /></button>
+                        </ActionTooltip>
+                        <ActionTooltip label="Remove block">
+                          <button type="button" aria-label="Remove" onClick={() => setBlocks((current) => current.filter((item) => item !== id))} className="grid size-5 place-items-center rounded-full bg-card text-ink-faint ring-1 ring-line hover:text-rose"><X className="size-2.5" /></button>
+                        </ActionTooltip>
+                      </div>
                     </div>
                     <div className="mt-2">
                       {id === "financial" && fin ? (
@@ -337,7 +328,7 @@ export default function ReportsStudioPage() {
                             formatter={(v) => formatNaira(Number(v))}
                           />
                           <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-                            {formatNaira(fin.grandTotal)} given across {number(fin.transactionCount)} transactions
+                            {formatNaira(fin.grandTotal)} given across {number(fin.transactionCount)} {collectionLabel(fin.transactionCount, "transactions")}
                             {fin.byCategory.length
                               ? `; ${fin.byCategory[0].name} leads at ${percent(fin.byCategory[0].total, fin.grandTotal)}% of the total.`
                               : "."}
@@ -346,28 +337,28 @@ export default function ReportsStudioPage() {
                       ) : null}
                       {id === "attendance" && att ? (
                         <>
-                          <TrendChart
+                          <TrendChart integerAxis
                             data={att.monthlyTrend.map((m) => ({ label: monthLabel(m.month), total: m.total }))}
                             series={[{ key: "total", label: "Attendance", color: "var(--chart-1)" }]}
                             height={150}
                             formatter={(v) => number(Number(v))}
                           />
                           <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-                            Average {number(Math.round(att.averagePerService))} in the room across {number(att.serviceCount)} services
+                            Average {number(Math.round(att.averagePerService))} in the room across {number(att.serviceCount)} {collectionLabel(att.serviceCount, "services")}
                             {att.byService.length ? `; ${att.byService[0].name} carries the house.` : "."}
                           </p>
                         </>
                       ) : null}
                       {id === "members" && mem ? (
                         <>
-                          <TrendChart
+                          <TrendChart integerAxis
                             data={mem.monthlyGrowth.map((m) => ({ label: monthLabel(m.month), total: m.total }))}
                             series={[{ key: "total", label: "Members", color: "var(--chart-2)" }]}
                             height={150}
                             formatter={(v) => number(Number(v))}
                           />
                           <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-                            {number(mem.totalMembers)} members, {number(mem.newMembersInPeriod)} new in the period, {number(mem.activeMembers)} active.
+                            {number(mem.totalMembers)} {collectionLabel(mem.totalMembers, "members")}, {number(mem.newMembersInPeriod)} new in the period, {number(mem.activeMembers)} active.
                           </p>
                         </>
                       ) : null}
@@ -383,13 +374,13 @@ export default function ReportsStudioPage() {
             </div>
 
             <footer className="mt-8 border-t border-dashed border-line pt-4 text-xs text-ink-faint">
-              Generated {new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })} · {rangeLabel} · {branchLabel} · donor names withheld
+              Generated {formatRecordDate(new Date())} · {rangeLabel} · {branchLabel} · donor names withheld
             </footer>
           </div>
         </main>
 
         {/* Settings */}
-        <aside data-tour-report-settings className="space-y-4 xl:sticky xl:top-20 xl:self-start">
+        <aside data-tour-report-settings className="min-w-0 space-y-4 xl:sticky xl:top-20 xl:self-start">
           <div className="paper-card rounded-2xl p-4">
             <p className="rule-label mb-3">Report settings</p>
             <div className="space-y-3">

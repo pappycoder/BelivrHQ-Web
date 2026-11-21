@@ -6,7 +6,7 @@ import * as React from "react";
 import Link from "next/link";
 import { PageHeader } from "@/components/paper/section";
 import { EmptyState, FilterChip, ListPaginationFooter, ManageHeading, RowActions, SearchField } from "@/components/paper/primitives";
-import { StatCard, Tag } from "@/components/paper/stat";
+import { StatCard } from "@/components/paper/stat";
 import { ListToolbar } from "@/components/shared/list-toolbar";
 import { ListTable } from "@/components/shared/list-table";
 import { VisibleDataExport } from "@/components/shared/visible-data-export";
@@ -31,6 +31,7 @@ import {
   type Asset,
   type AssetWorklistRecord,
 } from "@/hooks/use-assets";
+import { StatusBadge } from "./status-badge";
 import { LoanFormDialog } from "./loan-form-dialog";
 import { MaintenanceFormDialog } from "./maintenance-form-dialog";
 import { ReturnLoanDialog } from "./return-loan-dialog";
@@ -172,7 +173,7 @@ export function AssetWorklist({ kind, heading }: { kind: "loans" | "maintenance"
                     <div className="min-w-0 text-ink-soft"><span className="block truncate">{loan?.borrowerName ?? job?.type ?? "Not available"}</span>{job?.performedBy && <span className="block truncate text-ink-faint">{job.performedBy}</span>}</div>
                     <span className="num text-ink-soft">{date(loan?.loanDate ?? job?.scheduledDate)}</span>
                     <span className="num text-ink-soft">{date(loan?.expectedReturnDate ?? job?.completedDate)}</span>
-                    <div><Tag tone={overdue ? "rose" : record.status === "returned" || record.status === "completed" ? "moss" : "neutral"} dot>{overdue ? "Overdue" : record.status.replaceAll("_", " ")}</Tag>{loan?.actualReturnDate && <span className="mt-1 block text-xs text-ink-faint">Returned {date(loan.actualReturnDate)}</span>}</div>
+                    <div>{loan ? <StatusBadge kind="loan" value={overdue ? "overdue" : loan.status} /> : job ? <StatusBadge kind="maintenance" value={job.status} /> : null}{loan?.actualReturnDate && <span className="mt-1 block text-xs text-ink-faint">Returned {date(loan.actualReturnDate)}</span>}</div>
                     <div className="flex justify-end"><RowActions actions={[
                       canReadAsset && { label: "Open asset", href: `/operations/assets/${record.assetId}`, icon: <ArrowUpRight /> },
                       canUpdate && !record.assetArchived && (job || loan?.status !== "returned") && { label: isLoan ? "Record return" : "Update job", onSelect: () => setEditing(record), icon: isLoan ? <RotateCcw /> : <Wrench /> },

@@ -1,5 +1,10 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { formatRecordDateTime } from "@/lib/record-date";
+
 import { DialogFooter } from "@/components/ui/dialog";
 
 import { FormSection } from "@/components/shared/form-section";
@@ -526,7 +531,7 @@ function ProviderAccounts({
                 </p>
                 <p className="mt-0.5 text-xs text-ink-faint">
                   {account.verified_at
-                    ? `Last checked ${new Date(account.verified_at).toLocaleString()}`
+                    ? `Last checked ${formatRecordDateTime(account.verified_at)}`
                     : "Not checked yet."}
                 </p>
                 <div className="mt-3 flex flex-wrap gap-1.5">
@@ -1034,7 +1039,7 @@ function ChannelSettings({
                       }
                     >
                       {account.label} ({account.provider};{" "}
-                      {account.verification_status})
+                      {formatStatusLabel(account.verification_status)})
                     </option>
                   ))}
                 </select>

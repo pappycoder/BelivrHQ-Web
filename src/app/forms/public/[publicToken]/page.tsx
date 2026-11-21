@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { retryPage } from "@/lib/retry-page";
 
 import { ValidatedForm } from "@/components/ui/validated-form";
@@ -130,13 +132,13 @@ function PublicFormContent({ token }: { token: string }) {
         </span>
       </header>
       <main className="mx-auto grid w-full max-w-6xl min-w-0 gap-0 px-4 pb-10 sm:px-8 lg:grid-cols-[minmax(0,.85fr)_minmax(0,1.15fr)]">
-        <aside className="relative overflow-hidden rounded-t-3xl bg-[var(--brand)] px-6 py-8 text-white sm:p-10 lg:rounded-l-3xl lg:rounded-tr-none">
+        <aside className="public-form-panel relative overflow-hidden rounded-t-3xl px-6 py-8 text-white sm:p-10 lg:rounded-l-3xl lg:rounded-tr-none">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute -right-28 -top-28 size-80 rounded-full border-[40px] border-white/5"
           />
           <div className="relative lg:sticky lg:top-10">
-            <p className="text-xs font-semibold uppercase tracking-[.2em] text-[#d6e5ba]">
+            <p className="text-xs font-semibold uppercase tracking-[.2em] text-white">
               A place to connect
             </p>
             {isPending ? (
@@ -149,7 +151,7 @@ function PublicFormContent({ token }: { token: string }) {
                 <h1 className="mt-5 break-words text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
                   {form?.title || "This form is unavailable"}
                 </h1>
-                <p className="mt-5 whitespace-pre-line break-words text-sm leading-7 text-white/75">
+                <p className="mt-5 whitespace-pre-line break-words text-sm leading-7 text-white">
                   {form?.description ||
                     (form
                       ? "Thank you for taking a moment to share your response. Complete the questions, then send it to the team that shared this form."
@@ -161,7 +163,7 @@ function PublicFormContent({ token }: { token: string }) {
               <>
                 <div className="mt-7 flex flex-wrap gap-2 text-xs">
                   <span className="rounded-full border border-white/15 px-3 py-2">
-                    {form.fields.length} questions
+                    {form.fields.length} {collectionLabel(form.fields.length, "questions")}
                   </span>
                   <span className="rounded-full border border-white/15 px-3 py-2">
                     {required.length} required
@@ -171,7 +173,7 @@ function PublicFormContent({ token }: { token: string }) {
                   </span>
                 </div>
                 <div className="mt-8 border-t border-white/15 pt-6">
-                  <div className="mb-3 flex items-center justify-between gap-2 text-xs text-white/80">
+                  <div className="mb-3 flex items-center justify-between gap-2 text-xs text-white">
                     <span>Your progress</span>
                     <span>
                       {completed} of {form.fields.length} answered
@@ -186,19 +188,19 @@ function PublicFormContent({ token }: { token: string }) {
                     className="h-1.5 overflow-hidden rounded-full bg-white/15"
                   >
                     <div
-                      className="h-full rounded-full bg-[#d6e5ba] transition-[width] motion-reduce:transition-none"
+                      className="h-full rounded-full bg-white transition-[width] motion-reduce:transition-none"
                       style={{ width: `${progress}%` }}
                     />
                   </div>
                   {required.length > 0 && (
-                    <p className="mt-3 text-xs text-white/65">
-                      {requiredDone} of {required.length} required questions completed
+                    <p className="mt-3 text-xs text-white">
+                      {requiredDone} of {required.length} required {collectionLabel(required.length, "questions")} completed
                     </p>
                   )}
                 </div>
               </>
             )}
-            <p className="mt-8 flex items-start gap-2 text-xs leading-6 text-white/65">
+            <p className="mt-8 flex items-start gap-2 text-xs leading-6 text-white">
               <LockKeyhole className="mt-1 size-3.5 shrink-0" />
               Your response goes to the team that shared this form.
             </p>
@@ -261,8 +263,7 @@ function PublicFormContent({ token }: { token: string }) {
                 </p>
                 <h2 className="mt-2 text-2xl font-semibold tracking-tight">Let’s get started.</h2>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Fields marked <span className="font-medium text-destructive">*</span> are
-                  required. Take your time and review your answers before sending.
+                  Take your time and review your answers before sending.
                 </p>
               </div>
               <div className="[&>div]:space-y-6">
@@ -283,7 +284,7 @@ function PublicFormContent({ token }: { token: string }) {
                 <Button
                   type="submit"
                   size="lg"
-                  className="w-full rounded-xl bg-[var(--brand)] text-white transition hover:brightness-110"
+                  className="w-full rounded-xl"
                   disabled={sending || !captchaReady}
                 >
                   {sending ? (

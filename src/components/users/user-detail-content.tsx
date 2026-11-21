@@ -1,5 +1,8 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
 import { formatRecordDate, formatRecordDateTime } from "@/lib/record-date";
 
 import { RequiredFieldsNotice, RequiredIndicator } from "@/components/ui/required-fields";
@@ -253,7 +256,7 @@ function AccountInfoTab({ user }: AccountInfoTabProps) {
               <DataRow label="Branch" value={user.branch?.name || "None"} />
               <DataRow
                 label="Status"
-                value={user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                value={formatStatusLabel(user.status)}
               />
               <DataRow label="Created" value={formatDate(user.createdAt)} />
               <DataRow label="Last Updated" value={formatDate(user.updatedAt)} />
@@ -286,7 +289,10 @@ function AccountInfoTab({ user }: AccountInfoTabProps) {
               />
             )}
             {user.member.address && <DataRow label="Address" value={user.member.address} />}
-            <DataRow label="Member Status" value={user.member.status} />
+            <DataRow
+              label="Member Status"
+              value={formatStatusLabel(user.member.status)}
+            />
           </CardContent>
         </Card>
       )}

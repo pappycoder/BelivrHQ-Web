@@ -1,5 +1,12 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { collectionLabel } from "@/lib/collection-label";
+
+import { EventPicker, useEventPickerEvents } from "@/components/events/event-picker";
+
 import { DialogFooter, DialogClose } from "@/components/ui/dialog";
 
 import { useId as useFormFieldId } from "react";
@@ -32,7 +39,6 @@ import {
 import { ConfirmDeleteDialog } from "@/components/pastoral/confirm-delete-dialog";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
-  useEventsList,
   useEventTiers,
   useCreateTier,
   useUpdateTier,
@@ -57,7 +63,7 @@ function TiersInner() {
   const [formTarget, setFormTarget] = React.useState<{ open: boolean; tier: EventTicketTier | null }>({ open: false, tier: null });
   const [deleteTarget, setDeleteTarget] = React.useState<EventTicketTier | null>(null);
 
-  const events = useEventsList({ limit: 100, sortBy: "startDate", sortOrder: "desc" });
+  const events = useEventPickerEvents();
   const tiers = useEventTiers(eventId);
   const tickets = useAllTickets({ eventId: eventId || undefined, limit: 100 });
   const create = useCreateTier(eventId);
@@ -88,27 +94,15 @@ function TiersInner() {
       />
 
       <div className="flex flex-wrap items-center gap-2">
-        <select
-          value={eventId}
-          onChange={(e) => { setEventId(e.target.value); router.replace(`/gatherings/events/tiers${e.target.value ? `?event=${e.target.value}` : ""}`); }}
-          className="h-9 w-full min-w-0 max-w-full rounded-full border border-line bg-card px-3 text-sm outline-none sm:w-auto"
-          aria-label="Event selector"
-        >
-          <option value="">Choose an event…</option>
-          {eventList.map((event) => (
-            <option key={event.eventId} value={event.eventId}>
-              {event.title} · {formatDate(event.startDate)}{event.isFree ? " (free)" : ""}
-            </option>
-          ))}
-        </select>
+        <EventPicker query={events} value={eventId} showPricing
+          onValueChange={value => { setEventId(value); router.replace(`/gatherings/events/tiers${value ? `?event=${value}` : ""}`); }} />
         {selected && !selected.isFree ? <Tag tone="gold">paid event</Tag> : null}
         {selected?.isFree ? (
           <span className="text-sm text-ink-faint">Free events use registration check-in; no tiers needed.</span>
         ) : null}
       </div>
 
-      {!eventId ? (
-        <EmptyState icon={<Ticket />} title="Pick an event to manage its tickets" description="Tiers, capacity and every issued ticket sit on one honest screen." />
+      {!eventId ? (events.isSuccess && eventList.length ? <EmptyState icon={<Ticket />} title="Pick an event to manage its tickets" description="Tiers, capacity and every issued ticket sit on one honest screen." /> : null
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -143,12 +137,12 @@ function TiersInner() {
                         <span className="block truncate text-xs text-ink-faint">{tier.description || "No description"}</span>
                         <span className="mt-1 flex flex-wrap gap-x-2 text-xs text-ink-soft md:hidden">
                           <span className="num font-semibold sm:hidden">{formatNaira(tier.price)}</span>
-                          <span>{tier.capacity != null ? `${number(tier.capacity)} seats` : "Uncapped seats"}</span>
+                          <span>{tier.capacity != null ? `${number(tier.capacity)} ${collectionLabel(tier.capacity, "seats")}` : "Uncapped seats"}</span>
                         </span>
                       </span>
                       <span className="num hidden w-24 text-right text-sm font-semibold sm:block">{formatNaira(tier.price)}</span>
                       <span className="num hidden w-28 text-right text-sm text-ink-soft md:block">
-                        {tier.capacity != null ? <>{number(tier.capacity)} seats</> : "uncapped seats"}
+                        {tier.capacity != null ? <>{number(tier.capacity)} {collectionLabel(tier.capacity, "seats")}</> : "uncapped seats"}
                       </span>
                       {(canUpdate || canDelete) && paidEvent ? (
                         <RowActions
@@ -197,7 +191,7 @@ function TiersInner() {
                       <span className="font-mono text-xs text-ink-faint">{t.code}</span>
                       <span className="min-w-0 flex-1 truncate">{t.memberName ?? t.visitorName ?? "Unassigned"}</span>
                       <span className="hidden truncate text-xs text-ink-faint sm:block">{t.tierName ?? "Not available"} · {formatDate(t.createdAt)}</span>
-                      <Tag tone={t.usedAt ? "moss" : "neutral"} dot>{t.usedAt ? "used" : "open"}</Tag>
+                      <Tag tone={t.usedAt ? "moss" : "neutral"} dot>{formatStatusLabel(t.usedAt ? "used" : "open")}</Tag>
                     </div>
                   ))}
                 {!ticketRows.length ? <p className="px-5 py-8 text-center text-sm text-ink-faint">No tickets issued for this event yet.</p> : null}

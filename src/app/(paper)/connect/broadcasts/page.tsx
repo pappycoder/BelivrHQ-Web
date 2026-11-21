@@ -1,5 +1,10 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { collectionLabel } from "@/lib/collection-label";
+
 import { DialogFooter, DialogClose } from "@/components/ui/dialog";
 
 import { useId as useFormFieldId } from "react";
@@ -143,7 +148,7 @@ export default function BroadcastsPage() {
       },
       {
         onSuccess: (b: Broadcast) => {
-          toast(draft.scheduledAt ? `“${b.name}” scheduled for ${stamp(b.scheduledAt)}.` : `“${b.name}” is queued to ${b.totalRecipients} people.`);
+          toast(draft.scheduledAt ? `“${b.name}” scheduled for ${stamp(b.scheduledAt)}.` : `“${b.name}” is queued to ${b.totalRecipients} ${collectionLabel(b.totalRecipients, "people")}.`);
           setFormOpen(false);
         },
         onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't queue the broadcast.")),
@@ -240,7 +245,7 @@ export default function BroadcastsPage() {
                     <span className="truncate text-sm text-ink-soft">{b.templateName}</span>
                     <span><Tag tone={b.channel === "whatsapp" ? "moss" : b.channel === "sms" ? "sky" : "gold"}>{BROADCAST_CHANNEL_LABELS[b.channel]}</Tag></span>
                     <span className="num">{b.totalRecipients}</span>
-                    <span><Tag tone={STATUS_TONES[b.status] ?? "neutral"} dot>{BROADCAST_STATUS_LABELS[b.status as keyof typeof BROADCAST_STATUS_LABELS] ?? b.status}</Tag></span>
+                    <span><Tag tone={STATUS_TONES[b.status] ?? "neutral"} dot>{BROADCAST_STATUS_LABELS[b.status as keyof typeof BROADCAST_STATUS_LABELS] ?? formatStatusLabel(b.status)}</Tag></span>
                     <span className="num text-sm text-ink-faint">{b.scheduledAt ? `sched ${stamp(b.scheduledAt)}` : stamp(b.sentAt ?? b.createdAt)}</span>
                     {actionsFor(b)}
                   </div>

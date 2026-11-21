@@ -1,5 +1,12 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { collectionLabel } from "@/lib/collection-label";
+
+import { EventPicker, useEventPickerEvents } from "@/components/events/event-picker";
+
 import { DialogFooter, DialogClose } from "@/components/ui/dialog";
 
 import { FormSection } from "@/components/shared/form-section";
@@ -28,7 +35,7 @@ import {
 } from "@/components/ui/dialog";
 import { MemberCombobox } from "@/components/members/member-combobox";
 import { usePermissions } from "@/hooks/use-permissions";
-import { useEventsList, useEventTiers, useAllTickets, useCreateTicket, type AllTicketItem } from "@/hooks/use-events";
+import { useEventTiers, useAllTickets, useCreateTicket, type AllTicketItem } from "@/hooks/use-events";
 import { generateTicketPDF } from "@/lib/ticket-pdf";
 import { formatDate } from "@/hooks/use-media";
 import { formatNaira } from "@/hooks/use-analytics";
@@ -49,7 +56,7 @@ function TicketsInner() {
   const [assignTier, setAssignTier] = React.useState("");
   const [pdfBusy, setPdfBusy] = React.useState<string | null>(null);
 
-  const events = useEventsList({ limit: 100, sortBy: "startDate", sortOrder: "desc" });
+  const events = useEventPickerEvents();
   const tiers = useEventTiers(eventId);
   const tickets = useAllTickets({ eventId: eventId || undefined, page, limit: perPage });
   const createTicket = useCreateTicket();
@@ -104,23 +111,12 @@ function TicketsInner() {
       />
 
       <ListToolbar>
-<select
-          value={eventId}
-          onChange={(e) => { setEventId(e.target.value); setPage(1); router.replace(`/gatherings/events/tickets${e.target.value ? `?event=${e.target.value}` : ""}`); }}
-          className="h-9 w-full min-w-0 max-w-full rounded-full border border-line bg-card px-3 text-sm outline-none sm:w-auto"
-          aria-label="Event selector"
-        >
-          <option value="">Choose an event…</option>
-          {eventList.map((event) => (
-            <option key={event.eventId} value={event.eventId}>
-              {event.title} · {formatDate(event.startDate)}
-            </option>
-          ))}
-        </select>
+<EventPicker query={events} value={eventId}
+          onValueChange={value => { setEventId(value); setPage(1); router.replace(`/gatherings/events/tickets${value ? `?event=${value}` : ""}`); }} />
 {selected ? (
           <span className="flex items-center gap-1.5 text-xs text-ink-faint">
-            {paidEvent ? <Tag tone="gold">paid</Tag> : <Tag tone="moss">free</Tag>}
-            {(tiers.data ?? []).length ? <span>{(tiers.data ?? []).length} tiers</span> : paidEvent ? <span>no tiers (flat price)</span> : null}
+            {paidEvent ? <Tag tone="gold">Paid</Tag> : <Tag tone="moss">Free</Tag>}
+            {(tiers.data ?? []).length ? <span>{(tiers.data ?? []).length} {collectionLabel((tiers.data ?? []).length, "tiers")}</span> : paidEvent ? <span>no tiers (flat price)</span> : null}
           </span>
         ) : null}
 {eventId ? (
@@ -171,7 +167,7 @@ function TicketsInner() {
                   <span className="truncate text-sm text-ink-soft">{ticket.tierName ?? "General"}</span>
                   <span className="flex items-center gap-1.5">
                     <Tag tone={ticket.usedAt ? "moss" : ticket.status === "cancelled" || ticket.status === "refunded" ? "rose" : "gold"} dot>
-                      {ticket.usedAt ? "used" : ticket.status}
+                      {formatStatusLabel(ticket.usedAt ? "used" : ticket.status)}
                     </Tag>
                     {ticket.pricePaid ? <span className="num text-xs text-ink-faint">{formatNaira(ticket.pricePaid)}</span> : null}
                   </span>
@@ -199,13 +195,13 @@ function TicketsInner() {
             </ListTable>
           )}
         </>
-      ) : (
+      ) : events.isSuccess && eventList.length ? (
         <EmptyState
           icon={<Ticket />}
           title="Choose an event to review its tickets"
           description="Review issued tickets, seat counts and printable A5 event tickets."
         />
-      )}
+      ) : null}
 
       <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
         <FormDialogContent className="rounded-2xl border-line bg-card">

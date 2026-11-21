@@ -1,5 +1,10 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import { PermissionLink } from "@/components/shared/permission-link";
 import {
@@ -104,7 +109,7 @@ export default function GivingOverviewPage() {
                 prefix="₦"
                 tone="brand"
                 icon={<HandCoins className="size-4" />}
-                deltaLabel={`${number(s.monthCount)} gifts`}
+                deltaLabel={`${number(s.monthCount)} ${collectionLabel(s.monthCount, "gifts")}`}
               />
             </StaggerItem>
             <StaggerItem>
@@ -268,7 +273,7 @@ function RecentGifts() {
             }
             dot
           >
-            {tx.status}
+            {formatStatusLabel(tx.status)}
           </Tag>
           <span className="num w-28 text-right text-sm font-semibold">
             {formatNaira(tx.amount)}
@@ -313,7 +318,7 @@ function FundsRail() {
                 {category.name}
               </span>
               {category.isRecurring ? (
-                <Tag tone="sky">recurring</Tag>
+                <Tag tone="sky">Recurring</Tag>
               ) : (
                 <span className="num text-xs text-ink-faint">
                   one-off gifts
@@ -367,7 +372,7 @@ function RecurringRail() {
             </span>
           </p>
           <p className="text-xs text-ink-faint">
-            {number(active.length)} active schedules ·{" "}
+            {number(active.length)} active {collectionLabel(active.length, "schedules")} ·{" "}
             {number(rows.length - active.length)} paused or ended
           </p>
         </div>

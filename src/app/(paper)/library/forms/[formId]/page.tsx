@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { DetailNavigation, DetailHeading } from "@/components/paper/section";
 
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
@@ -32,6 +34,7 @@ import {
   useForm,
   useRegenerateLink,
   FIELD_TYPE_LABELS,
+  FORM_STATUS_LABELS,
 } from "@/hooks/use-forms";
 import { formatDate } from "@/hooks/use-media";
 
@@ -90,7 +93,7 @@ export default function FormDetailPage({
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0 space-y-1.5">
             <div className="flex flex-wrap items-center gap-2">
-              <Tag tone={f.status === "published" ? "moss" : f.status === "draft" ? "gold" : "sky"} dot>{f.status}</Tag>
+              <Tag tone={f.status === "published" ? "moss" : f.status === "draft" ? "gold" : "sky"} dot>{FORM_STATUS_LABELS[f.status]}</Tag>
               {f.isPublic ? <Tag tone="brand">Public</Tag> : <Tag tone="neutral">Members only</Tag>}
               {f.archivedAt ? <Tag tone="rose">Archived</Tag> : null}
               {f.branchName ? <Tag tone="sky">{f.branchName}</Tag> : null}
@@ -154,7 +157,7 @@ export default function FormDetailPage({
         <SubmissionsRegister key={f.id} form={f} />
 
         <aside className="grid gap-4 md:grid-cols-2">
-          <SectionCard eyebrow="Questions" title={`${f.fields?.length ?? 0} fields`} bodyClassName="p-0">
+          <SectionCard eyebrow="Questions" title={`${f.fields?.length ?? 0} ${collectionLabel(f.fields?.length ?? 0, "fields")}`} bodyClassName="p-0">
             <div className="divide-y divide-line/70">
               {(f.fields ?? []).map((field) => (
                 <div key={field.key} className="flex items-center justify-between gap-2 px-4 py-2.5 text-sm">

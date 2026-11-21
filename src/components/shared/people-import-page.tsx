@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { RequiredFieldsNotice, RequiredIndicator } from "@/components/ui/required-fields";
 
 import { LoadingState } from "@/components/shared/loading-state";
@@ -387,7 +389,7 @@ export function PeopleImportPage({
         if (dryRun) throw error;
         result.errors.push({
           row: entries[0].rowNumber,
-          message: `Import stopped after ${offset} processed rows (${result.created} created). Remaining rows need review before retrying; the last batch may have partially completed.`,
+          message: `Import stopped after ${offset} processed ${collectionLabel(offset, "rows")} (${result.created} created). Remaining rows need review before retrying; the last batch may have partially completed.`,
         });
         return result;
       }
@@ -511,8 +513,7 @@ export function PeopleImportPage({
             <CardHeader>
               <CardTitle>Upload your file</CardTitle>
               <CardDescription>
-                The first row must contain column headers. You&apos;ll map them
-                to
+                The first row must contain column headers. You&apos;ll map them to{" "}
                 {singular} fields in the next step.
               </CardDescription>
             </CardHeader>
@@ -702,7 +703,7 @@ export function PeopleImportPage({
               <div className="rounded-md border border-amber-200 bg-amber-50 dark:border-amber-900 dark:bg-amber-950 p-3 text-sm">
                 <p className="font-medium text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
                   <AlertTriangle className="h-4 w-4" />
-                  {rowIssues.length} row(s) have data issues
+                  {rowIssues.length} {collectionLabel(rowIssues.length, "rows")} with data issues
                 </p>
                 <p className="text-muted-foreground mt-1">
                   Problem rows are reported during the preview step and will be
@@ -739,7 +740,7 @@ export function PeopleImportPage({
           <CardHeader>
             <CardTitle>Preview</CardTitle>
             <CardDescription>
-              {fileName} : {rows.length} data row(s) parsed.
+              {fileName} : {rows.length} data {collectionLabel(rows.length, "rows")} parsed.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -765,7 +766,7 @@ export function PeopleImportPage({
                   {
                     new Set(dryRunResult.errors.map((error) => error.row)).size
                   }{" "}
-                  row(s) with problems
+                  {collectionLabel(new Set(dryRunResult.errors.map((error) => error.row)).size, "rows")} with problems
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
                   These rows will be skipped; everything else imports normally.
@@ -801,7 +802,7 @@ export function PeopleImportPage({
                 {dryRunResult.errors.length > 25 && (
                   <p className="px-4 py-2 text-sm text-muted-foreground border-t">
                     Showing the first 25 of {dryRunResult.errors.length}{" "}
-                    problems.
+                    {collectionLabel(dryRunResult.errors.length, "problems")}.
                   </p>
                 )}
               </div>
@@ -849,9 +850,9 @@ export function PeopleImportPage({
             <div className="people-import-complete text-center">
               <p className="text-lg font-semibold">Import finished</p>
               <p className="text-muted-foreground mt-1">
-                {finalResult.created} {kind} were created.
+                {finalResult.created} {collectionLabel(finalResult.created, kind)} {finalResult.created === 1 ? "was" : "were"} created.
                 {finalResult.errors.length > 0 &&
-                  ` ${new Set(finalResult.errors.map((error) => error.row)).size} row(s) were skipped.`}
+                  ` ${new Set(finalResult.errors.map((error) => error.row)).size} ${collectionLabel(new Set(finalResult.errors.map((error) => error.row)).size, "rows")} skipped.`}
               </p>
             </div>
             {finalResult.errors.length > 0 && (

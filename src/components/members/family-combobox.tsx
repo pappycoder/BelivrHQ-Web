@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -105,7 +107,7 @@ export function FamilyCombobox({
                     />
                     <span>{family.name}</span>
                     <span className="ml-auto text-sm text-muted-foreground">
-                      {family.members.length} member(s)
+                      {family.members.length} {collectionLabel(family.members.length, "members")}
                     </span>
                   </CommandItem>
                 ))}

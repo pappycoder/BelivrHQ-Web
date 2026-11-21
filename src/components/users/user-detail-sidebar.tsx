@@ -1,5 +1,7 @@
+import { UserStatusBadge } from "@/components/users/user-status-badge";
 import { formatRecordDate } from "@/lib/record-date";
 import { DetailHeading } from "@/components/paper/section";
+import { Tag } from "@/components/paper/stat";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { WorkspaceAvatar } from "@/components/workspace/workspace-presentation";
@@ -61,18 +63,13 @@ export function UserDetailSidebar({ user }: UserDetailSidebarProps) {
         <DetailHeading className="mt-2">
           {user.firstName} {user.lastName}
         </DetailHeading>
-        <div className="flex justify-center gap-2 mt-1">
-          <Badge variant={user.status === "active" ? "default" : "destructive"}>
-            {user.status}
-          </Badge>
+        <div className="flex flex-wrap justify-center gap-2 mt-1">
+          <UserStatusBadge status={user.status} />
           {user.mfaEnabled && <Badge variant="secondary">MFA Enabled</Badge>}
           {user.isAdminHq && (
-            <Badge
-              variant="secondary"
-              title="Admin HQ (cross-branch access enabled)"
-            >
-              Admin HQ
-            </Badge>
+            <span className="inline-flex" title="Admin HQ (cross-branch access enabled)">
+              <Tag tone="sky">Admin HQ</Tag>
+            </span>
           )}
         </div>
       </CardHeader>

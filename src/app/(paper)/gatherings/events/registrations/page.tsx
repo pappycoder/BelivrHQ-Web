@@ -1,5 +1,9 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+import { EventPicker, useEventPickerEvents } from "@/components/events/event-picker";
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { ListTable } from "@/components/shared/list-table";
@@ -45,7 +49,6 @@ import { RegisterAttendeeButton } from "@/components/events/register-attendee-bu
 import { ExportDropdown } from "@/components/shared/export-dropdown";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
-  useEventsList,
   useEventRegistrations,
   type EventRegistration,
 } from "@/hooks/use-events";
@@ -132,7 +135,7 @@ function RegistrationsInner() {
   const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [view, setView] = React.useState<"table" | "cards">("table");
 
-  const events = useEventsList({ limit: 100, sortBy: "startDate", sortOrder: "desc" });
+  const events = useEventPickerEvents();
   const registrations = useEventRegistrations(eventId);
 
   // The endpoint returns the whole list, so every control is client-side —
@@ -227,24 +230,8 @@ function RegistrationsInner() {
               onChange={(value) => { setQuery(value); resetPage(); }}
               placeholder="Search attendees…"
               className="registrations-tour-search w-full max-w-xs"
-            />) : undefined} controls={<><select
-          value={eventId}
-          onChange={(e) => {
-            setEventId(e.target.value);
-            setQuery("");
-            resetPage();
-            router.replace(`/gatherings/events/registrations${e.target.value ? `?event=${e.target.value}` : ""}`);
-          }}
-          className="registrations-tour-event h-9 max-w-[300px] truncate rounded-full border border-line bg-card px-3 text-sm outline-none"
-          aria-label="Event selector"
-        >
-          <option value="">Choose an event…</option>
-          {eventList.map((event) => (
-            <option key={event.eventId} value={event.eventId}>
-              {event.title} · {formatDate(event.startDate)}
-            </option>
-          ))}
-        </select>{eventId ? (<span className="flex flex-wrap items-center gap-1.5 text-xs text-ink-faint">
+            />) : undefined} controls={<><EventPicker query={events} value={eventId} className="registrations-tour-event"
+          onValueChange={value => { setEventId(value); setQuery(""); resetPage(); router.replace(`/gatherings/events/registrations${value ? `?event=${value}` : ""}`); }} />{eventId ? (<span className="flex flex-wrap items-center gap-1.5 text-xs text-ink-faint">
               {selected?.isFree ? <Tag tone="moss">free event</Tag> : <Tag tone="gold">tickets</Tag>}
               {selected?.capacity ? <span className="num">capacity {number(selected.capacity)}</span> : null}
             </span>) : null}{eventId ? (<div className="registrations-tour-display flex flex-wrap items-center gap-2">
@@ -273,7 +260,7 @@ function RegistrationsInner() {
           </div>) : null}</>}>{eventId ? <><div className="registrations-tour-payment flex flex-wrap gap-1.5" role="group" aria-label="Registration payment filters">
               {(["all", "paid", "pending", "failed", "cancelled"] as const).map((s) => (
                 <FilterChip key={s} active={payment === s} onClick={() => { setPayment(s); resetPage(); }}>
-                  {s === "all" ? "Any payment" : s}
+                  {s === "all" ? "Any payment" : formatStatusLabel(s)}
                 </FilterChip>
               ))}
               </div><div className="registrations-tour-door flex flex-wrap gap-1.5" role="group" aria-label="Registration check-in filters">
@@ -326,7 +313,7 @@ function RegistrationsInner() {
                         <span className="num text-right text-sm">{registration.quantity ?? 1}</span>
                         <span>
                           <Tag tone={STATUS_TONES[registration.paymentStatus ?? "pending"] ?? "neutral"} dot>
-                            {registration.paymentStatus ?? "pending"}
+                            {formatStatusLabel(registration.paymentStatus ?? "pending")}
                           </Tag>
                         </span>
                         <span className="text-xs text-ink-faint">
@@ -376,7 +363,7 @@ function RegistrationsInner() {
                       <div className="mt-3 flex items-center justify-between gap-2 border-t border-line/70 pt-3">
                         <span className="flex items-center gap-1.5">
                           <Tag tone={STATUS_TONES[registration.paymentStatus ?? "pending"] ?? "neutral"} dot>
-                            {registration.paymentStatus ?? "pending"}
+                            {formatStatusLabel(registration.paymentStatus ?? "pending")}
                           </Tag>
                           {registration.checkedIn ? <Tag tone="sky" dot>Checked in</Tag> : null}
                         </span>
@@ -408,14 +395,14 @@ function RegistrationsInner() {
             </Link>
           </div>
         </>
-      ) : (
+      ) : events.isSuccess && eventList.length ? (
         <div className="registrations-tour-pick"><EmptyState
           className="paper-card bg-card"
           icon={<ClipboardList />}
           title="Pick an event to see its house"
           description="Registrations, payments and check-ins arrive here the moment a list is chosen."
         /></div>
-      )}
+      ) : null}
     </div>
   );
 }

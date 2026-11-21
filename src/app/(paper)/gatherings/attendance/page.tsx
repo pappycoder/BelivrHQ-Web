@@ -111,7 +111,7 @@ export default function AttendanceDashboardPage() {
             {trends.isLoading || summary.isLoading ? (
               <Skeleton className="h-[220px]" />
             ) : trends.data?.length ? (
-              <TrendChart
+              <TrendChart integerAxis
                 data={trends.data.map((point) => ({
                   label: new Date(point.date).toLocaleDateString("en-GB", { day: "numeric", month: "short" }),
                   members: point.members,

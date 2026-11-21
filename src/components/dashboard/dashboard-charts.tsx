@@ -1,5 +1,8 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
 import * as React from "react";
 import Link from "next/link";
 import { format, subDays } from "date-fns";
@@ -279,7 +282,7 @@ export function DashboardCharts() {
             >
               <DashboardDonut
                 data={Object.entries(members.data?.byStatus ?? {}).map(
-                  ([name, value]) => ({ name: name.replace(/_/g, " "), value }),
+                  ([name, value]) => ({ name: formatStatusLabel(name), value }),
                 )}
               />
             </ChartCard>

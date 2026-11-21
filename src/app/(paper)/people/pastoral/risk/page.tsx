@@ -1,5 +1,8 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -162,7 +165,7 @@ export default function RiskRadarPage() {
                       <div className="min-w-0">
                         <p className="truncate text-sm font-semibold">{name}</p>
                         <p className="truncate text-xs text-ink-faint">
-                          {row.memberStatus ?? "member"} · last calculated {formatDate(row.calculatedAt)}
+                          {formatStatusLabel(row.memberStatus, "Member")} · last calculated {formatDate(row.calculatedAt)}
                         </p>
                       </div>
                     </button>

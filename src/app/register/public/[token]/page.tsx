@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { retryPage } from "@/lib/retry-page";
 
 import { ValidatedForm } from "@/components/ui/validated-form";
@@ -105,7 +107,7 @@ function Registration({ token }: { token: string }) {
       aside={
         <div className="mt-7 flex flex-wrap gap-2 text-xs">
           {[
-            `${form.data.fields.length} questions`,
+            `${form.data.fields.length} ${collectionLabel(form.data.fields.length, "questions")}`,
             `${form.data.fields.filter((field) => field.required).length} required`,
             "No sign-in needed",
           ].map((text) => (
@@ -138,7 +140,7 @@ function Registration({ token }: { token: string }) {
             </p>
             <h2 className="text-2xl font-semibold">Let’s get started.</h2>
             <p className="text-sm leading-7 text-muted-foreground">
-              Fields marked * are required. Take your time before sending.
+              Take your time before sending.
             </p>
           </header>
           <ValidatedForm onSubmit={submit} className="space-y-7">

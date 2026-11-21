@@ -145,7 +145,7 @@ export default function SettingsAppearancePage() {
           <Palette className="size-4 text-ink-faint" />
           <p className="rule-label">The palette in the room</p>
         </div>
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {[
             ["var(--brand)", "brand · your accent"],
             ["var(--moss)", "moss · growth & good"],
@@ -154,7 +154,7 @@ export default function SettingsAppearancePage() {
             ["var(--rose)", "rose · warnings"],
             ["var(--ink)", "ink · type"],
           ].map(([token, label]) => (
-            <span key={token} className="flex flex-1 flex-col items-center gap-1.5">
+            <span key={token} className="flex min-w-0 flex-col items-center gap-1.5">
               <span className="h-8 w-full rounded-lg border border-line" style={{ background: token }} />
               <span className="text-center text-xs uppercase tracking-wider text-ink-faint">{label}</span>
             </span>

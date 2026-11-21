@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { FormActions } from "@/components/shared/form-actions";
 
 import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
@@ -213,7 +215,7 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
               <strong className="font-semibold text-ink">
                 {builderFields.length}
               </strong>{" "}
-              questions
+              {collectionLabel(builderFields.length, "questions")}
             </span>
             <span>
               <strong className="font-semibold text-ink">
@@ -377,7 +379,7 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
           {withPreview ? <CreatePreviewSidebar>
             <CreatePreviewCard editing={!!form} eyebrow="Form preview" title={formControl.watch("title") || "Untitled form"}>
               <dl className="space-y-3 text-sm">
-                <div><dt className="rule-label">Questions</dt><dd className="mt-1">{builderFields.length} questions · {builderFields.filter(field => field.required).length} required</dd></div>
+                <div><dt className="rule-label">Questions</dt><dd className="mt-1">{builderFields.length} {collectionLabel(builderFields.length, "questions")} · {builderFields.filter(field => field.required).length} required</dd></div>
                 <div><dt className="rule-label">Status</dt><dd className="mt-1 capitalize">{settingsValues.status || "draft"}</dd></div>
                 <div><dt className="rule-label">Sharing</dt><dd className="mt-1">{settingsValues.isPublic ? "Public link" : "Members only"}</dd></div>
                 {formControl.watch("description") && <div><dt className="rule-label">Description</dt><dd className="mt-1 break-words">{formControl.watch("description")}</dd></div>}

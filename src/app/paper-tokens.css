@@ -23,6 +23,13 @@
   --color-rose-soft: var(--rose-soft);
 }
 
+/* Public introductions keep white copy legible even when the workspace accent
+   becomes brighter in dark mode or a custom palette is selected. */
+.public-form-panel {
+  background-color: color-mix(in srgb, var(--brand) 35%, #10231f);
+  color: #fff;
+}
+
 /* Light "Paper" values — safe at :root because no existing rule reads them. */
 :root {
   --paper: #f7f4ec;
@@ -37,7 +44,7 @@
   --brand-soft: #d8eae7;
   --moss: #4c5f3d;
   --moss-soft: #dfe6d5;
-  --gold: #a97e26;
+  --gold: #76551a;
   --gold-soft: #f2e6c8;
   --sky: #3d6b7d;
   --sky-soft: #d9e6ea;
@@ -106,8 +113,8 @@
 
 /* Keep every register's search and filter controls within the member-list bounds. */
 [data-paper-root] [data-list-toolbar] > [data-tour-search] { width: 100%; max-width: 20rem; }
-[data-paper-root] [data-list-toolbar] select { width: 11rem; max-width: 100%; text-overflow: ellipsis; }
-[data-paper-root] [data-list-controls] [role="combobox"][aria-label^="Sort"] { width: 10rem; }
+[data-paper-root] [data-list-toolbar] select:not([data-event-picker-control]) { width: 11rem; max-width: 100%; text-overflow: ellipsis; }
+[data-paper-root] [data-list-controls] [role="combobox"][aria-label^="Sort"] { width: 12rem; max-width: 100%; }
 [data-paper-root] [data-slot="table"] tbody [data-slot="table-cell"] { border-color: color-mix(in srgb, var(--line) 70%, transparent); }
 
 /* Registers share the member directory's white surface, header and row rhythm.
@@ -139,9 +146,18 @@
 [data-paper-root] [data-slot="table"][data-compact-rows="true"] [data-slot="table-cell"] { padding-block: .6rem; }
 
 @layer utilities {
-  [data-paper-root] {
-    font-family: var(--font-inter-tight), var(--font-inter), Inter, sans-serif;
+  [data-paper-root],
+  [data-slot="paper-tag"] {
+    font-family: var(--font-inter-tight, Inter), var(--font-inter, Inter), Inter, sans-serif;
   }
+
+  /* These accent colors need a darker foreground on their pale badge fills. */
+  [data-slot="paper-tag"][data-tone="brand"] { color: color-mix(in srgb, var(--brand) 90%, #000); }
+  [data-slot="paper-tag"][data-tone="sky"] { color: color-mix(in srgb, var(--sky) 90%, #000); }
+  [data-slot="paper-tag"][data-tone="rose"] { color: color-mix(in srgb, var(--rose) 90%, #000); }
+  .dark [data-slot="paper-tag"][data-tone="brand"] { color: var(--brand); }
+  .dark [data-slot="paper-tag"][data-tone="sky"] { color: var(--sky); }
+  .dark [data-slot="paper-tag"][data-tone="rose"] { color: var(--rose); }
 
   [data-paper-root] h1,
   [data-paper-root] h2,

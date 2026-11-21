@@ -1,5 +1,10 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { collectionLabel } from "@/lib/collection-label";
+
 import { formatRecordDate } from "@/lib/record-date";
 
 import { DetailNavigation, DetailHeading } from "@/components/paper/section";
@@ -120,7 +125,7 @@ export default function VisitorDetailPage({
               <div className="flex flex-wrap items-center gap-2">
                 <DetailHeading>{fullName}</DetailHeading>
                 <Tag tone={v.followUpStatus === "converted" ? "moss" : v.followUpStatus === "dropped_off" ? "neutral" : "gold"} dot>
-                  {FOLLOW_UP_OPTIONS.find((o) => o.value === v.followUpStatus)?.label ?? v.followUpStatus}
+                  {FOLLOW_UP_OPTIONS.find((o) => o.value === v.followUpStatus)?.label ?? formatStatusLabel(v.followUpStatus)}
                 </Tag>
                 {v.convertedMemberId ? (
                   <Link href={`/people/members/${v.convertedMemberId}`}>
@@ -191,7 +196,7 @@ export default function VisitorDetailPage({
               <select
                 value={v.followUpStatus}
                 disabled={updateVisitor.isPending}
-                onChange={(event) => { const nextStatus = event.target.value; confirm({ title: "Update follow-up status?", subject: fullName, description: `Change follow-up status to ${nextStatus.replaceAll("_", " ")}?`, onConfirm: () => updateVisitor.mutateAsync(
+                onChange={(event) => { const nextStatus = event.target.value; confirm({ title: "Update follow-up status?", subject: fullName, description: `Change follow-up status to ${formatStatusLabel(nextStatus)}?`, onConfirm: () => updateVisitor.mutateAsync(
                     { visitorId: v.id, input: { followUpStatus: nextStatus as FollowUpStatus } },
                     { onSuccess: () => toast("Status updated."), onError: () => toast.error("Couldn't update the status.") },
                   ) }); }}
@@ -203,7 +208,7 @@ export default function VisitorDetailPage({
               </select>
             ) : (
               <p className="text-sm font-medium">
-                {FOLLOW_UP_OPTIONS.find((o) => o.value === v.followUpStatus)?.label ?? v.followUpStatus}
+                {FOLLOW_UP_OPTIONS.find((o) => o.value === v.followUpStatus)?.label ?? formatStatusLabel(v.followUpStatus)}
               </p>
             )}
           </div>
@@ -238,7 +243,7 @@ export default function VisitorDetailPage({
         <SectionCard
           eyebrow="Being here"
           title="Visit history"
-          actions={<span className="num text-sm text-ink-faint">{visits.data?.meta?.total ?? visitsRows.length} check-ins</span>}
+          actions={<span className="num text-sm text-ink-faint">{visits.data?.meta?.total ?? visitsRows.length} {collectionLabel(visits.data?.meta?.total ?? visitsRows.length, "check-ins")}</span>}
           bodyClassName="p-0"
         >
           {visits.isLoading ? (

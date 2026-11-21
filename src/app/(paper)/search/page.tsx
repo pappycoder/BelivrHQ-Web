@@ -1,5 +1,8 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -23,8 +26,8 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { useMembersList, type Member } from "@/hooks/use-members";
 import { useEventsList, type EventItem } from "@/hooks/use-events";
 import { useSermonsList, type Sermon } from "@/hooks/use-sermons";
-import { useFormsList, type Form } from "@/hooks/use-forms";
-import { useVisitorsList, type Visitor } from "@/hooks/use-visitors";
+import { useFormsList, FORM_STATUS_LABELS, type Form } from "@/hooks/use-forms";
+import { useVisitorsList, FOLLOW_UP_STATUSES, type Visitor } from "@/hooks/use-visitors";
 import { formatDate } from "@/hooks/use-media";
 
 const SCOPES = ["All", "People", "Gatherings", "Library"] as const;
@@ -77,7 +80,7 @@ function MemberRail({ search, onSettled }: RailProps) {
             <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.photoUrl} size="sm" />
             <span className="min-w-0 flex-1">
               <span className="block truncate text-sm font-medium">{member.firstName} {member.lastName}</span>
-              <span className="block truncate text-xs text-ink-faint">{member.phone ?? member.email ?? "no contact"} · {member.status}</span>
+              <span className="block truncate text-xs text-ink-faint">{member.phone ?? member.email ?? "no contact"} · {formatStatusLabel(member.status)}</span>
             </span>
             <Tag tone="neutral">{member.memberSince?.slice(0, 4) || "member"}</Tag>
           </Link>
@@ -102,7 +105,7 @@ function VisitorRail({ search, onSettled }: RailProps) {
               <span className="block truncate text-sm font-medium">{visitor.firstName} {visitor.lastName ?? ""}</span>
               <span className="block truncate text-xs text-ink-faint">{visitor.phone ?? "no phone"} · first visit {formatDate(visitor.firstVisitDate)}</span>
             </span>
-            <Tag tone="gold" dot>{visitor.followUpStatus.replace(/_/g, " ")}</Tag>
+            <Tag tone="gold" dot>{FOLLOW_UP_STATUSES.find(item => item.value === visitor.followUpStatus)?.label ?? formatStatusLabel(visitor.followUpStatus)}</Tag>
           </Link>
         ))}
       </div>
@@ -127,7 +130,7 @@ function EventRail({ search, onSettled }: RailProps) {
               <span className="block truncate text-sm font-medium">{event.title}</span>
               <span className="block text-xs text-ink-faint">{formatDate(event.startDate)} · {event.location ?? "venue TBD"}</span>
             </span>
-            {event.isFree ? <Tag tone="moss">free</Tag> : <Tag tone="gold">tickets</Tag>}
+            {event.isFree ? <Tag tone="moss">Free</Tag> : <Tag tone="gold">Tickets</Tag>}
           </Link>
         ))}
       </div>
@@ -175,9 +178,9 @@ function FormRail({ search, onSettled }: RailProps) {
             </span>
             <span className="min-w-0 flex-1">
               <span className="block truncate text-sm font-medium">{form.title}</span>
-              <span className="block text-xs text-ink-faint">{form.fields?.length ?? 0} questions · {form.submissionCount ?? 0} answers</span>
+              <span className="block text-xs text-ink-faint">{form.fields?.length ?? 0} {collectionLabel(form.fields?.length ?? 0, "questions")} · {form.submissionCount ?? 0} {collectionLabel(form.submissionCount ?? 0, "answers")}</span>
             </span>
-            <Tag tone={form.status === "published" ? "moss" : "neutral"} dot>{form.status}</Tag>
+            <Tag tone={form.status === "published" ? "moss" : "neutral"} dot>{FORM_STATUS_LABELS[form.status]}</Tag>
           </Link>
         ))}
       </div>

@@ -1,5 +1,7 @@
 "use client";
 
+import { formatRecordDateTime } from "@/lib/record-date";
+
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useCurrentProfile } from "@/hooks/use-profile";
@@ -64,7 +66,7 @@ export function NotificationDetailDialog({ notification, open, onOpenChange, onD
             </div>
             <DialogTitle className="break-words text-xl leading-snug">{item?.title ?? notification.title}</DialogTitle>
             <DialogDescription>
-              {item ? <>Received <time dateTime={item.createdAt}>{new Date(item.createdAt).toLocaleString(undefined, { dateStyle: "full", timeStyle: "short" })}</time></> : "Loading the full notification."}
+              {item ? <>Received <time dateTime={item.createdAt}>{formatRecordDateTime(item.createdAt)}</time></> : "Loading the full notification."}
             </DialogDescription>
           </DialogHeader>
           {detail.isError ? (

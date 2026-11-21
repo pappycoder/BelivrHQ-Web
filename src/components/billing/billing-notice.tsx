@@ -1,4 +1,6 @@
 "use client";
+
+import { collectionLabel } from "@/lib/collection-label";
 import Link from "next/link";
 import { useCurrentProfile } from "@/hooks/use-profile";
 import { useBillingStatus } from "@/hooks/use-billing";
@@ -48,7 +50,7 @@ export function BillingNotice({
           {days <= 7
             ? days <= 0
               ? "Your subscription needs renewal"
-              : `Renew your subscription within ${days} days`
+              : `Renew your subscription within ${days} ${collectionLabel(days, "days")}`
             : "Review your plan allowances"}
         </p>
         {resources.map((r) => (

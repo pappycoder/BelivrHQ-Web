@@ -1,5 +1,8 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
 import { DialogFooter, DialogClose } from "@/components/ui/dialog";
 
 import { useId as useFormFieldId } from "react";
@@ -164,7 +167,7 @@ export default function MessagesPage() {
                   <p className="mt-0.5 truncate text-sm text-ink-soft">{message.content}</p>
                 ) : null}
               </div>
-              <Tag tone={message.status === "failed" ? "rose" : "neutral"}>{MESSAGE_STATUS_LABELS[message.status] ?? message.status}</Tag>
+              <Tag tone={message.status === "failed" ? "rose" : "neutral"}>{MESSAGE_STATUS_LABELS[message.status] ?? formatStatusLabel(message.status)}</Tag>
               <span className="num hidden w-32 shrink-0 text-right text-xs text-ink-faint sm:block">{stamp(message.createdAt)}</span>
               {canSend && message.direction === "inbound" ? (
                 <button

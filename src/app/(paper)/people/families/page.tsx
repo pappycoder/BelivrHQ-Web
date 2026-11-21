@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { formatRecordDate } from "@/lib/record-date";
@@ -491,7 +493,7 @@ export default function FamiliesPage() {
                     <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-sm">
                       <span className="flex items-center gap-2">
                         <AvatarStack people={family.members.map((m) => ({ name: `${m.firstName} ${m.lastName}` }))} size="xs" max={4} />
-                        <span className="text-ink-soft">{family.members.length} people</span>
+                        <span className="text-ink-soft">{family.members.length} {collectionLabel(family.members.length, "people")}</span>
                       </span>
                       <span className="flex items-center gap-1.5 text-ink-faint">
                         {family.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}

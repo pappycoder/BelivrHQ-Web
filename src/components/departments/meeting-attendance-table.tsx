@@ -1,5 +1,9 @@
 "use client";
 
+import { formatRecordDate } from "@/lib/record-date";
+import { formatStatusLabel } from "@/lib/status-label";
+
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import Link from "next/link";
@@ -157,7 +161,7 @@ export function MeetingAttendanceTable({
                 <SelectItem value="all">All statuses</SelectItem>
                 {["present", "late", "absent", "excused"].map((value) => (
                   <SelectItem key={value} value={value}>
-                    {value}
+                    {formatStatusLabel(value)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -319,7 +323,7 @@ export function MeetingAttendanceTable({
                 <span>
                   <Tag tone={row.memberId ? "moss" : "gold"}>{row.type}</Tag>
                 </span>
-                <span className="text-ink-soft">{row.date}</span>
+                <span className="text-ink-soft">{formatRecordDate(row.date)}</span>
                 <span>
                   <Tag
                     tone={
@@ -330,7 +334,7 @@ export function MeetingAttendanceTable({
                           : "neutral"
                     }
                   >
-                    {row.status}
+                    {formatStatusLabel(row.status)}
                   </Tag>
                 </span>
                 <span className="truncate text-ink-faint">

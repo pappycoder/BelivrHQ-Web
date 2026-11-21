@@ -39,8 +39,10 @@ export function Tag({
 }) {
   return (
     <span
+      data-slot="paper-tag"
+      data-tone={tone}
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium leading-5",
+        "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium not-italic normal-case leading-5 tracking-normal",
         toneBg[tone],
         className,
       )}

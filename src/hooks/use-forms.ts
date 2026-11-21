@@ -54,11 +54,7 @@ export const SUBMISSION_STATUS_LABELS: Record<SubmissionStatus, string> = {
   rejected: "Rejected",
 };
 
-export const SUBMISSION_STATUS_TEXT: Record<SubmissionStatus, string> = {
-  pending: "text-yellow-600",
-  approved: "text-emerald-600",
-  rejected: "text-red-600",
-};
+
 
 export interface FormFieldValidation {
   min?: number;

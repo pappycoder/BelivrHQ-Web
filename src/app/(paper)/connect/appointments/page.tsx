@@ -10,6 +10,7 @@ import {
   Video,
 } from "lucide-react";
 import { PageHeader } from "@/components/paper/section";
+import { AppointmentStatusBadge } from "@/components/appointments/appointment-status-badge";
 import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
@@ -32,12 +33,7 @@ import {
   type Appointment,
 } from "@/hooks/use-appointments";
 
-const STATUS_TONES: Record<string, "moss" | "gold" | "sky" | "neutral"> = {
-  confirmed: "moss",
-  pending: "gold",
-  completed: "sky",
-  cancelled: "neutral",
-};
+
 
 function dayKey(value: string) {
   const d = new Date(value);
@@ -172,9 +168,7 @@ export default function AppointmentsPage() {
                             {appointment.location ? ` · ${appointment.location}` : ""}
                           </p>
                         </div>
-                        <Tag tone={STATUS_TONES[appointment.status] ?? "neutral"} dot>
-                          {APPOINTMENT_STATUS_LABELS[appointment.status as keyof typeof APPOINTMENT_STATUS_LABELS] ?? appointment.status}
-                        </Tag>
+                        <AppointmentStatusBadge status={appointment.status} />
                         {canUpdate && !appointment.archivedAt ? (
                           <span className="shrink-0 rounded-full px-2 py-1 text-xs text-brand opacity-0 transition-opacity [.paper-card:hover_&]:opacity-100 hover:underline">
                             Manage

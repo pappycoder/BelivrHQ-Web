@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import { Mic2 } from "lucide-react";
 import { PersonAvatar } from "@/components/paper/primitives";
@@ -36,7 +38,7 @@ export default function SpeakersPage() {
             <PersonAvatar name={item.name} size="lg" />
             <div className="min-w-0">
               <p className="truncate font-display text-sm font-semibold">{item.name}</p>
-              <p className="num text-sm text-ink-faint">{item.count} messages on record</p>
+              <p className="num text-sm text-ink-faint">{item.count} {collectionLabel(item.count, "messages")} on record</p>
             </div>
           </div>
           <div className="mt-4 flex-1" />

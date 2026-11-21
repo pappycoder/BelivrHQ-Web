@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { ListTable } from "@/components/shared/list-table";
@@ -201,7 +203,7 @@ export default function AdminBranchesPage() {
                   <RowActions reveal={false} actions={manageActions(branch)} />
                 </div>
                 <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
-                  <span className="num">{number(branch.memberCount ?? 0)} members</span>
+                  <span className="num">{number(branch.memberCount ?? 0)} {collectionLabel(branch.memberCount ?? 0, "members")}</span>
                   <span>added {formatDate(branch.createdAt)}</span>
                 </div>
               </div>

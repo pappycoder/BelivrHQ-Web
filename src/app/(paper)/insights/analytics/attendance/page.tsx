@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import Link from "next/link";
 import { ArrowLeft, CalendarCheck, UserRoundPlus } from "lucide-react";
@@ -97,8 +99,8 @@ export default function AttendanceAnalyticsPage() {
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <StatCard label="Total counted" value={a.total} tone="brand" icon={<CalendarCheck className="size-4" />} deltaLabel={`${number(a.members)} members`} />
-            <StatCard label="Guest visits" value={a.visitors} tone="gold" deltaLabel={`${number(a.firstTimeVisitors)} first-timers`} />
+            <StatCard label="Total counted" value={a.total} tone="brand" icon={<CalendarCheck className="size-4" />} deltaLabel={`${number(a.members)} ${collectionLabel(a.members, "members")}`} />
+            <StatCard label="Guest visits" value={a.visitors} tone="gold" deltaLabel={`${number(a.firstTimeVisitors)} ${collectionLabel(a.firstTimeVisitors, "first-timers")}`} />
             <StatCard label="Returning guests" value={a.returningVisitors} tone="sky" deltaLabel={guestTotal ? `${percent(a.returningVisitors, guestTotal)}% of guest visits` : "Not available"} />
             <StatCard label="Services logged" value={a.byService?.length ?? 0} tone="moss" />
           </div>
@@ -106,7 +108,7 @@ export default function AttendanceAnalyticsPage() {
           <div className="grid gap-4 lg:grid-cols-12">
             <SectionCard className="lg:col-span-7" eyebrow="Trend" title="Total in the room">
               {trendRows.length ? (
-                <TrendChart
+                <TrendChart integerAxis
                   data={trendRows}
                   series={[
                     { key: "members", label: "Members", color: "var(--chart-2)" },
@@ -122,7 +124,7 @@ export default function AttendanceAnalyticsPage() {
 
             <SectionCard className="lg:col-span-5" eyebrow="Sources" title="How people were counted">
               {sourceData.length ? (
-                <DonutChart data={sourceData} centerValue={number(a.total)} centerLabel="counted" height={170} formatter={(v) => `${number(Number(v))} visits`} />
+                <DonutChart data={sourceData} centerValue={number(a.total)} centerLabel="counted" height={170} formatter={(v) => `${number(Number(v))} ${collectionLabel(Number(v), "visits")}`} />
               ) : (
                 <p className="py-12 text-center text-sm text-ink-faint">Sources appear with the first check-ins.</p>
               )}
@@ -139,7 +141,7 @@ export default function AttendanceAnalyticsPage() {
 
             <SectionCard className="lg:col-span-7" eyebrow="Per service" title="Where the people are">
               {serviceRows.length ? (
-                <BarSeries data={serviceRows} series={[{ key: "total", label: "Attendance", color: "var(--chart-1)" }]} horizontal height={200} formatter={(v) => number(Number(v))} />
+                <BarSeries integerAxis data={serviceRows} series={[{ key: "total", label: "Attendance", color: "var(--chart-1)" }]} horizontal height={200} formatter={(v) => number(Number(v))} />
               ) : (
                 <p className="py-12 text-center text-sm text-ink-faint">No services in this period.</p>
               )}

@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { ListTable } from "@/components/shared/list-table";
@@ -237,7 +239,7 @@ export default function MediaFoldersPage() {
                   <div className="mt-3 flex flex-1 items-start justify-between">
                     <div>
                       <p className="font-display text-sm font-semibold">{folder.folder}</p>
-                      <p className="num mt-1 text-sm text-ink-soft">{number(folder.count)} files</p>
+                      <p className="num mt-1 text-sm text-ink-soft">{number(folder.count)} {collectionLabel(folder.count, "files")}</p>
                     </div>
                     <FolderClosed className="size-4 text-ink-faint" />
                   </div>
@@ -258,7 +260,7 @@ export default function MediaFoldersPage() {
           {filtered.slice(0, 5).map((folder) => (
             <span
               key={folder.folder}
-              title={`${folder.folder}: ${folder.count} files`}
+              title={`${folder.folder}: ${folder.count} ${collectionLabel(folder.count, "files")}`}
               style={{
                 width: `${totalFiles ? Math.max(4, Math.round((folder.count / totalFiles) * 100)) : 20}%`,
                 background: colorOf(folder.folder),

@@ -1,5 +1,9 @@
 "use client";
 
+import { formatRecordDateTime } from "@/lib/record-date";
+
+import { collectionLabel } from "@/lib/collection-label";
+
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
 
 import { submissionRespondent } from "@/lib/submission-respondent";
@@ -16,14 +20,11 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { format } from "date-fns";
 import { Check, Eye, X } from "lucide-react";
 import {
   useBulkReviewSubmissions,
   type Form,
   type FormSubmission,
-  SUBMISSION_STATUS_LABELS,
-  SUBMISSION_STATUS_TEXT,
 } from "@/hooks/use-forms";
 import {
   Table,
@@ -34,7 +35,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { SubmissionStatusBadge } from "./submission-status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function submissionValue(value: unknown): string {
@@ -90,9 +91,9 @@ export function SubmissionsTable({
       setBulkStatus(null);
       setReason("");
       if (result.succeeded.length)
-        toast.success(`${result.succeeded.length} responses ${bulkStatus}`);
+        toast.success(`${result.succeeded.length} ${collectionLabel(result.succeeded.length, "responses")} ${bulkStatus}`);
       if (result.failed.length) {
-        const message = `${result.failed.length} responses could not be updated. They remain selected for retry. ${result.failed[0].message}`;
+        const message = `${result.failed.length} ${collectionLabel(result.failed.length, "responses")} could not be updated. They remain selected for retry. ${result.failed[0].message}`;
         setBatchError(message);
         toast.error(message);
       }
@@ -120,7 +121,7 @@ export function SubmissionsTable({
       {selected.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 border-b bg-accent/30 p-3">
           <span role="status" className="mr-auto text-sm font-medium">
-            {selected.length} responses selected · {pending.length} pending
+            {selected.length} {collectionLabel(selected.length, "responses")} selected · {pending.length} pending
           </span>
           <VisibleDataExport
             getRoot={() => root.current}
@@ -280,13 +281,11 @@ export function SubmissionsTable({
                     <TableCell>Open response</TableCell>
                   )}
                   <TableCell>
-                    <Badge variant="outline" className={SUBMISSION_STATUS_TEXT[submission.status]}>
-                      {SUBMISSION_STATUS_LABELS[submission.status]}
-                    </Badge>
+                    <SubmissionStatusBadge status={submission.status} />
                   </TableCell>
                   <TableCell>{submission.submittedBy ? "Signed in" : "Public"}</TableCell>
                   <TableCell>
-                    {format(new Date(submission.createdAt), "MMM d, yyyy h:mm a")}
+                    {formatRecordDateTime(submission.createdAt)}
                   </TableCell>
                   <TableCell>{submission.attachments?.length ?? 0}</TableCell>
                   <TableCell className="text-right">
@@ -344,7 +343,7 @@ export function SubmissionsTable({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {bulkStatus === "rejected" ? "Reject" : "Approve"} {pending.length} pending responses?
+              {bulkStatus === "rejected" ? "Reject" : "Approve"} {pending.length} pending {collectionLabel(pending.length, "responses")}?
             </DialogTitle>
             <DialogDescription>
               This changes only the selected pending responses for {form.title}. Already reviewed

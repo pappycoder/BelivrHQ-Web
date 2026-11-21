@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { FormStatusDialog } from "@/components/forms/form-status-dialog";
@@ -302,7 +304,7 @@ export default function FormsListPage() {
           ))}
         </div>
 <Select value={sortBy} onValueChange={(value) => { setSortBy(value as SortValue); setPage(1); }}>
-            <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
+            <SelectTrigger aria-label="Sort forms" className="h-9 w-56 max-w-full rounded-full border-line bg-card text-sm shadow-none">
               <ArrowUpDownIcon /> <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -392,25 +394,25 @@ export default function FormsListPage() {
         <>
           <StaggerGroup className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {rows.map((form) => (
-              <StaggerItem key={form.id}>
-                <div className="paper-card flex h-full flex-col rounded-2xl p-4">
+              <StaggerItem key={form.id} className="min-w-0">
+                <div className="paper-card flex h-full min-w-0 flex-col rounded-2xl p-4">
                   <div className="flex items-start justify-between gap-2">
-                    <button type="button" onClick={() => router.push(`/library/forms/${form.id}`)} className="min-w-0 text-left">
-                      <p className="truncate text-sm font-semibold hover:text-brand">{form.title}</p>
+                    <button type="button" onClick={() => router.push(`/library/forms/${form.id}`)} className="min-w-0 flex-1 text-left">
+                      <p className="break-words text-sm font-semibold hover:text-brand">{form.title}</p>
                       <p className="mt-0.5 text-xs text-ink-faint">
-                        {form.fields?.length ?? 0} questions · {form.branchName ?? "all branches"}
+                        {form.fields?.length ?? 0} {collectionLabel(form.fields?.length ?? 0, "questions")} · {form.branchName ?? "all branches"}
                       </p>
                     </button>
-                    <span className="flex shrink-0 items-center gap-1.5">
+                    <span className="shrink-0">
                       {statusTag(form)}
-                      <RowActions reveal={false} actions={manageActions(form)} />
                     </span>
                   </div>
                   {form.description ? <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-ink-soft">{form.description}</p> : <p className="flex-1" />}
-                  <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
-                    <span className="num">{number(form.submissionCount ?? 0)} answers</span>
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-t border-line/70 pt-3 text-xs text-ink-faint">
+                    <span className="num">{number(form.submissionCount ?? 0)} {collectionLabel(form.submissionCount ?? 0, "answers")}</span>
                     <span>updated {formatDate(form.updatedAt)}</span>
                   </div>
+                  <RowActions reveal={false} actions={manageActions(form)} className="mt-2 flex-wrap justify-start" />
                 </div>
               </StaggerItem>
             ))}

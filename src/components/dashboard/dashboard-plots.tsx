@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { useId } from "react";
 import {
   Area,
@@ -78,7 +80,7 @@ export function DashboardTrend({
     <ChartContainer
       config={config}
       role="group"
-      aria-label={`${split ? "Members and visitors" : "Total"} across ${data.length} periods. Latest: ${split ? `${number(data[data.length - 1].members ?? 0)} members, ${number(data[data.length - 1].visitors ?? 0)} visitors` : formatValue(data[data.length - 1].total)}.`}
+      aria-label={`${split ? "Members and visitors" : "Total"} across ${data.length} ${collectionLabel(data.length, "periods")}. Latest: ${split ? `${number(data[data.length - 1].members ?? 0)} ${collectionLabel(data[data.length - 1].members ?? 0, "members")}, ${number(data[data.length - 1].visitors ?? 0)} ${collectionLabel(data[data.length - 1].visitors ?? 0, "visitors")}` : formatValue(data[data.length - 1].total)}.`}
       style={{ height }}
       className="w-full aspect-auto"
     >

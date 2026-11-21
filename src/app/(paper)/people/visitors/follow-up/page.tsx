@@ -1,5 +1,8 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
@@ -433,7 +436,7 @@ function CardFace({
         </select>
       ) : dragging ? null : (
         <Tag tone={visitor.followUpStatus === "converted" ? "moss" : "neutral"} className="mt-2">
-          {COLUMNS.find((c) => c.statuses.includes(visitor.followUpStatus))?.label ?? visitor.followUpStatus}
+          {COLUMNS.find((c) => c.statuses.includes(visitor.followUpStatus))?.label ?? formatStatusLabel(visitor.followUpStatus)}
         </Tag>
       )}
     </div>

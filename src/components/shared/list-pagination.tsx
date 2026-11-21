@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { collectionLabel } from "@/lib/collection-label";
 import { cn } from "@/lib/utils";
 
 export function ListPaginationFooter({
@@ -11,6 +12,7 @@ export function ListPaginationFooter({
   onPerPageChange,
   perPageOptions = [10, 15, 25, 50],
   itemName = "items",
+  itemNameSingular,
   pending = false,
 }: {
   page: number;
@@ -20,6 +22,7 @@ export function ListPaginationFooter({
   onPerPageChange?: (perPage: number) => void;
   perPageOptions?: number[];
   itemName?: string;
+  itemNameSingular?: string;
   pending?: boolean;
 }) {
   const totalPages = Math.max(1, Math.ceil(total / Math.max(1, perPage)));
@@ -42,7 +45,7 @@ export function ListPaginationFooter({
         <span className="num font-medium text-ink">
           {total.toLocaleString()}
         </span>{" "}
-        {itemName}
+        {collectionLabel(total, itemName, itemNameSingular)}
       </span>
       <div className="flex flex-wrap items-center gap-3">
         {onPerPageChange ? (

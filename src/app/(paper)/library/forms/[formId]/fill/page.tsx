@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { RequiredFieldsNotice } from "@/components/ui/required-fields";
 
 import * as React from "react";
@@ -129,7 +131,7 @@ export default function FillFormPage({
         }
         title={f.title}
         description={f.description || "Answer honestly. Someone reads every response."}
-        actions={<Tag tone="neutral">{f.fields?.length ?? 0} questions</Tag>}
+        actions={<Tag tone="neutral">{f.fields?.length ?? 0} {collectionLabel(f.fields?.length ?? 0, "questions")}</Tag>}
       />
 
       <div className="mx-auto max-w-2xl space-y-4">

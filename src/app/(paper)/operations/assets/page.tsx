@@ -17,6 +17,7 @@ import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives"
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ExportDropdown } from "@/components/shared/export-dropdown";
+import { StatusBadge } from "@/components/assets/status-badge";
 import { AssetDetailDrawer } from "@/components/assets/asset-detail-drawer";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
@@ -33,14 +34,6 @@ import {
 import { formatNaira } from "@/hooks/use-analytics";
 
 const PAGE_SIZE = 15;
-
-const STATUS_TONES: Record<AssetStatus, "moss" | "gold" | "neutral" | "rose"> = {
-  active: "moss",
-  maintenance: "gold",
-  retired: "neutral",
-  lost: "rose",
-  disposed: "neutral",
-};
 
 const EXPORT_COLUMNS: ExportColumn[] = [
   { key: "assetTag", label: "Tag" },
@@ -201,9 +194,7 @@ export default function AssetsPage() {
                       </button>
                       <span className="truncate text-sm text-ink-soft">{asset.categoryName ?? "Not available"}</span>
                       <span>
-                        <Tag tone={asset.archivedAt ? "neutral" : STATUS_TONES[asset.status]} dot>
-                          {asset.archivedAt ? "Archived" : ASSET_STATUS_LABELS[asset.status]}
-                        </Tag>
+                        {asset.archivedAt ? <Tag dot>Archived</Tag> : <StatusBadge kind="status" value={asset.status} />}
                       </span>
                       <span className="truncate text-sm text-ink-soft">{asset.custodianName ?? asset.location ?? "Unassigned"}</span>
                       <span className="text-right text-sm text-ink-faint">{ASSET_CONDITION_LABELS[asset.condition]}</span>

@@ -249,7 +249,7 @@ export function DepartmentFormDialog({
                   name="branchId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Branch{!isEdit && " *"}</FormLabel>
+                      <FormLabel>Branch</FormLabel>
                       <Select
                         value={field.value || undefined}
                         onValueChange={(value) => {

@@ -106,7 +106,7 @@ export function SermonAggregateBrowser({
 
   const exportColumns = [
     { key: "name", label: nameColumnLabel },
-    { key: "count", label: `${nounPlural} counted` },
+    { key: "count", label: "Sermons counted" },
     { key: "lastDate", label: lastColumnLabel },
   ];
   const exportData = filtered.map((item) => ({
@@ -157,7 +157,7 @@ export function SermonAggregateBrowser({
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
         <StatCard label={nounPlural} value={rows.length} tone="brand" />
-        <StatCard label={`${nounSingular} counted`} value={rows.reduce((sum, s) => sum + s.count, 0)} tone="moss" />
+        <StatCard label="Sermons counted" value={rows.reduce((sum, s) => sum + s.count, 0)} tone="moss" />
         <StatCard label="Most active" value={rows.reduce((max, s) => Math.max(max, s.count), 0)} tone="sky" deltaLabel={`${nounSingular.toLowerCase()} with the most`} />
       </div>
 
@@ -188,7 +188,7 @@ export function SermonAggregateBrowser({
               <ArrowUpDownIcon /> <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="count">Most {nounPlural.toLowerCase()}</SelectItem>
+              <SelectItem value="count">Most sermons</SelectItem>
               <SelectItem value="name">Name</SelectItem>
               <SelectItem value="lastDate">Recently active</SelectItem>
             </SelectContent>

@@ -124,7 +124,7 @@ export default function AttendanceReportsPage() {
             trends.isLoading ? (
               <Skeleton className="h-[230px] rounded-xl" />
             ) : trendRows.length ? (
-              <BarSeries
+              <BarSeries integerAxis
                 data={trendRows}
                 series={[
                   { key: "total", label: "Total", color: "var(--chart-1)" },

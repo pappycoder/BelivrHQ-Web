@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -20,8 +22,9 @@ import { EmptyState } from "@/components/paper/primitives";
 import { useCurrentProfile } from "@/hooks/use-profile";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useMemberDashboard, useGivingDashboardCharts } from "@/hooks/use-dashboard-charts";
-import { useEventsSummary, type EventItem } from "@/hooks/use-events";
+import { useEventsSummary } from "@/hooks/use-events";
 import { useNotificationsList, formatRelativeTime } from "@/hooks/use-notifications";
+import { upcomingEvents } from "@/lib/upcoming-events";
 import { currency, number, shortDate } from "@/lib/paper/format";
 
 const STATUS_LABELS: Record<string, string> = {
@@ -108,7 +111,7 @@ export default function PaperHomePage() {
             prefix={givingCurrency === "NGN" ? "₦" : "$"}
             tone="brand"
             icon={<HandCoins className="size-4" />}
-            deltaLabel={`${number(giving.data?.count ?? 0)} gifts`}
+            deltaLabel={`${number(giving.data?.count ?? 0)} ${collectionLabel(giving.data?.count ?? 0, "gifts")}`}
           />
         </GatedMetric>
         <GatedMetric ready={ready} show={canAny("events:calendar:read")}>
@@ -173,9 +176,9 @@ export default function PaperHomePage() {
                     color: STATUS_COLORS[index % STATUS_COLORS.length],
                   }))}
                   centerValue={number(members.data.total)}
-                  centerLabel="people"
+                  centerLabel={collectionLabel(members.data.total, "people")}
                   height={168}
-                  formatter={(value) => `${value} people`}
+                  formatter={(value) => `${value} ${collectionLabel(Number(value), "people")}`}
                 />
                 <div className="mt-3 space-y-1.5">
                   {Object.entries(members.data.byStatus).slice(0, 4).map(([key, value], index) => (
@@ -246,6 +249,7 @@ export default function PaperHomePage() {
                 { key: "visitors", label: "Visitors", color: "var(--chart-1)" },
               ]}
               height={180}
+              integerAxis
               formatter={(value) => number(Number(value))}
             />
           </SectionCard>
@@ -293,28 +297,27 @@ function UpcomingStat() {
 
 function UpcomingEvents({ className }: { className?: string }) {
   const events = useEventsSummary();
-  const upcoming = React.useMemo(() => {
-    const list: EventItem[] = events.data?.data ?? [];
-    return list
-      .filter((event) => !event.archivedAt)
-      .sort((a, b) => a.startDate.localeCompare(b.startDate))
-      .slice(0, 4);
-  }, [events.data]);
+  const [now, setNow] = React.useState(() => new Date());
+  React.useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
+  const upcoming = React.useMemo(() => upcomingEvents(events.data?.data ?? [], now), [events.data, now]);
 
   return (
     <SectionCard
       className={`home-tour-events ${className ?? ""}`}
       eyebrow="Gatherings"
-      title={<span className="inline-flex items-center gap-1">Next up <SectionHelp title="Gatherings">This list shows up to four unarchived gatherings ordered by start date. Check each date before planning: past gatherings may still appear. Select a gathering to view its details, or open Calendar.</SectionHelp></span>}
+      title={<span className="inline-flex items-center gap-1">Next up <SectionHelp title="Gatherings">Upcoming gatherings are ordered by their next occurrence. Recurring events show their next scheduled date; one-time gatherings remain here while they are in progress. Select a gathering to view its details, or open Calendar.</SectionHelp></span>}
       actions={
         <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-full text-sm text-ink-faint" asChild>
-          <Link href="/events">Calendar <ArrowRight className="size-3" /></Link>
+          <Link href="/gatherings/events">Calendar <ArrowRight className="size-3" /></Link>
         </Button>
       }
       bodyClassName="p-0"
     >
       <div className="divide-y divide-line/70">
-        {upcoming.map((event) => (
+        {upcoming.map(({ event, at }) => (
           <Link
             key={event.eventId}
             href={`/gatherings/events/${event.eventId}`}
@@ -322,13 +325,13 @@ function UpcomingEvents({ className }: { className?: string }) {
           >
             <div className="grid size-10 shrink-0 place-items-center rounded-xl border border-line bg-card">
               <span className="num text-sm font-semibold leading-none">
-                {new Date(event.startDate).getUTCDate()}
+                {at.getDate()}
               </span>
             </div>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{event.title}</p>
               <p className="truncate text-sm text-ink-soft">
-                {shortDate(event.startDate)} · {event.location ?? "Location TBD"}
+                {shortDate(at.toISOString())} · {event.location ?? "Location TBD"}
               </p>
             </div>
             <Tag tone="neutral">{event.isFree ? "Free" : "Ticketed"}</Tag>
@@ -336,7 +339,7 @@ function UpcomingEvents({ className }: { className?: string }) {
         ))}
         {!upcoming.length ? (
           <p className="px-5 py-8 text-center text-sm text-ink-soft">
-            Nothing scheduled yet. Add a gathering to get started.
+            No upcoming gatherings. Open Calendar to plan the next one.
           </p>
         ) : null}
       </div>

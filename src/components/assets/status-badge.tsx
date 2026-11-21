@@ -1,15 +1,11 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
+import { Tag, type Tone } from "@/components/paper/stat";
 import {
   ASSET_CONDITION_LABELS,
-  ASSET_CONDITION_STYLES,
   ASSET_STATUS_LABELS,
-  ASSET_STATUS_STYLES,
   LOAN_STATUS_LABELS,
-  LOAN_STATUS_STYLES,
   MAINTENANCE_STATUS_LABELS,
-  MAINTENANCE_STATUS_STYLES,
   type AssetCondition,
   type AssetLoanStatus,
   type AssetStatus,
@@ -22,33 +18,45 @@ type StatusKind =
   | { kind: "maintenance"; value: MaintenanceStatus }
   | { kind: "loan"; value: AssetLoanStatus };
 
+const tones = {
+  status: { active: "moss", maintenance: "gold", retired: "neutral", lost: "rose", disposed: "neutral" },
+  condition: { new: "moss", good: "moss", fair: "gold", poor: "rose", damaged: "rose" },
+  maintenance: { scheduled: "sky", in_progress: "gold", completed: "moss", cancelled: "neutral" },
+  loan: { borrowed: "sky", returned: "moss", overdue: "rose" },
+} satisfies {
+  status: Record<AssetStatus, Tone>;
+  condition: Record<AssetCondition, Tone>;
+  maintenance: Record<MaintenanceStatus, Tone>;
+  loan: Record<AssetLoanStatus, Tone>;
+};
+
 export function StatusBadge(props: StatusKind) {
   const { kind, value } = props;
 
   let label: string;
-  let style: string;
+  let tone: Tone;
   switch (kind) {
     case "status":
       label = ASSET_STATUS_LABELS[value];
-      style = ASSET_STATUS_STYLES[value];
+      tone = tones.status[value];
       break;
     case "condition":
       label = ASSET_CONDITION_LABELS[value];
-      style = ASSET_CONDITION_STYLES[value];
+      tone = tones.condition[value];
       break;
     case "maintenance":
       label = MAINTENANCE_STATUS_LABELS[value];
-      style = MAINTENANCE_STATUS_STYLES[value];
+      tone = tones.maintenance[value];
       break;
     case "loan":
       label = LOAN_STATUS_LABELS[value];
-      style = LOAN_STATUS_STYLES[value];
+      tone = tones.loan[value];
       break;
   }
 
   return (
-    <Badge variant="outline" className={`gap-1 rounded-full font-normal ${style}`}>
+    <Tag tone={tone} dot>
       {label}
-    </Badge>
+    </Tag>
   );
 }

@@ -1,5 +1,12 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { formatRecordDate } from "@/lib/record-date";
+
+import { collectionLabel } from "@/lib/collection-label";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
@@ -71,6 +78,8 @@ export default function SettingsBillingPage() {
 
   const d = status.data;
   const sub = d.subscription;
+  // The history is newest first; latestPayment is an unfinished checkout.
+  const latestRecordedPayment = d.payments[0];
   const planName = (p?: string | null) =>
     p ? p.charAt(0).toUpperCase() + p.slice(1) : "Not subscribed";
   const priceFor = (planId: string) => {
@@ -170,9 +179,9 @@ export default function SettingsBillingPage() {
                       <span className="text-xs font-normal text-ink-faint">/mo</span>
                     </p>
                     <p className="mt-1 text-xs text-ink-faint">
-                      {entry.limits.members > 0 ? number(entry.limits.members) : "Unlimited"} people ·{" "}
+                      {entry.limits.members > 0 ? number(entry.limits.members) : "Unlimited"} {collectionLabel(entry.limits.members, "people")} ·{" "}
                       {entry.limits.locations > 0 ? `${number(entry.limits.locations)} branch${entry.limits.locations === 1 ? "" : "es"}` : "unlimited branches"} ·{" "}
-                      {entry.limits.staff > 0 ? `${number(entry.limits.staff)} staff seats` : "unlimited staff"}
+                      {entry.limits.staff > 0 ? `${number(entry.limits.staff)} ${collectionLabel(entry.limits.staff, "staff seats")}` : "unlimited staff"}
                     </p>
                     {!current && status.canPay ? (
                       <Button asChild size="sm" variant="outline" className="mt-3 h-8 w-full rounded-full border-line text-sm">
@@ -218,7 +227,7 @@ export default function SettingsBillingPage() {
                   <span>Invoice</span>
                   <span>Date</span>
                   <span>Plan</span>
-                  <span>Method</span>
+                  <span>Status</span>
                   <span className="text-right">Amount</span>
                 </div>
                 {d.payments.slice(0, 12).map((p) => (
@@ -226,11 +235,11 @@ export default function SettingsBillingPage() {
                     <div className="grid grid-cols-[1.2fr_1fr_0.8fr_1fr_0.9fr] items-center gap-3 px-5 py-3 text-sm">
                       <span className="truncate font-mono text-xs text-ink-faint">{p.reference.slice(0, 16)}</span>
                       <span className="text-ink-soft">
-                        {new Date(p.created_at).toLocaleDateString("en-GB", { month: "short", day: "numeric", year: "numeric" })}
+                        {formatRecordDate(new Date(p.created_at))}
                       </span>
                       <span>{planName(p.plan)}</span>
                       <span className="flex items-center gap-1.5 text-sm">
-                        <Tag tone={PAYMENT_TONES[p.status] ?? "neutral"} dot>{p.status}</Tag>
+                        <Tag tone={PAYMENT_TONES[p.status] ?? "neutral"} dot>{formatStatusLabel(p.status)}</Tag>
                       </span>
                       <span className="num text-right font-semibold">{subscriptionMoney(p.amount, p.currency)}</span>
                     </div>
@@ -256,23 +265,26 @@ export default function SettingsBillingPage() {
                 </li>
               ))}
               {d.features.length > 10 ? (
-                <li className="text-xs text-ink-faint">+ {number(d.features.length - 10)} more feature surfaces</li>
+                <li className="text-xs text-ink-faint">+ {number(d.features.length - 10)} more {collectionLabel(d.features.length - 10, "feature surfaces")}</li>
               ) : null}
             </ul>
           </div>
-          {d.latestPayment ? (
+          {latestRecordedPayment ? (
             <div className="paper-card rounded-2xl p-5">
-              <p className="rule-label mb-2">Last charge</p>
+              <p className="rule-label mb-2">Latest payment</p>
               <p className="num font-display text-lg font-semibold">
-                {subscriptionMoney(d.latestPayment.amount, d.latestPayment.currency)}
+                {subscriptionMoney(latestRecordedPayment.amount, latestRecordedPayment.currency)}
               </p>
-              <p className="mt-0.5 text-xs text-ink-faint">
-                via {d.latestPayment.gateway} · exact reference {d.latestPayment.reference.slice(0, 10)}…
+              <div className="mt-2">
+                <Tag tone={PAYMENT_TONES[latestRecordedPayment.status] ?? "neutral"} dot>{formatStatusLabel(latestRecordedPayment.status)}</Tag>
+              </div>
+              <p className="mt-2 text-xs text-ink-faint">
+                {formatRecordDate(new Date(latestRecordedPayment.created_at))} · reference {latestRecordedPayment.reference.slice(0, 10)}…
               </p>
             </div>
           ) : (
             <div className="rounded-2xl border border-dashed border-line p-5 text-xs leading-relaxed text-ink-faint">
-              No payment charges yet. Choose a plan above to get started.
+              No payments recorded yet.
             </div>
           )}
           <div className="rounded-2xl border border-dashed border-line p-5 text-xs leading-relaxed text-ink-faint">

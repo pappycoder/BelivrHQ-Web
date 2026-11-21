@@ -359,7 +359,7 @@ export function FilterChip({
       className={cn(
         "h-8 gap-1.5 rounded-full border-line bg-card px-3 text-sm font-medium shadow-none",
         active &&
-          "border-ink/20 bg-ink text-paper hover:bg-ink/90 hover:text-paper",
+          "border-ink/20 bg-ink text-paper hover:bg-ink/90 hover:text-paper dark:border-ink/20 dark:bg-ink dark:text-paper dark:hover:bg-ink/90 dark:hover:text-paper",
       )}
     >
       {children}

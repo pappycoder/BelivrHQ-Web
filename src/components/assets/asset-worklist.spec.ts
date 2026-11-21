@@ -7,7 +7,8 @@ const state = vi.hoisted(() => ({
   records: [] as AssetWorklistRecord[],
   grants: new Set<string>(),
 }));
-vi.mock("@/hooks/use-assets", () => ({
+vi.mock("@/hooks/use-assets", async (original) => ({
+  ...await original<typeof import("@/hooks/use-assets")>(),
   useAssetWorklist: () => ({ data: { data: state.records, meta: { total: state.records.length } }, isLoading: false, isFetching: false, error: null }),
   useAssetsList: () => ({ data: { data: [], meta: { total: 0 } }, isLoading: false }),
 }));

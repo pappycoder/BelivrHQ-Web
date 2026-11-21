@@ -1,5 +1,8 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
@@ -333,7 +336,7 @@ export default function GivingDonationsPage() {
               setPage(1);
             }}
           >
-            {s}
+            {formatStatusLabel(s)}
           </FilterChip>
         ))}
 <select
@@ -494,7 +497,7 @@ export default function GivingDonationsPage() {
                       {TYPE_LABELS[tx.type] ?? tx.type}
                     </span>
                     <Tag tone={STATUS_TONES[tx.status]} dot>
-                      {tx.status}
+                      {formatStatusLabel(tx.status)}
                     </Tag>
                   </span>
                   <span className="num text-right text-sm font-semibold">

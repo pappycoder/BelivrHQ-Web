@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
 
 import * as React from "react";
@@ -148,7 +150,7 @@ export default function PaperNotificationsPage() {
   const runBulk = (mutation: typeof bulkRead, done: (n: number) => string, title: string) => {
     const ids = [...selectedIds];
     const names = items.filter((item) => ids.includes(item.id)).map((item) => item.title);
-    confirm({ title, subject: names.join(" · "), description: `Update ${ids.length} selected notifications?`, onConfirm: () => mutation.mutateAsync(ids, {
+    confirm({ title, subject: names.join(" · "), description: `Update ${ids.length} selected ${collectionLabel(ids.length, "notifications")}?`, onConfirm: () => mutation.mutateAsync(ids, {
       onSuccess: () => { toast(done(ids.length)); setSelected((current) => { const next = new Set(current); ids.forEach((id) => next.delete(id)); return next; }); },
       onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't complete that.")),
     }) });
@@ -160,7 +162,7 @@ export default function PaperNotificationsPage() {
     const onDone = () => {
       toast(
         ids.length > 1
-          ? `${ids.length} notifications deleted.`
+          ? `${ids.length} ${collectionLabel(ids.length, "notifications")} deleted.`
           : "Notification deleted.",
       );
       setSelected((current) => {
@@ -185,7 +187,7 @@ export default function PaperNotificationsPage() {
         title="Notifications"
         description={
           list.data?.unreadCount
-            ? `${list.data.unreadCount} things that happened while you were elsewhere.`
+            ? `${list.data.unreadCount} ${collectionLabel(list.data.unreadCount, "things")} that happened while you were elsewhere.`
             : "Everything is quiet."
         }
         actions={

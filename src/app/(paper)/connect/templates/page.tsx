@@ -1,5 +1,7 @@
 "use client";
 
+import { formatRecordDate } from "@/lib/record-date";
+
 import { DialogFooter, DialogClose } from "@/components/ui/dialog";
 
 import { useId as useFormFieldId } from "react";
@@ -255,7 +257,7 @@ export default function TemplatesPage() {
             <span><Tag tone={t.archivedAt ? "neutral" : t.status === "published" ? "moss" : "gold"}>{t.archivedAt ? "Archived" : TEMPLATE_STATUS_LABELS[t.status]}</Tag></span>
             <span className="truncate text-ink-soft">{t.category ?? "Not available"}</span>
             <span className="truncate text-ink-soft">{t.branchName ?? "All branches"}</span>
-            <span className="text-ink-faint">{new Date(t.updatedAt).toLocaleDateString("en-GB")}</span>
+            <span className="text-ink-faint">{formatRecordDate(new Date(t.updatedAt))}</span>
             {actionsFor(t, true)}
           </div>)}
         </ListTable>
