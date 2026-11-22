@@ -55,7 +55,7 @@ export default function NewFormPage() {
           </Button>
         }
       />
-      <FormForm onSubmit={onSubmit} submitLabel="Create form" />
+      <FormForm withPreview onSubmit={onSubmit} submitLabel="Create form" />
     </div>
   );
 }

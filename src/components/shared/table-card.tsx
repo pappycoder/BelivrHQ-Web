@@ -2,34 +2,26 @@
 
 import { TableExportScope } from "@/contexts/table-export-scope";
 import * as React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import { TablePagination } from "@/components/shared/table-pagination";
 
 interface TableCardProps {
   title?: React.ReactNode;
   description?: React.ReactNode;
-  /** Rendered on the right side of the header (buttons, links). */
   action?: React.ReactNode;
-  /** Rendered above the table (search, filters). */
   toolbar?: React.ReactNode;
   exportAction?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
   itemName?: string;
-  /** When set, a TablePagination footer is rendered inside the card. */
   page?: number;
-  /** Defaults to 15 when pagination is enabled. */
   perPage?: number;
   total?: number;
   onPageChange?: (page: number) => void;
   onPerPageChange?: (perPage: number) => void;
 }
 
-/**
- * Standard list-page table grammar: a titled Card wrapping the table as an
- * inner `rounded-md border` card, with the pagination footer inside the card.
- * Mirrors the Assets register layout everywhere.
- */
+/** Shared section surface and pagination for native record tables. */
 export function TableCard({
   title,
   description,
@@ -48,22 +40,11 @@ export function TableCard({
   const paginated = typeof page === "number" && typeof onPageChange === "function";
 
   return (
-    <Card data-table-card className={className}>
-      {(title || description || action || exportAction) && (
-        <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            {title && <CardTitle>{title}</CardTitle>}
-            {description && <CardDescription>{description}</CardDescription>}
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {exportAction}
-            {action}
-          </div>
-        </CardHeader>
-      )}
-      <CardContent className="space-y-4">
-        {toolbar && <div data-table-toolbar className="min-w-0 [&>*]:max-w-full [&>div]:flex-wrap">{toolbar}</div>}
-        <div data-table-body className="min-w-0 overflow-x-auto rounded-md border">
+    <section className={cn("min-w-0 space-y-4", className)}>
+      {(title || description || action || exportAction) && <div className="flex flex-wrap items-end justify-between gap-3"><div className="min-w-0 space-y-1">{title && <h2 className="font-display text-lg font-semibold leading-tight">{title}</h2>}{description && <p className="text-sm text-ink-soft">{description}</p>}</div><div className="flex flex-wrap items-center gap-2">{exportAction}{action}</div></div>}
+      {toolbar}
+      <div data-table-card className="paper-card overflow-hidden rounded-2xl">
+        <div data-table-body className="min-w-0 overflow-x-auto">
           <TableExportScope.Provider value={Boolean(exportAction)}>
             {children}
           </TableExportScope.Provider>
@@ -78,7 +59,7 @@ export function TableCard({
             onPerPageChange={onPerPageChange}
           />
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }

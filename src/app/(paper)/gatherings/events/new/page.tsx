@@ -1,5 +1,10 @@
 "use client";
 
+import { FormActions } from "@/components/shared/form-actions";
+
+import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
+
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import * as React from "react";
@@ -8,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, CalendarPlus, Ticket } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader, SectionCard } from "@/components/paper/section";
+import { PageTour, type TourStep } from "@/components/tours/page-tour";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,6 +29,24 @@ import {
   type EventRecurrence,
 } from "@/lib/schedule-occurrence";
 import { cn } from "@/lib/utils";
+
+const NEW_EVENT_TOUR_STEPS: TourStep[] = [
+  { target: ".new-event-tour-heading", title: "Plan a new event", description: "Use this form to prepare an event. Fields marked with an asterisk are required. The tour explains each part without entering details or submitting the form. You can replay it with Take a tour." },
+  { target: ".new-event-tour-title", title: "Give the event a title", description: "Enter a clear event name. Title is required and appears in the calendar preview as you type. The placeholder is only an example, not a saved title." },
+  { target: ".new-event-tour-type", title: "Choose an event type", description: "Choose Conference, Lifecycle, Training or Social. Conference is selected initially. Service schedules are created separately with Add service on the calendar or in the service register." },
+  { target: ".new-event-tour-description", title: "Describe what to expect", description: "Add an optional description to explain the event. Keep useful details here, such as its purpose and who should attend. Typing only updates this form until you create the event." },
+  { target: ".new-event-tour-recurrence", title: "Choose how the event repeats", description: "One-time stays on one calendar day. Every week repeats on the start date's weekday until the optional end date, or indefinitely. Date range runs each day from start through end, inclusive, and requires an end date." },
+  { target: ".new-event-tour-start", title: "Set the start date and time", description: "Starts is required. Open its picker, choose the date and 24-hour time, then Apply. Cancel closes the picker without applying its draft. For weekly events, the start date also determines the recurring weekday." },
+  { target: ".new-event-tour-end", title: "Review the end of the schedule", description: "One-time events can have an end time on the same day. Date range requires an end date on or after the start date. Weekly events have an optional Until date. Review the time as well as the date before saving." },
+  { target: ".new-event-tour-location", title: "Tell people where to gather", description: "Location is optional. Enter the venue or meeting location you want shown with the event. It also appears in the preview; changing it here does not reserve a venue." },
+  { target: ".new-event-tour-capacity", title: "Set a capacity when needed", description: "Capacity is an optional numeric limit for the event. Leave it blank if you do not want to set a capacity here. Check the value before creating the event; the preview shows what you entered." },
+  { target: ".new-event-tour-branch", title: "Check the event's branch", description: "HQ accounts must select a branch. Other accounts see the branch the event will belong to. This choice determines the event's scope; it does not change your account's access." },
+  { target: ".new-event-tour-pricing", title: "Choose free or priced attendance", description: "Free to attend starts switched on. If your plan includes paid events, turn it off to reveal Price. Plans that support free events only keep this switch locked. Free admission does not necessarily remove the need to register." },
+  { target: ".new-event-tour-price", title: "Review the ticket price", description: "Enter the price for a priced event. Review it carefully before saving. Ticket tiers, check-in codes and checkout are managed from the event page after creation. This form does not charge anyone." },
+  { target: ".new-event-tour-preview", title: "Check the calendar preview", description: "The preview follows your title, start date, location, type, capacity and pricing choices. It is a local summary of this draft, not a saved calendar entry. On small screens it appears below the form sections." },
+  { target: ".new-event-tour-submit", title: "Create only when ready", description: "Create event validates the required fields and submits the form. Successful creation opens the new event's record. Review the schedule, branch and pricing first. Next and Finish in this tour never create an event." },
+  { target: ".new-event-tour-cancel", title: "Leave without creating an event", description: "Cancel returns to the calendar without saving this form. The Gatherings · Events link above does the same. Draft entries are not saved automatically, so finish reviewing them before leaving." },
+];
 
 function toIso(local: string) {
   if (!local) return undefined;
@@ -107,6 +131,8 @@ export default function NewEventPage() {
   return (
     <div className="space-y-6">
       <PageHeader
+        className="new-event-tour-heading"
+        actions={<PageTour page="Create event" account={profile ? `${profile.churchId}:${profile.profileId}` : undefined} ready={ready && canCreate && !createEvent.isPending} steps={NEW_EVENT_TOUR_STEPS} />}
         eyebrow={
           <Link href="/gatherings/events" className="flex items-center gap-1.5 hover:text-ink">
             <ArrowLeft className="size-3" /> Gatherings · Events
@@ -121,15 +147,15 @@ export default function NewEventPage() {
           Your role can view the calendar but not create events.
         </p>
       ) : (
-        <ValidatedForm onSubmit={submit} className="grid gap-4 lg:grid-cols-[1fr_320px]">
+        <ValidatedForm onSubmit={submit} className={CREATE_FORM_LAYOUT}>
           <div className="min-w-0 space-y-4">
             <SectionCard eyebrow="Details" title="What is it?">
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5 sm:col-span-2">
-                  <Label required className="text-sm">Title</Label>
-                  <Input required value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="Sunday Gathering" className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                <div className="new-event-tour-title space-y-1.5 sm:col-span-2">
+                  <Label required className="text-sm" htmlFor="new-event-title">Title</Label>
+                  <Input id="new-event-title" required value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="Sunday Gathering" className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
                 </div>
-                <div className="space-y-1.5 sm:col-span-2">
+                <div className="new-event-tour-type space-y-1.5 sm:col-span-2">
                   <Label className="text-sm">Type</Label>
                   <div className="flex flex-wrap gap-1.5">
                     {EVENT_CREATION_TYPES.map((item) => (
@@ -137,6 +163,7 @@ export default function NewEventPage() {
                         key={item.value}
                         type="button"
                         onClick={() => set("type", item.value)}
+                        aria-pressed={form.type === item.value}
                         className={cn(
                           "rounded-full border px-3 py-1.5 text-sm transition-colors",
                           form.type === item.value ? "border-ink/20 bg-ink text-paper" : "border-line bg-card text-ink-soft hover:border-ink/20",
@@ -147,16 +174,16 @@ export default function NewEventPage() {
                     ))}
                   </div>
                 </div>
-                <div className="space-y-1.5 sm:col-span-2">
-                  <Label className="text-sm">Description</Label>
-                  <Textarea rows={3} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="A sentence people can picture themselves in…" className="resize-none rounded-lg border-line bg-card text-sm shadow-none" />
+                <div className="new-event-tour-description space-y-1.5 sm:col-span-2">
+                  <Label className="text-sm" htmlFor="new-event-description">Description</Label>
+                  <Textarea id="new-event-description" rows={3} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="A sentence people can picture themselves in…" className="resize-none rounded-lg border-line bg-card text-sm shadow-none" />
                 </div>
               </div>
             </SectionCard>
 
             <SectionCard eyebrow="When & where" title="Put it on the calendar">
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5 sm:col-span-2">
+                <div className="new-event-tour-recurrence space-y-1.5 sm:col-span-2">
                   <Label className="text-sm">Repeats</Label>
                   <div className="flex flex-wrap gap-1.5">
                     {EVENT_RECURRENCES.map((item) => (
@@ -164,6 +191,7 @@ export default function NewEventPage() {
                         key={item}
                         type="button"
                         onClick={() => set("recurrence", item)}
+                        aria-pressed={form.recurrence === item}
                         className={cn(
                           "rounded-full border px-3 py-1.5 text-sm transition-colors",
                           form.recurrence === item ? "border-ink/20 bg-ink text-paper" : "border-line bg-card text-ink-soft hover:border-ink/20",
@@ -183,32 +211,32 @@ export default function NewEventPage() {
                         : "Happens on the start day alone. The end time just closes that day. Check-in rejects any other date."}
                   </p>
                 </div>
-                <div className="space-y-1.5">
-                  <Label required className="text-sm">Starts</Label>
-                  <Input required picker="wheel" type="datetime-local" value={form.start} onChange={(e) => set("start", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                <div className="new-event-tour-start space-y-1.5">
+                  <Label required className="text-sm" htmlFor="new-event-start">Starts</Label>
+                  <Input id="new-event-start" required picker="wheel" type="datetime-local" value={form.start} onChange={(e) => set("start", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
                 </div>
-                <div className="space-y-1.5">
-                  <Label required={form.recurrence === "multi_day"} className="text-sm">
+                <div className="new-event-tour-end space-y-1.5">
+                  <Label htmlFor="new-event-end" required={form.recurrence === "multi_day"} className="text-sm">
                     {form.recurrence === "one_time"
                       ? "Ends (same day)"
                       : form.recurrence === "multi_day"
                         ? "Ends"
                         : "Until (optional)"}
                   </Label>
-                  <Input required={form.recurrence === "multi_day"} picker="wheel" type="datetime-local" value={form.end} onChange={(e) => set("end", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                  <Input id="new-event-end" required={form.recurrence === "multi_day"} picker="wheel" type="datetime-local" value={form.end} onChange={(e) => set("end", e.target.value)} className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-sm">Location</Label>
-                  <Input value={form.location} onChange={(e) => set("location", e.target.value)} placeholder="Main Hall" className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                <div className="new-event-tour-location space-y-1.5">
+                  <Label className="text-sm" htmlFor="new-event-location">Location</Label>
+                  <Input id="new-event-location" value={form.location} onChange={(e) => set("location", e.target.value)} placeholder="Main Hall" className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-sm">Capacity</Label>
-                  <Input type="number" value={form.capacity} onChange={(e) => set("capacity", e.target.value)} placeholder="400" className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                <div className="new-event-tour-capacity space-y-1.5">
+                  <Label className="text-sm" htmlFor="new-event-capacity">Capacity</Label>
+                  <Input id="new-event-capacity" type="number" value={form.capacity} onChange={(e) => set("capacity", e.target.value)} placeholder="400" className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
                 </div>
                 {isHq ? (
-                  <div className="space-y-1.5 sm:col-span-2">
-                    <Label required className="text-sm">Branch</Label>
-                    <select required value={form.branchId} onChange={(e) => set("branchId", e.target.value)} className="h-10 w-full rounded-lg border border-line bg-card px-2 text-sm outline-none">
+                  <div className="new-event-tour-branch space-y-1.5 sm:col-span-2">
+                    <Label required className="text-sm" htmlFor="new-event-branch">Branch</Label>
+                    <select id="new-event-branch" required value={form.branchId} onChange={(e) => set("branchId", e.target.value)} className="h-10 w-full rounded-lg border border-line bg-card px-2 text-sm outline-none">
                       <option value="">Select a branch</option>
                       {(branches.data?.data ?? []).map((b) => (
                         <option key={b.branchId} value={b.branchId}>{b.name}</option>
@@ -216,14 +244,14 @@ export default function NewEventPage() {
                     </select>
                   </div>
                 ) : (
-                  <p className="text-sm text-ink-faint sm:col-span-2">
+                  <p className="new-event-tour-branch text-sm text-ink-faint sm:col-span-2">
                     This event will belong to {profile?.branch?.name ?? "your branch"}.
                   </p>
                 )}
               </div>
             </SectionCard>
 
-            <SectionCard eyebrow="Tickets" title="Free or priced">
+            <SectionCard className="new-event-tour-pricing" eyebrow="Tickets" title="Free or priced">
               <label className="flex items-center justify-between rounded-lg border border-line px-3 py-2.5">
                 <span className="flex items-center gap-2 text-sm"><Ticket className="size-3.5 text-ink-faint" /> Free to attend</span>
                 <Switch disabled={!canCreatePaidEvents} checked={form.isFree} onCheckedChange={(v) => set("isFree", !!v)} />
@@ -231,9 +259,9 @@ export default function NewEventPage() {
               {!canCreatePaidEvents && <p className="mt-3 text-sm leading-relaxed text-ink-muted">Your plan includes free events. Paid events are available on Network and Enterprise.</p>}
               {!form.isFree ? (
                 <div className="mt-3 grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-1.5">
-                    <Label className="text-sm">Price</Label>
-                    <Input type="number" value={form.price} onChange={(e) => set("price", e.target.value)} placeholder="10" className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
+                  <div className="new-event-tour-price space-y-1.5">
+                    <Label className="text-sm" htmlFor="new-event-price">Price</Label>
+                    <Input id="new-event-price" type="number" value={form.price} onChange={(e) => set("price", e.target.value)} placeholder="10" className="h-10 rounded-lg border-line bg-card text-sm shadow-none" />
                   </div>
                   <p className="self-end text-xs leading-relaxed text-ink-faint">
                     Ticket tiers, check-in codes and checkout are managed from the event page after saving.
@@ -243,11 +271,9 @@ export default function NewEventPage() {
             </SectionCard>
           </div>
 
-          <aside className="lg:sticky lg:top-20 lg:self-start">
-            <div className="paper-card rounded-2xl p-4">
-              <p className="rule-label mb-3">Calendar preview</p>
-              <div className="rounded-xl border border-line bg-background p-3.5">
-                <p className="font-display text-sm font-semibold">{form.title || "Untitled gathering"}</p>
+          <CreatePreviewSidebar>
+            <CreatePreviewCard eyebrow="Calendar preview" title={form.title || "Untitled gathering"}>
+              <div className="new-event-tour-preview space-y-3">
                 <p className="mt-1 text-sm text-ink-soft">
                   {form.start ? new Date(form.start).toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" }) : "Date not set"}
                   {form.location ? ` · ${form.location}` : ""}
@@ -257,14 +283,16 @@ export default function NewEventPage() {
                   {form.capacity ? ` · capacity ${form.capacity}` : ""} · {form.isFree ? "free" : form.price ? `${form.price}/seat` : "priced"}
                 </p>
               </div>
-              <Button type="submit" disabled={createEvent.isPending} className="mt-4 h-10 w-full gap-2 rounded-lg text-sm">
+            </CreatePreviewCard>
+            <FormActions>
+              <Button type="submit" disabled={createEvent.isPending} className="new-event-tour-submit mt-4 h-10 w-full gap-2 rounded-lg text-sm">
                 <CalendarPlus className="size-4" /> {createEvent.isPending ? "Creating…" : "Create event"}
               </Button>
-              <Button asChild variant="ghost" className="mt-2 h-9 w-full rounded-lg text-sm text-ink-soft">
+              <Button asChild variant="ghost" className="new-event-tour-cancel mt-2 h-9 w-full rounded-lg text-sm text-ink-soft">
                 <Link href="/gatherings/events">Cancel</Link>
               </Button>
-            </div>
-          </aside>
+            </FormActions>
+          </CreatePreviewSidebar>
         </ValidatedForm>
       )}
     </div>

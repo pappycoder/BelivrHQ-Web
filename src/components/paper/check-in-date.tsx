@@ -3,13 +3,9 @@
 import * as React from "react";
 import { format } from "date-fns";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
+import { FormDateTimePanel } from "@/components/ui/form-date-time-picker";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { IconAction } from "@/components/paper/primitives";
 import {
   localDayKey,
@@ -48,7 +44,6 @@ export function CheckInDatePicker({
   className?: string;
 }) {
   const [open, setOpen] = React.useState(false);
-  const [month, setMonth] = React.useState<Date>(() => parseDayKey(value));
 
   const selected = React.useMemo(() => parseDayKey(value), [value]);
   const previous = stepOccurrence(occursOn, value, -1);
@@ -58,9 +53,6 @@ export function CheckInDatePicker({
     ? today
     : nearestOccurrence(occursOn, today);
 
-  React.useEffect(() => {
-    setMonth(parseDayKey(value));
-  }, [value]);
 
   return (
     <div className={cn("flex items-center gap-1", className)}>
@@ -72,13 +64,7 @@ export function CheckInDatePicker({
         className="size-9 rounded-full border border-line bg-card"
       />
 
-      <Popover
-        open={open}
-        onOpenChange={(nextOpen) => {
-          setOpen(nextOpen);
-          if (nextOpen) setMonth(selected);
-        }}
-      >
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             type="button"
@@ -91,38 +77,22 @@ export function CheckInDatePicker({
             <span>{format(selected, "EEE d MMM")}</span>
           </Button>
         </PopoverTrigger>
-        <PopoverContent align="start" className="w-auto p-0">
-          <Calendar
-            mode="single"
-            selected={selected}
-            month={month}
-            onMonthChange={setMonth}
-            disabled={(date) => !occursOn(localDayKey(date))}
-            onSelect={(date) => {
-              if (!date) return;
-              onChange(localDayKey(date));
+        <PopoverContent align="start" collisionPadding={12} className="filter-date-popover" data-date-picker-kind="date" aria-label={label}>
+          <p className="filter-date-title">{label}</p>
+          <FormDateTimePanel
+            compact
+            type="date"
+            value={value}
+            todayValue={todayTarget ?? undefined}
+            todayLabel="Jump to today"
+            validate={date => occursOn(date) ? undefined : "Choose a date when this gathering meets."}
+            onApply={date => {
+              if (disabled || !occursOn(date)) return;
+              onChange(date);
               setOpen(false);
             }}
+            onCancel={() => setOpen(false)}
           />
-          <div className="flex items-center justify-between gap-3 border-t border-line px-3 py-2">
-            <span className="text-xs text-ink-faint">
-              Only valid dates are selectable
-            </span>
-            <Button
-              type="button"
-              variant="ghost"
-              size="xs"
-              disabled={!todayTarget}
-              onClick={() => {
-                if (!todayTarget) return;
-                onChange(todayTarget);
-                setOpen(false);
-              }}
-              className="rounded-full text-sm"
-            >
-              Jump to today
-            </Button>
-          </div>
         </PopoverContent>
       </Popover>
 

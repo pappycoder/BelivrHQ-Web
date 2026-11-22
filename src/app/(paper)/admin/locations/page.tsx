@@ -1,5 +1,11 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
+import { collectionLabel } from "@/lib/collection-label";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
@@ -85,6 +91,8 @@ export default function AdminBranchesPage() {
     canDelete && branch.archivedAt && { label: "Delete forever", icon: <Trash2 />, tone: "danger", onSelect: () => setArchiveState({ kind: "purge", branch }), bulk: { key: "delete", label: "Delete selected permanently", destructive: true, run: () => del.mutateAsync(branch.branchId) } },
   ];
 
+  if (branches.isError) return <PageQueryError title="Branches" />;
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -111,11 +119,11 @@ export default function AdminBranchesPage() {
         <StatCard label="Locations named" value={rows.filter((b) => b.city).length} tone="sky" />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={query} onChange={setQuery} placeholder="Search name, city or address…" className="w-full max-w-xs" />
-        <FilterChip active={archivedView} onClick={() => setArchivedView((v) => !v)}>Archived</FilterChip>
-        <span className="ml-auto">
-          <ViewToggle
+      <ListToolbar
+ search={<SearchField value={query} onChange={setQuery} placeholder="Search name, city or address…" className="w-full max-w-xs" />}
+ controls={<>
+<FilterChip active={archivedView} onClick={() => setArchivedView((v) => !v)}>Archived</FilterChip>
+<ViewToggle
             value={view}
             onChange={setView}
             options={[
@@ -123,8 +131,10 @@ export default function AdminBranchesPage() {
               { value: "cards", label: "Cards", icon: <LayoutGrid /> },
             ]}
           />
-        </span>
-      </div>
+</>}
+>
+
+</ListToolbar>
 
       {branches.isLoading ? (
         <div className="space-y-2">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-xl" />)}</div>
@@ -197,7 +207,7 @@ export default function AdminBranchesPage() {
                   <RowActions reveal={false} actions={manageActions(branch)} />
                 </div>
                 <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
-                  <span className="num">{number(branch.memberCount ?? 0)} members</span>
+                  <span className="num">{number(branch.memberCount ?? 0)} {collectionLabel(branch.memberCount ?? 0, "members")}</span>
                   <span>added {formatDate(branch.createdAt)}</span>
                 </div>
               </div>

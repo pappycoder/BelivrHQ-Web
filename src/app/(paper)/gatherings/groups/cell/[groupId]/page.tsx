@@ -1,5 +1,8 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -94,6 +97,10 @@ export default function CellGroupDetailPage({
         <Skeleton className="h-40 rounded-2xl" />
       </div>
     );
+  }
+
+  if (group.isError && !isMissingRecordError(group.error)) {
+    return <RecordQueryError title="Cell group details" error={group.error} backHref="/gatherings/groups/cell" backLabel="Back to cell groups" />;
   }
 
   if (group.isError || !group.data) {

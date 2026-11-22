@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import * as React from "react";
@@ -9,7 +13,6 @@ import { z } from "zod";
 import { toast } from "@/lib/toast";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -92,7 +95,7 @@ export function ReturnLoanDialog({
   const onSubmit = (values: ReturnFormValues) => {
     const payload = {
       actualReturnDate: values.actualReturnDate,
-      conditionAfter: values.conditionAfter as AssetCondition | undefined,
+      conditionAfter: (values.conditionAfter || undefined) as AssetCondition | undefined,
       notes: values.notes?.trim() || undefined,
     };
     returnMutation.mutate(payload as never, {
@@ -113,7 +116,7 @@ export function ReturnLoanDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px]">
+      <FormDialogContent className="sm:max-w-[480px]">
         <DialogHeader>
           <DialogTitle>Return {assetName}</DialogTitle>
           <DialogDescription>
@@ -123,59 +126,61 @@ export function ReturnLoanDialog({
 
         <Form {...form}>
           <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <FormField required
+            <FormSection title="Return details">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <FormField required
+                  control={form.control}
+                  name="actualReturnDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Return Date *</FormLabel>
+                      <FormControl>
+                        <Input picker="wheel" type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="conditionAfter"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Condition After</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select condition" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {CONDITION_OPTIONS.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
                 control={form.control}
-                name="actualReturnDate"
+                name="notes"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Return Date *</FormLabel>
+                    <FormLabel>Notes</FormLabel>
                     <FormControl>
-                      <Input picker="wheel" type="date" {...field} />
+                      <Textarea placeholder="Return notes" rows={2} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="conditionAfter"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Condition After</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select condition" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {CONDITION_OPTIONS.map((opt) => (
-                          <SelectItem key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Notes</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Return notes" rows={2} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            </FormSection>
 
             <DialogFooter className="pt-2">
               <Button
@@ -192,7 +197,7 @@ export function ReturnLoanDialog({
             </DialogFooter>
           </ValidatedForm>
         </Form>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

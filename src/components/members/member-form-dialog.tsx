@@ -1,5 +1,7 @@
 "use client";
 
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import * as React from "react";
@@ -14,7 +16,6 @@ import { z } from "zod";
 import { toast } from "@/lib/toast";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -193,7 +194,7 @@ export function MemberFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={requestClose}>
-      <DialogContent
+      <FormDialogContent
         data-workspace-editor={isEdit ? "member" : undefined}
         onCloseAutoFocus={returnFocusRef ? event => {
           if (returnFocusRef.current) {
@@ -491,7 +492,7 @@ export function MemberFormDialog({
             </DialogFooter>
           </ValidatedForm>
         </Form>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

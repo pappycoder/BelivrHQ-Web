@@ -1,5 +1,12 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { collectionLabel } from "@/lib/collection-label";
+
+import { FormSection } from "@/components/shared/form-section";
+
 import * as React from "react";
 import {
   Archive,
@@ -47,7 +54,7 @@ export function PeopleHeader({
         count === undefined ? undefined : (
           <span
             className="rounded-full border border-primary/15 bg-primary/5 px-2.5 py-1 text-sm font-medium tabular-nums text-[var(--workspace-accent-readable,var(--primary))]"
-            aria-label={`${count.toLocaleString()} results`}
+            aria-label={`${count.toLocaleString()} ${collectionLabel(count, "results")}`}
           >
             {count.toLocaleString()}
           </span>
@@ -103,12 +110,12 @@ export function PeopleStatusBadge({ status }: { status: string }) {
     <Badge
       variant="outline"
       className={cn(
-        "gap-1.5 rounded-full px-2 py-0.5 text-sm font-medium capitalize",
+        "gap-1.5 rounded-full px-2 py-0.5 text-sm font-medium",
         statusTones[status] ?? statusTones.inactive,
       )}
     >
       <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
-      {status.replace(/_/g, " ")}
+      {formatStatusLabel(status)}
     </Badge>
   );
 }
@@ -132,8 +139,8 @@ export function PeopleSectionHeading({
   icon?: LucideIcon;
 }) {
   return (
-    <span className="flex items-center gap-2 text-sm font-semibold">
-      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-violet-500/8 text-violet-600 dark:text-violet-300">
+    <span className="flex items-center gap-2 font-display text-lg font-semibold">
+      <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-brand-soft text-brand">
         <Icon className="size-3.5" aria-hidden="true" />
       </span>
       {children}
@@ -151,17 +158,7 @@ export function PeopleFormSection({
   icon?: LucideIcon;
   description?: string;
 }) {
-  return (
-    <fieldset className="min-w-0 space-y-4 rounded-xl border border-border/70 p-4">
-      <legend className="px-1">
-        <PeopleSectionHeading icon={icon}>{title}</PeopleSectionHeading>
-      </legend>
-      {description && (
-        <p className="text-sm text-muted-foreground">{description}</p>
-      )}
-      {children}
-    </fieldset>
-  );
+  return <FormSection title={<PeopleSectionHeading icon={icon}>{title}</PeopleSectionHeading>} description={description}>{children}</FormSection>;
 }
 
 export function PeopleMoreFilters({
@@ -180,7 +177,7 @@ export function PeopleMoreFilters({
           {count > 0 && (
             <span
               className="rounded-full bg-primary/10 px-1.5 text-sm text-[var(--workspace-accent-readable,var(--primary))]"
-              aria-label={`${count} active filters`}
+              aria-label={`${count} active ${collectionLabel(count, "filters")}`}
             >
               {count}
             </span>

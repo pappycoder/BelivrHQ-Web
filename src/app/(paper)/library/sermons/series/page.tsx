@@ -1,5 +1,8 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import * as React from "react";
 import { ChevronRight, Layers, Radio } from "lucide-react";
 import { Tag } from "@/components/paper/stat";
@@ -10,6 +13,8 @@ import { formatDate } from "@/hooks/use-media";
 export default function SermonSeriesPage() {
   const series = useSermonsSeries();
   const rows = series.data ?? [];
+
+  if (series.isError) return <PageQueryError title="Sermon series" />;
 
   return (
     <SermonAggregateBrowser
@@ -40,7 +45,7 @@ export default function SermonSeriesPage() {
           </div>
           <p className="mt-3 flex-1 font-display text-base font-semibold leading-snug tracking-tight">{item.name}</p>
           <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-sm text-ink-faint">
-            <span className="num">{item.count} messages · last {formatDate(item.lastDate)}</span>
+            <span className="num">{item.count} {collectionLabel(item.count, "messages")} · last {formatDate(item.lastDate)}</span>
             <ChevronRight className="size-3.5" />
           </div>
         </button>

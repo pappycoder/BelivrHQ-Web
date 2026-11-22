@@ -1,17 +1,16 @@
 "use client";
 
+import { formatRecordDateTime } from "@/lib/record-date";
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
+import { SubmissionStatusBadge } from "./submission-status-badge";
 import { SubmissionRespondent } from "./submission-respondent";
 import {
-  SUBMISSION_STATUS_LABELS,
-  SUBMISSION_STATUS_TEXT,
   type Form,
   type FormSubmission,
 } from "@/hooks/use-forms";
@@ -43,18 +42,16 @@ export function SubmissionDetailDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[560px] max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex flex-wrap items-center gap-2">
             Submission
-            <Badge variant="outline" className={SUBMISSION_STATUS_TEXT[submission.status]}>
-              {SUBMISSION_STATUS_LABELS[submission.status]}
-            </Badge>
+            <SubmissionStatusBadge status={submission.status} />
           </DialogTitle>
         </DialogHeader>
 
         <SubmissionRespondent submission={submission} fields={form?.fields} size="sm" />
 
         <div className="space-y-1 text-sm text-muted-foreground">
-          <p>Submitted {format(new Date(submission.createdAt), "MMM d, yyyy 'at' h:mm a")}</p>
+          <p>Submitted {formatRecordDateTime(submission.createdAt)}</p>
           <p>{submission.submittedBy ? "Submitted by a church member" : "Submitted publicly"}</p>
         </div>
 

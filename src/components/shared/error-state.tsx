@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { retryPage } from "@/lib/retry-page";
 import { CircleAlert, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -18,17 +18,14 @@ interface ErrorStateProps {
 export function ErrorState({
   title = "Unable to load this content",
   description = "Please try again. If this continues, come back in a moment.",
-  onRetry,
   retrying = false,
   className,
 }: ErrorStateProps) {
-  const queryClient = useQueryClient();
   const [pending, setPending] = React.useState(false);
   const retry = async () => {
     setPending(true);
     try {
-      if (onRetry) await onRetry();
-      else await queryClient.refetchQueries({ type: "active", predicate: (query) => query.state.status === "error" });
+      await retryPage();
     } finally { setPending(false); }
   };
   const busy = retrying || pending;

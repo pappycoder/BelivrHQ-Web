@@ -1,5 +1,11 @@
 "use client";
 
+import { formatRecordDate } from "@/lib/record-date";
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import Link from "next/link";
 import { ArrowUpDown, CalendarDays, TriangleAlert } from "lucide-react";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -99,8 +105,8 @@ export function MeetingAttendanceTable({
       }
     >
       <div className="space-y-3 p-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <SearchField
+        <ListToolbar
+ search={<SearchField
             value={search}
             onChange={(value) => {
               setSearch(value);
@@ -108,9 +114,18 @@ export function MeetingAttendanceTable({
             }}
             placeholder="Search attendee or notes…"
             className="w-full max-w-xs"
-          />
-          <div className="ml-auto flex flex-wrap items-center gap-2">
-            <Select
+          />}
+ controls={<>
+<SortDirectionToggle
+              ascending={ascending}
+              onToggle={() => {
+                setAscending((value) => !value);
+                setPage(1);
+              }}
+            />
+</>}
+>
+<Select
               value={type}
               onValueChange={(value) => {
                 setType(value);
@@ -129,8 +144,7 @@ export function MeetingAttendanceTable({
                 <SelectItem value="Visitor">Visitors</SelectItem>
               </SelectContent>
             </Select>
-
-            <Select
+<Select
               value={status}
               onValueChange={(value) => {
                 setStatus(value);
@@ -147,12 +161,12 @@ export function MeetingAttendanceTable({
                 <SelectItem value="all">All statuses</SelectItem>
                 {["present", "late", "absent", "excused"].map((value) => (
                   <SelectItem key={value} value={value}>
-                    {value}
+                    {formatStatusLabel(value)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Select
+<Select
               value={sort}
               onValueChange={(value) => {
                 setSort(value as AttendanceSort);
@@ -174,20 +188,12 @@ export function MeetingAttendanceTable({
                 <SelectItem value="status">Status</SelectItem>
               </SelectContent>
             </Select>
-            <SortDirectionToggle
-              ascending={ascending}
-              onToggle={() => {
-                setAscending((value) => !value);
-                setPage(1);
-              }}
-            />
-          </div>
-        </div>
+</ListToolbar>
         <div className="flex flex-wrap items-center gap-3">
           <label className="flex items-center gap-2 text-xs text-ink-faint">
             Meeting date
             <Input
-              picker="native"
+              picker="popover"
               aria-label={`${title} meeting date`}
               type="date"
               value={date}
@@ -317,7 +323,7 @@ export function MeetingAttendanceTable({
                 <span>
                   <Tag tone={row.memberId ? "moss" : "gold"}>{row.type}</Tag>
                 </span>
-                <span className="text-ink-soft">{row.date}</span>
+                <span className="text-ink-soft">{formatRecordDate(row.date)}</span>
                 <span>
                   <Tag
                     tone={
@@ -328,7 +334,7 @@ export function MeetingAttendanceTable({
                           : "neutral"
                     }
                   >
-                    {row.status}
+                    {formatStatusLabel(row.status)}
                   </Tag>
                 </span>
                 <span className="truncate text-ink-faint">

@@ -1,5 +1,15 @@
 "use client";
 
+import { formatRecordDate } from "@/lib/record-date";
+
+import { DialogFooter, DialogClose } from "@/components/ui/dialog";
+
+import { useId as useFormFieldId } from "react";
+
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import * as React from "react";
@@ -29,7 +39,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
-  DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -83,6 +92,7 @@ function draftFrom(t: Template): Draft {
 }
 
 export default function TemplatesPage() {
+  const formFieldId = useFormFieldId();
   const { can, ready } = usePermissions();
   const canCreate = ready && can("templates", "create");
   const canUpdate = ready && can("templates", "update");
@@ -247,7 +257,7 @@ export default function TemplatesPage() {
             <span><Tag tone={t.archivedAt ? "neutral" : t.status === "published" ? "moss" : "gold"}>{t.archivedAt ? "Archived" : TEMPLATE_STATUS_LABELS[t.status]}</Tag></span>
             <span className="truncate text-ink-soft">{t.category ?? "Not available"}</span>
             <span className="truncate text-ink-soft">{t.branchName ?? "All branches"}</span>
-            <span className="text-ink-faint">{new Date(t.updatedAt).toLocaleDateString("en-GB")}</span>
+            <span className="text-ink-faint">{formatRecordDate(new Date(t.updatedAt))}</span>
             {actionsFor(t, true)}
           </div>)}
         </ListTable>
@@ -288,52 +298,58 @@ export default function TemplatesPage() {
       {!templates.isError && <ListPaginationFooter page={controls.page} perPage={controls.perPage} total={total} onPageChange={controls.setPage} onPerPageChange={value => { controls.setPerPage(value); controls.setPage(1); }} perPageOptions={[12, 24, 48]} itemName="templates" />}
 
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="rounded-2xl border-line bg-card sm:max-w-[520px]">
+        <FormDialogContent className="rounded-2xl border-line bg-card sm:max-w-[520px]">
           <DialogHeader>
             <DialogTitle className="font-display">{editing ? `Edit ${editing.name}` : "New template"}</DialogTitle>
           </DialogHeader>
           <ValidatedForm onSubmit={submit} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label required className="text-sm">Name</Label>
-              <Input required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="First-time guest welcome" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
-            </div>
-            <div className="grid grid-cols-3 gap-3">
+            <FormSection title="Details">
               <div className="space-y-1.5">
-                <Label required className="text-sm">Channel</Label>
-                <select required value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as TemplateChannel }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
-                  {TEMPLATE_CHANNELS.map((c) => <option key={c} value={c}>{TEMPLATE_CHANNEL_LABELS[c]}</option>)}
-                </select>
+                <Label htmlFor={`${formFieldId}-field-1`} required className="text-sm">Name</Label>
+                <Input id={`${formFieldId}-field-1`} required value={draft.name} onChange={(e) => setDraft((d) => ({ ...d, name: e.target.value }))} placeholder="First-time guest welcome" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              </div>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor={`${formFieldId}-field-2`} required className="text-sm">Channel</Label>
+                  <select id={`${formFieldId}-field-2`} required value={draft.channel} onChange={(e) => setDraft((d) => ({ ...d, channel: e.target.value as TemplateChannel }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
+                    {TEMPLATE_CHANNELS.map((c) => <option key={c} value={c}>{TEMPLATE_CHANNEL_LABELS[c]}</option>)}
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor={`${formFieldId}-field-3`} className="text-sm">Category</Label>
+                  <select id={`${formFieldId}-field-3`} value={draft.category} onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
+                    <option value="MARKETING">Marketing</option>
+                    <option value="UTILITY">Utility</option>
+                    <option value="AUTHENTICATION">Authentication</option>
+                  </select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor={`${formFieldId}-field-4`} className="text-sm">Language</Label>
+                  <Input id={`${formFieldId}-field-4`} value={draft.language} onChange={(e) => setDraft((d) => ({ ...d, language: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                </div>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm">Category</Label>
-                <select value={draft.category} onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
-                  <option value="MARKETING">Marketing</option>
-                  <option value="UTILITY">Utility</option>
-                  <option value="AUTHENTICATION">Authentication</option>
-                </select>
+                <Label htmlFor={`${formFieldId}-field-5`} required className="text-sm">Content</Label>
+                <Textarea id={`${formFieldId}-field-5`} required rows={5} value={draft.content} onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))} placeholder="Hi {{first_name}}, it was lovely to meet you on Sunday…" className="resize-none rounded-lg border-line bg-background font-mono text-sm shadow-none" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-sm">Language</Label>
-                <Input value={draft.language} onChange={(e) => setDraft((d) => ({ ...d, language: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                <Label htmlFor={`${formFieldId}-field-6`} className="text-sm">Variables (comma separated)</Label>
+                <Input id={`${formFieldId}-field-6`} value={draft.variables} onChange={(e) => setDraft((d) => ({ ...d, variables: e.target.value }))} placeholder="first_name, church" className="h-10 rounded-lg border-line bg-background font-mono text-sm shadow-none" />
               </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label required className="text-sm">Content</Label>
-              <Textarea required rows={5} value={draft.content} onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))} placeholder="Hi {{first_name}}, it was lovely to meet you on Sunday…" className="resize-none rounded-lg border-line bg-background font-mono text-sm shadow-none" />
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-sm">Variables (comma separated)</Label>
-              <Input value={draft.variables} onChange={(e) => setDraft((d) => ({ ...d, variables: e.target.value }))} placeholder="first_name, church" className="h-10 rounded-lg border-line bg-background font-mono text-sm shadow-none" />
-            </div>
-            <label className="flex items-center justify-between rounded-lg border border-line px-3 py-2.5">
-              <span className="text-sm">Published (usable in broadcasts)</span>
-              <input type="checkbox" checked={draft.publish} onChange={(e) => setDraft((d) => ({ ...d, publish: e.target.checked }))} />
-            </label>
-            <Button type="submit" disabled={createTemplate.isPending || updateTemplate.isPending} className="h-10 w-full rounded-lg text-sm">
-              {editing ? "Save template" : "Create template"}
-            </Button>
+              <label className="flex items-center justify-between rounded-lg border border-line px-3 py-2.5">
+                <span className="text-sm">Published (usable in broadcasts)</span>
+                <input type="checkbox" checked={draft.publish} onChange={(e) => setDraft((d) => ({ ...d, publish: e.target.checked }))} />
+              </label>
+
+            </FormSection>
+<DialogFooter>
+<DialogClose asChild><Button type="button" variant="outline" disabled={createTemplate.isPending || updateTemplate.isPending}>Cancel</Button></DialogClose>
+<Button type="submit" disabled={createTemplate.isPending || updateTemplate.isPending} className="h-10 rounded-lg text-sm">
+                {editing ? "Save template" : "Create template"}
+              </Button>
+</DialogFooter>
           </ValidatedForm>
-        </DialogContent>
+        </FormDialogContent>
       </Dialog>
 
       <ConfirmDeleteDialog

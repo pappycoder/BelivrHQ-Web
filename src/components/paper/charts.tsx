@@ -16,6 +16,7 @@ import {
   YAxis,
 } from "recharts";
 import { cn } from "@/lib/utils";
+import { chartTick } from "@/lib/paper/format";
 
 export const CHART_COLORS = [
   "var(--chart-1)",
@@ -82,6 +83,7 @@ export function TrendChart({
   xKey = "label",
   height = 220,
   formatter,
+  integerAxis = false,
   showGrid = true,
   stacked = false,
   className,
@@ -91,6 +93,7 @@ export function TrendChart({
   xKey?: string;
   height?: number;
   formatter?: (value: number | string) => string;
+  integerAxis?: boolean;
   showGrid?: boolean;
   stacked?: boolean;
   className?: string;
@@ -138,15 +141,12 @@ export function TrendChart({
             dy={6}
           />
           <YAxis
+            allowDecimals={!integerAxis}
             tick={axisStyle}
             tickLine={false}
             axisLine={false}
             width={44}
-            tickFormatter={(value) =>
-              typeof value === "number" && value >= 1000
-                ? `${Math.round(value / 1000)}k`
-                : String(value)
-            }
+            tickFormatter={chartTick}
           />
           <Tooltip
             content={<PaperTooltip formatter={formatter} />}
@@ -178,6 +178,7 @@ export function BarSeries({
   height = 220,
   formatter,
   horizontal = false,
+  integerAxis = false,
   className,
 }: {
   data: Record<string, string | number>[];
@@ -186,6 +187,7 @@ export function BarSeries({
   height?: number;
   formatter?: (value: number | string) => string;
   horizontal?: boolean;
+  integerAxis?: boolean;
   className?: string;
 }) {
   return (
@@ -205,7 +207,7 @@ export function BarSeries({
           />
           {horizontal ? (
             <>
-              <XAxis type="number" tick={axisStyle} tickLine={false} axisLine={false} />
+              <XAxis allowDecimals={!integerAxis} type="number" tick={axisStyle} tickLine={false} axisLine={false} />
               <YAxis
                 type="category"
                 dataKey={xKey}
@@ -224,7 +226,7 @@ export function BarSeries({
                 axisLine={false}
                 dy={6}
               />
-              <YAxis tick={axisStyle} tickLine={false} axisLine={false} width={44} />
+              <YAxis allowDecimals={!integerAxis} tick={axisStyle} tickLine={false} axisLine={false} width={44} />
             </>
           )}
           <Tooltip

@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { CornerDownLeft } from "lucide-react";
@@ -73,7 +75,7 @@ export function CommandPalette({
         </span>
         <span className="flex items-center gap-2">
           <kbd className="rounded border border-line bg-muted px-1 font-mono">↵</kbd>
-          to open · {rows.length} destinations
+          to open · {rows.length} {collectionLabel(rows.length, "destinations")}
         </span>
       </div>
     </CommandDialog>

@@ -1,5 +1,15 @@
 "use client";
 
+import { DialogFooter, DialogClose } from "@/components/ui/dialog";
+
+import { useId as useFormFieldId } from "react";
+
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { RequiredFieldsNotice, RequiredIndicator } from "@/components/ui/required-fields";
 
 import * as React from "react";
@@ -174,24 +184,27 @@ function MediaInner() {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={query} onChange={setQuery} placeholder="Search filenames…" className="w-full max-w-[220px]" />
-        {KIND_TABS.map((t) => (
+      <ListToolbar
+ search={<SearchField value={query} onChange={setQuery} placeholder="Search filenames…" className="w-full max-w-[220px]" />}
+ controls={<>
+<ViewToggle value={view} onChange={setView} options={[{ value: "table", label: "List view", icon: <Rows3 /> }, { value: "cards", label: "Card view", icon: <LayoutGrid /> }]} />
+</>}
+>
+{KIND_TABS.map((t) => (
           <FilterChip key={t.value} active={kind === t.value} onClick={() => { setKind(t.value); setPage(1); }}>{t.label}</FilterChip>
         ))}
-        <select value={folder} onChange={(e) => { setFolder(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-3 text-sm outline-none">
+<select value={folder} onChange={(e) => { setFolder(e.target.value); setPage(1); }} className="h-9 rounded-full border border-line bg-card px-3 text-sm outline-none">
           <option value="all">All folders</option>
           {folderList.map((f) => <option key={f.folder} value={f.folder}>{f.folder}</option>)}
         </select>
-        <select value={permissions} onChange={(e) => { setPermissions(e.target.value); setPage(1); }} className="h-8 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Visibility filter">
+<select value={permissions} onChange={(e) => { setPermissions(e.target.value); setPage(1); }} className="h-9 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Visibility filter">
           <option value="">Any visibility</option>
           <option value="public">Public</option>
           <option value="members">Members</option>
           <option value="leadership">Leadership</option>
         </select>
-        <ViewToggle value={view} onChange={setView} options={[{ value: "table", label: "List view", icon: <Rows3 /> }, { value: "cards", label: "Card view", icon: <LayoutGrid /> }]} />
-        <span className="ml-auto flex items-center gap-1 text-xs text-ink-faint"><ShieldCheck className="size-3" /> signed-in members only, per badge</span>
-      </div>
+<span className="flex items-center gap-1.5 text-xs text-ink-faint"><ShieldCheck className="size-3" />signed-in members only, per badge</span>
+</ListToolbar>
 
       {list.isError ? (
         <EmptyState title="Media could not be loaded" description="Try opening the library again." action={<Button variant="outline" onClick={() => void list.refetch()}>Retry</Button>} />
@@ -303,36 +316,43 @@ function MediaInner() {
               </div>
             </>
           ) : null}
+
         </DialogContent>
       </Dialog>
 
       <Dialog open={!!permTarget} onOpenChange={(v) => !v && setPermTarget(null)}>
-        <DialogContent className="rounded-2xl border-line bg-card">
+        <FormDialogContent className="rounded-2xl border-line bg-card">
           <DialogHeader>
             <DialogTitle className="font-display">Who can see {permTarget?.filename}</DialogTitle>
             <DialogDescription className="text-sm">Public links work anywhere; members and leadership need a signed-in session.</DialogDescription>
           </DialogHeader>
-          <div className="flex flex-wrap gap-2">
-            {(["public", "members", "leadership"] as const).map((p) => (
-              <FilterChip key={p} active={permValue === p} onClick={() => setPermValue(p)}>
-                {MEDIA_PERMISSION_LABELS[p]}
-              </FilterChip>
-            ))}
-          </div>
-          <Button
-            className="h-10 w-full rounded-lg text-sm"
-            disabled={updatePerms.isPending || !permTarget || permTarget.permissions === permValue}
-            onClick={() => {
-              if (!permTarget) return;
-              updatePerms.mutate(
-                { assetId: permTarget.assetId, permissions: permValue },
-                { onSuccess: () => { toast("Visibility updated."); setPermTarget(null); }, onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't change permissions.")) },
-              );
-            }}
-          >
-            Save visibility
-          </Button>
-        </DialogContent>
+          <FormSection title="Details">
+            <div className="flex flex-wrap gap-2">
+              {(["public", "members", "leadership"] as const).map((p) => (
+                <FilterChip key={p} active={permValue === p} onClick={() => setPermValue(p)}>
+                  {MEDIA_PERMISSION_LABELS[p]}
+                </FilterChip>
+              ))}
+            </div>
+
+          </FormSection>
+<DialogFooter>
+<DialogClose asChild><Button type="button" variant="outline" disabled={updatePerms.isPending}>Cancel</Button></DialogClose>
+<Button
+              className="h-10 rounded-lg text-sm"
+              disabled={updatePerms.isPending || !permTarget || permTarget.permissions === permValue}
+              onClick={() => {
+                if (!permTarget) return;
+                updatePerms.mutate(
+                  { assetId: permTarget.assetId, permissions: permValue },
+                  { onSuccess: () => { toast("Visibility updated."); setPermTarget(null); }, onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't change permissions.")) },
+                );
+              }}
+            >
+              Save visibility
+            </Button>
+</DialogFooter>
+        </FormDialogContent>
       </Dialog>
 
       <UploadDialog open={uploadOpen} onOpenChange={setUploadOpen} folders={folderList.map((f) => f.folder)} />
@@ -378,6 +398,7 @@ function MediaPreviewBody({ asset }: { asset: MediaAsset }) {
 }
 
 function UploadDialog({ open, onOpenChange, folders }: { open: boolean; onOpenChange: (o: boolean) => void; folders: string[] }) {
+  const formFieldId = useFormFieldId();
   const upload = useUploadMediaFile();
   const [files, setFiles] = React.useState<File[]>([]);
   const [folder, setFolder] = React.useState("uploads");
@@ -417,55 +438,61 @@ function UploadDialog({ open, onOpenChange, folders }: { open: boolean; onOpenCh
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-2xl border-line bg-card">
+      <FormDialogContent className="rounded-2xl border-line bg-card">
         <DialogHeader>
           <DialogTitle className="font-display">Upload to the library</DialogTitle>
           <DialogDescription className="text-sm">Images are optimised automatically; audio, video and documents go straight to the folder&apos;s store.</DialogDescription>
         </DialogHeader>
-        <div className="space-y-4">
-          <RequiredFieldsNotice />
-          <label className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed border-line bg-muted/20 py-8 text-center transition-colors hover:border-brand/40">
-            <UploadCloud className="size-6 text-ink-faint" />
-            <span className="text-sm font-medium">Choose files <RequiredIndicator /></span>
-            <span className="text-xs text-ink-faint">JPG/PNG → WebP · audio/video/docs up to 50 MB</span>
-            <input
-              type="file"
-              multiple
-              accept="image/*,audio/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
-              className="hidden"
-              onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
-            />
-          </label>
-          {files.length ? (
-            <div className="max-h-32 space-y-1 overflow-y-auto rounded-lg border border-line p-2 text-sm">
-              {files.map((f) => (
-                <p key={f.name} className="flex items-center justify-between">
-                  <span className="truncate">{f.name}</span>
-                  <span className="num text-ink-faint">{formatBytes(f.size)}</span>
-                </p>
-              ))}
+        <FormSection title="Details">
+          <div className="space-y-4">
+            <RequiredFieldsNotice />
+            <label className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed border-line bg-muted/20 py-8 text-center transition-colors hover:border-brand/40">
+              <UploadCloud className="size-6 text-ink-faint" />
+              <span className="text-sm font-medium">Choose files <RequiredIndicator /></span>
+              <span className="text-xs text-ink-faint">JPG/PNG → WebP · audio/video/docs up to 50 MB</span>
+              <input
+                type="file"
+                multiple
+                accept="image/*,audio/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                className="hidden"
+                onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
+              />
+            </label>
+            {files.length ? (
+              <div className="max-h-32 space-y-1 overflow-y-auto rounded-lg border border-line p-2 text-sm">
+                {files.map((f) => (
+                  <p key={f.name} className="flex items-center justify-between">
+                    <span className="truncate">{f.name}</span>
+                    <span className="num text-ink-faint">{formatBytes(f.size)}</span>
+                  </p>
+                ))}
+              </div>
+            ) : null}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label htmlFor={`${formFieldId}-field-1`} className="text-sm">Folder</Label>
+                <select id={`${formFieldId}-field-1`} value={folder} onChange={(e) => setFolder(e.target.value)} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
+                  {Array.from(new Set(["uploads", ...folders])).map((f) => <option key={f} value={f}>{f}</option>)}
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor={`${formFieldId}-field-2`} className="text-sm">…or new folder</Label>
+                <Input id={`${formFieldId}-field-2`} value={newFolder} onChange={(e) => setNewFolder(e.target.value)} placeholder="Advent 2026" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              </div>
             </div>
-          ) : null}
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label className="text-sm">Folder</Label>
-              <select value={folder} onChange={(e) => setFolder(e.target.value)} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
-                {Array.from(new Set(["uploads", ...folders])).map((f) => <option key={f} value={f}>{f}</option>)}
-              </select>
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-sm">…or new folder</Label>
-              <Input value={newFolder} onChange={(e) => setNewFolder(e.target.value)} placeholder="Advent 2026" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+            <div>
+              {upload.isPending ? <p className="num mb-1 text-xs text-ink-faint">{done}/{files.length} uploaded…</p> : null}
+
             </div>
           </div>
-          <div>
-            {upload.isPending ? <p className="num mb-1 text-xs text-ink-faint">{done}/{files.length} uploaded…</p> : null}
-            <Button className="h-10 w-full gap-2 rounded-lg text-sm" onClick={submit} disabled={upload.isPending}>
-              <UploadCloud className="size-4" /> Upload {files.length ? `${files.length} file${files.length === 1 ? "" : "s"}` : ""}
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
+        </FormSection>
+<DialogFooter>
+<DialogClose asChild><Button type="button" variant="outline" disabled={upload.isPending}>Cancel</Button></DialogClose>
+<Button className="h-10 gap-2 rounded-lg text-sm" onClick={submit} disabled={upload.isPending}>
+                <UploadCloud className="size-4" /> Upload {files.length ? `${files.length} file${files.length === 1 ? "" : "s"}` : ""}
+              </Button>
+</DialogFooter>
+      </FormDialogContent>
     </Dialog>
   );
 }

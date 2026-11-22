@@ -1,5 +1,11 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+import { EventPicker, useEventPickerEvents } from "@/components/events/event-picker";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
@@ -16,6 +22,8 @@ import {
   UserPlus,
 } from "lucide-react";
 import { PageHeader } from "@/components/paper/section";
+import { PageTour, type TourStep } from "@/components/tours/page-tour";
+import { useCurrentProfile } from "@/hooks/use-profile";
 import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
@@ -41,12 +49,30 @@ import { RegisterAttendeeButton } from "@/components/events/register-attendee-bu
 import { ExportDropdown } from "@/components/shared/export-dropdown";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
-  useEventsList,
   useEventRegistrations,
   type EventRegistration,
 } from "@/hooks/use-events";
 import { formatDate } from "@/hooks/use-media";
 import { number } from "@/lib/paper/format";
+
+const REGISTRATIONS_TOUR_STEPS: TourStep[] = [
+  { target: ".registrations-tour-heading", title: "Review event registrations", description: "Choose an event to review who registered, their payment status and whether they have checked in. This guide does not register anyone, change a payment or mark attendance." },
+  { target: ".registrations-tour-event", title: "Choose the event first", description: "Select from up to 100 loaded events within your access. Choosing an event loads its registrations and clears the search. Payment and door filters remain as selected, so check them when switching events. The full tour opens after your first event choice." },
+  { target: ".registrations-tour-pick", title: "Start with an event", description: "No event is selected yet. Finish this short guide, choose an event above, then follow the guide to its registration controls. You can replay the relevant tour anytime with Take a tour." },
+  { target: ".registrations-tour-summary", title: "Read totals for the whole event", description: "Registrations, Paid, Checked in and Awaiting payment count registration records for the selected event, across the loaded list. They do not count seats. Search and filters change the matching results and pagination, while these totals stay separate." },
+  { target: ".registrations-tour-search", title: "Find an attendee or ticket", description: "Search the loaded registrations by attendee name, tier name or ticket code. Filtering is immediate and returns to page one. Clear search removes only the text filter; payment and door filters still apply." },
+  { target: ".registrations-tour-payment", title: "Filter recorded payment status", description: "Any payment removes the payment filter. Paid, pending, failed and cancelled show registrations with that recorded status. These controls filter the list; they do not collect money, cancel registrations or change payments." },
+  { target: ".registrations-tour-door", title: "Filter recorded check-ins", description: "Checked in shows registrations marked as checked in; Still out shows the others. Select the active chip again to remove this filter. This is the registration's recorded check-in flag, not a date-specific attendance report. Filtering changes no attendance." },
+  { target: ".registrations-tour-display", title: "Sort and choose a layout", description: "Sort by Registered date, Name, Tier or Seats and reverse the direction if needed. Table and Cards show the same matching registrations. Use horizontal scrolling for wide tables on smaller screens." },
+  { target: "[data-list-table='gatherings-events-registrations-1'] > [data-export-ignore]", title: "Columns and selected rows", description: "Columns chooses the visible table fields. Checkboxes select registrations on this page and offer exports for that selection. Selecting a row does not register a person, change payment status or check them in." },
+  { target: ".registrations-tour-record", title: "Read a registration", description: "Review the attendee, tier, seat quantity, payment status, check-in flag and ticket code when supplied. A registration can reserve more than one seat. The event summary counts registrations, while Qty or the card's multiplier shows seats." },
+  { target: ".registrations-tour-manage", title: "Open the related workspace", description: "In Table view, hover a row or focus its controls to reveal actions. Open attendee appears when your account can read member profiles. Run check-in opens the attendance desk for this event; opening it alone does not check anyone in." },
+  { target: ".registrations-tour-empty", title: "When the list is empty", description: "Check the search, payment and door filters before assuming the event has no registrations. Clear search, choose Any payment and toggle the active Checked in or Still out chip off to show the full loaded list." },
+  { target: ".registrations-tour-page [aria-label='Pagination']", title: "Browse matching registrations", description: "Prev and Next move through matching results. Rows per page changes the number displayed. The range and total follow search and filters. Navigation is disabled when there is nowhere else to go." },
+  { target: ".registrations-tour-export button", title: "Export the matching list", description: "Export offers PDF, Excel and CSV for all loaded registrations matching your current filters, including other pages. Check the event and filters before downloading. It is hidden when no registrations match." },
+  { target: ".registrations-tour-register button", title: "Register a member for a free event", description: "For a free, unarchived event, authorised users can open Register Attendee, choose an existing member and confirm one place. Event Full disables registration when capacity is reached. Registration and check-in are separate; the tour does not submit this dialog." },
+  { target: ".registrations-tour-links", title: "Continue to the event or door desk", description: "Open the event shows the event record. Run check-in opens the attendance desk with this event selected. Review the date and context there before making changes. These links alone do not alter registrations or attendance." },
+];
 
 const PAGE_SIZE = 15;
 
@@ -95,6 +121,7 @@ function RegistrationsInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { can, ready } = usePermissions();
+  const { data: profile } = useCurrentProfile();
   const canRegister = ready && can("events:registrations", "create");
   const canViewMembers = ready && can("members:all", "read");
 
@@ -108,7 +135,7 @@ function RegistrationsInner() {
   const [perPage, setPerPage] = React.useState(PAGE_SIZE);
   const [view, setView] = React.useState<"table" | "cards">("table");
 
-  const events = useEventsList({ limit: 100, sortBy: "startDate", sortOrder: "desc" });
+  const events = useEventPickerEvents();
   const registrations = useEventRegistrations(eventId);
 
   // The endpoint returns the whole list, so every control is client-side —
@@ -167,83 +194,49 @@ function RegistrationsInner() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="registrations-tour-page space-y-6">
       <PageHeader
+        className="registrations-tour-heading"
         eyebrow="Gatherings · Events"
         title="Who&apos;s coming."
         description="Review registrations, payments and walk-ins in one place."
         actions={
           <>
+            <PageTour page={eventId ? "Event registrations" : "Choose event registrations"} account={profile ? `${profile.churchId}:${profile.profileId}` : undefined} ready={ready && events.isSuccess && (!eventId || registrations.isSuccess)} steps={REGISTRATIONS_TOUR_STEPS} />
             {eventId && total ? (
+              <div className="registrations-tour-export inline-flex">
               <ExportDropdown
                 columns={EXPORT_COLUMNS}
                 data={filtered.map(exportRow)}
                 title={`Registrations: ${selected?.title ?? "Event"}`}
                 filename="event-registrations"
                 disabled={!total}
-              />
+              /></div>
             ) : null}
-            {selected && canRegister ? <RegisterAttendeeButton event={selected} /> : null}
+            {selected && canRegister ? <div className="registrations-tour-register inline-flex"><RegisterAttendeeButton event={selected} /></div> : null}
           </>
         }
       />
 
-      <div className="flex flex-wrap items-center gap-2">
-        <select
-          value={eventId}
-          onChange={(e) => {
-            setEventId(e.target.value);
-            setQuery("");
-            resetPage();
-            router.replace(`/gatherings/events/registrations${e.target.value ? `?event=${e.target.value}` : ""}`);
-          }}
-          className="h-9 max-w-[300px] truncate rounded-full border border-line bg-card px-3 text-sm outline-none"
-          aria-label="Event selector"
-        >
-          <option value="">Choose an event…</option>
-          {eventList.map((event) => (
-            <option key={event.eventId} value={event.eventId}>
-              {event.title} · {formatDate(event.startDate)}
-            </option>
-          ))}
-        </select>
-        {eventId ? (
-          <>
-            <SearchField
-              value={query}
-              onChange={(value) => { setQuery(value); resetPage(); }}
-              placeholder="Search attendees…"
-              className="w-full max-w-[220px]"
-            />
-            <div className="flex flex-wrap gap-1.5">
-              {(["all", "paid", "pending", "failed", "cancelled"] as const).map((s) => (
-                <FilterChip key={s} active={payment === s} onClick={() => { setPayment(s); resetPage(); }}>
-                  {s === "all" ? "Any payment" : s}
-                </FilterChip>
-              ))}
-              <FilterChip active={door === "in"} onClick={() => { setDoor((d) => (d === "in" ? "all" : "in")); resetPage(); }}>Checked in</FilterChip>
-              <FilterChip active={door === "out"} onClick={() => { setDoor((d) => (d === "out" ? "all" : "out")); resetPage(); }}>Still out</FilterChip>
-            </div>
-            <span className="ml-auto flex flex-wrap items-center gap-1.5 text-xs text-ink-faint">
-              {selected?.isFree ? <Tag tone="moss">free event</Tag> : <Tag tone="gold">tickets</Tag>}
-              {selected?.capacity ? <span className="num">capacity {number(selected.capacity)}</span> : null}
-            </span>
-          </>
-        ) : null}
-      </div>
-
-      {eventId ? (
-        <>
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {eventId ? (<div className="registrations-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
             <StatCard label="Registrations" value={all.length} tone="brand" icon={<ClipboardList className="size-4" />} deltaLabel={total !== all.length ? `${number(total)} matching` : "all shown"} />
             <StatCard label="Paid" value={paid} tone="moss" />
             <StatCard label="Checked in" value={checkedIn} tone="sky" deltaLabel={all.length ? `${Math.round((checkedIn / all.length) * 100)}% of list` : "Not available"} />
             <StatCard label="Awaiting payment" value={all.filter((r) => r.paymentStatus === "pending").length} tone="gold" />
-          </div>
+          </div>) : null}
 
-          <div className="flex flex-wrap items-center gap-2">
+<ListToolbar search={eventId ? (<SearchField
+              value={query}
+              onChange={(value) => { setQuery(value); resetPage(); }}
+              placeholder="Search attendees…"
+              className="registrations-tour-search w-full max-w-xs"
+            />) : undefined} controls={<><EventPicker query={events} value={eventId} className="registrations-tour-event"
+          onValueChange={value => { setEventId(value); setQuery(""); resetPage(); router.replace(`/gatherings/events/registrations${value ? `?event=${value}` : ""}`); }} />{eventId ? (<span className="flex flex-wrap items-center gap-1.5 text-xs text-ink-faint">
+              {selected?.isFree ? <Tag tone="moss">free event</Tag> : <Tag tone="gold">tickets</Tag>}
+              {selected?.capacity ? <span className="num">capacity {number(selected.capacity)}</span> : null}
+            </span>) : null}{eventId ? (<div className="registrations-tour-display flex flex-wrap items-center gap-2">
             <Select value={sortBy} onValueChange={(value) => { setSortBy(value as SortValue); resetPage(); }}>
-              <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
+              <SelectTrigger aria-label="Sort registrations" className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
                 <ArrowUpDownIcon /> <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -264,18 +257,32 @@ function RegistrationsInner() {
                 { value: "cards", label: "Cards", icon: <LayoutGrid /> },
               ]}
             />
-          </div>
+          </div>) : null}</>}>{eventId ? <><div className="registrations-tour-payment flex flex-wrap gap-1.5" role="group" aria-label="Registration payment filters">
+              {(["all", "paid", "pending", "failed", "cancelled"] as const).map((s) => (
+                <FilterChip key={s} active={payment === s} onClick={() => { setPayment(s); resetPage(); }}>
+                  {s === "all" ? "Any payment" : formatStatusLabel(s)}
+                </FilterChip>
+              ))}
+              </div><div className="registrations-tour-door flex flex-wrap gap-1.5" role="group" aria-label="Registration check-in filters">
+              <FilterChip active={door === "in"} onClick={() => { setDoor((d) => (d === "in" ? "all" : "in")); resetPage(); }}>Checked in</FilterChip>
+              <FilterChip active={door === "out"} onClick={() => { setDoor((d) => (d === "out" ? "all" : "out")); resetPage(); }}>Still out</FilterChip></div></> : null}</ListToolbar>
+
+      {eventId ? (
+        <>
+
+
+
 
           {registrations.isLoading ? (
             <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-12 rounded-xl" />)}</div>
           ) : rows.length === 0 ? (
-            <EmptyState
+            <div className="registrations-tour-empty"><EmptyState
               className="paper-card bg-card"
               icon={<UserPlus />}
-              title={query ? "Nobody matches that search" : "No registrations yet"}
-              description={selected?.isFree ? "Free events fill at the door or with Register Attendee." : "Tickets appear here the moment someone registers."}
+              title={query || payment !== "all" || door !== "all" ? "No matching registrations" : "No registrations yet"}
+              description={query || payment !== "all" || door !== "all" ? "Adjust the search, payment or check-in filters to review other registrations." : selected?.isFree ? "Use Register Attendee to register a member for this free event." : "Tickets appear here when someone registers."}
               action={selected ? <RegisterAttendeeButton event={selected} /> : null}
-            />
+            /></div>
           ) : view === "table" ? (
             <div className="paper-card overflow-hidden rounded-2xl">
               <div className="overflow-x-auto">
@@ -287,7 +294,7 @@ function RegistrationsInner() {
                     <span>Payment</span>
                     <span>Checked in</span>
                     <span className="text-right">Ticket</span>
-                    <ManageHeading />
+                    <div className="registrations-tour-manage text-right"><ManageHeading /></div>
                   </div>
                   <div className="divide-y divide-line/70">
                     {rows.map((registration: EventRegistration) => (
@@ -295,7 +302,7 @@ function RegistrationsInner() {
                         key={registration.registrationId}
                         className="group grid grid-cols-[minmax(0,1.8fr)_1fr_0.8fr_0.8fr_0.8fr_1fr_auto] items-center gap-3 px-5 py-3 transition-colors hover:bg-muted/40"
                       >
-                        <span className="flex min-w-0 items-center gap-2.5">
+                        <span className="registrations-tour-record flex min-w-0 items-center gap-2.5">
                           <PersonAvatar name={registration.memberName ?? "A member"} size="xs" />
                           <span className="min-w-0">
                             <span className="block truncate text-sm font-medium">{displayName(registration)}</span>
@@ -306,7 +313,7 @@ function RegistrationsInner() {
                         <span className="num text-right text-sm">{registration.quantity ?? 1}</span>
                         <span>
                           <Tag tone={STATUS_TONES[registration.paymentStatus ?? "pending"] ?? "neutral"} dot>
-                            {registration.paymentStatus ?? "pending"}
+                            {formatStatusLabel(registration.paymentStatus ?? "pending")}
                           </Tag>
                         </span>
                         <span className="text-xs text-ink-faint">
@@ -339,7 +346,7 @@ function RegistrationsInner() {
                   <StaggerItem key={registration.registrationId}>
                     <div className="paper-card flex h-full flex-col rounded-2xl p-4">
                       <div className="flex items-start justify-between gap-2">
-                        <span className="flex min-w-0 items-center gap-2.5">
+                        <span className="registrations-tour-record flex min-w-0 items-center gap-2.5">
                           <PersonAvatar name={registration.memberName ?? "A member"} size="md" />
                           <span className="min-w-0">
                             <span className="block truncate text-sm font-semibold">{displayName(registration)}</span>
@@ -348,7 +355,7 @@ function RegistrationsInner() {
                             </span>
                           </span>
                         </span>
-                        <RowActions reveal={false} actions={manageActions(registration)} />
+                        <RowActions className="registrations-tour-manage" reveal={false} actions={manageActions(registration)} />
                       </div>
                       <p className="mt-2 flex-1 text-sm text-ink-soft">
                         Registered {formatDate(registration.createdAt)}
@@ -356,7 +363,7 @@ function RegistrationsInner() {
                       <div className="mt-3 flex items-center justify-between gap-2 border-t border-line/70 pt-3">
                         <span className="flex items-center gap-1.5">
                           <Tag tone={STATUS_TONES[registration.paymentStatus ?? "pending"] ?? "neutral"} dot>
-                            {registration.paymentStatus ?? "pending"}
+                            {formatStatusLabel(registration.paymentStatus ?? "pending")}
                           </Tag>
                           {registration.checkedIn ? <Tag tone="sky" dot>Checked in</Tag> : null}
                         </span>
@@ -379,7 +386,7 @@ function RegistrationsInner() {
             </>
           )}
 
-          <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
+          <div className="registrations-tour-links flex flex-wrap items-center justify-center gap-4 text-sm">
             <button type="button" onClick={() => router.push(`/gatherings/events/${eventId}`)} className="flex items-center gap-1.5 text-brand hover:underline">
               <CalendarDays className="size-3" /> Open the event
             </button>
@@ -388,14 +395,14 @@ function RegistrationsInner() {
             </Link>
           </div>
         </>
-      ) : (
-        <EmptyState
+      ) : events.isSuccess && eventList.length ? (
+        <div className="registrations-tour-pick"><EmptyState
           className="paper-card bg-card"
           icon={<ClipboardList />}
           title="Pick an event to see its house"
           description="Registrations, payments and check-ins arrive here the moment a list is chosen."
-        />
-      )}
+        /></div>
+      ) : null}
     </div>
   );
 }

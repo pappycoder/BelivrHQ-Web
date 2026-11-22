@@ -1,5 +1,16 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
+import { formatRecordDateTime } from "@/lib/record-date";
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { collectionLabel } from "@/lib/collection-label";
+
+import { DetailNavigation, DetailHeading } from "@/components/paper/section";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -82,6 +93,10 @@ export default function EventDetailPage({
     );
   }
 
+  if (event.isError && !isMissingRecordError(event.error)) {
+    return <RecordQueryError title="Event details" error={event.error} backHref="/gatherings/events" backLabel="Back to the calendar" />;
+  }
+
   if (event.isError || !event.data) {
     return (
       <EmptyState
@@ -114,9 +129,9 @@ export default function EventDetailPage({
 
   return (
     <div className="space-y-6">
-      <Link href="/gatherings/events" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
+      <DetailNavigation><Link href="/gatherings/events" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
         <ArrowLeft className="size-3" /> Gatherings · Events
-      </Link>
+      </Link></DetailNavigation>
 
       <div className="paper-card overflow-hidden rounded-2xl">
         <div className="h-2 bg-[linear-gradient(90deg,var(--brand),var(--gold)_55%,var(--moss))]" />
@@ -128,7 +143,7 @@ export default function EventDetailPage({
               {e.branchName ? <Tag tone="sky">{e.branchName}</Tag> : null}
               {e.archivedAt ? <Tag tone="rose">Archived</Tag> : null}
             </div>
-            <h1 className="font-display text-[clamp(1.5rem,2.6vw,2.1rem)] font-semibold tracking-tight">{e.title}</h1>
+            <DetailHeading>{e.title}</DetailHeading>
             <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-soft">
               <span>{fullDate(e.startDate)}{e.endDate && timeOf(e.endDate) ? ` → ${timeOf(e.endDate)}` : ""}</span>
               <span className="flex items-center gap-1"><MapPin className="size-3" /> {e.location ?? "Location to be announced"}</span>
@@ -147,7 +162,7 @@ export default function EventDetailPage({
               <p className="max-w-2xl text-sm leading-relaxed text-ink-soft">{e.description}</p>
             ) : null}
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div data-tour-actions className="flex flex-wrap gap-2">
             {canCheckIn ? (
               <Button asChild size="sm" className="h-8 gap-1.5 rounded-full text-sm">
                 <Link href={`/gatherings/events/check-in?event=${encodeURIComponent(e.eventId)}`}>
@@ -173,10 +188,10 @@ export default function EventDetailPage({
           </div>
         </div>
         {e.capacity ? (
-          <div className="border-t border-line px-5 py-3 md:px-6">
+          <div data-tour-event-capacity className="border-t border-line px-5 py-3 md:px-6">
             <div className="flex items-center justify-between text-sm text-ink-soft">
               <span className="num">{e.registrationCount ?? 0} registered of {e.capacity}</span>
-              <span className="num">{e.capacity - (e.registrationCount ?? 0)} seats left</span>
+              <span className="num">{e.capacity - (e.registrationCount ?? 0)} {collectionLabel(e.capacity - (e.registrationCount ?? 0), "seats")} left</span>
             </div>
             <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-muted">
               <div
@@ -216,24 +231,26 @@ export default function EventDetailPage({
 
         {canSeeRegistrations ? (
           <TabsContent value="registrations" className="mt-4">
-            <SectionCard eyebrow="Who's coming" title={`${registrations.data?.length ?? 0} registrations`} bodyClassName="p-0">
+            <SectionCard eyebrow="Who's coming" title={`${registrations.data?.length ?? 0} ${collectionLabel(registrations.data?.length ?? 0, "registrations")}`} bodyClassName="p-0">
               {registrations.isLoading ? (
                 <div className="space-y-2 p-5">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-10 rounded-lg" />)}</div>
               ) : registrations.data?.length ? (
                 <div className="divide-y divide-line/70">
                   {registrations.data.map((reg) => (
-                    <div key={reg.registrationId} className="flex items-center gap-3 px-5 py-3 text-sm">
+                    <div key={reg.registrationId} className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3 gap-y-2 px-5 py-3 text-sm sm:flex sm:items-center">
                       <PersonAvatar name={reg.memberName ?? "Guest"} size="xs" />
-                      <span className="min-w-0 flex-1 truncate font-medium">
+                      <span className="min-w-0 flex-1 break-words font-medium [overflow-wrap:anywhere]">
                         {reg.memberName ?? reg.memberId.slice(0, 10)}
                       </span>
-                      {reg.tierName ? <Tag tone="neutral">{reg.tierName}</Tag> : null}
+                      <div className="col-start-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2 sm:max-w-[60%] sm:justify-end">
+                      {reg.tierName ? <Tag tone="neutral" className="max-w-full whitespace-normal"><span className="min-w-0 [overflow-wrap:anywhere]">{reg.tierName}</span></Tag> : null}
                       <span className="num text-xs text-ink-faint">×{reg.quantity}</span>
                       <Tag tone={reg.paymentStatus === "paid" || reg.paymentStatus === "success" ? "moss" : reg.paymentStatus === "pending" ? "gold" : "rose"}>
-                        {reg.paymentStatus}
+                        {formatStatusLabel(reg.paymentStatus)}
                       </Tag>
                       <Tag tone={reg.checkedIn ? "moss" : "neutral"} dot>{reg.checkedIn ? "In" : "Awaiting"}</Tag>
-                      {reg.ticketCode ? <span className="hidden font-mono text-xs text-ink-faint sm:block">{reg.ticketCode}</span> : null}
+                      {reg.ticketCode ? <span className="hidden min-w-0 break-all font-mono text-xs text-ink-faint sm:block">{reg.ticketCode}</span> : null}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -248,20 +265,22 @@ export default function EventDetailPage({
           <TabsContent value="attendance" className="mt-4">
             <AttendanceWorkspace name={e.title} scope="Event" peopleValue="named" headcountValue="reported" canSeeHeadcount={true}>
         <TabsContent value="named" className="mt-4">
-            <SectionCard eyebrow="In the room" title={`${attendance.data?.length ?? 0} check-ins`} bodyClassName="p-0">
+            <SectionCard eyebrow="In the room" title={`${attendance.data?.length ?? 0} ${collectionLabel(attendance.data?.length ?? 0, "check-ins")}`} bodyClassName="p-0">
               {attendance.data?.length ? (
                 <div className="divide-y divide-line/70">
                   {attendance.data.map((record) => (
-                    <div key={record.attendanceId} className="flex items-center gap-3 px-5 py-3 text-sm">
-                      <ScanLine className="size-3.5 shrink-0 text-ink-faint" />
-                      <span className="min-w-0 flex-1 truncate font-medium">
+                    <div key={record.attendanceId} className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3 gap-y-2 px-5 py-3 text-sm sm:flex sm:items-center">
+                      <ScanLine className="mt-0.5 size-3.5 shrink-0 text-ink-faint sm:mt-0" />
+                      <span className="min-w-0 flex-1 break-words font-medium [overflow-wrap:anywhere]">
                         {record.memberName ?? record.visitorName ?? "Guest"}
                         {!record.memberId && record.visitorName ? <span className="ml-1.5 text-xs text-gold">walk-in</span> : null}
                       </span>
-                      <Tag tone="neutral">{attendanceCategoryLabel(record.category) ?? "Not available"}</Tag>
-                      <span className="num w-40 shrink-0 text-right text-xs text-ink-faint">
-                        {new Date(record.checkInAt).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
-                      </span>
+                      <div className="col-start-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2 sm:shrink-0 sm:justify-end">
+                        <Tag tone="neutral">{attendanceCategoryLabel(record.category) ?? "Not available"}</Tag>
+                        <span className="num text-xs text-ink-faint">
+                          {formatRecordDateTime(record.checkInAt)}
+                        </span>
+                      </div>
                     </div>
                   ))}
                 </div>

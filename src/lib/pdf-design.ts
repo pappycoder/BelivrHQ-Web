@@ -1,3 +1,4 @@
+import { formatRecordDate } from "./record-date";
 import type jsPDF from "jspdf";
 import type { ExportBranding, ExportLogo } from "./export-branding";
 
@@ -115,7 +116,7 @@ export function drawPdfFooters(doc: jsPDF, generatedAt: Date, label = "BelivrHQ"
     doc.setFont(PDF_FONT, "normal");
     doc.setFontSize(7);
     doc.setTextColor(PDF_COLORS.muted);
-    doc.text(`Powered by ${label}  ·  ${generatedAt.toLocaleDateString("en-NG", { day: "2-digit", month: "short", year: "numeric" })}`, 14, height - 10);
+    doc.text(`Powered by ${label}  ·  ${formatRecordDate(generatedAt)}`, 14, height - 10);
     doc.text(`${i} / ${total}`, width - 14, height - 10, { align: "right" });
   }
 }

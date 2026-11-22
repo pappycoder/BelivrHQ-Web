@@ -1,7 +1,12 @@
 "use client";
+
+import { DialogFooter, DialogClose } from "@/components/ui/dialog";
+
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
@@ -275,14 +280,15 @@ export function DepartmentDetailContent({
                       Add member
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <FormDialogContent>
                     <DialogHeader>
                       <DialogTitle>Add department member</DialogTitle>
                       <DialogDescription>
                         Choose a member and their role in this department.
                       </DialogDescription>
-                    </DialogHeader>{" "}
-                    <div className="mt-4 space-y-3 rounded-lg border p-4">
+                    </DialogHeader><FormSection title="Details">
+{" "}
+                    <div className="paper-card mt-4 space-y-3 rounded-lg border p-4">
                       <p className="text-sm font-medium flex items-center gap-2">
                         <UserPlus className="h-4 w-4" /> Add Member
                       </p>
@@ -313,8 +319,13 @@ export function DepartmentDetailContent({
                           </SelectItem>
                         </SelectContent>
                       </Select>
-                      <Button
-                        className="w-full"
+
+                    </div>
+</FormSection>
+<DialogFooter>
+<DialogClose asChild><Button type="button" variant="outline" disabled={addMember.isPending}>Cancel</Button></DialogClose>
+<Button
+                        className=""
                         onClick={handleAdd}
                         disabled={!memberId || addMember.isPending}
                       >
@@ -322,8 +333,8 @@ export function DepartmentDetailContent({
                           ? "Adding..."
                           : "Add to Department"}
                       </Button>
-                    </div>
-                  </DialogContent>
+</DialogFooter>
+                  </FormDialogContent>
                 </Dialog>
               ) : undefined
             }

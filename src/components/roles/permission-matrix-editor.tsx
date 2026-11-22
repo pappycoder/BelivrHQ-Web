@@ -62,7 +62,7 @@ export function PermissionMatrixEditor({
   const renderCell = (perm: Permission | undefined) => {
     if (!perm) {
       return (
-        <span className="w-14 flex justify-center">
+        <span className="flex justify-center">
           <Minus className="h-3.5 w-3.5 text-muted-foreground/30" />
         </span>
       );
@@ -75,7 +75,7 @@ export function PermissionMatrixEditor({
     return (
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="w-14 flex justify-center">
+          <span className="flex justify-center">
             <Checkbox
               checked={isSelected}
               disabled={locked || isBlocked}
@@ -97,39 +97,42 @@ export function PermissionMatrixEditor({
   };
 
   const renderColumn = (resourceList: string[], key: number) => (
-    <div key={key} className="overflow-x-auto rounded-lg border">
-      <div className="flex items-center border-b bg-muted/50 px-3 py-2 rounded-t-lg">
-        <span className="flex-1 text-sm font-medium text-muted-foreground uppercase tracking-wide">
-          Resource
-        </span>
-        {PERMISSION_ACTIONS.map((action) => (
-          <span
-            key={action}
-            className="w-14 text-center text-sm font-medium text-muted-foreground capitalize"
-          >
-            {action}
+    <div key={key} role="region" aria-label={`Permission matrix ${key + 1}`} tabIndex={0} className="min-w-0 overflow-x-auto rounded-lg border">
+      <div className="min-w-[29rem]">
+        <div data-permission-head className="grid grid-cols-[minmax(10rem,1fr)_repeat(5,3.5rem)] items-center border-b bg-muted/50 px-3 py-2 rounded-t-lg">
+          <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            Resource
           </span>
-        ))}
-      </div>
-      <div className="px-3 py-1">
-        {resourceList.map((resource) => {
-          const actions = actionsByResource.get(resource)!;
-          return (
-            <div
-              key={resource}
-              className="flex items-center py-1 px-1 -mx-1 rounded hover:bg-muted/40"
+          {PERMISSION_ACTIONS.map((action) => (
+            <span
+              key={action}
+              className="text-center text-sm font-medium text-muted-foreground capitalize"
             >
-              <span className="min-w-24 flex-1 break-words text-sm capitalize">
-                {getResourceLabel(resource)}
-              </span>
-              {PERMISSION_ACTIONS.map((action) => (
-                <React.Fragment key={action}>
-                  {renderCell(actions.get(action))}
-                </React.Fragment>
-              ))}
-            </div>
-          );
-        })}
+              {action}
+            </span>
+          ))}
+        </div>
+        <div className="px-3 py-1">
+          {resourceList.map((resource) => {
+            const actions = actionsByResource.get(resource)!;
+            return (
+              <div
+                key={resource}
+                data-permission-row
+                className="grid grid-cols-[minmax(10rem,1fr)_repeat(5,3.5rem)] items-center py-2 rounded hover:bg-muted/40"
+              >
+                <span className="min-w-0 break-words pr-3 text-sm capitalize">
+                  {getResourceLabel(resource)}
+                </span>
+                {PERMISSION_ACTIONS.map((action) => (
+                  <React.Fragment key={action}>
+                    {renderCell(actions.get(action))}
+                  </React.Fragment>
+                ))}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -156,7 +159,7 @@ export function PermissionMatrixEditor({
           No resources match this search.
         </p>
       )}
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid min-w-0 grid-cols-1 gap-4 2xl:grid-cols-2">
         {columns.map(renderColumn)}
       </div>
     </div>

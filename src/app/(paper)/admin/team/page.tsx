@@ -1,5 +1,12 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
+import { formatRecordDateTime } from "@/lib/record-date";
+import { UserStatusBadge } from "@/components/users/user-status-badge";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
@@ -134,6 +141,8 @@ export default function AdminTeamPage() {
     },
   ];
 
+  if (users.isError) return <PageQueryError title="Team members" />;
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -172,13 +181,10 @@ export default function AdminTeamPage() {
         <StatCard label="Admin HQ" value={rows.filter((u) => u.isAdminHq).length} tone="sky" deltaLabel="cross-branch readers" />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={query} onChange={setQuery} placeholder="Search name or email…" className="w-full max-w-xs" />
-        <FilterChip active={status === ""} onClick={() => { setStatus(""); setPage(1); }}>All</FilterChip>
-        <FilterChip active={status === "active"} onClick={() => { setStatus("active"); setPage(1); }}>Active</FilterChip>
-        <FilterChip active={status === "inactive"} onClick={() => { setStatus("inactive"); setPage(1); }}>Paused</FilterChip>
-        <span className="ml-auto">
-          <ViewToggle
+      <ListToolbar
+ search={<SearchField value={query} onChange={setQuery} placeholder="Search name or email…" className="w-full max-w-xs" />}
+ controls={<>
+<ViewToggle
             value={view}
             onChange={setView}
             options={[
@@ -186,8 +192,12 @@ export default function AdminTeamPage() {
               { value: "cards", label: "Cards", icon: <LayoutGrid /> },
             ]}
           />
-        </span>
-      </div>
+</>}
+>
+<FilterChip active={status === ""} onClick={() => { setStatus(""); setPage(1); }}>All</FilterChip>
+<FilterChip active={status === "active"} onClick={() => { setStatus("active"); setPage(1); }}>Active</FilterChip>
+<FilterChip active={status === "inactive"} onClick={() => { setStatus("inactive"); setPage(1); }}>Paused</FilterChip>
+</ListToolbar>
 
       {users.isLoading ? (
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-32 rounded-2xl" />)}</div>
@@ -227,11 +237,11 @@ export default function AdminTeamPage() {
                         </span>
                         <span className="truncate text-sm text-ink-soft">{member.branch?.name ?? "Not available"}</span>
                         <span>
-                          <Tag tone={member.status === "active" ? "moss" : "rose"} dot>{member.status === "active" ? "Active" : "Paused"}</Tag>
+                          <UserStatusBadge status={member.status} />
                           {member.isAdminHq ? <Tag tone="sky" className="ml-1">HQ</Tag> : null}
                         </span>
                         <span className="num text-xs text-ink-faint">
-                          {member.lastSignInAt ? new Date(member.lastSignInAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "never"}
+                          {member.lastSignInAt ? formatRecordDateTime(member.lastSignInAt) : "Never signed in"}
                         </span>
                         <div className="flex justify-end">
                           <RowActions actions={manageActions(member)} />
@@ -243,10 +253,10 @@ export default function AdminTeamPage() {
               </div>
             </div>
           ) : (
-            <StaggerGroup className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <StaggerGroup className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {rows.map((member) => (
-                <StaggerItem key={member.profileId}>
-                  <div className="paper-card flex h-full flex-col rounded-2xl p-4">
+                <StaggerItem key={member.profileId} className="min-w-0">
+                  <div className="paper-card flex h-full min-w-0 flex-col rounded-2xl p-4">
                     <div className="flex items-start justify-between gap-2">
                       <button type="button" onClick={() => router.push(`/admin/team/${member.profileId}`)} className="flex min-w-0 items-center gap-3 text-left">
                         <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.avatarUrl} size="md" />
@@ -258,13 +268,13 @@ export default function AdminTeamPage() {
                       <RowActions reveal={false} actions={manageActions(member)} />
                     </div>
                     <p className="mt-2 truncate text-xs text-ink-faint">{member.email ?? "No email on file"}</p>
-                    <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-line/70 pt-3 text-xs text-ink-faint">
                       <span className="flex items-center gap-1.5">
-                        <Tag tone={member.status === "active" ? "moss" : "rose"} dot>{member.status === "active" ? "Active" : "Paused"}</Tag>
+                        <UserStatusBadge status={member.status} />
                         {member.isAdminHq ? <Tag tone="sky">HQ</Tag> : null}
                         {member.branch ? <span className="truncate">· {member.branch.name}</span> : null}
                       </span>
-                      <span>{member.lastSignInAt ? new Date(member.lastSignInAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "never signed in"}</span>
+                      <span>{member.lastSignInAt ? formatRecordDateTime(member.lastSignInAt) : "Never signed in"}</span>
                     </div>
                   </div>
                 </StaggerItem>

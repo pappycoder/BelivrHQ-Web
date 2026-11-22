@@ -1,5 +1,7 @@
 "use client";
 
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 import { WorkspaceFormSection } from "@/components/workspace/workspace-presentation";
 
@@ -10,7 +12,6 @@ import { z } from "zod";
 import { toast } from "@/lib/toast";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -164,7 +165,7 @@ export function DepartmentFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
+      <FormDialogContent
         onCloseAutoFocus={
           returnFocusRef
             ? (event) => {
@@ -248,7 +249,7 @@ export function DepartmentFormDialog({
                   name="branchId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Branch{!isEdit && " *"}</FormLabel>
+                      <FormLabel>Branch</FormLabel>
                       <Select
                         value={field.value || undefined}
                         onValueChange={(value) => {
@@ -348,7 +349,7 @@ export function DepartmentFormDialog({
             </DialogFooter>
           </ValidatedForm>
         </Form>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

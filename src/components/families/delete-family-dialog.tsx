@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import { toast } from "@/lib/toast";
 import { AlertTriangle } from "lucide-react";
@@ -62,7 +64,7 @@ export function DeleteFamilyDialog({
           if (done === families.length) {
             if (!single && families.length > 3 && failed > 0) {
               toast.warning(
-                `Deleted ${succeeded} of ${families.length} families`,
+                `Deleted ${succeeded} of ${families.length} ${collectionLabel(families.length, "families")}`,
                 {
                   description:
                     "Some families could not be deleted. Please try again.",
@@ -109,7 +111,7 @@ export function DeleteFamilyDialog({
             <AlertTriangle className="h-6 w-6 text-destructive" />
           </div>
           <DialogTitle className="text-center">
-            {single ? "Delete Family" : `Delete ${families.length} Families`}
+            {single ? "Delete Family" : `Delete ${families.length} ${collectionLabel(families.length, "Families")}`}
           </DialogTitle>
           <DialogDescription className="text-center">
             {single ? (
@@ -125,7 +127,7 @@ export function DeleteFamilyDialog({
               <>
                 Are you sure you want to delete{" "}
                 <span className="font-medium text-foreground">
-                  {families.length} families
+                  {families.length} {collectionLabel(families.length, "families")}
                 </span>
                 ? The family groups and their member associations are removed.
                 Member records themselves are not deleted.

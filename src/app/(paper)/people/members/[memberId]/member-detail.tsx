@@ -1,5 +1,15 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { formatRecordDate } from "@/lib/record-date";
+
+import { DetailNavigation, DetailHeading } from "@/components/paper/section";
+
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
 
 import * as React from "react";
@@ -87,6 +97,10 @@ export default function MemberDetail({
     );
   }
 
+  if (member.isError && !isMissingRecordError(member.error)) {
+    return <RecordQueryError title="Member details" error={member.error} backHref="/people/members" backLabel="Back to the register" />;
+  }
+
   if (member.isError || !data) {
     return (
       <div className="flex flex-col items-center gap-3 py-20 text-center">
@@ -124,12 +138,12 @@ export default function MemberDetail({
   return (
     <div className="space-y-6">
       {dialog}
-      <Link
+      <DetailNavigation><Link
         href="/people/members"
         className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink"
       >
         <ArrowLeft className="size-3" /> People · Members
-      </Link>
+      </Link></DetailNavigation>
 
       <div className="paper-card rounded-2xl p-5 md:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -137,14 +151,14 @@ export default function MemberDetail({
             <PersonAvatar name={fullName} src={data.photoUrl} size="xl" />
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="font-display text-[clamp(1.5rem,2.4vw,2rem)] font-semibold tracking-tight">
+                <DetailHeading>
                   {fullName}
-                </h1>
-                <Tag tone={STATUS_TONES[data.status]} dot>{data.status}</Tag>
+                </DetailHeading>
+                <Tag tone={STATUS_TONES[data.status]} dot>{formatStatusLabel(data.status)}</Tag>
                 {data.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
               </div>
               <p className="text-sm text-ink-soft">
-                Member since {data.memberSince ?? "Not available"}
+                Member since {formatRecordDate(data.memberSince)}
                 {data.city ? ` · ${data.city}` : ""}
               </p>
               <div className="flex flex-wrap gap-1.5">
@@ -261,8 +275,8 @@ export default function MemberDetail({
             <DataList>
               <FieldRow label="Address">{data.address ?? "Not available"}</FieldRow>
               <FieldRow label="City / State">{[data.city, data.state].filter(Boolean).join(", ") || "Not available"}</FieldRow>
-              <FieldRow label="Status">{data.status}</FieldRow>
-              <FieldRow label="Member since">{data.memberSince ?? "Not available"}</FieldRow>
+              <FieldRow label="Status">{formatStatusLabel(data.status)}</FieldRow>
+              <FieldRow label="Member since">{formatRecordDate(data.memberSince)}</FieldRow>
             </DataList>
           </SectionCard>
           {customEntries.length ? (
@@ -341,7 +355,7 @@ export default function MemberDetail({
                     </span>
                     <span className="text-sm text-ink-soft">{formatDate(record.givingDate ?? record.createdAt)}</span>
                     <span className="ml-auto">
-                      <Tag tone={record.status === "success" ? "moss" : record.status === "pending" ? "gold" : "rose"}>{record.status}</Tag>
+                      <Tag tone={record.status === "success" ? "moss" : record.status === "pending" ? "gold" : "rose"}>{formatStatusLabel(record.status)}</Tag>
                     </span>
                   </div>
                 ))}
@@ -382,8 +396,5 @@ export default function MemberDetail({
 }
 
 function formatDate(value?: string) {
-  if (!value) return "Not available";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  return formatRecordDate(value);
 }

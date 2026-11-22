@@ -37,7 +37,7 @@ function initials(name: string): string {
     .join("");
 }
 
-interface RecipientComboboxProps {
+interface RecipientComboboxProps extends Pick<React.ComponentProps<"button">, "id" | "aria-labelledby" | "aria-label" | "aria-describedby"> {
   /** Ids already selected — hidden from the dropdown. */
   excludeIds: string[];
   onToggle: (contact: EmailContact) => void;
@@ -53,6 +53,7 @@ export function RecipientCombobox({
   excludeIds,
   onToggle,
   placeholder,
+  ...accessibilityProps
 }: RecipientComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -69,6 +70,7 @@ export function RecipientCombobox({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
+          {...accessibilityProps}
           type="button"
           role="combobox"
           aria-expanded={open}

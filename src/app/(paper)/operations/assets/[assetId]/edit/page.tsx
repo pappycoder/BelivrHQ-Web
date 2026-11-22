@@ -1,5 +1,8 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -41,6 +44,10 @@ export default function EditAssetPage({
         <Skeleton className="h-96 rounded-2xl" />
       </div>
     );
+  }
+
+  if (asset.isError && !isMissingRecordError(asset.error)) {
+    return <RecordQueryError title="Edit asset" error={asset.error} backHref="/operations/assets" backLabel="Back to the register" />;
   }
 
   if (asset.isError || !asset.data) {

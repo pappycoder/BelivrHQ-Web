@@ -1,0 +1,818 @@
+[
+  {
+    "scenario": "unused-live",
+    "theme": "light",
+    "width": 1280,
+    "all": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [],
+      "rows": [
+        {
+          "cells": [
+            {
+              "content": 689,
+              "height": 21,
+              "overflow": "hidden",
+              "text": "Chioma Eze",
+              "textOverflow": "ellipsis",
+              "width": 689
+            },
+            {
+              "content": 170,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "EVT-20261103-9CC9A8",
+              "textOverflow": "ellipsis",
+              "width": 170
+            },
+            {
+              "content": 116,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "General · 3 Nov 2026",
+              "textOverflow": "ellipsis",
+              "width": 116
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 1116,
+          "rowWidth": 1116
+        },
+        {
+          "cells": [
+            {
+              "content": 685,
+              "height": 21,
+              "overflow": "hidden",
+              "text": "Jane Garcia",
+              "textOverflow": "ellipsis",
+              "width": 685
+            },
+            {
+              "content": 170,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "EVT-20261025-FB2550",
+              "textOverflow": "ellipsis",
+              "width": 170
+            },
+            {
+              "content": 120,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "General · 25 Oct 2026",
+              "textOverflow": "ellipsis",
+              "width": 120
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 1116,
+          "rowWidth": 1116
+        },
+        {
+          "cells": [
+            {
+              "content": 685,
+              "height": 21,
+              "overflow": "hidden",
+              "text": "Ladi Samuel",
+              "textOverflow": "ellipsis",
+              "width": 685
+            },
+            {
+              "content": 170,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "EVT-20261025-4E24AE",
+              "textOverflow": "ellipsis",
+              "width": 170
+            },
+            {
+              "content": 120,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "General · 25 Oct 2026",
+              "textOverflow": "ellipsis",
+              "width": 120
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 1116,
+          "rowWidth": 1116
+        }
+      ]
+    },
+    "filtered": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [
+        "No used tickets in this recent list.Show all tickets"
+      ],
+      "rows": []
+    },
+    "recovered": true,
+    "matchingRows": 3
+  },
+  {
+    "scenario": "unused-live",
+    "theme": "light",
+    "width": 390,
+    "all": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [],
+      "rows": [
+        {
+          "cells": [
+            {
+              "content": 228,
+              "height": 21,
+              "overflow": "visible",
+              "text": "Chioma Eze",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 228,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261103-9CC9A8",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 228,
+              "height": 17,
+              "overflow": "visible",
+              "text": "General · 3 Nov 2026",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 344,
+          "rowWidth": 344
+        },
+        {
+          "cells": [
+            {
+              "content": 228,
+              "height": 21,
+              "overflow": "visible",
+              "text": "Jane Garcia",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 228,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-FB2550",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 228,
+              "height": 17,
+              "overflow": "visible",
+              "text": "General · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 344,
+          "rowWidth": 344
+        },
+        {
+          "cells": [
+            {
+              "content": 228,
+              "height": 21,
+              "overflow": "visible",
+              "text": "Ladi Samuel",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 228,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-4E24AE",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 228,
+              "height": 17,
+              "overflow": "visible",
+              "text": "General · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 344,
+          "rowWidth": 344
+        }
+      ]
+    },
+    "filtered": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [
+        "No used tickets in this recent list.Show all tickets"
+      ],
+      "rows": []
+    },
+    "recovered": true,
+    "matchingRows": 3
+  },
+  {
+    "scenario": "unused-live",
+    "theme": "light",
+    "width": 320,
+    "all": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [],
+      "rows": [
+        {
+          "cells": [
+            {
+              "content": 158,
+              "height": 21,
+              "overflow": "visible",
+              "text": "Chioma Eze",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 158,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261103-9CC9A8",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 158,
+              "height": 17,
+              "overflow": "visible",
+              "text": "General · 3 Nov 2026",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 274,
+          "rowWidth": 274
+        },
+        {
+          "cells": [
+            {
+              "content": 158,
+              "height": 21,
+              "overflow": "visible",
+              "text": "Jane Garcia",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 158,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-FB2550",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 158,
+              "height": 17,
+              "overflow": "visible",
+              "text": "General · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 274,
+          "rowWidth": 274
+        },
+        {
+          "cells": [
+            {
+              "content": 158,
+              "height": 21,
+              "overflow": "visible",
+              "text": "Ladi Samuel",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 158,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-4E24AE",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 158,
+              "height": 17,
+              "overflow": "visible",
+              "text": "General · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 274,
+          "rowWidth": 274
+        }
+      ]
+    },
+    "filtered": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [
+        "No used tickets in this recent list.Show all tickets"
+      ],
+      "rows": []
+    },
+    "recovered": true,
+    "matchingRows": 3
+  },
+  {
+    "scenario": "unused-live",
+    "theme": "dark",
+    "width": 1280,
+    "all": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [],
+      "rows": [
+        {
+          "cells": [
+            {
+              "content": 689,
+              "height": 21,
+              "overflow": "hidden",
+              "text": "Chioma Eze",
+              "textOverflow": "ellipsis",
+              "width": 689
+            },
+            {
+              "content": 170,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "EVT-20261103-9CC9A8",
+              "textOverflow": "ellipsis",
+              "width": 170
+            },
+            {
+              "content": 116,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "General · 3 Nov 2026",
+              "textOverflow": "ellipsis",
+              "width": 116
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 1116,
+          "rowWidth": 1116
+        },
+        {
+          "cells": [
+            {
+              "content": 685,
+              "height": 21,
+              "overflow": "hidden",
+              "text": "Jane Garcia",
+              "textOverflow": "ellipsis",
+              "width": 685
+            },
+            {
+              "content": 170,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "EVT-20261025-FB2550",
+              "textOverflow": "ellipsis",
+              "width": 170
+            },
+            {
+              "content": 120,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "General · 25 Oct 2026",
+              "textOverflow": "ellipsis",
+              "width": 120
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 1116,
+          "rowWidth": 1116
+        },
+        {
+          "cells": [
+            {
+              "content": 685,
+              "height": 21,
+              "overflow": "hidden",
+              "text": "Ladi Samuel",
+              "textOverflow": "ellipsis",
+              "width": 685
+            },
+            {
+              "content": 170,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "EVT-20261025-4E24AE",
+              "textOverflow": "ellipsis",
+              "width": 170
+            },
+            {
+              "content": 120,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "General · 25 Oct 2026",
+              "textOverflow": "ellipsis",
+              "width": 120
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 1116,
+          "rowWidth": 1116
+        }
+      ]
+    },
+    "filtered": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [
+        "No used tickets in this recent list.Show all tickets"
+      ],
+      "rows": []
+    },
+    "recovered": true,
+    "matchingRows": 3
+  },
+  {
+    "scenario": "unused-live",
+    "theme": "dark",
+    "width": 390,
+    "all": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [],
+      "rows": [
+        {
+          "cells": [
+            {
+              "content": 228,
+              "height": 21,
+              "overflow": "visible",
+              "text": "Chioma Eze",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 228,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261103-9CC9A8",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 228,
+              "height": 17,
+              "overflow": "visible",
+              "text": "General · 3 Nov 2026",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 344,
+          "rowWidth": 344
+        },
+        {
+          "cells": [
+            {
+              "content": 228,
+              "height": 21,
+              "overflow": "visible",
+              "text": "Jane Garcia",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 228,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-FB2550",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 228,
+              "height": 17,
+              "overflow": "visible",
+              "text": "General · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 344,
+          "rowWidth": 344
+        },
+        {
+          "cells": [
+            {
+              "content": 228,
+              "height": 21,
+              "overflow": "visible",
+              "text": "Ladi Samuel",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 228,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-4E24AE",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 228,
+              "height": 17,
+              "overflow": "visible",
+              "text": "General · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 228
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 344,
+          "rowWidth": 344
+        }
+      ]
+    },
+    "filtered": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [
+        "No used tickets in this recent list.Show all tickets"
+      ],
+      "rows": []
+    },
+    "recovered": true,
+    "matchingRows": 3
+  },
+  {
+    "scenario": "unused-live",
+    "theme": "dark",
+    "width": 320,
+    "all": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [],
+      "rows": [
+        {
+          "cells": [
+            {
+              "content": 158,
+              "height": 21,
+              "overflow": "visible",
+              "text": "Chioma Eze",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 158,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261103-9CC9A8",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 158,
+              "height": 17,
+              "overflow": "visible",
+              "text": "General · 3 Nov 2026",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 274,
+          "rowWidth": 274
+        },
+        {
+          "cells": [
+            {
+              "content": 158,
+              "height": 21,
+              "overflow": "visible",
+              "text": "Jane Garcia",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 158,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-FB2550",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 158,
+              "height": 17,
+              "overflow": "visible",
+              "text": "General · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 274,
+          "rowWidth": 274
+        },
+        {
+          "cells": [
+            {
+              "content": 158,
+              "height": 21,
+              "overflow": "visible",
+              "text": "Ladi Samuel",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 158,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-4E24AE",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 158,
+              "height": 17,
+              "overflow": "visible",
+              "text": "General · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 158
+            },
+            {
+              "content": 60,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Open",
+              "textOverflow": "clip",
+              "width": 60
+            }
+          ],
+          "rowContent": 274,
+          "rowWidth": 274
+        }
+      ]
+    },
+    "filtered": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [
+        "No used tickets in this recent list.Show all tickets"
+      ],
+      "rows": []
+    },
+    "recovered": true,
+    "matchingRows": 3
+  }
+]

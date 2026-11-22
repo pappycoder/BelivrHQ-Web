@@ -1,5 +1,22 @@
 "use client";
 
+import { ErrorState } from "@/components/shared/error-state";
+
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { collectionLabel } from "@/lib/collection-label";
+
+import { EventPicker, useEventPickerEvents } from "@/components/events/event-picker";
+
+import { DialogFooter, DialogClose } from "@/components/ui/dialog";
+
+import { useId as useFormFieldId } from "react";
+
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { RequiredFieldsNotice } from "@/components/ui/required-fields";
 
 import * as React from "react";
@@ -17,7 +34,6 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
@@ -25,7 +41,6 @@ import {
 import { ConfirmDeleteDialog } from "@/components/pastoral/confirm-delete-dialog";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
-  useEventsList,
   useEventTiers,
   useCreateTier,
   useUpdateTier,
@@ -50,7 +65,7 @@ function TiersInner() {
   const [formTarget, setFormTarget] = React.useState<{ open: boolean; tier: EventTicketTier | null }>({ open: false, tier: null });
   const [deleteTarget, setDeleteTarget] = React.useState<EventTicketTier | null>(null);
 
-  const events = useEventsList({ limit: 100, sortBy: "startDate", sortOrder: "desc" });
+  const events = useEventPickerEvents();
   const tiers = useEventTiers(eventId);
   const tickets = useAllTickets({ eventId: eventId || undefined, limit: 100 });
   const create = useCreateTier(eventId);
@@ -62,8 +77,13 @@ function TiersInner() {
   const paidEvent = selected && !selected.isFree;
   const rows = tiers.data ?? [];
   const ticketRows = (tickets.data?.data ?? []).slice(0, 10);
+  const visibleTicketRows = ticketRows.filter((ticket) =>
+    ticketFilter === "used" ? Boolean(ticket.usedAt) : ticketFilter === "open" ? !ticket.usedAt : true,
+  );
   const capacity = rows.reduce((sum, t) => sum + (t.capacity ?? 0), 0);
   const cappedCount = rows.filter((t) => t.capacity != null).length;
+  const eventReady = events.isSuccess && !events.isError && !!selected;
+  const tierDataReady = eventReady && tiers.isSuccess && !tiers.isError;
 
   return (
     <div className="space-y-6">
@@ -72,7 +92,7 @@ function TiersInner() {
         title="Pricing and capacity, decided kindly."
         description="Set ticket tiers and prices for each paid event before registration opens."
         actions={
-          canCreate && paidEvent ? (
+          canCreate && paidEvent && tierDataReady ? (
             <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setFormTarget({ open: true, tier: null })}>
               <Plus className="size-3.5" /> New tier
             </Button>
@@ -81,34 +101,22 @@ function TiersInner() {
       />
 
       <div className="flex flex-wrap items-center gap-2">
-        <select
-          value={eventId}
-          onChange={(e) => { setEventId(e.target.value); router.replace(`/gatherings/events/tiers${e.target.value ? `?event=${e.target.value}` : ""}`); }}
-          className="h-9 rounded-full border border-line bg-card px-3 text-sm outline-none"
-          aria-label="Event selector"
-        >
-          <option value="">Choose an event…</option>
-          {eventList.map((event) => (
-            <option key={event.eventId} value={event.eventId}>
-              {event.title} · {formatDate(event.startDate)}{event.isFree ? " (free)" : ""}
-            </option>
-          ))}
-        </select>
+        <EventPicker query={events} value={eventId} showPricing
+          onValueChange={value => { setEventId(value); router.replace(`/gatherings/events/tiers${value ? `?event=${value}` : ""}`); }} />
         {selected && !selected.isFree ? <Tag tone="gold">paid event</Tag> : null}
         {selected?.isFree ? (
           <span className="text-sm text-ink-faint">Free events use registration check-in; no tiers needed.</span>
         ) : null}
       </div>
 
-      {!eventId ? (
-        <EmptyState icon={<Ticket />} title="Pick an event to manage its tickets" description="Tiers, capacity and every issued pass sit on one honest screen." />
+      {!eventId ? (events.isSuccess && eventList.length ? <EmptyState icon={<Ticket />} title="Pick an event to manage its tickets" description="Tiers, capacity and every issued ticket sit on one honest screen." /> : null
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <StatCard label="Tiers" value={rows.length} tone="brand" icon={<Coins className="size-4" />} />
-            <StatCard label="Tickets issued" value={ticketRows.length} tone="moss" deltaLabel={`page of ${number(tickets.data?.total ?? 0)}`} />
-            <StatCard label="Tier capacity" value={capacity} tone="gold" deltaLabel={`${cappedCount} capped · ${rows.length - cappedCount} uncapped`} />
-            <StatCard label="Event capacity" value={selected?.capacity ?? 0} tone="sky" deltaLabel="from the event itself" />
+            {tiers.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={tiers.isError} label="Tiers" value={rows.length} tone="brand" icon={<Coins className="size-4" />} />}
+            {tickets.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={tickets.isError} label="Tickets issued" value={ticketRows.length} tone="moss" deltaLabel={tickets.isError ? "Please try again" : `page of ${number(tickets.data?.total ?? 0)}`} />}
+            {tiers.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={tiers.isError} label="Tier capacity" value={capacity} tone="gold" deltaLabel={tiers.isError ? "Please try again" : `${cappedCount} capped · ${rows.length - cappedCount} uncapped`} />}
+            {events.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={!eventReady} label="Event capacity" value={selected?.capacity ?? 0} tone="sky" deltaLabel="from the event itself" />}
           </div>
 
           <SectionCard
@@ -116,12 +124,14 @@ function TiersInner() {
             title={selected ? `Tickets for ${selected.title}` : "Ticket tiers"}
             bodyClassName="p-0"
           >
-            {tiers.isLoading ? (
+            {tiers.isError ? (
+              <ErrorState title="Unable to load ticket tiers" />
+            ) : tiers.isPending ? (
               <div className="space-y-2 p-5">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-12 rounded-xl" />)}</div>
             ) : rows.length === 0 ? (
               <div className="px-5 py-10 text-center">
                 <p className="text-sm text-ink-faint">{paidEvent ? "No tiers yet. The first one sets the price of entry." : "Free event: registrations stand in for tickets."}</p>
-                {canCreate && paidEvent ? (
+                {canCreate && paidEvent && tierDataReady ? (
                   <Button size="sm" variant="outline" className="mt-3 rounded-full border-line text-sm" onClick={() => setFormTarget({ open: true, tier: null })}>Create the first tier</Button>
                 ) : null}
               </div>
@@ -134,12 +144,16 @@ function TiersInner() {
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-sm font-semibold">{tier.name}</span>
                         <span className="block truncate text-xs text-ink-faint">{tier.description || "No description"}</span>
+                        <span className="mt-1 flex flex-wrap gap-x-2 text-xs text-ink-soft md:hidden">
+                          <span className="num font-semibold sm:hidden">{formatNaira(tier.price)}</span>
+                          <span>{tier.capacity != null ? `${number(tier.capacity)} ${collectionLabel(tier.capacity, "seats")}` : "Uncapped seats"}</span>
+                        </span>
                       </span>
                       <span className="num hidden w-24 text-right text-sm font-semibold sm:block">{formatNaira(tier.price)}</span>
                       <span className="num hidden w-28 text-right text-sm text-ink-soft md:block">
-                        {tier.capacity != null ? <>{number(tier.capacity)} seats</> : "uncapped seats"}
+                        {tier.capacity != null ? <>{number(tier.capacity)} {collectionLabel(tier.capacity, "seats")}</> : "uncapped seats"}
                       </span>
-                      {(canUpdate || canDelete) && paidEvent ? (
+                      {(canUpdate || canDelete) && paidEvent && tierDataReady ? (
                         <RowActions
                           actions={[
                             canUpdate && {
@@ -164,7 +178,7 @@ function TiersInner() {
           </SectionCard>
 
           <SectionCard
-            eyebrow="Issued passes"
+            eyebrow="Issued tickets"
             title="Recent tickets"
             actions={
               <div className="flex items-center gap-2">
@@ -175,21 +189,26 @@ function TiersInner() {
             }
             bodyClassName="p-0"
           >
-            {tickets.isLoading ? (
+            {tickets.isError ? (
+              <ErrorState title="Unable to load recent tickets" />
+            ) : tickets.isPending ? (
               <div className="space-y-2 p-5">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-10 rounded-xl" />)}</div>
             ) : (
               <div className="divide-y divide-line/70">
-                {ticketRows
-                  .filter((t) => (ticketFilter === "used" ? Boolean(t.usedAt) : ticketFilter === "open" ? !t.usedAt : true))
-                  .map((t) => (
-                    <div key={t.ticketId ?? t.code} className="flex items-center gap-3 px-5 py-2.5 text-sm">
-                      <span className="font-mono text-xs text-ink-faint">{t.code}</span>
-                      <span className="min-w-0 flex-1 truncate">{t.memberName ?? t.visitorName ?? "Unassigned"}</span>
-                      <span className="hidden truncate text-xs text-ink-faint sm:block">{t.tierName ?? "Not available"} · {formatDate(t.createdAt)}</span>
-                      <Tag tone={t.usedAt ? "moss" : "neutral"} dot>{t.usedAt ? "used" : "open"}</Tag>
+                {visibleTicketRows.map((t) => (
+                    <div key={t.ticketId ?? t.code} className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-1 px-5 py-3 text-sm sm:flex sm:items-center">
+                      <span className="col-start-1 row-start-1 min-w-0 font-medium [overflow-wrap:anywhere] sm:flex-1 sm:truncate">{t.memberName ?? t.visitorName ?? "Unassigned"}</span>
+                      <span className="col-start-1 row-start-2 min-w-0 break-all font-mono text-xs text-ink-faint sm:order-first sm:w-40 sm:shrink-0 sm:truncate">{t.code}</span>
+                      <span className="col-start-1 row-start-3 min-w-0 text-xs text-ink-faint [overflow-wrap:anywhere] sm:max-w-[35%] sm:truncate">{t.tierName ?? "Not available"} · {formatDate(t.createdAt)}</span>
+                      <Tag className="col-start-2 row-start-1 self-start sm:order-last sm:shrink-0 sm:self-center" tone={t.usedAt ? "moss" : "neutral"} dot>{formatStatusLabel(t.usedAt ? "used" : "open")}</Tag>
                     </div>
                   ))}
-                {!ticketRows.length ? <p className="px-5 py-8 text-center text-sm text-ink-faint">No passes issued for this event yet.</p> : null}
+                {!visibleTicketRows.length ? (
+                  <div role="status" className="space-y-3 px-5 py-8 text-center">
+                    <p className="text-sm text-ink-faint">{ticketRows.length ? `No ${ticketFilter === "used" ? "used" : "unused"} tickets in this recent list.` : "No tickets issued for this event yet."}</p>
+                    {ticketRows.length ? <Button size="sm" variant="outline" className="rounded-full" onClick={() => setTicketFilter("")}>Show all tickets</Button> : null}
+                  </div>
+                ) : null}
               </div>
             )}
             <div className="border-t border-line px-5 py-2.5 text-xs text-ink-faint">
@@ -204,7 +223,9 @@ function TiersInner() {
         onOpenChange={(value) => setFormTarget({ open: value, tier: value ? formTarget.tier : null })}
         tier={formTarget.tier}
         pending={create.isPending || update.isPending}
+        disabled={!tierDataReady}
         onSave={(values, existing) => {
+          if (!tierDataReady) return;
           const done = {
             onSuccess: () => { toast(existing ? "Tier updated." : "Tier created."); setFormTarget({ open: false, tier: null }); },
             onError: (e: unknown) => toast.error(getToastErrorMessage(e, "Couldn't save the tier. Capacity may already be sold out.")),
@@ -223,7 +244,7 @@ function TiersInner() {
         pending={del.isPending}
         pendingLabel="Deleting…"
         onConfirm={() => {
-          if (!canDelete || !deleteTarget) return;
+          if (!canDelete || !deleteTarget || !tierDataReady) return;
           del.mutate(deleteTarget.id, {
             onSuccess: () => { toast("Tier deleted."); setDeleteTarget(null); },
             onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't delete it. Tickets may already be sold.")),
@@ -242,13 +263,16 @@ function TierFormDialog({
   tier,
   onSave,
   pending,
+  disabled = false,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   tier: EventTicketTier | null;
   onSave: (values: TierValues, existing: EventTicketTier | null) => void;
   pending: boolean;
+  disabled?: boolean;
 }) {
+  const formFieldId = useFormFieldId();
   const [form, setForm] = React.useState({ name: "", price: "", capacity: "", description: "" });
 
   React.useEffect(() => {
@@ -264,48 +288,54 @@ function TierFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-2xl border-line bg-card">
+      <FormDialogContent className="rounded-2xl border-line bg-card">
         <DialogHeader>
           <DialogTitle className="font-display">{tier ? `Edit ${tier.name}` : "Set a new tier"}</DialogTitle>
           <DialogDescription className="text-sm">Name the ticket the way the congregation would say it.</DialogDescription>
         </DialogHeader>
-        <div className="space-y-3">
-          <RequiredFieldsNotice className="col-span-full" />
-          <div className="space-y-1.5">
-            <Label required className="text-sm">Tier name</Label>
-            <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Standard" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
+        <FormSection title="Details">
+          <div className="space-y-3">
+            <RequiredFieldsNotice className="col-span-full" />
             <div className="space-y-1.5">
-              <Label required className="text-sm">Price (₦)</Label>
-              <Input inputMode="numeric" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value.replace(/[^\d]/g, "") }))} placeholder="5000" className="num h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              <Label htmlFor={`${formFieldId}-field-1`} required className="text-sm">Tier name</Label>
+              <Input id={`${formFieldId}-field-1`} value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Standard" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor={`${formFieldId}-field-2`} required className="text-sm">Price (₦)</Label>
+                <Input id={`${formFieldId}-field-2`} inputMode="numeric" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value.replace(/[^\d]/g, "") }))} placeholder="5000" className="num h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor={`${formFieldId}-field-3`} className="text-sm">Capacity (optional)</Label>
+                <Input id={`${formFieldId}-field-3`} inputMode="numeric" value={form.capacity} onChange={(e) => setForm((f) => ({ ...f, capacity: e.target.value.replace(/[^\d]/g, "") }))} placeholder="100" className="num h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              </div>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-sm">Capacity (optional)</Label>
-              <Input inputMode="numeric" value={form.capacity} onChange={(e) => setForm((f) => ({ ...f, capacity: e.target.value.replace(/[^\d]/g, "") }))} placeholder="100" className="num h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              <Label htmlFor={`${formFieldId}-field-4`} className="text-sm">Note (optional)</Label>
+              <Input id={`${formFieldId}-field-4`} value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="What the ticket covers" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
             </div>
+
           </div>
-          <div className="space-y-1.5">
-            <Label className="text-sm">Note (optional)</Label>
-            <Input value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="What the ticket covers" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
-          </div>
-          <Button
-            className="h-10 w-full rounded-lg text-sm"
-            disabled={!valid || pending}
-            onClick={() => onSave(
-              {
-                name: form.name.trim(),
-                price: Number(form.price || 0),
-                capacity: form.capacity ? Number(form.capacity) : undefined,
-                description: form.description.trim() || undefined,
-              },
-              tier,
-            )}
-          >
-            {pending ? "Saving…" : tier ? "Save tier" : "Create tier"}
-          </Button>
-        </div>
-      </DialogContent>
+        </FormSection>
+<DialogFooter>
+<DialogClose asChild><Button type="button" variant="outline" disabled={pending}>Cancel</Button></DialogClose>
+<Button
+              className="h-10 rounded-lg text-sm"
+              disabled={disabled || !valid || pending}
+              onClick={() => onSave(
+                {
+                  name: form.name.trim(),
+                  price: Number(form.price || 0),
+                  capacity: form.capacity ? Number(form.capacity) : undefined,
+                  description: form.description.trim() || undefined,
+                },
+                tier,
+              )}
+            >
+              {pending ? "Saving…" : tier ? "Save tier" : "Create tier"}
+            </Button>
+</DialogFooter>
+      </FormDialogContent>
     </Dialog>
   );
 }

@@ -1,0 +1,512 @@
+[
+  {
+    "route": "/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc",
+    "views": [
+      {
+        "label": "light-1280",
+        "heading": "Juliana Ayoze",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "light-390",
+        "heading": "Juliana Ayoze",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-1280",
+        "heading": "Juliana Ayoze",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-390",
+        "heading": "Juliana Ayoze",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      }
+    ],
+    "recovered": true
+  },
+  {
+    "route": "/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5",
+    "views": [
+      {
+        "label": "light-1280",
+        "heading": "The Williams",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "light-390",
+        "heading": "The Williams",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-1280",
+        "heading": "The Williams",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-390",
+        "heading": "The Williams",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      }
+    ],
+    "recovered": true
+  },
+  {
+    "route": "/people/members/634a74c4-ad73-4506-933d-105295aafba7",
+    "views": [
+      {
+        "label": "light-1280",
+        "heading": "Jane Garcia",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "light-390",
+        "heading": "Jane Garcia",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-1280",
+        "heading": "Jane Garcia",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-390",
+        "heading": "Jane Garcia",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      }
+    ],
+    "recovered": true
+  },
+  {
+    "route": "/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0",
+    "views": [
+      {
+        "label": "light-1280",
+        "heading": "Sunday Service",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "light-390",
+        "heading": "Sunday Service",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-1280",
+        "heading": "Sunday Service",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-390",
+        "heading": "Sunday Service",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      }
+    ],
+    "recovered": true
+  },
+  {
+    "route": "/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9",
+    "views": [
+      {
+        "label": "light-1280",
+        "heading": "Youth Conference 2026",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "light-390",
+        "heading": "Youth Conference 2026",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-1280",
+        "heading": "Youth Conference 2026",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-390",
+        "heading": "Youth Conference 2026",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      }
+    ],
+    "recovered": true
+  },
+  {
+    "route": "/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit",
+    "views": [
+      {
+        "label": "light-1280",
+        "heading": "Amend the plan.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "light-390",
+        "heading": "Amend the plan.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-1280",
+        "heading": "Amend the plan.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-390",
+        "heading": "Amend the plan.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      }
+    ],
+    "recovered": true
+  },
+  {
+    "route": "/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844",
+    "views": [
+      {
+        "label": "light-1280",
+        "heading": "Apapa Cell Group",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "light-390",
+        "heading": "Apapa Cell Group",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-1280",
+        "heading": "Apapa Cell Group",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-390",
+        "heading": "Apapa Cell Group",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      }
+    ],
+    "recovered": true
+  },
+  {
+    "route": "/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df",
+    "views": [
+      {
+        "label": "light-1280",
+        "heading": "Walking in Faith",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "light-390",
+        "heading": "Walking in Faith",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-1280",
+        "heading": "Walking in Faith",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-390",
+        "heading": "Walking in Faith",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      }
+    ],
+    "recovered": true
+  },
+  {
+    "route": "/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit",
+    "views": [
+      {
+        "label": "light-1280",
+        "heading": "Amend the record.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "light-390",
+        "heading": "Amend the record.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-1280",
+        "heading": "Amend the record.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-390",
+        "heading": "Amend the record.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      }
+    ],
+    "recovered": true
+  },
+  {
+    "route": "/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47",
+    "views": [
+      {
+        "label": "light-1280",
+        "heading": "Person Draft Form",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "light-390",
+        "heading": "Person Draft Form",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-1280",
+        "heading": "Person Draft Form",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-390",
+        "heading": "Person Draft Form",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      }
+    ],
+    "recovered": true
+  },
+  {
+    "route": "/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit",
+    "views": [
+      {
+        "label": "light-1280",
+        "heading": "Amend the form.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "light-390",
+        "heading": "Amend the form.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-1280",
+        "heading": "Amend the form.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-390",
+        "heading": "Amend the form.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      }
+    ],
+    "recovered": true
+  },
+  {
+    "route": "/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill",
+    "views": [
+      {
+        "label": "light-1280",
+        "heading": "Person Draft Form",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "light-390",
+        "heading": "Person Draft Form",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-1280",
+        "heading": "Person Draft Form",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-390",
+        "heading": "Person Draft Form",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      }
+    ],
+    "recovered": true
+  },
+  {
+    "route": "/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit",
+    "views": [
+      {
+        "label": "light-1280",
+        "heading": "Amend UI TEST — Portable projector.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "light-390",
+        "heading": "Amend UI TEST — Portable projector.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-1280",
+        "heading": "Amend UI TEST — Portable projector.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-390",
+        "heading": "Amend UI TEST — Portable projector.",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      }
+    ],
+    "recovered": true
+  },
+  {
+    "route": "/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a",
+    "views": [
+      {
+        "label": "light-1280",
+        "heading": "Dennis Kolawole",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "light-390",
+        "heading": "Dennis Kolawole",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-1280",
+        "heading": "Dennis Kolawole",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-390",
+        "heading": "Dennis Kolawole",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      }
+    ],
+    "recovered": true
+  },
+  {
+    "route": "/admin/permissions/church_admin",
+    "views": [
+      {
+        "label": "light-1280",
+        "heading": "Church Admin",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "light-390",
+        "heading": "Church Admin",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-1280",
+        "heading": "Church Admin",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      },
+      {
+        "label": "dark-390",
+        "heading": "Church Admin",
+        "skeletons": 0,
+        "alerts": [],
+        "overflow": false
+      }
+    ],
+    "recovered": true
+  }
+]

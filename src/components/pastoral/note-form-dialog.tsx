@@ -1,5 +1,7 @@
 "use client";
 
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 import { WorkspaceFormSection } from "@/components/workspace/workspace-presentation";
 
@@ -10,7 +12,6 @@ import { z } from "zod";
 import { toast } from "@/lib/toast";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -154,7 +155,7 @@ export function NoteFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
+      <FormDialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{isEdit ? "Edit Note" : "Add Note"}</DialogTitle>
           <DialogDescription>
@@ -174,7 +175,7 @@ export function NoteFormDialog({
                   <FormItem>
                     <FormLabel>Member</FormLabel>
                     {isEdit && note ? (
-                      <div className="flex h-10 items-center rounded-md border border-transparent bg-gray-50 px-3 py-2 text-sm">
+                      <div className="flex h-10 items-center rounded-md border border-input bg-muted text-foreground px-3 py-2 text-sm">
                         {note.memberFirstName} {note.memberLastName}
                       </div>
                     ) : (
@@ -280,7 +281,7 @@ export function NoteFormDialog({
             </DialogFooter>
           </ValidatedForm>
         </Form>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

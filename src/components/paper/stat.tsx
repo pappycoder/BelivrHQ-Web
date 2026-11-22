@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { CountUp } from "./motion/primitives";
+import { StatValue } from "./stat-value";
 
 export type Tone = "brand" | "moss" | "gold" | "sky" | "rose" | "neutral";
 
@@ -39,8 +39,10 @@ export function Tag({
 }) {
   return (
     <span
+      data-slot="paper-tag"
+      data-tone={tone}
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium leading-5",
+        "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium not-italic normal-case leading-5 tracking-normal",
         toneBg[tone],
         className,
       )}
@@ -63,6 +65,7 @@ export function StatCard({
   decimals = 0,
   prefix,
   suffix,
+  unavailable = false,
 }: {
   label: string;
   value: number;
@@ -75,22 +78,24 @@ export function StatCard({
   decimals?: number;
   prefix?: string;
   suffix?: string;
+  unavailable?: boolean;
 }) {
   const positive = (delta ?? 0) > 0;
   const flat = delta === 0 || delta === undefined;
   return (
     <div
+      data-tour-stat={label}
       className={cn(
         "paper-card lift group relative flex flex-col justify-between gap-4 overflow-hidden rounded-2xl p-5",
         className,
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <span className="rule-label">{label}</span>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <span className="rule-label min-w-0 flex-[1_1_7rem] [overflow-wrap:anywhere]">{label}</span>
         {icon ? (
           <span
             className={cn(
-              "grid size-8 place-items-center rounded-lg [&_svg]:size-4",
+              "grid size-8 shrink-0 place-items-center rounded-lg [&_svg]:size-4",
               toneBg[tone],
             )}
           >
@@ -99,17 +104,12 @@ export function StatCard({
         ) : null}
       </div>
       <div className="space-y-1.5">
-        <div className="font-display text-[1.9rem] font-semibold leading-none tracking-tight">
-          <CountUp
-            value={value}
-            decimals={decimals}
-            prefix={prefix}
-            suffix={suffix}
-          />
-        </div>
-        {delta !== undefined || footer ? (
+        {unavailable ? (
+          <div data-slot="stat-unavailable" className="[overflow-wrap:anywhere] font-display text-lg font-semibold leading-tight">Unavailable</div>
+        ) : <StatValue value={value} decimals={decimals} prefix={prefix} suffix={suffix} />}
+        {unavailable || delta !== undefined || footer ? (
           <div className="flex items-center gap-2 text-sm text-ink-soft">
-            {delta !== undefined ? (
+            {!unavailable && delta !== undefined ? (
               <span
                 className={cn(
                   "inline-flex items-center gap-0.5 font-medium",
@@ -131,7 +131,7 @@ export function StatCard({
               </span>
             ) : null}
             {deltaLabel ? <span className="text-ink-faint">{deltaLabel}</span> : null}
-            {footer}
+            {!unavailable ? footer : null}
           </div>
         ) : null}
       </div>

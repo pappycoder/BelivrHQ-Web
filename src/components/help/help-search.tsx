@@ -1,4 +1,6 @@
 "use client";
+
+import { collectionLabel } from "@/lib/collection-label";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -123,7 +125,7 @@ export function HelpSearch({
             <span className="font-medium">All guides</span>
             {!compact && (
               <span className="mt-1 block text-sm text-muted-foreground">
-                Find your next step in {index.length} practical guides.
+                Find your next step in {index.length} practical {collectionLabel(index.length, "guides")}.
               </span>
             )}
           </span>
@@ -185,7 +187,7 @@ export function HelpSearch({
             href="/help"
             className="inline-flex items-center gap-2 text-sm font-medium text-primary"
           >
-            Browse all {index.length} guides
+            Browse all {index.length} {collectionLabel(index.length, "guides")}
             <ArrowUpRight className="size-4" />
           </Link>
         )}

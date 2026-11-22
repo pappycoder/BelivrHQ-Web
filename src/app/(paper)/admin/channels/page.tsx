@@ -12,7 +12,7 @@ export default function IntegrationsPage() {
         title="Your tools, working together."
         description="Manage the accounts and services that keep your church connected, from messages to payments."
       />
-      <IntegrationSettingsTab />
+      <div data-tour-integrations><IntegrationSettingsTab /></div>
     </div>
   );
 }

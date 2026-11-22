@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import { toast } from "@/lib/toast";
 import {
@@ -66,14 +68,14 @@ export function DeleteVisitorDialog({
           if (done === visitors.length) {
             if (!single && visitors.length > 3 && failed > 0) {
               toast.warning(
-                `Deleted ${succeeded} of ${visitors.length} visitors`,
+                `Deleted ${succeeded} of ${visitors.length} ${collectionLabel(visitors.length, "visitors")}`,
                 {
                   description:
                     "Some visitors could not be deleted. Please try again.",
                 },
               );
             } else if (!single && succeeded > 0) {
-              toast.success(`${succeeded} visitor(s) deleted`);
+              toast.success(`${succeeded} ${collectionLabel(succeeded, "visitors")} deleted`);
             }
             setPendingCount(0);
             // Single deletes stay open on failure so the error stays visible.
@@ -115,7 +117,7 @@ export function DeleteVisitorDialog({
             <AlertTriangle className="h-6 w-6 text-destructive" />
           </div>
           <DialogTitle className="text-center">
-            {single ? "Delete Visitor" : `Delete ${visitors.length} Visitors`}
+            {single ? "Delete Visitor" : `Delete ${visitors.length} ${collectionLabel(visitors.length, "Visitors")}`}
           </DialogTitle>
           <DialogDescription className="text-center">
             {single ? (
@@ -131,7 +133,7 @@ export function DeleteVisitorDialog({
               <>
                 Are you sure you want to permanently delete{" "}
                 <span className="font-medium text-foreground">
-                  {visitors.length} visitors
+                  {visitors.length} {collectionLabel(visitors.length, "visitors")}
                 </span>
                 ? Their records and follow-up history will be removed. This
                 action cannot be undone.

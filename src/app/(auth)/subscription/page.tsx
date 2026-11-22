@@ -1,5 +1,9 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
+import { retryPage } from "@/lib/retry-page";
+
 import { AuthFormWrapper } from "@/components/shared/auth-form-wrapper";
 import { RegistrationCheckout } from "@/components/billing/registration-checkout";
 import { LoadingState } from "@/components/shared/loading-state";
@@ -529,7 +533,7 @@ export default function SubscriptionPage() {
           <button
             type="button"
             className="text-primary underline"
-            onClick={() => void status.refetch()}
+            onClick={() => void retryPage()}
           >
             try loading checkout again
           </button>
@@ -623,7 +627,7 @@ export default function SubscriptionPage() {
           title="Billing could not be loaded"
           description={status.error.message}
           action={
-            <Button variant="outline" onClick={() => void status.refetch()}>
+            <Button variant="outline" onClick={() => void retryPage()}>
               Try again
             </Button>
           }
@@ -824,7 +828,7 @@ export default function SubscriptionPage() {
                       ? "Non-archived directory records"
                       : resource === "locations"
                         ? "Includes your headquarters"
-                        : `${data.usage?.pendingInvitations ?? 0} pending invitations included`}
+                        : `${data.usage?.pendingInvitations ?? 0} pending ${collectionLabel(data.usage?.pendingInvitations ?? 0, "invitations")} included`}
                   </p>
                   {limit > 0 && (used >= limit || percent >= 80) && (
                     <p className="mt-2 text-xs text-gold">
@@ -955,7 +959,7 @@ export default function SubscriptionPage() {
                       )}
                       <p className="mt-4 border-y border-line py-3 text-xs leading-relaxed text-ink-soft">
                         {catalog?.limits
-                          ? `${catalog.limits.members.toLocaleString()} members · ${catalog.limits.locations} location${catalog.limits.locations === 1 ? "" : "s"} · ${catalog.limits.staff} staff accounts`
+                          ? `${catalog.limits.members.toLocaleString()} ${collectionLabel(catalog.limits.members, "members")} · ${catalog.limits.locations} location${catalog.limits.locations === 1 ? "" : "s"} · ${catalog.limits.staff} ${collectionLabel(catalog.limits.staff, "staff accounts")}`
                           : item.capacity}
                       </p>
                       <ul className="mt-4 space-y-2 text-xs leading-relaxed text-ink-soft">

@@ -154,26 +154,112 @@ input::placeholder, textarea::placeholder { font-style: italic; }
 [role="combobox"][data-placeholder] [data-slot="select-value"],
 select:has(option[value=""]:checked), option[value=""] { font-style: italic; }
 
-/* Measuring-tape date/time wheels: native momentum, snap, fixed rail and faded edges. */
-.wheel-columns { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .5rem; }
-.wheel-time-columns { grid-template-columns: repeat(auto-fit,minmax(0,1fr)); }
-.wheel-column { min-width: 0; text-align: center; }
-.wheel-column-label { display: block; margin-bottom: .375rem; color: var(--muted-foreground); font-size: .75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
-.wheel-ruler { position: relative; overflow: hidden; border: 0; border-radius: 0; background: linear-gradient(to bottom,transparent,color-mix(in srgb,var(--muted) 55%,transparent) 20%,color-mix(in srgb,var(--card) 80%,transparent) 50%,color-mix(in srgb,var(--muted) 55%,transparent) 80%,transparent); }
-.wheel-scroll { position: relative; height: 160px; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; overflow-anchor: none; padding-block: 60px; scrollbar-width: none; outline: none; mask-image: linear-gradient(to bottom,transparent,#000 30%,#000 70%,transparent); }
-.wheel-scroll::-webkit-scrollbar { display: none; }
-.wheel-column:has(.wheel-scroll:focus-visible) .wheel-column-label { color: var(--foreground); text-decoration: underline; text-underline-offset: 4px; }
-.wheel-tick { position: relative; display: flex; height: 40px; flex-shrink: 0; align-items: center; justify-content: center; cursor: pointer; color: var(--muted-foreground); font-size: .875rem; font-variant-numeric: tabular-nums; transition: transform 140ms ease-out,color 140ms ease-out,opacity 140ms ease-out; user-select: none; }
-.wheel-tick::before { content: ""; position: absolute; left: 0; width: 5px; height: 1px; background: currentColor; opacity: .4; }
-.wheel-tick[data-major=true]::before { width: 10px; }
-.wheel-tick[data-selected=true] { color: var(--primary); font-weight: 650; }
-.wheel-tick-label { display: block; backface-visibility: hidden; transition: transform 100ms ease-out, opacity 100ms ease-out; }
-.wheel-preview { display: block; padding-block: .25rem .5rem; text-align: center; font-size: clamp(1.75rem,7vw,2rem); font-weight: 650; line-height: 1.2; letter-spacing: -.035em; color: var(--foreground); font-variant-numeric: tabular-nums; }
-.wheel-preview-time { display: block; margin-top: .375rem; color: var(--muted-foreground); font-size: .9375rem; font-weight: 500; letter-spacing: .02em; }
-.wheel-scroll[data-scrolling=true] .wheel-tick[data-selected=true] { opacity: .85; }
+/* Calendar and time selection for form fields. */
+.form-date-dialog { width: min(27rem,calc(100vw - 2rem)); max-width: calc(100vw - 2rem); gap: 1rem; padding: 1.25rem; border: 1px solid var(--border); border-radius: 1.5rem; background: var(--card); box-shadow: 0 24px 80px rgb(0 0 0 / .2); scrollbar-width: thin; }
+.form-date-dialog [data-slot="dialog-header"] { gap: .25rem; text-align: left; padding-right: 1.5rem; }
+.form-date-dialog [data-slot="dialog-title"] { font-size: 1.25rem; }
+.form-date-dialog [data-slot="dialog-description"] { font-size: .875rem; line-height: 1.5; }
+.form-date-panel { display: grid; min-width: 0; gap: .875rem; }
+.form-date-summary { display: flex; align-items: center; gap: .75rem; min-width: 0; padding: .875rem; border: 1px solid color-mix(in srgb,var(--primary) 18%,var(--border)); border-radius: 1rem; background: linear-gradient(115deg,color-mix(in srgb,var(--primary) 9%,var(--card)),color-mix(in srgb,var(--primary) 3%,var(--card))); }
+.form-date-summary-icon { display: grid; flex-shrink: 0; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: .8rem; background: color-mix(in srgb,var(--primary) 12%,var(--card)); color: var(--primary); }
+.form-date-summary-icon svg { width: 1.25rem; height: 1.25rem; }
+.form-date-eyebrow { margin-bottom: .25rem; color: var(--muted-foreground); font-size: .75rem; line-height: 1.25; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.form-date-preview { display: block; color: var(--foreground); font-size: 1.625rem; font-weight: 650; line-height: 1.2; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.form-date-preview-detail { display: block; margin-top: .25rem; color: var(--primary); font-size: .8125rem; line-height: 1.4; font-weight: 500; letter-spacing: 0; }
+.form-date-layout { display: grid; grid-template-columns: minmax(0,1fr); min-width: 0; gap: .875rem; }
+.form-calendar-card,.form-time-card { min-width: 0; padding: .75rem; border: 1px solid var(--border); border-radius: 1rem; background: var(--card); }
+.form-picker-section-heading { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .625rem; }
+.form-picker-section-heading h3 { display: inline-flex; align-items: center; gap: .375rem; color: var(--foreground); font-size: .875rem; font-weight: 600; }
+.form-picker-section-heading h3 svg { width: 1rem; height: 1rem; color: var(--primary); }
+.form-picker-section-heading > button,.form-time-heading-actions > button { height: 1.75rem; padding: .25rem .5rem; border-radius: .5rem; color: var(--primary); font-size: .8125rem; }
+.form-calendar-navigation { display: flex; align-items: center; justify-content: space-between; min-width: 0; gap: .375rem; margin-bottom: .75rem; }
+.form-calendar-caption,.form-calendar-arrows { display: flex; align-items: center; min-width: 0; gap: .25rem; }
+.form-month-trigger { width: auto; min-width: 0; height: 2.125rem; padding: .375rem .5rem; gap: .375rem; border-color: transparent; border-radius: .625rem; background: var(--muted); font-size: .875rem; box-shadow: none; }
+.form-picker-year { width: 4.25rem; min-width: 0; height: 2.125rem; padding: .375rem .25rem; border: 1px solid transparent; border-radius: .625rem; outline: none; background: var(--muted); color: var(--foreground); font-size: .875rem; font-variant-numeric: tabular-nums; text-align: center; appearance: textfield; }
+.form-picker-year::-webkit-inner-spin-button,.form-picker-year::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.form-picker-year:focus-visible { border-color: var(--ring); box-shadow: 0 0 0 2px color-mix(in srgb,var(--ring) 20%,transparent); }
+.form-month-short { display: none; }
+.form-calendar-arrows > button { width: 1.875rem; height: 1.875rem; padding: .25rem; border: 1px solid var(--border); border-radius: .625rem; }
+.form-calendar-arrows svg { width: 1rem; height: 1rem; }
+.form-picker-calendar { --form-cell-size: 2.5rem; width: 100%; padding: 0; background: transparent; }
+.form-calendar-months,.form-calendar-month { width: 100%; }
+.form-calendar-grid,.form-calendar-grid thead,.form-calendar-grid tbody { display: block; width: 100%; }
+.form-calendar-weekdays,.form-calendar-week { display: grid; width: 100%; grid-template-columns: repeat(7,minmax(0,1fr)); gap: .125rem; }
+.form-calendar-week { margin-top: .25rem; }
+.form-calendar-weekday { padding: .25rem 0; color: var(--muted-foreground); font-size: .75rem; font-weight: 500; text-align: center; }
+.form-calendar-day { position: relative; height: var(--form-cell-size); min-width: 0; padding: 0; text-align: center; }
+.form-picker-calendar button[data-day] { display: grid; position: relative; place-items: center; width: min(100%,var(--form-cell-size)); height: var(--form-cell-size); min-width: 0; margin-inline: auto; padding: 0; border: 1px solid transparent; border-radius: .7rem; outline: none; background: transparent; color: var(--foreground); font-size: .875rem; font-weight: 450; line-height: 1; transition: background-color 140ms ease,box-shadow 140ms ease; }
+.form-picker-calendar button[data-day]:hover:not(:disabled) { background: var(--muted); }
+.form-calendar-day[data-outside=true] button { color: var(--muted-foreground); opacity: .6; }
+.form-calendar-day[data-today=true]:not([data-selected=true]) button { border-color: color-mix(in srgb,var(--primary) 35%,transparent); color: var(--primary); font-weight: 650; }
+.form-picker-calendar button[data-selected-single=true],.form-picker-calendar button[data-selected-single=true]:hover { background: var(--primary); color: var(--primary-foreground); font-weight: 650; box-shadow: 0 3px 8px color-mix(in srgb,var(--primary) 18%,transparent); }
+.form-picker-calendar button[data-day]:focus-visible { box-shadow: 0 0 0 2px var(--card),0 0 0 4px var(--ring); }
+.form-picker-calendar button[data-day]:disabled { opacity: .25; cursor: not-allowed; }
+.form-time-card { display: flex; flex-direction: column; gap: .75rem; background: linear-gradient(150deg,var(--card),color-mix(in srgb,var(--muted) 35%,var(--card))); }
+.form-time-card .form-picker-section-heading { margin-bottom: 0; }
+.form-time-format { padding: .125rem .5rem; border: 1px solid var(--border); border-radius: 999px; color: var(--muted-foreground); font-size: .75rem; }
+.form-time-units { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); align-items: end; gap: .25rem; }
+.form-time-units[data-seconds=true] { grid-template-columns: minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr); }
+.form-time-unit { display: grid; min-width: 0; gap: .375rem; }
+.form-time-unit > label { color: var(--muted-foreground); font-size: .75rem; font-style: normal; }
+.form-time-trigger { width: 100%; min-width: 0; height: 2.875rem; padding: .375rem .5rem; gap: .25rem; border-radius: .75rem; background: var(--card); color: var(--foreground); font-size: 1.375rem; font-weight: 550; font-variant-numeric: tabular-nums; box-shadow: 0 2px 4px rgb(0 0 0 / .025); }
+.form-time-trigger > svg { width: .75rem; height: .75rem; }
+.form-time-units[data-seconds=true] .form-time-trigger { padding-inline: .375rem; gap: .125rem; font-size: 1.125rem; }
+.form-time-colon { padding-bottom: .625rem; color: var(--muted-foreground); font-size: 1.25rem; }
+.form-time-menu { z-index: 2200; max-height: 15rem; }
+.form-time-heading-actions { display: flex; align-items: center; gap: .375rem; }
+.form-time-note { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted-foreground); font-size: .8125rem; line-height: 1.6; }
+.form-date-error { color: var(--destructive); font-size: .875rem; line-height: 1.5; }
+.form-date-actions { position: sticky; z-index: 2; bottom: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .5rem; padding-top: .875rem; border-top: 1px solid var(--border); background: var(--card); }
+.form-date-actions > button { height: 2.5rem; min-height: 2.5rem; padding-inline: .75rem; border-radius: .8rem; }
+@media (min-width: 640px) {
+  .form-date-dialog[data-date-picker-kind=datetime-local] { width: min(44rem,calc(100vw - 2rem)); }
+  [data-form-date-picker=datetime-local] .form-date-layout { grid-template-columns: minmax(0,1fr) 14rem; }
+  [data-form-date-picker=datetime-local][data-has-seconds=true] .form-date-layout { grid-template-columns: minmax(0,1fr) 16rem; }
+}
+@media (max-width: 639px) {
+  .form-month-long { display: none; }
+  .form-month-short { display: inline; }
+  .form-picker-calendar { --form-cell-size: clamp(1.75rem,9vw,2.5rem); }
+  [data-form-date-picker=datetime-local] .form-time-note { display: none; }
+  [data-form-date-picker=datetime-local] { gap: .625rem; }
+  [data-form-date-picker=datetime-local] .form-date-summary { padding: .625rem .75rem; }
+  [data-form-date-picker=datetime-local] .form-picker-calendar { --form-cell-size: clamp(1.75rem,8vw,2rem); }
+  [data-form-date-picker=datetime-local] .form-calendar-week { margin-top: .125rem; }
+  [data-form-date-picker=datetime-local] .form-calendar-card { padding-block: .625rem; }
+}
+@media (max-width: 360px) {
+  .form-date-dialog { padding: 1rem; }
+  .form-calendar-card,.form-time-card { padding: .625rem; }
+  .form-date-summary { padding: .75rem; gap: .625rem; }
+  .form-date-summary-icon { width: 2rem; height: 2rem; }
+  .form-date-preview { font-size: 1.375rem; }
+  .form-picker-year { width: 3.5rem; }
+  .form-calendar-arrows > button { width: 1.75rem; height: 1.75rem; }
+  .form-date-actions { gap: .375rem; }
+  .form-date-actions > button { padding-inline: .5rem; }
+}
+/* Anchored, compact controls for filters and date selectors. */
+.filter-date-popover { z-index: 2100; width: min(18rem,calc(100vw - 1.5rem)); max-height: var(--radix-popover-content-available-height); overflow-y: auto; padding: .75rem; border-radius: 1rem; background: var(--card); color: var(--foreground); box-shadow: 0 8px 28px rgb(0 0 0 / .12); scrollbar-width: thin; }
+.filter-date-title { margin-bottom: .625rem; font-size: .875rem; font-weight: 600; line-height: 1.4; }
+.filter-date-popover .form-date-panel,.filter-date-popover .form-date-layout { gap: .625rem; grid-template-columns: minmax(0,1fr); }
+.filter-date-popover .form-calendar-card { padding: 0; border: 0; border-radius: 0; }
+.filter-date-popover .form-calendar-card .form-picker-section-heading { display: none; }
+.filter-date-popover .form-picker-calendar { --form-cell-size: 2rem; }
+.filter-date-popover .form-calendar-week { margin-top: .125rem; }
+.filter-date-popover .form-calendar-navigation { margin-bottom: .375rem; }
+.filter-date-popover .form-month-long { display: none; }
+.filter-date-popover .form-month-short { display: inline; }
+.filter-date-popover .form-picker-year { width: 3.75rem; }
+.filter-date-popover .form-date-actions { gap: .375rem; padding-top: .5rem; }
+.filter-date-popover .form-date-actions > button { height: 2rem; min-height: 2rem; padding-inline: .5rem; border-radius: .625rem; font-size: .8125rem; }
+.filter-date-popover .form-time-card { padding: .625rem; gap: .5rem; }
+.filter-date-popover .form-time-note { display: none; }
+.filter-date-popover .form-time-trigger { height: 2.5rem; font-size: 1.125rem; }
+.form-calendar-menu { z-index: 2200; }
 @media (prefers-reduced-motion: reduce) {
-  .wheel-tick, .wheel-tick-label { transition: none; transform: none !important; }
-  .wheel-picker-dialog { animation: none !important; }
+  .form-picker-calendar button[data-day] { transition: none; }
+  .form-date-dialog { animation: none !important; }
 }
 
 /* Grid registers share the native-table selection and column controls. */

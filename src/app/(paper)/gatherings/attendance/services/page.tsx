@@ -1,5 +1,7 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import * as React from "react";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -17,6 +19,7 @@ import {
 } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
+import { PageTour, type TourStep } from "@/components/tours/page-tour";
 import { StatCard, Tag } from "@/components/paper/stat";
 import {
   EmptyState,
@@ -56,6 +59,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+const SERVICES_TOUR_STEPS: TourStep[] = [
+  { target: ".services-tour-heading", title: "Explore the service register", description: "Review service schedules, branches and counting status. This guide explains the register without creating a service, changing its schedule or recording attendance. Replay it anytime with Take a tour." },
+  { target: ".services-tour-summary", title: "Understand totals and page statistics", description: "Services counts all records matching your filters. Active here counts active services on this page. Check-ins all-time sums attendance counts for this page's services. Branches counts their distinct branch scopes, including church-wide services. These are not room headcounts." },
+  { target: ".services-tour-search", title: "Find a service", description: "After the tour, type a service name. Search updates after a short pause and returns to page one. It combines with status, category, branch, weekday and Archived filters." },
+  { target: ".services-tour-status", title: "Filter counting status", description: "Active and Paused filter whether counting is enabled for a service. These buttons do not pause or resume anything. All removes only the status filter; your other choices still apply." },
+  { target: ".services-tour-archive", title: "Review archived services", description: "Archived switches to the archived register. Turn it off to return to regular services. Archiving keeps attendance history, and authorised users can restore a service. It is separate from pausing counting or permanently deleting a service." },
+  { target: ".services-tour-category", title: "Choose a service category", description: "Choose a category or All categories to narrow the register. The category describes the service; it does not represent a breakdown of attendance by age. Filtering changes no service records." },
+  { target: ".services-tour-branch", title: "Choose a branch scope", description: "HQ accounts can choose a branch or All branches. Other accounts remain within their assigned access. This filter changes the displayed records and returns to the first page; it does not move services between branches." },
+  { target: ".services-tour-weekday", title: "Filter a scheduled weekday", description: "Choose a weekday or All weekdays. This matches the service's configured weekday; it is not a search for every occurrence on a calendar date. Use the full service record to review its recurrence and date window." },
+  { target: ".services-tour-sort", title: "Arrange the services", description: "Sort by Day of week, Name or Date added. The direction button reverses the order. Sorting returns to page one without changing any service schedule." },
+  { target: "[data-list-table='services-list'] > [data-export-ignore]", title: "Columns and selected services", description: "Columns chooses the visible fields. Checkboxes select services on this page and reveal actions available to your account and selected-row exports. Selection alone makes no changes. Review the confirmation before applying a bulk action." },
+  { target: ".services-tour-record", title: "Read a service record", description: "Review the name, category, schedule, branch, counting status and all-time check-ins. A schedule may be weekly, one-time or a date range. Select the service name to open its full record; viewing it records no attendance." },
+  { target: ".services-tour-manage", title: "Understand the management actions", description: "Hover a row or focus its controls to reveal actions. Depending on permissions, you can Open, Edit, Pause or Resume counting, Archive, Restore or Delete. Archive retains attendance history. Delete is permanent; review its warning carefully and use Archive when keeping history matters." },
+  { target: ".services-tour-empty", title: "When no services match", description: "Try another search or loosen the filters. Clear filters resets search, status, category, branch, weekday and Archived view and returns to page one. Your account's access restrictions still apply." },
+  { target: ".services-tour-page [aria-label='Pagination']", title: "Browse the matching register", description: "Prev and Next move through filtered results. Rows per page changes how many services are displayed. The range and total follow your filters, and navigation is disabled when there are no more pages." },
+  { target: ".services-tour-add", title: "Add a service", description: "Add service opens a form for the name, category, recurrence, schedule and branch. Review the required fields and Counting active setting before saving. Close dismisses the form without creating a service. This button appears only with create access." },
+];
 
 const PAGE_SIZE = 15;
 
@@ -208,24 +229,28 @@ export default function AttendanceServicesPage() {
     );
 
   return (
-    <div className="space-y-6">
+    <div className="services-tour-page space-y-6">
       <PageHeader
+        className="services-tour-heading"
         eyebrow="Gatherings · Attendance"
         title="The weekly rhythm."
         description="Services, classes and meetings, each with its own window for counting heads."
         actions={
-          canCreate ? (
+          <>
+          <PageTour page="Service register" account={profile ? `${profile.churchId}:${profile.profileId}` : undefined} ready={ready && services.isSuccess && !formOpen && !deleteTarget} steps={SERVICES_TOUR_STEPS} />
+          {canCreate ? (
             <Button
-              className="h-9 gap-1.5 rounded-full text-sm"
+              className="services-tour-add h-9 gap-1.5 rounded-full text-sm"
               onClick={openCreate}
             >
               <Plus className="size-3.5" /> Add service
             </Button>
-          ) : null
+          ) : null}
+          </>
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="services-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard
           label="Services"
           value={total}
@@ -252,33 +277,15 @@ export default function AttendanceServicesPage() {
       </div>
 
       <div role="group" aria-label="Service list filters" className="space-y-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <SearchField
+        <ListToolbar
+ search={<SearchField
             value={searchInput}
             onChange={setSearchInput}
             placeholder="Search services…"
-            className="w-full max-w-xs"
-          />
-          <div className="flex flex-wrap gap-1.5">
-            {[
-              ["all", "All"],
-              ["active", "Active"],
-              ["paused", "Paused"],
-            ].map(([value, label]) => (
-              <FilterChip
-                key={value}
-                active={status === value}
-                onClick={() => {
-                  setStatus(value);
-                  setPage(1);
-                }}
-              >
-                {label}
-              </FilterChip>
-            ))}
-          </div>
-          <div className="ml-auto flex max-w-full flex-wrap items-center gap-2">
-            <FilterChip
+            className="services-tour-search w-full max-w-xs"
+          />}
+ controls={<>
+<div className="services-tour-archive inline-flex"><FilterChip
               active={archivedView}
               onClick={() => {
                 setArchivedView((v) => !v);
@@ -286,30 +293,8 @@ export default function AttendanceServicesPage() {
               }}
             >
               Archived
-            </FilterChip>
-            <Select
-              value={category}
-              onValueChange={(value) => {
-                setCategory(value);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger
-                aria-label="Service category"
-                className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All categories</SelectItem>
-                {SERVICE_CATEGORIES.map((item) => (
-                  <SelectItem key={item.value} value={item.value}>
-                    {item.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {isHq && (
+            </FilterChip></div>
+{isHq && (
               <Select
                 value={branchId}
                 onValueChange={(value) => {
@@ -321,7 +306,7 @@ export default function AttendanceServicesPage() {
                   aria-label="Service branch"
                   data-prefix-icon="building"
                   disabled={branches.isLoading || branches.isError}
-                  className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
+                  className="services-tour-branch h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -335,7 +320,7 @@ export default function AttendanceServicesPage() {
                 </SelectContent>
               </Select>
             )}
-            <Select
+<div className="services-tour-sort flex flex-wrap items-center gap-2"><Select
               value={sortBy}
               onValueChange={(value) => {
                 setSortBy(value as typeof sortBy);
@@ -362,9 +347,50 @@ export default function AttendanceServicesPage() {
                 setSortOrder((value) => (value === "asc" ? "desc" : "asc"));
                 setPage(1);
               }}
-            />
+            /></div>
+</>}
+>
+<div className="services-tour-status flex flex-wrap gap-1.5" role="group" aria-label="Service status filters">
+            {[
+              ["all", "All"],
+              ["active", "Active"],
+              ["paused", "Paused"],
+            ].map(([value, label]) => (
+              <FilterChip
+                key={value}
+                active={status === value}
+                onClick={() => {
+                  setStatus(value);
+                  setPage(1);
+                }}
+              >
+                {label}
+              </FilterChip>
+            ))}
           </div>
-        </div>
+<Select
+              value={category}
+              onValueChange={(value) => {
+                setCategory(value);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger
+                aria-label="Service category"
+                className="services-tour-category h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All categories</SelectItem>
+                {SERVICE_CATEGORIES.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+</ListToolbar>
         <div className="flex flex-wrap items-center gap-3">
           <Select
             value={weekday}
@@ -375,7 +401,7 @@ export default function AttendanceServicesPage() {
           >
             <SelectTrigger
               aria-label="Service weekday"
-              className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
+              className="services-tour-weekday h-9 w-44 rounded-full border-line bg-card text-sm shadow-none"
             >
               <SelectValue />
             </SelectTrigger>
@@ -430,7 +456,7 @@ export default function AttendanceServicesPage() {
         </div>
       ) : (
         <div className="paper-card overflow-hidden rounded-2xl">
-          <ListTable
+          <div className="overflow-x-auto"><ListTable
             tableId="services-list"
             label="Service register"
             recordType="service"
@@ -445,7 +471,7 @@ export default function AttendanceServicesPage() {
               <span>Branch</span>
               <span>Status</span>
               <span className="text-right">Check-ins</span>
-              <ManageHeading />
+              <div className="services-tour-manage text-right"><ManageHeading /></div>
             </div>
             <div className="divide-y divide-line/70">
               {rows.map((service) => (
@@ -455,7 +481,7 @@ export default function AttendanceServicesPage() {
                 >
                   <Link
                     href={`/gatherings/attendance/services/${service.serviceId}`}
-                    className="min-w-0"
+                    className="services-tour-record min-w-0"
                   >
                     <span className="block truncate text-sm font-semibold">
                       {service.name}
@@ -538,8 +564,9 @@ export default function AttendanceServicesPage() {
                 </div>
               ))}
             </div>
+          </ListTable></div>
             {!rows.length && (
-              <div className="p-6">
+              <div className="services-tour-empty p-6">
                 <EmptyState
                   className="bg-card"
                   icon={<CalendarClock />}
@@ -561,7 +588,6 @@ export default function AttendanceServicesPage() {
                 />
               </div>
             )}
-          </ListTable>
           <ListPaginationFooter
             page={page}
             perPage={perPage}

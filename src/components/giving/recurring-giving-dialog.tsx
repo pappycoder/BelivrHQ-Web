@@ -1,12 +1,17 @@
 "use client";
 
+import { useId as useFormFieldId } from "react";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
+import { FormSection } from "@/components/shared/form-section";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 import { GivingFormSection as StyledGivingFormSection } from "./giving-presentation";
 
 import { useEffect, useState } from "react";
 import {
   Dialog,
-  DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
@@ -46,6 +51,7 @@ export function RecurringGivingDialog({
   branchId?: string;
   presentationClassName?: string;
 }) {
+  const formFieldId = useFormFieldId();
   const GivingFormSection = presentationClassName
     ? StyledGivingFormSection
     : PlainSection;
@@ -115,7 +121,7 @@ export function RecurringGivingDialog({
   );
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
+      <FormDialogContent
         className={`${presentationClassName ?? ""} sm:max-w-[540px] max-h-[90vh] overflow-y-auto`}
       >
         <DialogHeader>
@@ -147,7 +153,7 @@ export function RecurringGivingDialog({
           ) : null}
           <GivingFormSection title="Giver & branch">
             <div className="space-y-2">
-              <Label required={true}>Branch</Label>
+              <Label htmlFor={`${formFieldId}-field-1`} required={true}>Branch</Label>
               <AvailableSelect
                 unavailableMessage={
                   profile?.isAdminHq && !branches.data?.data.length
@@ -168,7 +174,7 @@ export function RecurringGivingDialog({
                   setCategoryId("");
                 }}
               >
-                <SelectTrigger aria-required={true} aria-label="Recurring giving branch">
+                <SelectTrigger id={`${formFieldId}-field-1`} aria-required={true} aria-label="Recurring giving branch">
                   <SelectValue placeholder="Select a branch" />
                 </SelectTrigger>
                 <SelectContent>
@@ -187,8 +193,8 @@ export function RecurringGivingDialog({
               </AvailableSelect>
             </div>
             <div className="space-y-2">
-              <Label required>Member</Label>
-              <MemberCombobox
+              <Label htmlFor={`${formFieldId}-field-2`} required>Member</Label>
+              <MemberCombobox id={`${formFieldId}-field-2`}
                 branchId={branchId || undefined}
                 value={memberId}
                 selectedName={memberName}
@@ -205,7 +211,7 @@ export function RecurringGivingDialog({
           </GivingFormSection>
           <GivingFormSection title="Schedule & authorization">
             <div className="space-y-2">
-              <Label required={true}>Category</Label>
+              <Label htmlFor={`${formFieldId}-field-3`} required={true}>Category</Label>
               <AvailableSelect
                 value={categoryId || undefined}
                 onValueChange={setCategoryId}
@@ -220,7 +226,7 @@ export function RecurringGivingDialog({
                       : undefined
                 }
               >
-                <SelectTrigger aria-required={true} aria-label="Recurring giving category">
+                <SelectTrigger id={`${formFieldId}-field-3`} aria-required={true} aria-label="Recurring giving category">
                   <SelectValue placeholder="Select a recurring category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -266,7 +272,7 @@ export function RecurringGivingDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label required={true}>Frequency</Label>
+              <Label htmlFor={`${formFieldId}-field-4`} required={true}>Frequency</Label>
               <Select
                 value={frequency}
                 onValueChange={(value) =>
@@ -274,7 +280,7 @@ export function RecurringGivingDialog({
                 }
                 disabled={mutation.isPending}
               >
-                <SelectTrigger aria-required={true} aria-label="Giving frequency">
+                <SelectTrigger id={`${formFieldId}-field-4`} aria-required={true} aria-label="Giving frequency">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -305,16 +311,17 @@ export function RecurringGivingDialog({
             </Button>
           </DialogFooter>
         </ValidatedForm>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }
 
 function PlainSection({
+  title,
   children,
 }: {
   title: string;
   children: React.ReactNode;
 }) {
-  return <div className="space-y-4">{children}</div>;
+  return <FormSection title={title}>{children}</FormSection>;
 }

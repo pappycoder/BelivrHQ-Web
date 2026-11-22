@@ -1,9 +1,13 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 
-import { ContentImage } from "@/components/shared/content-image";
+import { IdentityImage } from "@/components/shared/identity-image";
 
 /**
  * @file General Settings tab content — one merged "Church" section (logo
@@ -12,18 +16,18 @@ import { ContentImage } from "@/components/shared/content-image";
  * row and regional Preferences. Rendered inside the settings shell.
  */
 
+import { retryPage } from "@/lib/retry-page";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "@/lib/toast";
-import { AlertCircle, Building2, ImagePlus, Loader2, Mail } from "lucide-react";
+import { AlertCircle, ImagePlus, Loader2, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -148,15 +152,7 @@ function LogoTile({ church }: { church: ChurchProfile }) {
   return (
     <div className="mb-5 flex flex-wrap items-center gap-4 rounded-lg bg-muted/60 p-4">
       <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded border border-dashed border-border bg-background">
-        {church.logoUrl ? (
-          <ContentImage
-            src={church.logoUrl}
-            alt={church.name}
-            className="h-full w-full object-cover"
-          />
-        ) : (
-          <Building2 className="h-7 w-7 text-muted-foreground" />
-        )}
+        <IdentityImage src={church.logoUrl} kind="church" alt={`${church.name} logo`} />
       </div>
       <div className="min-w-0">
         <h4 className="mb-1 text-sm font-medium">Church Logo</h4>
@@ -388,7 +384,7 @@ function EmailSection({ church }: { church: ChurchProfile }) {
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
+        <FormDialogContent>
           <DialogHeader>
             <DialogTitle>Change Email</DialogTitle>
             <DialogDescription>
@@ -398,19 +394,21 @@ function EmailSection({ church }: { church: ChurchProfile }) {
           </DialogHeader>
           <Form {...form}>
             <ValidatedForm schemaValidation onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-              <FormField required
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>New email address</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="admin@church.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <FormSection title="Details">
+                <FormField required
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>New email address</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="admin@church.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormSection>
               <DialogFooter>
                 <Button
                   type="button"
@@ -436,7 +434,7 @@ function EmailSection({ church }: { church: ChurchProfile }) {
               </DialogFooter>
             </ValidatedForm>
           </Form>
-        </DialogContent>
+        </FormDialogContent>
       </Dialog>
     </SettingsSection>
   );
@@ -573,7 +571,7 @@ export function GeneralSettingsTab() {
           <p className="text-sm text-muted-foreground">
             {(churchQuery.error as Error | null)?.message || "Failed to load church settings."}
           </p>
-          <Button variant="outline" size="sm" onClick={() => churchQuery.refetch()}>
+          <Button variant="outline" size="sm" onClick={() => void retryPage()}>
             Try again
           </Button>
         </div>

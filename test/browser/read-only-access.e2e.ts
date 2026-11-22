@@ -63,7 +63,7 @@ async function installReadOnlySession(context: BrowserContext, grants: string[],
 for (const hq of [false, true]) test(`dashboard-only giving works without transaction or write grants (HQ=${hq})`, async ({ page, context }) => {
   await installReadOnlySession(context, ["giving:dashboard:read", "branches:read"], hq);
   await page.goto("/giving/overview");
-  await expect(page.getByText("₦1,234", { exact: true })).toBeVisible();
+  await expect(page.getByText("₦1,234", { exact: true }).filter({ visible: true })).toBeVisible();
   await expect(page.getByRole("button", { name: /Record (cash|gift)/i })).toHaveCount(0);
   await expect(page.getByText("Recent Gifts", { exact: true })).toHaveCount(0);
   for (const href of ["/giving/donations", "/giving/funds", "/giving/schedules", "/giving/statements", "/insights/analytics/giving"])

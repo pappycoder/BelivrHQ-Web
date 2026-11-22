@@ -1,4 +1,7 @@
 "use client";
+
+import { formatStatusLabel } from "@/lib/status-label";
+
 import * as React from "react";
 import { HandCoins } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -56,9 +59,9 @@ export function GivingStatusBadge({ status }: { status: string }) {
   return (
     <Badge
       variant="outline"
-      className={`rounded-full text-sm font-medium capitalize ${statusColors[status] ?? statusColors.inactive}`}
+      className={`rounded-full text-sm font-medium ${statusColors[status] ?? statusColors.inactive}`}
     >
-      {status.charAt(0).toUpperCase() + status.slice(1)}
+      {formatStatusLabel(status)}
     </Badge>
   );
 }

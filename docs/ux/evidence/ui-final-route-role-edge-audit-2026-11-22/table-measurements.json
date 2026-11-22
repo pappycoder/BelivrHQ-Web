@@ -1,0 +1,1066 @@
+[
+  {
+    "path": "/gatherings/groups",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 34,
+        "tagOverflow": false,
+        "text": "Choir",
+        "width": 28
+      },
+      {
+        "content": 14,
+        "tagOverflow": false,
+        "text": "Apapa Zone",
+        "width": 14
+      },
+      {
+        "content": 26,
+        "tagOverflow": false,
+        "text": "Chioma Eze",
+        "width": 14
+      },
+      {
+        "content": 10,
+        "tagOverflow": false,
+        "text": "0",
+        "width": 10
+      },
+      {
+        "content": 132,
+        "tagOverflow": false,
+        "text": "",
+        "width": 132
+      }
+    ],
+    "dark": false,
+    "region": 344,
+    "table": 344,
+    "truncate": [
+      {
+        "content": 36,
+        "text": "Choir",
+        "width": 0
+      },
+      {
+        "content": 78,
+        "text": "Apapa Zone",
+        "width": 14
+      },
+      {
+        "content": 76,
+        "text": "Chioma Eze",
+        "width": 0
+      }
+    ],
+    "width": 390
+  },
+  {
+    "path": "/gatherings/groups",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 34,
+        "tagOverflow": false,
+        "text": "Choir",
+        "width": 0
+      },
+      {
+        "content": 0,
+        "tagOverflow": false,
+        "text": "Apapa Zone",
+        "width": 0
+      },
+      {
+        "content": 26,
+        "tagOverflow": false,
+        "text": "Chioma Eze",
+        "width": 0
+      },
+      {
+        "content": 9,
+        "tagOverflow": false,
+        "text": "0",
+        "width": 0
+      },
+      {
+        "content": 128,
+        "tagOverflow": false,
+        "text": "",
+        "width": 128
+      }
+    ],
+    "dark": false,
+    "region": 274,
+    "table": 274,
+    "truncate": [
+      {
+        "content": 36,
+        "text": "Choir",
+        "width": 0
+      },
+      {
+        "content": 78,
+        "text": "Apapa Zone",
+        "width": 0
+      },
+      {
+        "content": 76,
+        "text": "Chioma Eze",
+        "width": 0
+      }
+    ],
+    "width": 320
+  },
+  {
+    "path": "/gatherings/groups",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 34,
+        "tagOverflow": false,
+        "text": "Choir",
+        "width": 28
+      },
+      {
+        "content": 14,
+        "tagOverflow": false,
+        "text": "Apapa Zone",
+        "width": 14
+      },
+      {
+        "content": 26,
+        "tagOverflow": false,
+        "text": "Chioma Eze",
+        "width": 14
+      },
+      {
+        "content": 10,
+        "tagOverflow": false,
+        "text": "0",
+        "width": 10
+      },
+      {
+        "content": 132,
+        "tagOverflow": false,
+        "text": "",
+        "width": 132
+      }
+    ],
+    "dark": true,
+    "region": 344,
+    "table": 344,
+    "truncate": [
+      {
+        "content": 36,
+        "text": "Choir",
+        "width": 0
+      },
+      {
+        "content": 78,
+        "text": "Apapa Zone",
+        "width": 14
+      },
+      {
+        "content": 76,
+        "text": "Chioma Eze",
+        "width": 0
+      }
+    ],
+    "width": 390
+  },
+  {
+    "path": "/gatherings/groups",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 34,
+        "tagOverflow": false,
+        "text": "Choir",
+        "width": 0
+      },
+      {
+        "content": 0,
+        "tagOverflow": false,
+        "text": "Apapa Zone",
+        "width": 0
+      },
+      {
+        "content": 26,
+        "tagOverflow": false,
+        "text": "Chioma Eze",
+        "width": 0
+      },
+      {
+        "content": 9,
+        "tagOverflow": false,
+        "text": "0",
+        "width": 0
+      },
+      {
+        "content": 128,
+        "tagOverflow": false,
+        "text": "",
+        "width": 128
+      }
+    ],
+    "dark": true,
+    "region": 274,
+    "table": 274,
+    "truncate": [
+      {
+        "content": 36,
+        "text": "Choir",
+        "width": 0
+      },
+      {
+        "content": 78,
+        "text": "Apapa Zone",
+        "width": 0
+      },
+      {
+        "content": 76,
+        "text": "Chioma Eze",
+        "width": 0
+      }
+    ],
+    "width": 320
+  },
+  {
+    "path": "/library/sermons",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 105,
+        "tagOverflow": false,
+        "text": "Walking in FaithHebrews 11:6",
+        "width": 35
+      },
+      {
+        "content": 14,
+        "tagOverflow": false,
+        "text": "Pastor Imole",
+        "width": 14
+      },
+      {
+        "content": 12,
+        "tagOverflow": true,
+        "text": "Faith Foundations",
+        "width": 12
+      },
+      {
+        "content": 36,
+        "tagOverflow": false,
+        "text": "25 Oct 2026",
+        "width": 13
+      },
+      {
+        "content": 55,
+        "tagOverflow": false,
+        "text": "Not available",
+        "width": 12
+      },
+      {
+        "content": 14,
+        "tagOverflow": false,
+        "text": "#Faith",
+        "width": 14
+      },
+      {
+        "content": 64,
+        "tagOverflow": false,
+        "text": "",
+        "width": 64
+      }
+    ],
+    "dark": false,
+    "region": 344,
+    "table": 344,
+    "truncate": [
+      {
+        "content": 105,
+        "text": "Walking in Faith",
+        "width": 105
+      },
+      {
+        "content": 105,
+        "text": "Hebrews 11:6",
+        "width": 105
+      },
+      {
+        "content": 79,
+        "text": "Pastor Imole",
+        "width": 14
+      },
+      {
+        "content": 128,
+        "text": "Faith Foundations",
+        "width": 12
+      },
+      {
+        "content": 35,
+        "text": "#Faith",
+        "width": 1
+      }
+    ],
+    "width": 390
+  },
+  {
+    "path": "/library/sermons",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 105,
+        "tagOverflow": false,
+        "text": "Walking in FaithHebrews 11:6",
+        "width": 10
+      },
+      {
+        "content": 4,
+        "tagOverflow": false,
+        "text": "Pastor Imole",
+        "width": 4
+      },
+      {
+        "content": 3,
+        "tagOverflow": true,
+        "text": "Faith Foundations",
+        "width": 3
+      },
+      {
+        "content": 36,
+        "tagOverflow": false,
+        "text": "25 Oct 2026",
+        "width": 4
+      },
+      {
+        "content": 55,
+        "tagOverflow": false,
+        "text": "Not available",
+        "width": 3
+      },
+      {
+        "content": 4,
+        "tagOverflow": false,
+        "text": "#Faith",
+        "width": 4
+      },
+      {
+        "content": 64,
+        "tagOverflow": false,
+        "text": "",
+        "width": 64
+      }
+    ],
+    "dark": false,
+    "region": 274,
+    "table": 274,
+    "truncate": [
+      {
+        "content": 105,
+        "text": "Walking in Faith",
+        "width": 105
+      },
+      {
+        "content": 105,
+        "text": "Hebrews 11:6",
+        "width": 105
+      },
+      {
+        "content": 79,
+        "text": "Pastor Imole",
+        "width": 4
+      },
+      {
+        "content": 128,
+        "text": "Faith Foundations",
+        "width": 3
+      },
+      {
+        "content": 35,
+        "text": "#Faith",
+        "width": 0
+      }
+    ],
+    "width": 320
+  },
+  {
+    "path": "/library/sermons",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 105,
+        "tagOverflow": false,
+        "text": "Walking in FaithHebrews 11:6",
+        "width": 35
+      },
+      {
+        "content": 14,
+        "tagOverflow": false,
+        "text": "Pastor Imole",
+        "width": 14
+      },
+      {
+        "content": 12,
+        "tagOverflow": true,
+        "text": "Faith Foundations",
+        "width": 12
+      },
+      {
+        "content": 36,
+        "tagOverflow": false,
+        "text": "25 Oct 2026",
+        "width": 13
+      },
+      {
+        "content": 55,
+        "tagOverflow": false,
+        "text": "Not available",
+        "width": 12
+      },
+      {
+        "content": 14,
+        "tagOverflow": false,
+        "text": "#Faith",
+        "width": 14
+      },
+      {
+        "content": 64,
+        "tagOverflow": false,
+        "text": "",
+        "width": 64
+      }
+    ],
+    "dark": true,
+    "region": 344,
+    "table": 344,
+    "truncate": [
+      {
+        "content": 105,
+        "text": "Walking in Faith",
+        "width": 105
+      },
+      {
+        "content": 105,
+        "text": "Hebrews 11:6",
+        "width": 105
+      },
+      {
+        "content": 79,
+        "text": "Pastor Imole",
+        "width": 14
+      },
+      {
+        "content": 128,
+        "text": "Faith Foundations",
+        "width": 12
+      },
+      {
+        "content": 35,
+        "text": "#Faith",
+        "width": 1
+      }
+    ],
+    "width": 390
+  },
+  {
+    "path": "/library/sermons",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 105,
+        "tagOverflow": false,
+        "text": "Walking in FaithHebrews 11:6",
+        "width": 10
+      },
+      {
+        "content": 4,
+        "tagOverflow": false,
+        "text": "Pastor Imole",
+        "width": 4
+      },
+      {
+        "content": 3,
+        "tagOverflow": true,
+        "text": "Faith Foundations",
+        "width": 3
+      },
+      {
+        "content": 36,
+        "tagOverflow": false,
+        "text": "25 Oct 2026",
+        "width": 4
+      },
+      {
+        "content": 55,
+        "tagOverflow": false,
+        "text": "Not available",
+        "width": 3
+      },
+      {
+        "content": 4,
+        "tagOverflow": false,
+        "text": "#Faith",
+        "width": 4
+      },
+      {
+        "content": 64,
+        "tagOverflow": false,
+        "text": "",
+        "width": 64
+      }
+    ],
+    "dark": true,
+    "region": 274,
+    "table": 274,
+    "truncate": [
+      {
+        "content": 105,
+        "text": "Walking in Faith",
+        "width": 105
+      },
+      {
+        "content": 105,
+        "text": "Hebrews 11:6",
+        "width": 105
+      },
+      {
+        "content": 79,
+        "text": "Pastor Imole",
+        "width": 4
+      },
+      {
+        "content": 128,
+        "text": "Faith Foundations",
+        "width": 3
+      },
+      {
+        "content": 35,
+        "text": "#Faith",
+        "width": 0
+      }
+    ],
+    "width": 320
+  },
+  {
+    "path": "/giving/schedules",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 110,
+        "tagOverflow": true,
+        "text": "Alexandra Montgomery-WellingtonActivelast charged 1 Nov 2026",
+        "width": 34
+      },
+      {
+        "content": 21,
+        "tagOverflow": false,
+        "text": "General offering",
+        "width": 21
+      },
+      {
+        "content": 62,
+        "tagOverflow": false,
+        "text": "₦25,000",
+        "width": 19
+      },
+      {
+        "content": 52,
+        "tagOverflow": false,
+        "text": "Monthly",
+        "width": 21
+      },
+      {
+        "content": 36,
+        "tagOverflow": false,
+        "text": "1 Dec 2026",
+        "width": 21
+      },
+      {
+        "content": 64,
+        "tagOverflow": false,
+        "text": "",
+        "width": 64
+      }
+    ],
+    "dark": false,
+    "region": 344,
+    "table": 344,
+    "truncate": [
+      {
+        "content": 228,
+        "text": "Alexandra Montgomery-Wellington",
+        "width": 0
+      },
+      {
+        "content": 132,
+        "text": "last charged 1 Nov 2026",
+        "width": 0
+      },
+      {
+        "content": 102,
+        "text": "General offering",
+        "width": 21
+      }
+    ],
+    "width": 390
+  },
+  {
+    "path": "/giving/schedules",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 110,
+        "tagOverflow": true,
+        "text": "Alexandra Montgomery-WellingtonActivelast charged 1 Nov 2026",
+        "width": 14
+      },
+      {
+        "content": 9,
+        "tagOverflow": false,
+        "text": "General offering",
+        "width": 9
+      },
+      {
+        "content": 62,
+        "tagOverflow": false,
+        "text": "₦25,000",
+        "width": 8
+      },
+      {
+        "content": 52,
+        "tagOverflow": false,
+        "text": "Monthly",
+        "width": 9
+      },
+      {
+        "content": 36,
+        "tagOverflow": false,
+        "text": "1 Dec 2026",
+        "width": 9
+      },
+      {
+        "content": 64,
+        "tagOverflow": false,
+        "text": "",
+        "width": 64
+      }
+    ],
+    "dark": false,
+    "region": 274,
+    "table": 274,
+    "truncate": [
+      {
+        "content": 228,
+        "text": "Alexandra Montgomery-Wellington",
+        "width": 0
+      },
+      {
+        "content": 132,
+        "text": "last charged 1 Nov 2026",
+        "width": 0
+      },
+      {
+        "content": 102,
+        "text": "General offering",
+        "width": 9
+      }
+    ],
+    "width": 320
+  },
+  {
+    "path": "/giving/schedules",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 110,
+        "tagOverflow": true,
+        "text": "Alexandra Montgomery-WellingtonActivelast charged 1 Nov 2026",
+        "width": 34
+      },
+      {
+        "content": 21,
+        "tagOverflow": false,
+        "text": "General offering",
+        "width": 21
+      },
+      {
+        "content": 62,
+        "tagOverflow": false,
+        "text": "₦25,000",
+        "width": 19
+      },
+      {
+        "content": 52,
+        "tagOverflow": false,
+        "text": "Monthly",
+        "width": 21
+      },
+      {
+        "content": 36,
+        "tagOverflow": false,
+        "text": "1 Dec 2026",
+        "width": 21
+      },
+      {
+        "content": 64,
+        "tagOverflow": false,
+        "text": "",
+        "width": 64
+      }
+    ],
+    "dark": true,
+    "region": 344,
+    "table": 344,
+    "truncate": [
+      {
+        "content": 228,
+        "text": "Alexandra Montgomery-Wellington",
+        "width": 0
+      },
+      {
+        "content": 132,
+        "text": "last charged 1 Nov 2026",
+        "width": 0
+      },
+      {
+        "content": 102,
+        "text": "General offering",
+        "width": 21
+      }
+    ],
+    "width": 390
+  },
+  {
+    "path": "/giving/schedules",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 110,
+        "tagOverflow": true,
+        "text": "Alexandra Montgomery-WellingtonActivelast charged 1 Nov 2026",
+        "width": 14
+      },
+      {
+        "content": 9,
+        "tagOverflow": false,
+        "text": "General offering",
+        "width": 9
+      },
+      {
+        "content": 62,
+        "tagOverflow": false,
+        "text": "₦25,000",
+        "width": 8
+      },
+      {
+        "content": 52,
+        "tagOverflow": false,
+        "text": "Monthly",
+        "width": 9
+      },
+      {
+        "content": 36,
+        "tagOverflow": false,
+        "text": "1 Dec 2026",
+        "width": 9
+      },
+      {
+        "content": 64,
+        "tagOverflow": false,
+        "text": "",
+        "width": 64
+      }
+    ],
+    "dark": true,
+    "region": 274,
+    "table": 274,
+    "truncate": [
+      {
+        "content": 228,
+        "text": "Alexandra Montgomery-Wellington",
+        "width": 0
+      },
+      {
+        "content": 132,
+        "text": "last charged 1 Nov 2026",
+        "width": 0
+      },
+      {
+        "content": 102,
+        "text": "General offering",
+        "width": 9
+      }
+    ],
+    "width": 320
+  },
+  {
+    "path": "/settings/billing",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 54,
+        "tagOverflow": false,
+        "text": "UI-TEST-INVOICE-",
+        "width": 54
+      },
+      {
+        "content": 45,
+        "tagOverflow": false,
+        "text": "1 Nov 2026",
+        "width": 45
+      },
+      {
+        "content": 55,
+        "tagOverflow": false,
+        "text": "Network",
+        "width": 36
+      },
+      {
+        "content": 77,
+        "tagOverflow": true,
+        "text": "Success",
+        "width": 45
+      },
+      {
+        "content": 86,
+        "tagOverflow": false,
+        "text": "NGN 25,000",
+        "width": 19
+      }
+    ],
+    "dark": false,
+    "region": 344,
+    "table": 344,
+    "truncate": [
+      {
+        "content": 123,
+        "text": "UI-TEST-INVOICE-",
+        "width": 54
+      }
+    ],
+    "width": 390
+  },
+  {
+    "path": "/settings/billing",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 36,
+        "tagOverflow": false,
+        "text": "UI-TEST-INVOICE-",
+        "width": 36
+      },
+      {
+        "content": 34,
+        "tagOverflow": false,
+        "text": "1 Nov 2026",
+        "width": 30
+      },
+      {
+        "content": 55,
+        "tagOverflow": false,
+        "text": "Network",
+        "width": 24
+      },
+      {
+        "content": 77,
+        "tagOverflow": true,
+        "text": "Success",
+        "width": 30
+      },
+      {
+        "content": 86,
+        "tagOverflow": false,
+        "text": "NGN 25,000",
+        "width": 6
+      }
+    ],
+    "dark": false,
+    "region": 274,
+    "table": 274,
+    "truncate": [
+      {
+        "content": 123,
+        "text": "UI-TEST-INVOICE-",
+        "width": 36
+      }
+    ],
+    "width": 320
+  },
+  {
+    "path": "/settings/billing",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 54,
+        "tagOverflow": false,
+        "text": "UI-TEST-INVOICE-",
+        "width": 54
+      },
+      {
+        "content": 45,
+        "tagOverflow": false,
+        "text": "1 Nov 2026",
+        "width": 45
+      },
+      {
+        "content": 55,
+        "tagOverflow": false,
+        "text": "Network",
+        "width": 36
+      },
+      {
+        "content": 77,
+        "tagOverflow": true,
+        "text": "Success",
+        "width": 45
+      },
+      {
+        "content": 86,
+        "tagOverflow": false,
+        "text": "NGN 25,000",
+        "width": 19
+      }
+    ],
+    "dark": true,
+    "region": 344,
+    "table": 344,
+    "truncate": [
+      {
+        "content": 123,
+        "text": "UI-TEST-INVOICE-",
+        "width": 54
+      }
+    ],
+    "width": 390
+  },
+  {
+    "path": "/settings/billing",
+    "cells": [
+      {
+        "content": 19,
+        "tagOverflow": false,
+        "text": "",
+        "width": 19
+      },
+      {
+        "content": 36,
+        "tagOverflow": false,
+        "text": "UI-TEST-INVOICE-",
+        "width": 36
+      },
+      {
+        "content": 34,
+        "tagOverflow": false,
+        "text": "1 Nov 2026",
+        "width": 30
+      },
+      {
+        "content": 55,
+        "tagOverflow": false,
+        "text": "Network",
+        "width": 24
+      },
+      {
+        "content": 77,
+        "tagOverflow": true,
+        "text": "Success",
+        "width": 30
+      },
+      {
+        "content": 86,
+        "tagOverflow": false,
+        "text": "NGN 25,000",
+        "width": 6
+      }
+    ],
+    "dark": true,
+    "region": 274,
+    "table": 274,
+    "truncate": [
+      {
+        "content": 123,
+        "text": "UI-TEST-INVOICE-",
+        "width": 36
+      }
+    ],
+    "width": 320
+  }
+]

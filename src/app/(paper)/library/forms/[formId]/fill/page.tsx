@@ -1,5 +1,10 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
+import { collectionLabel } from "@/lib/collection-label";
+
 import { RequiredFieldsNotice } from "@/components/ui/required-fields";
 
 import * as React from "react";
@@ -77,6 +82,10 @@ export default function FillFormPage({
     );
   }
 
+  if (form.isError && !isMissingRecordError(form.error)) {
+    return <RecordQueryError title="Form" error={form.error} backHref="/library/forms" backLabel="Back to forms" />;
+  }
+
   if (form.isError || !f) {
     return (
       <EmptyState
@@ -129,7 +138,7 @@ export default function FillFormPage({
         }
         title={f.title}
         description={f.description || "Answer honestly. Someone reads every response."}
-        actions={<Tag tone="neutral">{f.fields?.length ?? 0} questions</Tag>}
+        actions={<Tag tone="neutral">{f.fields?.length ?? 0} {collectionLabel(f.fields?.length ?? 0, "questions")}</Tag>}
       />
 
       <div className="mx-auto max-w-2xl space-y-4">

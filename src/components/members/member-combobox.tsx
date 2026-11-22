@@ -16,7 +16,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMembersList, useSearchMembers, type Member } from "@/hooks/use-members";
 
-interface MemberComboboxProps {
+interface MemberComboboxProps extends Pick<React.ComponentProps<"button">, "id" | "aria-label" | "aria-labelledby" | "aria-describedby" | "aria-invalid" | "aria-required"> {
   /** Selected member id ("" = none). */
   value: string;
   onChange: (memberId: string, member?: Member) => void;
@@ -37,6 +37,7 @@ export function MemberCombobox({
   excludeIds = [],
   disabled = false,
   branchId,
+  ...accessibilityProps
 }: MemberComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -71,11 +72,12 @@ export function MemberCombobox({
     <Popover open={open && !disabled} onOpenChange={(next) => !disabled && setOpen(next)}>
       <PopoverTrigger asChild>
         <button
+          {...accessibilityProps}
           type="button"
           disabled={disabled}
           className={cn(
-            "flex h-10 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm",
-            "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+            "flex h-10 w-full items-center justify-between rounded-md border border-input bg-card px-3 py-2 text-sm",
+            "hover:bg-muted/40 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
             "disabled:cursor-not-allowed disabled:opacity-50"
           )}
         >

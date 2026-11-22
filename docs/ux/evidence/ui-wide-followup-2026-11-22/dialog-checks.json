@@ -1,0 +1,38 @@
+[
+  {
+    "client": 712,
+    "content": 712,
+    "duplicateLabels": 0,
+    "left": 283,
+    "right": 997,
+    "theme": "light",
+    "width": 1280
+  },
+  {
+    "client": 388,
+    "content": 388,
+    "duplicateLabels": 0,
+    "left": 0,
+    "right": 390,
+    "theme": "light",
+    "width": 390
+  },
+  {
+    "client": 712,
+    "content": 712,
+    "duplicateLabels": 0,
+    "left": 283,
+    "right": 997,
+    "theme": "dark",
+    "width": 1280
+  },
+  {
+    "client": 382,
+    "content": 382,
+    "duplicateLabels": 0,
+    "left": 3.1015625,
+    "right": 386.8984375,
+    "theme": "dark",
+    "width": 390
+  }
+]

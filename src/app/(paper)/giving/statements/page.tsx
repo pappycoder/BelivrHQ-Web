@@ -1,5 +1,9 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import { givingSource } from "@/lib/giving-source";
 import {
@@ -160,6 +164,8 @@ export default function GivingStatementsPage() {
 
   const rangeLabel = RANGES.find((r) => r.key === range)?.label ?? "All time";
 
+  if (canRecords && rowsQuery.isError) return <PageQueryError title="Giving statements" />;
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -191,7 +197,7 @@ export default function GivingStatementsPage() {
         <select
           value={categoryId}
           onChange={(e) => setCategoryId(e.target.value)}
-          className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-sm outline-none"
+          className="ml-auto h-9 rounded-full border border-line bg-card px-3 text-sm outline-none"
           aria-label="Fund filter"
         >
           <option value="">All funds</option>
@@ -235,7 +241,7 @@ export default function GivingStatementsPage() {
               prefix="₦"
               tone="brand"
               icon={<HandCoins className="size-4" />}
-              deltaLabel={`${number(rows.length)} gifts`}
+              deltaLabel={`${number(rows.length)} ${collectionLabel(rows.length, "gifts")}`}
             />
             <StatCard
               label="Average gift"
@@ -355,7 +361,7 @@ export default function GivingStatementsPage() {
                         {giver.name}
                       </span>
                       <span className="block text-xs text-ink-faint">
-                        {number(giver.count)} gifts
+                        {number(giver.count)} {collectionLabel(giver.count, "gifts")}
                       </span>
                     </span>
                     <span

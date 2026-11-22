@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import { ListTable } from "@/components/shared/list-table";
@@ -51,7 +55,6 @@ import {
 } from "@/components/ui/popover";
 import {
   Dialog,
-  DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
@@ -818,7 +821,7 @@ export function GeneralAttendancePanel({
                   </Label>
                   <Input
                     id={`headcount-filter-${fieldId}-from`}
-                    picker="native"
+                    picker="popover"
                     type="date"
                     value={dateDraft.from}
                     max={dateDraft.to || undefined}
@@ -837,7 +840,7 @@ export function GeneralAttendancePanel({
                   </Label>
                   <Input
                     id={`headcount-filter-${fieldId}-to`}
-                    picker="native"
+                    picker="popover"
                     type="date"
                     value={dateDraft.to}
                     min={dateDraft.from || undefined}
@@ -1065,7 +1068,7 @@ export function GeneralAttendancePanel({
           if (!save.isPending) setOpen(value);
         }}
       >
-        <DialogContent
+        <FormDialogContent
           className={cn(
             "max-h-[90dvh] overflow-y-auto sm:max-w-3xl",
             presentationClassName,
@@ -1080,8 +1083,10 @@ export function GeneralAttendancePanel({
               Only total attendance is required; all breakdowns are optional.
             </DialogDescription>
           </DialogHeader>
-          {renderForm(false)}
-        </DialogContent>
+          <FormSection title="Details">
+            {renderForm(false)}
+          </FormSection>
+        </FormDialogContent>
       </Dialog>
     </Card>
   );

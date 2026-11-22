@@ -1,0 +1,7 @@
+{
+  "selectedDay": "2026-11-01",
+  "calendarCellWidth": 48,
+  "selectedDayEntryWidth": 344,
+  "entryTitle": "Youth Conference 2026",
+  "assessment": "The month cell truncates its title; selecting the day exposes the full title in the wider entry button."
+}

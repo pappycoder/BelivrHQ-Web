@@ -1,7 +1,7 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import QRCode from "qrcode";
-import { format } from "date-fns";
+import { formatRecordDateTime } from "./record-date";
 import type { AllTicketItem } from "@/hooks/use-events";
 import { loadExportLogo, type ExportBranding } from "./export-branding";
 import { PDF_COLORS as colors, PDF_FONT, preparePdf, pdfText, pdfLabel, drawPdfHeader, drawPdfFooters } from "@/lib/pdf-design";
@@ -29,8 +29,7 @@ export async function createTicketPDF(ticket: AllTicketItem, branding?: ExportBr
   const longTitle = doc.splitTextToSize(ticket.eventName, 121).length * titleSize * 0.3528 * 1.4 > 24;
   pdfText(doc, longTitle ? "Event admission" : ticket.eventName, 14, 45, 121, titleSize, true);
 
-  const date = new Date(ticket.eventDate);
-  const dateLabel = Number.isNaN(date.getTime()) ? ticket.eventDate : format(date, "EEEE, MMM d, yyyy · h:mm a");
+  const dateLabel = formatRecordDateTime(ticket.eventDate);
   const fields = [
     ...(longTitle ? [["EVENT", ticket.eventName]] : []),
     ["WHEN", dateLabel],

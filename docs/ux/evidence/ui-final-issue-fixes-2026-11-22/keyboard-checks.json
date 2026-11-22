@@ -1,0 +1,38 @@
+[
+  {
+    "path": "/settings/billing",
+    "width": 320,
+    "theme": "dark",
+    "focusable": "0",
+    "before": 40,
+    "after": 78,
+    "documentOverflow": false
+  },
+  {
+    "path": "/gatherings/groups",
+    "width": 320,
+    "theme": "dark",
+    "focusable": "0",
+    "before": 0,
+    "after": 40,
+    "documentOverflow": false
+  },
+  {
+    "path": "/library/sermons",
+    "width": 320,
+    "theme": "dark",
+    "focusable": "0",
+    "before": 0,
+    "after": 40,
+    "documentOverflow": false
+  },
+  {
+    "path": "/giving/schedules",
+    "width": 320,
+    "theme": "dark",
+    "focusable": "0",
+    "before": 0,
+    "after": 32,
+    "documentOverflow": false
+  }
+]

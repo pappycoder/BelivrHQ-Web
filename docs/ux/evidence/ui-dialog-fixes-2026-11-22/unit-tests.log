@@ -1,0 +1,13 @@
+
+> belivrhq-web@0.1.0 test
+> vitest run
+
+
+ RUN  v4.1.12 /home/pappy-coder/Projects/belivrhq-project/BelivrHQ-Web
+
+
+ Test Files  75 passed (75)
+      Tests  847 passed (847)
+   Start at  07:02:50
+   Duration  18.72s (transform 8.82s, setup 0ms, import 69.43s, tests 22.00s, environment 19ms)
+

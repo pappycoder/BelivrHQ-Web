@@ -1,5 +1,9 @@
 "use client";
 
+import { formatRecordDate } from "@/lib/record-date";
+
+import { DetailHeading } from "@/components/paper/section";
+
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
 
 import { LoadingState } from "@/components/shared/loading-state";
@@ -11,7 +15,6 @@ import { ContentImage } from "@/components/shared/content-image";
 import * as React from "react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import QRCode from "qrcode";
-import { format, parseISO } from "date-fns";
 import { Boxes, RefreshCw } from "lucide-react";
 import {
   Sheet,
@@ -44,13 +47,8 @@ import {
   useGenerateAssetQr,
 } from "@/hooks/use-assets";
 
-function formatDate(value: string | undefined): string {
-  if (!value) return "Not available";
-  try {
-    return format(parseISO(value), "dd MMM yyyy");
-  } catch {
-    return value;
-  }
+function formatDate(value: string | undefined) {
+  return formatRecordDate(value);
 }
 
 function InfoRow({ label, value }: { label: string; value?: React.ReactNode }) {
@@ -135,7 +133,7 @@ export function AssetDetailDrawer({
   const asset = assetQuery.data;
 
   const content = (
-    <div className="px-6 pb-6">
+    <div className="min-w-0 [overflow-wrap:anywhere] px-6 pb-6">
       {dialog}
       {assetQuery.isLoading ? (
         <div className="space-y-4 pt-4">
@@ -150,7 +148,7 @@ export function AssetDetailDrawer({
       ) : (
         <>
           <div className="pt-1 space-y-1">
-            <p className="text-lg font-semibold">{asset.name}</p>
+            {presentation === "page" ? <DetailHeading>{asset.name}</DetailHeading> : <p className="text-lg font-semibold">{asset.name}</p>}
             <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               <Badge variant="outline" className="font-mono">
                 {asset.assetTag}
@@ -193,7 +191,7 @@ export function AssetDetailDrawer({
                   className="max-h-48 w-full rounded-lg border object-cover"
                 />
               )}
-              <div className="rounded-lg border p-4">
+              <div className="paper-card rounded-lg border p-4">
                 <InfoRow label="Category" value={asset.categoryName} />
                 <InfoRow label="Department" value={asset.departmentName} />
                 <InfoRow label="Branch" value={asset.branchName} />
@@ -201,7 +199,7 @@ export function AssetDetailDrawer({
                 <InfoRow label="Serial number" value={asset.serialNumber} />
                 <InfoRow label="Storage location" value={asset.location} />
               </div>
-              <div className="rounded-lg border p-4">
+              <div className="paper-card rounded-lg border p-4">
                 <InfoRow
                   label="Purchase date"
                   value={formatDate(asset.purchaseDate)}
@@ -225,7 +223,7 @@ export function AssetDetailDrawer({
               </div>
 
               {asset.description && (
-                <div className="rounded-lg border p-4">
+                <div className="paper-card rounded-lg border p-4">
                   <p className="text-sm font-medium mb-1">Description</p>
                   <p className="text-sm text-muted-foreground">
                     {asset.description}
@@ -233,7 +231,7 @@ export function AssetDetailDrawer({
                 </div>
               )}
               {asset.notes && (
-                <div className="rounded-lg border p-4">
+                <div className="paper-card rounded-lg border p-4">
                   <p className="text-sm font-medium mb-1">Notes</p>
                   <p className="text-sm text-muted-foreground">{asset.notes}</p>
                 </div>
@@ -286,7 +284,7 @@ export function AssetDetailDrawer({
                 <LoadingState label="Loading maintenance history" variant="table" rows={3} />
               ) : maintenanceQuery.data?.length ? (
                 maintenanceQuery.data.map((record) => (
-                  <div key={record.id} className="rounded-lg border p-3">
+                  <div key={record.id} className="paper-card rounded-lg border p-3">
                     <div className="flex items-center justify-between gap-2">
                       <p className="text-sm font-medium">{record.type}</p>
                       <StatusBadge kind="maintenance" value={record.status} />
@@ -321,7 +319,7 @@ export function AssetDetailDrawer({
                 <LoadingState label="Loading loan history" variant="table" rows={3} />
               ) : loansQuery.data?.length ? (
                 loansQuery.data.map((loan) => (
-                  <div key={loan.id} className="rounded-lg border p-3">
+                  <div key={loan.id} className="paper-card rounded-lg border p-3">
                     <div className="flex items-center justify-between gap-2">
                       <p className="text-sm font-medium">
                         {loan.borrowerName ?? "Unknown borrower"}
@@ -354,7 +352,7 @@ export function AssetDetailDrawer({
                 </p>
               ) : (
                 <>
-                  <div className="grid grid-cols-3 gap-2 rounded-lg border p-3">
+                  <div className="paper-card grid grid-cols-3 gap-2 rounded-lg border p-3">
                     <div>
                       <p className="text-sm text-muted-foreground">
                         Purchase Price

@@ -103,5 +103,5 @@ export function useManageConfirmation() {
       </DialogContent>
     </Dialog>
   );
-  return { confirm, dialog };
+  return { confirm, dialog, isOpen: !!action };
 }

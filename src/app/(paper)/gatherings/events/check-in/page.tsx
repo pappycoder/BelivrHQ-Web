@@ -1,4 +1,6 @@
 "use client";
+
+import { EventPicker, useEventPickerEvents } from "@/components/events/event-picker";
 import { LoadingState } from "@/components/shared/loading-state";
 
 import { ValidatedForm } from "@/components/ui/validated-form";
@@ -12,6 +14,8 @@ import {
 } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader, SectionCard } from "@/components/paper/section";
+import { PageTour, type TourStep } from "@/components/tours/page-tour";
+import { useCurrentProfile } from "@/hooks/use-profile";
 import { StatCard } from "@/components/paper/stat";
 import { CheckInDatePicker } from "@/components/paper/check-in-date";
 import {
@@ -31,7 +35,6 @@ import { GeneralAttendancePanel } from "@/components/attendance/general-attendan
 import { usePermissions } from "@/hooks/use-permissions";
 import { useCanViewGeneralAttendance } from "@/hooks/use-attendance";
 import {
-  useEventsList,
   useEventRegistrations,
   useEventAttendance,
   useBulkCheckIn,
@@ -46,10 +49,32 @@ import {
   type EventSchedule,
 } from "@/lib/schedule-occurrence";
 
+const CHECK_IN_TOUR_STEPS: TourStep[] = [
+  { target: ".event-checkin-tour-heading", title: "Run the event attendance desk", description: "Choose the right event and date before recording attendance. This tour explains the desk without checking anyone in, creating a visitor or saving a headcount. Replay it anytime with Take a tour." },
+  { target: ".event-checkin-tour-event", title: "Choose the event", description: "This selector lists up to 100 loaded events within your access, ordered by proximity to today. Confirm the event title before using any save action. Changing event clears draft selections and form entries after a discard prompt when needed." },
+  { target: ".event-checkin-tour-date", title: "Confirm the occurrence date", description: "Use the date picker or occurrence arrows to select a day on which the event meets. One-time events have only their scheduled day; weekly and date-range events offer their valid occurrences. Attendance saved here belongs to the selected event and date." },
+  { target: ".event-checkin-tour-workspace [aria-label='Attendance method']", title: "Choose an attendance method", description: "Check in people records named attendance. Record headcount saves a room total when your account has access. The methods are independent: their totals stay separate and are never added together. Switching methods alone saves nothing." },
+  { target: ".event-checkin-tour-summary", title: "Read the desk totals", description: "Named check-ins counts attendance on the selected day. Expected counts the event's loaded registrations, not just search results. Selected counts your unsaved roster choices. Review the Event card to confirm the desk's context." },
+  { target: ".event-checkin-tour-tabs", title: "Registrants or visitors", description: "Registered people shows the event roster. Visitors opens the walk-in form for someone arriving without registration. Both use the selected event and date. Opening either view does not record an arrival." },
+  { target: ".event-checkin-tour-search", title: "Find a registrant", description: "Search the loaded roster by name or ticket code. Filtering is immediate. Clear search restores the roster. Previously selected people can remain selected when hidden by search, so check Selected before saving." },
+  { target: ".event-checkin-tour-roster > div > div:first-child", title: "Unlock the roster deliberately", description: "The roster starts in View mode. Edit attendance unlocks selection. Select all shown affects available people in the current filtered roster. Saved people remain locked. Cancel editing clears unsaved choices and returns to View mode." },
+  { target: ".event-checkin-tour-roster [aria-label='Scrollable attendance roster']", title: "Review people and their status", description: "Each row identifies a registrant and shows ticket details when available. Awaiting, Selected and Saved distinguish roster state from a draft choice. Scroll within the roster for more people. Selecting a checkbox does not save attendance." },
+  { target: ".event-checkin-tour-save", title: "Save only reviewed selections", description: "Clear selection removes your draft choices. Check in saves selected people for this event and date, including selections hidden by search. It is disabled while locked or empty. If a save partly fails, remaining people stay selected for review and retry." },
+  { target: ".event-checkin-tour-walkin > div:first-child", title: "Unlock the walk-in form", description: "Choose Edit attendance to enter a walk-in guest. Cancel editing clears the form and locks it again. Opening or editing the form alone does not create a visitor or record attendance." },
+  { target: ".event-checkin-tour-walkin-fields > div:first-child", title: "Collect the walk-in details", description: "First name, last name and phone are required. Email and gender are optional. Confirm the event and date before submitting. Use Cancel editing to discard a draft guest." },
+  { target: ".event-checkin-tour-walkin-save", title: "Understand the walk-in save", description: "Check in as guest creates a visitor record and records their attendance for the selected event and date. Review the details first. This is a save action; the tour never submits it." },
+  { target: ".event-checkin-tour-arrivals", title: "Review confirmed arrivals", description: "This panel shows up to eight recorded arrivals for the selected date, with names and times. It is separate from unsaved selections. An empty panel means no arrivals are displayed for that date, not that the event has no registrations." },
+  { target: ".event-checkin-tour-workspace :is([aria-label='Headcount entry'], [aria-label='Reported headcount']) > div:nth-child(2)", title: "Review the headcount context", description: "Check the gathering, date and editing mode before entering a total. Existing counts open protected in View mode. Edit attendance unlocks changes when permitted; Cancel editing restores the saved values or clears an unsaved entry." },
+  { target: ".event-checkin-tour-workspace :is([aria-label='Headcount entry'], [aria-label='Reported headcount']) input[id$='-total']", title: "Enter the room total", description: "Only the total is required. It describes the room for this event and date, independently of named check-ins. Saving a headcount does not check individual people in. Review the counts before using Save headcount or Save changes." },
+  { target: ".event-checkin-tour-workspace [aria-label='Age breakdown']", title: "Optional age breakdown", description: "Adults and Children are optional counts within the room total. Leave unknown breakdowns blank. They describe the same attendance, not additional people to add to the total." },
+  { target: ".event-checkin-tour-workspace [aria-label='Gender breakdown']", title: "Optional gender breakdown", description: "Gender counts are another breakdown of the same room total. Review them alongside any age counts before saving. This guide leaves every headcount unchanged." },
+];
+
 type TabRoute = "roster" | "walkin";
 
 export default function EventCheckInPage() {
   const { can, ready } = usePermissions();
+  const { data: profile } = useCurrentProfile();
   const canCheckIn = ready && can("events:checkin", "create");
 
   const [eventId, setEventId] = React.useState("");
@@ -63,10 +88,7 @@ export default function EventCheckInPage() {
   const [savingRoster, setSavingRoster] = React.useState(false);
   const [walkIn, setWalkIn] = React.useState({ firstName: "", lastName: "", phone: "", email: "", gender: "" });
 
-  const events = useEventsList(
-    { limit: 100, sortBy: "startDate", sortOrder: "desc" },
-    { enabled: ready && can("events:list", "read") },
-  );
+  const events = useEventPickerEvents();
   const eventList = React.useMemo(() => {
     const today = todayKey();
     const distance = (event: EventItem) => {
@@ -230,40 +252,33 @@ export default function EventCheckInPage() {
   return (
     <div className="space-y-6">
       <PageHeader
+        className="event-checkin-tour-heading"
         eyebrow="Gatherings · Events"
         title="Event attendance"
         description="Choose an event and date, then check in registrants, welcome visitors or record a headcount."
         actions={
           <div className="flex flex-wrap items-center gap-2">
+            <PageTour page="Event check-in" account={profile ? `${profile.churchId}:${profile.profileId}` : undefined} ready={ready && events.isSuccess && (!activeId || (registrations.isSuccess && attendance.isSuccess)) && !saving} steps={CHECK_IN_TOUR_STEPS} />
             <CheckInDatePicker
+              className="event-checkin-tour-date"
               value={attendanceDate}
               onChange={(date) => changeContext(() => setAttendanceDate(date))}
               occursOn={occursOn}
               label="Event date"
               disabled={!activeEvent || saving}
             />
-            <select
-              value={activeId}
-              disabled={saving}
-              onChange={(event) => changeContext(() => setEventId(event.target.value))}
-              className="h-9 w-full min-w-[220px] rounded-full border border-line bg-card px-3 text-sm outline-none"
-              aria-label="Choose event"
-            >
-              {eventList.map((event) => (
-                <option key={event.eventId} value={event.eventId}>
-                  {event.title} · {new Date(event.startDate).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
-                </option>
-              ))}
-              {!eventList.length && activeEvent ? <option>{activeEvent.title}</option> : null}
-            </select>
+            <EventPicker query={events} items={eventList} value={activeId}
+              disabled={saving} label="Choose event" className="event-checkin-tour-event"
+              onValueChange={value => changeContext(() => setEventId(value))} />
           </div>
         }
       />
 
+      {activeEvent ? <div className="event-checkin-tour-workspace">
       <AttendanceWorkspace name={activeEvent?.title ?? "Choose a gathering"} scope="Event" canSeeHeadcount={canSeeReported} busy={saving}>
         <TabsContent value="individual" forceMount className="data-[state=inactive]:hidden">
           <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="event-checkin-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Named check-ins" value={attendedCount} tone="moss" icon={<Users className="size-4" />} deltaLabel={attendanceDate === todayKey() ? "right now" : "selected day"} />
         <StatCard label="Expected" value={registeredCount} tone="brand" deltaLabel="registered" />
         <StatCard label="Selected" value={selected.size} tone="gold" deltaLabel={selected.size ? "ready to check in" : "tap to select"} />
@@ -275,10 +290,10 @@ export default function EventCheckInPage() {
 
 
       <div className="flex flex-wrap items-center gap-2">
-        <FilterChip active={tab === "roster"} onClick={() => setTab("roster")}>Registered people</FilterChip>
-        <FilterChip active={tab === "walkin"} onClick={() => setTab("walkin")}>Visitors</FilterChip>
+        <div className="event-checkin-tour-tabs flex flex-wrap gap-2"><FilterChip active={tab === "roster"} onClick={() => setTab("roster")}>Registered people</FilterChip>
+        <FilterChip active={tab === "walkin"} onClick={() => setTab("walkin")}>Visitors</FilterChip></div>
         {tab === "roster" ? (
-          <SearchField value={query} onChange={setQuery} placeholder="Search a name or ticket code…" className="ml-auto w-full max-w-xs" />
+          <SearchField value={query} onChange={setQuery} placeholder="Search a name or ticket code…" className="event-checkin-tour-search ml-auto w-full max-w-xs" />
         ) : null}
       </div>
 
@@ -287,7 +302,7 @@ export default function EventCheckInPage() {
           <div className="paper-card rounded-2xl">
 
             {registrations.isError ? <div role="alert" className="p-4 text-sm">The roster could not be loaded. <Button type="button" variant="outline" onClick={() => registrations.refetch()}>Retry roster</Button></div> : registrations.isLoading ? <LoadingState label="Loading roster" variant="table" rows={4} /> : (
-              <AttendanceRosterTable
+              <div className="event-checkin-tour-roster"><AttendanceRosterTable
                 rows={rows.map(reg => ({ id: reg.memberId, name: reg.memberName ?? reg.memberId, detail: `${reg.tierName ? `${reg.tierName} · ` : ""}×${reg.quantity}${reg.ticketCode ? ` · ${reg.ticketCode}` : ""}`, recorded: reg.checkedIn, status: "Awaiting" }))}
                 selected={selected}
                 editable={editable}
@@ -296,41 +311,41 @@ export default function EventCheckInPage() {
                 onCancel={() => { setSelected(new Set()); setEditable(false); }}
                 onToggle={toggle}
                 onSelectAll={(ids, checked) => setSelected(previous => { const next = new Set(previous); ids.forEach(id => checked ? next.add(id) : next.delete(id)); return next; })}
-              />
+              /></div>
             )}
-            <AttendanceSelectionBar editable={editable} count={selected.size} busy={savingRoster} disabled={!activeEvent} onSave={doBulk} onClear={() => setSelected(new Set())} />
+            <div className="event-checkin-tour-save"><AttendanceSelectionBar editable={editable} count={selected.size} busy={savingRoster} disabled={!activeEvent} onSave={doBulk} onClear={() => setSelected(new Set())} /></div>
           </div>
         ) : (
-          <SectionCard eyebrow="No ticket? No problem" title="Walk someone in" bodyClassName="p-5" actions={<AttendanceEditToggle editable={editable} busy={saving} onEdit={() => setEditable(true)} onCancel={() => { setEditable(false); setSelected(new Set()); setWalkIn({ firstName: "", lastName: "", phone: "", email: "", gender: "" }); }} />}>
+          <SectionCard className="event-checkin-tour-walkin" eyebrow="No ticket? No problem" title="Walk someone in" bodyClassName="p-5" actions={<AttendanceEditToggle editable={editable} busy={saving} onEdit={() => setEditable(true)} onCancel={() => { setEditable(false); setSelected(new Set()); setWalkIn({ firstName: "", lastName: "", phone: "", email: "", gender: "" }); }} />}>
             <ValidatedForm onSubmit={doWalkIn} className="space-y-4">
               <fieldset disabled={!editable || saving} className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="event-checkin-tour-walkin-fields grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label required className="text-sm">First name</Label>
-                  <Input required value={walkIn.firstName} onChange={(e) => setWalkIn((w) => ({ ...w, firstName: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                  <Label required className="text-sm" htmlFor="event-walkin-firstName">First name</Label>
+                  <Input id="event-walkin-firstName" required value={walkIn.firstName} onChange={(e) => setWalkIn((w) => ({ ...w, firstName: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label required className="text-sm">Last name</Label>
-                  <Input required value={walkIn.lastName} onChange={(e) => setWalkIn((w) => ({ ...w, lastName: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                  <Label required className="text-sm" htmlFor="event-walkin-lastName">Last name</Label>
+                  <Input id="event-walkin-lastName" required value={walkIn.lastName} onChange={(e) => setWalkIn((w) => ({ ...w, lastName: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label required className="text-sm">Phone</Label>
-                  <Input required value={walkIn.phone} onChange={(e) => setWalkIn((w) => ({ ...w, phone: e.target.value }))} placeholder="+1 415 555 0100" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                  <Label required className="text-sm" htmlFor="event-walkin-phone">Phone</Label>
+                  <Input id="event-walkin-phone" required value={walkIn.phone} onChange={(e) => setWalkIn((w) => ({ ...w, phone: e.target.value }))} placeholder="+1 415 555 0100" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-sm">Email (optional)</Label>
-                  <Input value={walkIn.email} onChange={(e) => setWalkIn((w) => ({ ...w, email: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+                  <Label className="text-sm" htmlFor="event-walkin-email">Email (optional)</Label>
+                  <Input id="event-walkin-email" value={walkIn.email} onChange={(e) => setWalkIn((w) => ({ ...w, email: e.target.value }))} className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
                 </div>
                 <div className="space-y-1.5 sm:col-span-2">
-                  <Label className="text-sm">Gender (optional)</Label>
-                  <select value={walkIn.gender} onChange={(e) => setWalkIn((w) => ({ ...w, gender: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
+                  <Label className="text-sm" htmlFor="event-walkin-gender">Gender (optional)</Label>
+                  <select id="event-walkin-gender" value={walkIn.gender} onChange={(e) => setWalkIn((w) => ({ ...w, gender: e.target.value }))} className="h-10 w-full rounded-lg border border-line bg-background px-2 text-sm outline-none">
                     <option value="">Not said</option>
                     <option value="male">Male</option>
                     <option value="female">Female</option>
                   </select>
                 </div>
               </div>
-              <Button type="submit" disabled={!activeEvent || walkInCheckIn.isPending} className="h-10 w-full gap-2 rounded-lg text-sm">
+              <Button type="submit" disabled={!activeEvent || walkInCheckIn.isPending} className="event-checkin-tour-walkin-save h-10 w-full gap-2 rounded-lg text-sm">
                 <UserPlus className="size-4" /> {walkInCheckIn.isPending ? "Checking in…" : "Check in as guest"}
               </Button>
               <p className="text-center text-xs text-ink-faint">
@@ -342,7 +357,7 @@ export default function EventCheckInPage() {
         )}
 
         <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
-          <SectionCard eyebrow="Arrivals" title="Confirmed arrivals" bodyClassName="p-0">
+          <SectionCard className="event-checkin-tour-arrivals" eyebrow="Arrivals" title="Confirmed arrivals" bodyClassName="p-0">
             <div className="divide-y divide-line/70">
               {attendanceForDay.slice(0, 8).map((record) => (
                 <div key={record.attendanceId} className="flex items-center gap-2.5 px-4 py-2.5">
@@ -392,6 +407,7 @@ export default function EventCheckInPage() {
           </TabsContent>
         ) : null}
       </AttendanceWorkspace>
+      </div> : null}
     </div>
   );
 }

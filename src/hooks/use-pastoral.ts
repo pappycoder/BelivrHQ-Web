@@ -2,6 +2,8 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { fetchAllPages } from "@/lib/export-all";
+import { usePermissions } from "@/hooks/use-permissions";
 
 // ─── Types ───────────────────────────────────────────────
 
@@ -397,6 +399,21 @@ export function useRiskScores(params: ListRiskScoresParams = {}) {
     queryKey: ["pastoral-risk-scores", params],
     queryFn: ({ signal }) =>
       api.get<PaginatedResponse<RiskScore>>(`/pastoral/risk-scores${buildQuery(params)}`, { signal }),
+  });
+}
+
+/** Complete readable collection for the radar's client-side counts and filters. */
+export function useRiskScoresAll(params: Omit<ListRiskScoresParams, "page" | "limit"> = {}) {
+  const { can } = usePermissions();
+  return useQuery({
+    queryKey: ["pastoral-risk-scores", "all", params],
+    enabled: can("pastoral:risk-scores", "read"),
+    queryFn: ({ signal }) => fetchAllPages<RiskScore>((page) =>
+      api.get<PaginatedResponse<RiskScore>>(
+        `/pastoral/risk-scores${buildQuery({ ...params, page, limit: 100 })}`,
+        { signal },
+      ),
+    ),
   });
 }
 

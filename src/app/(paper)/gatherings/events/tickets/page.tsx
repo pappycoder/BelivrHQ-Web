@@ -1,5 +1,22 @@
 "use client";
 
+import { ErrorState } from "@/components/shared/error-state";
+
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { collectionLabel } from "@/lib/collection-label";
+
+import { EventPicker, useEventPickerEvents } from "@/components/events/event-picker";
+
+import { DialogFooter, DialogClose } from "@/components/ui/dialog";
+
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
@@ -14,14 +31,13 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { MemberCombobox } from "@/components/members/member-combobox";
 import { usePermissions } from "@/hooks/use-permissions";
-import { useEventsList, useEventTiers, useAllTickets, useCreateTicket, type AllTicketItem } from "@/hooks/use-events";
+import { useEventTiers, useAllTickets, useCreateTicket, type AllTicketItem } from "@/hooks/use-events";
 import { generateTicketPDF } from "@/lib/ticket-pdf";
 import { formatDate } from "@/hooks/use-media";
 import { formatNaira } from "@/hooks/use-analytics";
@@ -42,7 +58,7 @@ function TicketsInner() {
   const [assignTier, setAssignTier] = React.useState("");
   const [pdfBusy, setPdfBusy] = React.useState<string | null>(null);
 
-  const events = useEventsList({ limit: 100, sortBy: "startDate", sortOrder: "desc" });
+  const events = useEventPickerEvents();
   const tiers = useEventTiers(eventId);
   const tickets = useAllTickets({ eventId: eventId || undefined, page, limit: perPage });
   const createTicket = useCreateTicket();
@@ -54,24 +70,28 @@ function TicketsInner() {
   const usedCount = rows.filter((t) => t.usedAt).length;
   const paidEvent = !!selected && !selected.isFree;
 
+  const eventReady = events.isSuccess && !events.isError && !!selected;
+  const assignmentReady = canAssign && !!eventId && eventReady && tickets.isSuccess && !tickets.isError && (!paidEvent || (tiers.isSuccess && !tiers.isError));
+
   const download = async (ticket: AllTicketItem) => {
     setPdfBusy(ticket.ticketId);
     try {
       await generateTicketPDF(ticket);
     } catch (e) {
-      toast.error("Couldn't build the pass", { description: getToastErrorMessage(e, "Try again shortly.") });
+      toast.error("Couldn't build the ticket", { description: getToastErrorMessage(e, "Try again shortly.") });
     } finally {
       setPdfBusy(null);
     }
   };
 
   const assign = () => {
+    if (!assignmentReady) return;
     if (!eventId || !assignMember) { toast.error("Pick the person first."); return; }
     createTicket.mutate(
       { eventId, input: { memberId: assignMember.id, tierId: paidEvent && assignTier ? assignTier : undefined } },
       {
         onSuccess: () => {
-          toast.success(`Pass assigned to ${assignMember.name}.`);
+          toast.success(`Ticket assigned to ${assignMember.name}.`);
           setAssignOpen(false);
           setAssignMember(null);
           setAssignTier("");
@@ -85,10 +105,10 @@ function TicketsInner() {
     <div className="space-y-6">
       <PageHeader
         eyebrow="Gatherings · Events"
-        title="Passes in hand."
+        title="Issued tickets."
         description="Assign, print and track tickets to keep event entry running smoothly."
         actions={
-          canAssign && eventId ? (
+          assignmentReady ? (
             <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setAssignOpen(true)}>
               <UserPlus className="size-3.5" /> Assign ticket
             </Button>
@@ -96,60 +116,54 @@ function TicketsInner() {
         }
       />
 
-      <div className="flex flex-wrap items-center gap-2">
-        <select
-          value={eventId}
-          onChange={(e) => { setEventId(e.target.value); setPage(1); router.replace(`/gatherings/events/tickets${e.target.value ? `?event=${e.target.value}` : ""}`); }}
-          className="h-9 rounded-full border border-line bg-card px-3 text-sm outline-none"
-          aria-label="Event selector"
-        >
-          <option value="">Choose an event…</option>
-          {eventList.map((event) => (
-            <option key={event.eventId} value={event.eventId}>
-              {event.title} · {formatDate(event.startDate)}
-            </option>
-          ))}
-        </select>
-        {selected ? (
+      <ListToolbar>
+<EventPicker query={events} value={eventId}
+          onValueChange={value => { setEventId(value); setPage(1); router.replace(`/gatherings/events/tickets${value ? `?event=${value}` : ""}`); }} />
+{eventReady ? (
           <span className="flex items-center gap-1.5 text-xs text-ink-faint">
-            {paidEvent ? <Tag tone="gold">paid</Tag> : <Tag tone="moss">free</Tag>}
-            {(tiers.data ?? []).length ? <span>{(tiers.data ?? []).length} tiers</span> : paidEvent ? <span>no tiers (flat price)</span> : null}
+            {paidEvent ? <Tag tone="gold">Paid</Tag> : <Tag tone="moss">Free</Tag>}
+            {tiers.isError ? <span>Tier information unavailable</span> : tiers.isPending ? <Skeleton className="inline-block h-4 w-16" /> : (tiers.data ?? []).length ? <span>{(tiers.data ?? []).length} {collectionLabel((tiers.data ?? []).length, "tiers")}</span> : paidEvent ? <span>no tiers (flat price)</span> : null}
           </span>
         ) : null}
-        {eventId ? (
+{eventId ? (
           <Link href={`/gatherings/events/tiers?event=${encodeURIComponent(eventId)}`} className="ml-auto text-sm text-brand hover:underline">
             Manage tiers →
           </Link>
         ) : null}
-      </div>
+</ListToolbar>
 
       {eventId ? (
         <>
+          {tiers.isError ? <ErrorState title="Unable to load ticket tiers" /> : null}
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <StatCard label="Passes issued" value={total} tone="brand" icon={<Ticket className="size-4" />} />
-            <StatCard label="Used this page" value={usedCount} tone="moss" deltaLabel={rows.length ? `${Math.round((usedCount / rows.length) * 100)}%` : "Not available"} />
-            <StatCard label="Open this page" value={rows.length - usedCount} tone="gold" />
-            <StatCard label="Capacity" value={selected?.capacity ?? 0} tone="sky" deltaLabel="event seats" />
+            {tickets.isPending ? Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-32 rounded-2xl" />) : <>
+            <StatCard unavailable={tickets.isError} label="Tickets issued" value={total} tone="brand" icon={<Ticket className="size-4" />} />
+            <StatCard unavailable={tickets.isError} label="Used this page" value={usedCount} tone="moss" deltaLabel={tickets.isError ? "Please try again" : rows.length ? `${Math.round((usedCount / rows.length) * 100)}%` : "Not available"} />
+            <StatCard unavailable={tickets.isError} label="Open this page" value={rows.length - usedCount} tone="gold" />
+            </>}
+            {events.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={!eventReady} label="Capacity" value={selected?.capacity ?? 0} tone="sky" deltaLabel="event seats" />}
           </div>
 
-          {tickets.isLoading ? (
+          {tickets.isError ? (
+            <ErrorState title="Unable to load issued tickets" />
+          ) : tickets.isPending ? (
             <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-12 rounded-xl" />)}</div>
           ) : rows.length === 0 ? (
             <EmptyState
               icon={<Users />}
-              title="No passes yet"
+              title="No tickets issued yet"
               description={paidEvent ? "Sales appear here automatically; you can also seat someone by hand." : "Free events still track attendance at the desk. Claim happens member-side."}
-              action={canAssign ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => setAssignOpen(true)}>Assign the first</Button> : undefined}
+              action={assignmentReady ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => setAssignOpen(true)}>Assign the first</Button> : undefined}
             />
           ) : (
-            <ListTable className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="gatherings-events-tickets-1" records={rows ?? []} recordKey="ticketId">
+            <ListTable className="paper-card min-w-[960px] divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="gatherings-events-tickets-1" records={rows ?? []} recordKey="ticketId">
               <div className="rule-label grid grid-cols-[minmax(0,1.6fr)_1fr_0.8fr_1fr_0.8fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
                 <span>Holder</span>
                 <span>Code</span>
                 <span>Tier</span>
                 <span>Status</span>
                 <span className="text-right">Issued</span>
-                <span className="text-right">Pass</span>
+                <span className="text-right">Ticket</span>
               </div>
               {rows.map((ticket) => (
                 <div key={ticket.ticketId} className="grid grid-cols-[minmax(0,1.6fr)_1fr_0.8fr_1fr_0.8fr_auto] items-center gap-3 px-5 py-3">
@@ -162,13 +176,13 @@ function TicketsInner() {
                   </span>
                   <span className="truncate font-mono text-xs text-ink-faint">{ticket.code}</span>
                   <span className="truncate text-sm text-ink-soft">{ticket.tierName ?? "General"}</span>
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex min-w-0 flex-wrap items-center gap-1.5">
                     <Tag tone={ticket.usedAt ? "moss" : ticket.status === "cancelled" || ticket.status === "refunded" ? "rose" : "gold"} dot>
-                      {ticket.usedAt ? "used" : ticket.status}
+                      {formatStatusLabel(ticket.usedAt ? "used" : ticket.status)}
                     </Tag>
                     {ticket.pricePaid ? <span className="num text-xs text-ink-faint">{formatNaira(ticket.pricePaid)}</span> : null}
                   </span>
-                  <span className="num text-right text-xs text-ink-faint">{formatDate(ticket.createdAt)}</span>
+                  <span className="num whitespace-nowrap text-right text-xs text-ink-faint">{formatDate(ticket.createdAt)}</span>
                   <Button
                     size="xs"
                     variant="ghost"
@@ -186,49 +200,56 @@ function TicketsInner() {
                 total={total}
                 onPageChange={setPage}
                 onPerPageChange={setPerPage}
-                itemName="passes"
+                itemName="tickets"
                 pending={tickets.isFetching}
               />
             </ListTable>
           )}
         </>
-      ) : (
+      ) : events.isSuccess && eventList.length ? (
         <EmptyState
           icon={<Ticket />}
-          title="Choose an event to work its passes"
-          description="Review issued tickets, seat counts and printable A5 event passes."
+          title="Choose an event to review its tickets"
+          description="Review issued tickets, seat counts and printable A5 event tickets."
         />
-      )}
+      ) : null}
 
       <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
-        <DialogContent className="rounded-2xl border-line bg-card">
+        <FormDialogContent className="rounded-2xl border-line bg-card">
           <DialogHeader>
             <DialogTitle className="font-display">Seat someone by hand</DialogTitle>
-            <DialogDescription className="text-sm">Create a named pass to help attendees get through the queue.</DialogDescription>
+            <DialogDescription className="text-sm">Create a named ticket to help attendees get through the queue.</DialogDescription>
           </DialogHeader>
-          <div className="space-y-3">
-            <div className="space-y-1.5">
-              <p className="text-sm font-medium">Member</p>
-              <MemberCombobox
-                value={assignMember?.id ?? ""}
-                onChange={(id, member) => setAssignMember(id ? { id, name: `${member?.firstName ?? ""} ${member?.lastName ?? ""}`.trim() || "the member" } : null)}
-                placeholder="Search a member…"
-              />
-            </div>
-            {paidEvent && (tiers.data ?? []).length ? (
+          <FormSection title="Details">
+            {!assignmentReady ? <p role="alert" className="text-sm text-destructive">Ticket information is unavailable. Close this dialog and try again.</p> : null}
+            <div className="space-y-3">
               <div className="space-y-1.5">
-                <p className="text-sm font-medium">Tier</p>
-                <select value={assignTier} onChange={(e) => setAssignTier(e.target.value)} className="h-10 w-full rounded-lg border border-line bg-card px-2 text-sm outline-none" aria-label="Tier">
-                  <option value="">General (no tier)</option>
-                  {(tiers.data ?? []).map((t) => <option key={t.id} value={t.id}>{t.name} · {formatNaira(t.price)}</option>)}
-                </select>
+                <p className="text-sm font-medium">Member</p>
+                <MemberCombobox
+                  value={assignMember?.id ?? ""}
+                  onChange={(id, member) => setAssignMember(id ? { id, name: `${member?.firstName ?? ""} ${member?.lastName ?? ""}`.trim() || "the member" } : null)}
+                  placeholder="Search a member…"
+                />
               </div>
-            ) : null}
-            <Button className="h-10 w-full gap-2 rounded-lg text-sm" disabled={!assignMember || createTicket.isPending} onClick={assign}>
-              <UserPlus className="size-4" /> {createTicket.isPending ? "Assigning…" : "Assign pass"}
-            </Button>
-          </div>
-        </DialogContent>
+              {paidEvent && (tiers.data ?? []).length ? (
+                <div className="space-y-1.5">
+                  <p className="text-sm font-medium">Tier</p>
+                  <select value={assignTier} onChange={(e) => setAssignTier(e.target.value)} className="h-10 w-full rounded-lg border border-line bg-card px-2 text-sm outline-none" aria-label="Tier">
+                    <option value="">General (no tier)</option>
+                    {(tiers.data ?? []).map((t) => <option key={t.id} value={t.id}>{t.name} · {formatNaira(t.price)}</option>)}
+                  </select>
+                </div>
+              ) : null}
+
+            </div>
+          </FormSection>
+<DialogFooter>
+<DialogClose asChild><Button type="button" variant="outline" disabled={createTicket.isPending}>Cancel</Button></DialogClose>
+<Button className="h-10 gap-2 rounded-lg text-sm" disabled={!assignmentReady || !assignMember || createTicket.isPending} onClick={assign}>
+                <UserPlus className="size-4" /> {createTicket.isPending ? "Assigning…" : "Assign ticket"}
+              </Button>
+</DialogFooter>
+        </FormDialogContent>
       </Dialog>
     </div>
   );

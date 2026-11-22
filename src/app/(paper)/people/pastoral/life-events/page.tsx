@@ -1,5 +1,9 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
+import { PageHeader } from "@/components/paper/section";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -85,33 +89,26 @@ export default function LifeEventsPage() {
     return diff >= 0 && diff <= 7;
   }).length;
 
+  if (events.isError) return <PageQueryError title="Life events" />;
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <Link
+      <PageHeader eyebrow={<Link
             href="/people/pastoral"
             className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink"
           >
             <ArrowLeft className="size-3" /> People · Pastoral care
-          </Link>
-          <h1 className="mt-1 font-display text-[clamp(1.65rem,2.4vw,2.1rem)] font-semibold tracking-tight">
-            Milestones the church should not miss.
-          </h1>
-          <p className="mt-1 max-w-2xl text-sm text-ink-soft">
-            Remember birthdays, healings, homecomings and losses with a card, call or meal.
-          </p>
-        </div>
-        {canCreate ? (
+          </Link>} title="Milestones the church should not miss." description="Remember birthdays, healings, homecomings and losses with a card, call or meal." actions={canCreate ? (
           <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setFormOpen(true)}>
             <Plus className="size-3.5" /> Mark an event
           </Button>
-        ) : null}
-      </div>
+        ) : null} />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {events.isPending ? <><Skeleton className="h-32 rounded-2xl" /><Skeleton className="h-32 rounded-2xl" /></> : <>
         <StatCard label="On the calendar" value={events.data?.meta?.total ?? rows.length} tone="brand" icon={<Gift className="size-4" />} />
         <StatCard label="Within seven days" value={upcomingSoon} tone="gold" deltaLabel="send something" />
+        </>}
         <StatCard label="Types tracked" value={LIFE_EVENT_TYPES.length} tone="sky" />
         <div className="paper-card flex flex-col justify-between gap-4 rounded-2xl p-5">
           <span className="rule-label">Filter</span>
@@ -145,7 +142,7 @@ export default function LifeEventsPage() {
       ) : (
         <div className="space-y-6">
           {grouped.map(([label, items]) => (
-            <section key={label}>
+            <section data-tour-records key={label}>
               <p className="rule-label mb-2">{label}</p>
               <StaggerGroup className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl">
                 {items.map((event) => (

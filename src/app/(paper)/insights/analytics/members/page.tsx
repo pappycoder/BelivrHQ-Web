@@ -1,5 +1,10 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import Link from "next/link";
 import { ArrowLeft, Users } from "lucide-react";
@@ -9,7 +14,7 @@ import { EmptyState, FilterChip } from "@/components/paper/primitives";
 import { BarSeries, CHART_COLORS, DonutChart, TrendChart } from "@/components/paper/charts";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { number, percent } from "@/lib/paper/format";
+import { ageGroupLabel, number, percent } from "@/lib/paper/format";
 import {
   periodLabel,
   useAnalyticsMembers,
@@ -28,11 +33,11 @@ export default function MembersAnalyticsPage() {
     members: point.total,
   }));
   const ageData = Object.entries(m?.byAgeGroup ?? {}).map(([name, value], index) => ({
-    name,
+    name: ageGroupLabel(name),
     value,
     color: CHART_COLORS[index % CHART_COLORS.length],
   }));
-  const statusRows = Object.entries(m?.byStatus ?? {}).map(([label, count]) => ({ label, count: count as number }));
+  const statusRows = Object.entries(m?.byStatus ?? {}).map(([label, count]) => ({ label: formatStatusLabel(label), count: count as number }));
   const genderData = Object.entries(m?.byGender ?? {}).map(([name, value], index) => ({
     name,
     value,
@@ -85,7 +90,7 @@ export default function MembersAnalyticsPage() {
           <div className="grid gap-4 lg:grid-cols-12">
             <SectionCard className="lg:col-span-7" eyebrow="Growth" title="Members over time">
               {growthRows.length ? (
-                <TrendChart data={growthRows} series={[{ key: "members", label: "Members", color: "var(--chart-2)" }]} height={220} formatter={(v) => number(Number(v))} />
+                <TrendChart integerAxis data={growthRows} series={[{ key: "members", label: "Members", color: "var(--chart-2)" }]} height={220} formatter={(v) => number(Number(v))} />
               ) : (
                 <p className="py-12 text-center text-sm text-ink-faint">Growth trends will appear once there are enough records.</p>
               )}
@@ -93,7 +98,7 @@ export default function MembersAnalyticsPage() {
 
             <SectionCard className="lg:col-span-5" eyebrow="Age" title="Congregation bands">
               {ageData.length ? (
-                <DonutChart data={ageData} centerValue={number(m.total)} centerLabel="people" height={170} formatter={(v) => `${number(Number(v))} people`} />
+                <DonutChart data={ageData} centerValue={number(m.total)} centerLabel={collectionLabel(m.total, "people")} height={170} formatter={(v) => `${number(Number(v))} ${collectionLabel(Number(v), "people")}`} />
               ) : (
                 <p className="py-12 text-center text-sm text-ink-faint">Age data appears as profiles are filled.</p>
               )}
@@ -110,7 +115,7 @@ export default function MembersAnalyticsPage() {
 
             <SectionCard className="lg:col-span-5" eyebrow="Status" title="Where people stand">
               {statusRows.length ? (
-                <BarSeries data={statusRows} series={[{ key: "count", label: "Members", color: "var(--chart-4)" }]} horizontal height={190} formatter={(v) => number(Number(v))} />
+                <BarSeries integerAxis data={statusRows} series={[{ key: "count", label: "Members", color: "var(--chart-4)" }]} horizontal height={190} formatter={(v) => number(Number(v))} />
               ) : (
                 <p className="py-12 text-center text-sm text-ink-faint">No status breakdown yet.</p>
               )}

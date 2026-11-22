@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { PageHeader as PaperPageHeader } from "@/components/paper/section";
 import { usePermissions } from "@/hooks/use-permissions";
 import { checkRule, matchRoutePermission } from "@/lib/route-permissions";
 import {
@@ -29,10 +30,12 @@ interface PageHeaderProps {
 export function PageHeader({ title, titleMeta, breadcrumbs, action, description }: PageHeaderProps) {
   const { ready, canAny } = usePermissions();
   return (
-    <div className="workspace-page-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
-      <div className="workspace-page-heading min-w-0">
-        {titleMeta ? <div className="mb-2 flex flex-wrap items-center gap-3"><h1 className="text-2xl font-bold tracking-tight md:text-3xl">{title}</h1>{titleMeta}</div> : <h1 className="text-2xl font-bold tracking-tight mb-2 md:text-3xl">{title}</h1>}
-        {description && <p className="mb-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">{description}</p>}
+    <PaperPageHeader
+      className="workspace-page-header"
+      title={titleMeta ? <span className="flex flex-wrap items-center gap-3">{title}<span className="font-sans text-sm">{titleMeta}</span></span> : title}
+      description={description}
+      actions={action}
+      eyebrow={
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -54,8 +57,7 @@ export function PageHeader({ title, titleMeta, breadcrumbs, action, description 
             ))}
           </BreadcrumbList>
         </Breadcrumb>
-      </div>
-      {action && <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2 sm:justify-end [&>div]:flex-wrap">{action}</div>}
-    </div>
+      }
+    />
   );
 }

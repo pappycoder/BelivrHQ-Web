@@ -1,5 +1,18 @@
 "use client";
 
+import { ErrorState } from "@/components/shared/error-state";
+
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { DialogFooter, DialogClose } from "@/components/ui/dialog";
+
+import { useId as useFormFieldId } from "react";
+
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import * as React from "react";
@@ -25,7 +38,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
@@ -55,6 +67,7 @@ function stamp(value: string) {
 }
 
 export default function MessagesPage() {
+  const formFieldId = useFormFieldId();
   const { can, ready } = usePermissions();
   // Outbound sends ride the `whatsapp` resource (SMS + WhatsApp share it);
   // a "messages" resource was never in the permission catalog.
@@ -101,10 +114,12 @@ export default function MessagesPage() {
       />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatCard label="Messages this view" value={messages.data?.total ?? rows.length} tone="brand" icon={<MessageCircle className="size-4" />} />
-        <StatCard label="Outbound today" value={rows.filter((m) => m.direction === "outbound").length} tone="moss" deltaLabel="this page" />
-        <StatCard label="Inbound waiting" value={rows.filter((m) => m.direction === "inbound").length} tone="gold" deltaLabel="worth a reply" />
-        <StatCard label="Delivery failures" value={failed} tone={failed ? "rose" : "sky"} deltaLabel="recent sends" />
+        {messages.isPending ? Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-32 rounded-2xl" />) : <>
+        <StatCard unavailable={messages.isError} label="Messages this view" value={messages.data?.total ?? rows.length} tone="brand" icon={<MessageCircle className="size-4" />} />
+        <StatCard unavailable={messages.isError} label="Outbound today" value={rows.filter((m) => m.direction === "outbound").length} tone="moss" deltaLabel={messages.isError ? "Please try again" : "this page"} />
+        <StatCard unavailable={messages.isError} label="Inbound waiting" value={rows.filter((m) => m.direction === "inbound").length} tone="gold" deltaLabel={messages.isError ? "Please try again" : "worth a reply"} />
+        </>}
+        {analytics.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={analytics.isError} label="Delivery failures" value={failed} tone={failed ? "rose" : "sky"} deltaLabel={analytics.isError ? "Please try again" : "recent sends"} />}
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
@@ -114,7 +129,7 @@ export default function MessagesPage() {
         <FilterChip active={direction === "outbound"} onClick={() => setDirection("outbound")}>Outbound</FilterChip>
       </div>
 
-      {channels.length ? (
+      {analytics.isError ? <ErrorState title="Unable to load message delivery data" /> : channels.length ? (
         <div className="paper-card flex flex-wrap items-center gap-x-8 gap-y-2 rounded-2xl px-5 py-3">
           {channels.map((c) => (
             <span key={c.channel} className="flex items-center gap-2 text-sm text-ink-soft">
@@ -127,7 +142,7 @@ export default function MessagesPage() {
         </div>
       ) : null}
 
-      {messages.isLoading ? (
+      {messages.isError ? <ErrorState title="Unable to load messages" /> : messages.isPending ? (
         <div className="space-y-2">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}</div>
       ) : rows.length === 0 ? (
         <EmptyState
@@ -156,7 +171,7 @@ export default function MessagesPage() {
                   <p className="mt-0.5 truncate text-sm text-ink-soft">{message.content}</p>
                 ) : null}
               </div>
-              <Tag tone={message.status === "failed" ? "rose" : "neutral"}>{MESSAGE_STATUS_LABELS[message.status] ?? message.status}</Tag>
+              <Tag tone={message.status === "failed" ? "rose" : "neutral"}>{MESSAGE_STATUS_LABELS[message.status] ?? formatStatusLabel(message.status)}</Tag>
               <span className="num hidden w-32 shrink-0 text-right text-xs text-ink-faint sm:block">{stamp(message.createdAt)}</span>
               {canSend && message.direction === "inbound" ? (
                 <button
@@ -173,7 +188,7 @@ export default function MessagesPage() {
       )}
 
       <Dialog open={sendOpen} onOpenChange={setSendOpen}>
-        <DialogContent className="rounded-2xl border-line bg-card">
+        <FormDialogContent className="rounded-2xl border-line bg-card">
           <DialogHeader>
             <DialogTitle className="font-display">Send a text</DialogTitle>
             <DialogDescription className="text-sm">
@@ -181,22 +196,28 @@ export default function MessagesPage() {
             </DialogDescription>
           </DialogHeader>
           <ValidatedForm onSubmit={submit} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label required className="text-sm">To (phone)</Label>
-              <Input required value={draft.to} onChange={(e) => setDraft((d) => ({ ...d, to: e.target.value }))} placeholder="+1 415 555 0100" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
-            </div>
-            <div className="space-y-1.5">
-              <Label required className="text-sm">Message</Label>
-              <Textarea required rows={4} value={draft.text} onChange={(e) => setDraft((d) => ({ ...d, text: e.target.value }))} placeholder="Warm, short, and worth a reply…" className="resize-none rounded-lg border-line bg-background text-sm shadow-none" />
-            </div>
-            <Button type="submit" disabled={send.isPending} className="h-10 w-full gap-2 rounded-lg text-sm">
-              <Send className="size-4" /> {send.isPending ? "Sending…" : "Send message"}
-            </Button>
-            <p className="text-center text-xs text-ink-faint">
-              From addresses are managed on {MESSAGE_CHANNELS.join(", ")} in Settings → Integrations.
-            </p>
+            <FormSection title="Details">
+              <div className="space-y-1.5">
+                <Label htmlFor={`${formFieldId}-field-1`} required className="text-sm">To (phone)</Label>
+                <Input id={`${formFieldId}-field-1`} required value={draft.to} onChange={(e) => setDraft((d) => ({ ...d, to: e.target.value }))} placeholder="+1 415 555 0100" className="h-10 rounded-lg border-line bg-background text-sm shadow-none" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor={`${formFieldId}-field-2`} required className="text-sm">Message</Label>
+                <Textarea id={`${formFieldId}-field-2`} required rows={4} value={draft.text} onChange={(e) => setDraft((d) => ({ ...d, text: e.target.value }))} placeholder="Warm, short, and worth a reply…" className="resize-none rounded-lg border-line bg-background text-sm shadow-none" />
+              </div>
+
+              <p className="text-center text-xs text-ink-faint">
+                From addresses are managed on {MESSAGE_CHANNELS.join(", ")} in Settings → Integrations.
+              </p>
+            </FormSection>
+<DialogFooter>
+<DialogClose asChild><Button type="button" variant="outline" disabled={send.isPending}>Cancel</Button></DialogClose>
+<Button type="submit" disabled={send.isPending} className="h-10 gap-2 rounded-lg text-sm">
+                <Send className="size-4" /> {send.isPending ? "Sending…" : "Send message"}
+              </Button>
+</DialogFooter>
           </ValidatedForm>
-        </DialogContent>
+        </FormDialogContent>
       </Dialog>
     </div>
   );

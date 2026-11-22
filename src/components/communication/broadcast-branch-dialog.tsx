@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { RequiredFieldsNotice } from "@/components/ui/required-fields";
 import {
   BranchAssignmentField,
@@ -7,7 +11,6 @@ import {
 } from "@/components/shared/branch-assignment";
 import {
   Dialog,
-  DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
@@ -33,18 +36,20 @@ export function BroadcastBranchDialog({
         if (!open) onClose();
       }}
     >
-      <DialogContent>
+      <FormDialogContent>
         <DialogHeader>
           <DialogTitle>Edit Broadcast Branch</DialogTitle>
           <DialogDescription>
             Changing branch recalculates recipients before the scheduled send.
           </DialogDescription>
         </DialogHeader>
-        <RequiredFieldsNotice />
-        <BranchAssignmentField
-          assignment={assignment}
-          disabled={update.isPending}
-        />
+        <FormSection title="Details">
+          <RequiredFieldsNotice />
+          <BranchAssignmentField
+            assignment={assignment}
+            disabled={update.isPending}
+          />
+        </FormSection>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
             Cancel
@@ -75,7 +80,7 @@ export function BroadcastBranchDialog({
             Save Changes
           </Button>
         </DialogFooter>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

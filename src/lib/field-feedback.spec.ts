@@ -37,6 +37,12 @@ describe("field semantics", () => {
     expect(resolveFieldIcon("text", "Custom response")).toBe("text");
     expect(fieldIconImage("phone", "#64748b")).toContain("data:image/svg+xml");
   });
+  it("keeps the actual label's meaning when placeholder examples contain unrelated keywords", () => {
+    expect(resolveFieldIcon("text", "Name", "First-time guest welcome")).toBe("user");
+    expect(resolveFieldIcon("textarea", "Content", "Hi {{first_name}}, welcome")).toBe("message");
+    expect(resolveFieldIcon("text", "", "Enter email address")).toBe("mail");
+    expect(resolveFieldIcon("time", "Name", "Example")).toBe("clock");
+  });
 });
 describe("editable text differences", () => {
   it("isolates insertion in the middle without replacing the suffix", () => {

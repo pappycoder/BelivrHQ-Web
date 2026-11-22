@@ -1,5 +1,9 @@
 "use client";
 
+import { retryPage } from "@/lib/retry-page";
+
+import { PageHeader } from "@/components/paper/section";
+
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
 
 import * as React from "react";
@@ -115,14 +119,7 @@ export default function SharedInboxPage() {
   return (
     <div className="space-y-4">
       {dialog}
-      <header className="flex flex-wrap items-end justify-between gap-4 pb-2">
-        <div>
-          <p className="rule-label">Connect · Messages</p>
-          <h1 className="mt-2 font-display text-[clamp(1.75rem,3vw,2.5rem)] font-semibold tracking-tight">A place to stay connected.</h1>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-soft">Conversations, updates and a little encouragement. Keep your church team in the loop.</p>
-        </div>
-        {canAnswer && <Button className="h-10 gap-2 rounded-full px-5 text-sm" onClick={compose}><PenSquare className="size-4" /> Compose message</Button>}
-      </header>
+      <PageHeader eyebrow="Connect · Messages" title="A place to stay connected." description="Conversations, updates and a little encouragement. Keep your church team in the loop." actions={canAnswer && <Button className="h-10 gap-2 rounded-full px-5 text-sm" onClick={compose}><PenSquare className="size-4" /> Compose message</Button>} />
 
       <section aria-label="Mailbox" className="overflow-hidden rounded-2xl border border-line bg-card shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-muted/25 px-4 py-3 sm:px-6">
@@ -139,7 +136,7 @@ export default function SharedInboxPage() {
             <AlertCircle className="mb-4 size-9 text-ink-soft" />
             <h2 className="font-display text-xl font-semibold">Your messages couldn’t be loaded</h2>
             <p className="mt-2 max-w-sm text-sm text-ink-soft">Check your connection and try opening your mailbox again.</p>
-            <Button variant="outline" className="mt-6 gap-2 rounded-full" onClick={() => void emails.refetch()}><RefreshCw className="size-4" /> Try again</Button>
+            <Button variant="outline" className="mt-6 gap-2 rounded-full" onClick={() => void retryPage()}><RefreshCw className="size-4" /> Try again</Button>
           </div>
         ) : !listLoading && rows.length === 0 ? (
           <div className="relative isolate overflow-hidden px-5 py-12 sm:px-10 sm:py-16">
@@ -211,7 +208,7 @@ export default function SharedInboxPage() {
           ) : detail.isLoading ? (
             <div className="space-y-3 p-6"><Skeleton className="h-6 w-2/3" /><Skeleton className="h-4 w-1/3" /><Skeleton className="h-40 rounded-xl" /></div>
           ) : detail.isError || !active ? (
-            <div role="alert" className="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center"><AlertCircle className="size-8 text-ink-soft" /><p className="text-sm text-ink-soft">This message couldn’t be opened.</p><Button variant="outline" onClick={() => void detail.refetch()}>Try again</Button><Button variant="ghost" onClick={() => setSelectedId(null)}><ArrowLeft className="mr-2 size-4" /> Back to messages</Button></div>
+            <div role="alert" className="flex flex-1 flex-col items-center justify-center gap-4 p-8 text-center"><AlertCircle className="size-8 text-ink-soft" /><p className="text-sm text-ink-soft">This message couldn’t be opened.</p><Button variant="outline" onClick={() => void retryPage()}>Try again</Button><Button variant="ghost" onClick={() => setSelectedId(null)}><ArrowLeft className="mr-2 size-4" /> Back to messages</Button></div>
           ) : (
             <>
               <div className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-5 py-4">

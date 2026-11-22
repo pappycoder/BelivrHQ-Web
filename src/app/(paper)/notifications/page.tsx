@@ -1,5 +1,9 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
+import { collectionLabel } from "@/lib/collection-label";
+
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
 
 import * as React from "react";
@@ -18,6 +22,8 @@ import {
 } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader } from "@/components/paper/section";
+import { PageTour, type TourStep } from "@/components/tours/page-tour";
+import { useCurrentProfile } from "@/hooks/use-profile";
 import {
   EmptyState,
   FilterChip,
@@ -78,10 +84,22 @@ const TYPES: ("all" | NotificationType)[] = [
   "system",
 ];
 
+const NOTIFICATIONS_TOUR_STEPS: TourStep[] = [
+  { target: ".notifications-tour-heading", title: "Your notifications, in one place", description: "Review updates sent to your account here. The heading shows the unread count for your current filters. This tour explains the controls without opening, marking or deleting any notifications." },
+  { target: ".notifications-tour-read-filter", title: "Focus on unread updates", description: "After the tour, choose Unread to show only notifications you have not read, or All to include read items. Changing a filter returns to the first page and clears the selection." },
+  { target: ".notifications-tour-type-filter", title: "Choose a category", description: "Narrow the list to Pastoral, Giving, Event, Attendance, Broadcast or System updates. Categories combine with All or Unread. Choose All types to remove the category filter." },
+  { target: ".notifications-tour-mark-all", title: "Mark everything read", description: "Mark all read applies to all your unread notifications, including other pages and categories. A confirmation appears before the update. The button is disabled when the current filters show no unread notifications." },
+  { target: ".notifications-tour-first-item", title: "Read an update and manage it", description: "After the tour, select a title or View details to open the full notification. Opening it successfully marks it read. Row action icons let you mark it read or unread, or request deletion. Deletion is permanent and requires confirmation." },
+  { target: ".notifications-tour-selection", title: "Work with a selection", description: "Use individual checkboxes or Select all on this page. Selecting rows reveals Mark read, Mark unread, Delete and Clear. Updates and deletion ask for confirmation; Clear only removes the selection. Switching filters or pages clears it too." },
+  { target: ".notifications-tour-pagination", title: "Browse the remaining updates", description: "Use Prev and Next to move through the filtered list. Rows per page offers 10, 20 or 50 notifications and returns you to page one. The range and total show how many match your filters." },
+  { target: ".notifications-tour-empty", title: "When the list is empty", description: "An empty list can mean there are no notifications, or none match your filters. Try All and All types to broaden the list. Selection and pagination return when notifications are available." },
+];
+
 type DeleteTarget = { ids: string[]; label: string };
 
 export default function PaperNotificationsPage() {
   const { confirm, dialog } = useManageConfirmation();
+  const { data: profile } = useCurrentProfile();
   const [read, setRead] = React.useState<"all" | "unread">("all");
   const [type, setType] = React.useState<"all" | NotificationType>("all");
   const [page, setPage] = React.useState(1);
@@ -134,7 +152,7 @@ export default function PaperNotificationsPage() {
   const runBulk = (mutation: typeof bulkRead, done: (n: number) => string, title: string) => {
     const ids = [...selectedIds];
     const names = items.filter((item) => ids.includes(item.id)).map((item) => item.title);
-    confirm({ title, subject: names.join(" · "), description: `Update ${ids.length} selected notifications?`, onConfirm: () => mutation.mutateAsync(ids, {
+    confirm({ title, subject: names.join(" · "), description: `Update ${ids.length} selected ${collectionLabel(ids.length, "notifications")}?`, onConfirm: () => mutation.mutateAsync(ids, {
       onSuccess: () => { toast(done(ids.length)); setSelected((current) => { const next = new Set(current); ids.forEach((id) => next.delete(id)); return next; }); },
       onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't complete that.")),
     }) });
@@ -146,7 +164,7 @@ export default function PaperNotificationsPage() {
     const onDone = () => {
       toast(
         ids.length > 1
-          ? `${ids.length} notifications deleted.`
+          ? `${ids.length} ${collectionLabel(ids.length, "notifications")} deleted.`
           : "Notification deleted.",
       );
       setSelected((current) => {
@@ -162,18 +180,26 @@ export default function PaperNotificationsPage() {
     else deleteOne.mutate(ids[0], { onSuccess: onDone, onError });
   };
 
+  if (list.isError) return <PageQueryError title="Notifications" />;
+
   return (
     <div className="space-y-6">
       {dialog}
       <PageHeader
+        className="notifications-tour-heading"
         eyebrow="Today"
         title="Notifications"
         description={
-          list.data?.unreadCount
-            ? `${list.data.unreadCount} things that happened while you were elsewhere.`
+          list.isPending
+            ? "Your updates in one place."
+            : list.data?.unreadCount
+            ? `${list.data.unreadCount} ${collectionLabel(list.data.unreadCount, "things")} that happened while you were elsewhere.`
             : "Everything is quiet."
         }
         actions={
+          <>
+          <PageTour page="Notifications" account={profile ? `${profile.churchId}:${profile.profileId}` : undefined} ready={!!profile && profile.status === "active" && list.isSuccess && !activeNotification && !deleteTarget} steps={NOTIFICATIONS_TOUR_STEPS} />
+          <div className="notifications-tour-mark-all flex items-center gap-1">
           <Button
             variant="outline"
             className="h-9 gap-1.5 rounded-full border-line bg-card text-sm"
@@ -186,21 +212,27 @@ export default function PaperNotificationsPage() {
           >
             <CheckCheck className="size-3.5" /> Mark all read
           </Button>
+          </div>
+          </>
         }
       />
 
       <div className="flex flex-wrap items-center gap-2">
+        <div className="notifications-tour-read-filter flex items-center gap-2" role="group" aria-label="Read status filters">
         {FILTERS.map((item) => (
           <FilterChip key={item.value} active={read === item.value} onClick={() => { setRead(item.value); setPage(1); }}>
             {item.label}
           </FilterChip>
         ))}
+        </div>
         <span className="mx-1 hidden h-4 w-px bg-line sm:block" />
+        <div className="notifications-tour-type-filter flex flex-wrap items-center gap-2" role="group" aria-label="Category filters">
         {TYPES.map((item) => (
           <FilterChip key={item} active={type === item} onClick={() => { setType(item); setPage(1); }}>
             <span className="capitalize">{item === "all" ? "all types" : NOTIFICATION_TYPE_LABELS[item] ?? item}</span>
           </FilterChip>
         ))}
+        </div>
       </div>
 
       {list.isLoading ? (
@@ -210,16 +242,18 @@ export default function PaperNotificationsPage() {
           ))}
         </div>
       ) : items.length === 0 ? (
-        <EmptyState
-          icon={<BellOff />}
-          title="Nothing needs you"
-          description="The rarest, best screen. New signals land here as they happen."
-        />
+        <div className="notifications-tour-empty">
+          <EmptyState
+            icon={<BellOff />}
+            title="Nothing needs you"
+            description="The rarest, best screen. New signals land here as they happen."
+          />
+        </div>
       ) : (
         <div className="paper-card overflow-hidden rounded-2xl">
           <div
             className={cn(
-              "flex items-center gap-3 px-4 py-2.5 text-sm",
+              "notifications-tour-selection flex flex-wrap items-center gap-3 px-4 py-2.5 text-sm",
               selectedIds.length
                 ? "bg-ink text-paper"
                 : "border-b border-line text-ink-faint",
@@ -284,10 +318,10 @@ export default function PaperNotificationsPage() {
           </div>
 
           <div className="divide-y divide-line/70">
-            {items.map((item) => {
+            {items.map((item, index) => {
               const Icon = TYPE_ICONS[item.type] ?? Settings2;
               return (
-                <div key={item.id} className="group flex items-start gap-3 px-4 py-4 transition-colors hover:bg-muted/40">
+                <div key={item.id} className={cn("group flex items-start gap-3 px-4 py-4 transition-colors hover:bg-muted/40", index === 0 && "notifications-tour-first-item")}>
                   <Checkbox
                     checked={selected.has(item.id)}
                     onCheckedChange={() => toggle(item.id)}
@@ -357,6 +391,7 @@ export default function PaperNotificationsPage() {
             })}
           </div>
 
+          <div className="notifications-tour-pagination">
           <ListPaginationFooter
             page={page}
             perPage={perPage}
@@ -367,6 +402,7 @@ export default function PaperNotificationsPage() {
             itemName="notifications"
             pending={list.isFetching}
           />
+          </div>
         </div>
       )}
 

@@ -1,3 +1,7 @@
+import { UserStatusBadge } from "@/components/users/user-status-badge";
+import { formatRecordDate } from "@/lib/record-date";
+import { DetailHeading } from "@/components/paper/section";
+import { Tag } from "@/components/paper/stat";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { WorkspaceAvatar } from "@/components/workspace/workspace-presentation";
@@ -56,21 +60,16 @@ export function UserDetailSidebar({ user }: UserDetailSidebarProps) {
           photoUrl={user.avatarUrl ?? user.member?.photoUrl}
           className="mx-auto size-14"
         />
-        <h1 className="mt-2 text-xl font-semibold">
+        <DetailHeading className="mt-2">
           {user.firstName} {user.lastName}
-        </h1>
-        <div className="flex justify-center gap-2 mt-1">
-          <Badge variant={user.status === "active" ? "default" : "destructive"}>
-            {user.status}
-          </Badge>
+        </DetailHeading>
+        <div className="flex flex-wrap justify-center gap-2 mt-1">
+          <UserStatusBadge status={user.status} />
           {user.mfaEnabled && <Badge variant="secondary">MFA Enabled</Badge>}
           {user.isAdminHq && (
-            <Badge
-              variant="secondary"
-              title="Admin HQ (cross-branch access enabled)"
-            >
-              Admin HQ
-            </Badge>
+            <span className="inline-flex" title="Admin HQ (cross-branch access enabled)">
+              <Tag tone="sky">Admin HQ</Tag>
+            </span>
           )}
         </div>
       </CardHeader>
@@ -124,11 +123,7 @@ export function UserDetailSidebar({ user }: UserDetailSidebarProps) {
         <InfoRow
           icon={<Calendar className="h-4 w-4" />}
           label="Joined"
-          value={new Date(user.createdAt).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
+          value={formatRecordDate(user.createdAt)}
         />
       </CardContent>
     </Card>

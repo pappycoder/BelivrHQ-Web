@@ -1,5 +1,11 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 import { MeetingAttendanceRoster } from "./meeting-attendance-roster";
 import { useState } from "react";
@@ -14,7 +20,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
-  DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
@@ -70,7 +75,7 @@ export function DepartmentAttendancePanel({
           if (!savingRoster && !mutation.isPending) setOpen(value);
         }}
       >
-        <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+        <FormDialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Record department meeting attendance</DialogTitle>
             <DialogDescription>
@@ -99,104 +104,106 @@ export function DepartmentAttendancePanel({
               }
             }}
           >
-            <fieldset disabled={savingRoster || mutation.isPending} className="space-y-4">
-              <Label required className="grid gap-2">
-                Meeting date
-                <Input
-                  picker="wheel"
-                  aria-label="Department meeting date"
-                  type="date"
-                  required
-                  value={meetingDate}
-                  onChange={(event) => setMeetingDate(event.target.value)}
-                />
-              </Label>
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  variant={mode === "members" ? "default" : "outline"}
-                  onClick={() => setMode("members")}
-                >
-                  Members (Roster)
-                </Button>
-                <Button
-                  type="button"
-                  variant={mode === "visitor" ? "default" : "outline"}
-                  onClick={() => setMode("visitor")}
-                >
-                  Visitor
-                </Button>
-              </div>
-              {mode === "visitor" && (
-                <Label className="grid gap-2">
-                  Visitor name
+            <FormSection title="Details">
+              <fieldset disabled={savingRoster || mutation.isPending} className="space-y-4">
+                <Label required className="grid gap-2">
+                  Meeting date
                   <Input
-                    aria-label="Department visitor name"
+                    picker="wheel"
+                    aria-label="Department meeting date"
+                    type="date"
                     required
-                    maxLength={200}
-                    value={visitorName}
-                    onChange={(event) => setVisitorName(event.target.value)}
+                    value={meetingDate}
+                    onChange={(event) => setMeetingDate(event.target.value)}
                   />
                 </Label>
-              )}
-              <Label required className="grid gap-2">
-                Status
-                <select
-                  aria-label="Department attendance status"
-                  className="h-10 rounded-md border bg-background px-3"
-                  value={status}
-                  onChange={(event) => setStatus(event.target.value)}
-                >
-                  {["present", "late", "absent", "excused"].map((value) => (
-                    <option key={value} value={value}>
-                      {value}
-                    </option>
-                  ))}
-                </select>
-              </Label>
-              <Label required className="grid gap-2">
-                Notes
-                <Input
-                  aria-label="Department attendance notes"
-                  maxLength={1000}
-                  value={notes}
-                  onChange={(event) => setNotes(event.target.value)}
-                />
-              </Label>
-              {mode === "members" && (
-                <MeetingAttendanceRoster
-                  type="department"
-                  onBusyChange={setSavingRoster}
-                  id={department.id}
-                  members={department.members}
-                  meetingDate={meetingDate}
-                  status={status}
-                  notes={notes}
-                />
-              )}
-              <div className="flex justify-end gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setOpen(false)}
-                  disabled={mutation.isPending}
-                >
-                  Cancel
-                </Button>
-                {mode === "visitor" && (
+                <div className="flex gap-2">
                   <Button
-                    type="submit"
-                    disabled={
-                      mutation.isPending || !meetingDate || !visitorName.trim()
-                    }
+                    type="button"
+                    variant={mode === "members" ? "default" : "outline"}
+                    onClick={() => setMode("members")}
                   >
-                    Save attendance
+                    Members (Roster)
                   </Button>
+                  <Button
+                    type="button"
+                    variant={mode === "visitor" ? "default" : "outline"}
+                    onClick={() => setMode("visitor")}
+                  >
+                    Visitor
+                  </Button>
+                </div>
+                {mode === "visitor" && (
+                  <Label className="grid gap-2">
+                    Visitor name
+                    <Input
+                      aria-label="Department visitor name"
+                      required
+                      maxLength={200}
+                      value={visitorName}
+                      onChange={(event) => setVisitorName(event.target.value)}
+                    />
+                  </Label>
                 )}
-              </div>
-            </fieldset>
+                <Label required className="grid gap-2">
+                  Status
+                  <select
+                    aria-label="Department attendance status"
+                    className="h-10 rounded-md border bg-background px-3"
+                    value={status}
+                    onChange={(event) => setStatus(event.target.value)}
+                  >
+                    {["present", "late", "absent", "excused"].map((value) => (
+                      <option key={value} value={value}>
+                        {formatStatusLabel(value)}
+                      </option>
+                    ))}
+                  </select>
+                </Label>
+                <Label required className="grid gap-2">
+                  Notes
+                  <Input
+                    aria-label="Department attendance notes"
+                    maxLength={1000}
+                    value={notes}
+                    onChange={(event) => setNotes(event.target.value)}
+                  />
+                </Label>
+                {mode === "members" && (
+                  <MeetingAttendanceRoster
+                    type="department"
+                    onBusyChange={setSavingRoster}
+                    id={department.id}
+                    members={department.members}
+                    meetingDate={meetingDate}
+                    status={status}
+                    notes={notes}
+                  />
+                )}
+                <div className="flex justify-end gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setOpen(false)}
+                    disabled={mutation.isPending}
+                  >
+                    Cancel
+                  </Button>
+                  {mode === "visitor" && (
+                    <Button
+                      type="submit"
+                      disabled={
+                        mutation.isPending || !meetingDate || !visitorName.trim()
+                      }
+                    >
+                      Save attendance
+                    </Button>
+                  )}
+                </div>
+              </fieldset>
+            </FormSection>
           </ValidatedForm>
-        </DialogContent>
+        </FormDialogContent>
       </Dialog>
     </>
   );

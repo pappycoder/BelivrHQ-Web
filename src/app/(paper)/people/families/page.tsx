@@ -1,5 +1,11 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
+import { formatRecordDate } from "@/lib/record-date";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
@@ -21,6 +27,7 @@ import { api } from "@/lib/api";
 import { fetchAllPages, listUrl } from "@/lib/export-all";
 import type { ExportColumn } from "@/lib/export-utils";
 import { PageHeader } from "@/components/paper/section";
+import { PageTour, type TourStep } from "@/components/tours/page-tour";
 import { StatCard, Tag } from "@/components/paper/stat";
 import {
   AvatarStack,
@@ -66,6 +73,21 @@ import {
 
 const PAGE_SIZE = 15;
 
+const FAMILIES_TOUR_STEPS: TourStep[] = [
+  { target: ".families-tour-heading", title: "Keep households together", description: "Families groups existing members into households. Use this page to find a household, review its members and open its details. This guide keeps you on the page without changing any records." },
+  { target: ".families-tour-summary", title: "Read the household summary", description: "Households counts all households matching your filters. People on this page and Average size are calculated only from the households on the current page. Page shows your position in the filtered list." },
+  { target: ".families-tour-search", title: "Find a household", description: "After the tour, type a household name. The list updates after a short pause and returns to page one. Search combines with the branch and Archived filters." },
+  { target: ".families-tour-archive", title: "Include the archived register", description: "Archived switches to archived households. Turn it off to return to the regular register. Archiving keeps the household record; authorised users can restore it using the row actions." },
+  { target: ".families-tour-branch", title: "Choose a branch", description: "HQ accounts can narrow the list to a branch or choose All branches. Other accounts stay within the scope assigned to them. Changing the branch returns to the first page." },
+  { target: ".families-tour-display", title: "Sort and choose a layout", description: "Sort by Household name, Date created or Members, then use the direction button to reverse the order. Cards and Table show the same filtered households. Cards are useful on smaller screens; tables can scroll horizontally." },
+  { target: ".families-tour-preview", title: "Preview a household", description: "After the tour, select a household's name for a side preview; the crown identifies its head. Full household opens the complete record. Available actions depend on your role: Archive keeps the household for restoration; Delete removes the group and its associations, while member records remain. Opening the preview changes nothing." },
+  { target: "[data-list-table='people-families-1'] > [data-export-ignore]", title: "Columns and selected households", description: "In Table view, Columns chooses visible fields. Checkboxes select households on this page and reveal the bulk actions available to your account. Selecting rows alone makes no changes. Review the confirmation before applying an action." },
+  { target: ".families-tour-empty", title: "When the list is empty", description: "An empty list may mean no households match your filters. Clear the search, turn off Archived and choose All branches if available before creating a new household. Your account's access limits still apply." },
+  { target: ".families-tour-page [aria-label='Pagination']", title: "Browse more households", description: "Prev and Next move through the filtered households. Rows per page changes the page size. The range shows which households are currently displayed, and navigation is disabled when there are no more pages." },
+  { target: ".families-tour-export button", title: "Export the current view", description: "Export offers PDF, Excel and CSV. Check the filters before downloading. The button is disabled when no matching households are shown." },
+  { target: ".families-tour-new", title: "Create a household", description: "New household opens a form with a required family name and an optional head chosen from existing members. Saving creates the group; members can be added afterwards. This control appears only if your account can create families." },
+];
+
 const SORT_OPTIONS: { value: NonNullable<ListFamiliesParams["sortBy"]>; label: string }[] = [
   { value: "name", label: "Household name" },
   { value: "createdAt", label: "Date created" },
@@ -92,7 +114,7 @@ function toExportRows(families: Family[]): Record<string, unknown>[] {
 }
 
 export default function FamiliesPage() {
-  const { open, close } = useInspector();
+  const { open, close, isOpen: inspectorOpen } = useInspector();
   const { can, ready } = usePermissions();
   const { data: profile } = useCurrentProfile();
   const canUpdate = ready && can("families", "update");
@@ -218,8 +240,8 @@ export default function FamiliesPage() {
             </div>
           </div>
           <DataList>
-            <FieldRow label="Created">{family.createdAt?.slice(0, 10) ?? "Not available"}</FieldRow>
-            {family.archivedAt ? <FieldRow label="Archived">{family.archivedAt.slice(0, 10)}</FieldRow> : null}
+            <FieldRow label="Created">{formatRecordDate(family.createdAt)}</FieldRow>
+            {family.archivedAt ? <FieldRow label="Archived">{formatRecordDate(family.archivedAt)}</FieldRow> : null}
           </DataList>
           <div className="grid grid-cols-2 gap-2">
             <Button asChild size="sm" className="h-9 rounded-lg text-sm">
@@ -287,14 +309,23 @@ export default function FamiliesPage() {
     return toExportRows(rows);
   }, [params]);
 
+  const tourSteps = React.useMemo(() => FAMILIES_TOUR_STEPS.map((step) =>
+    step.target === ".families-tour-export button"
+      ? { ...step, description: `Export offers PDF, Excel and CSV. ${canDelete || canUpdate ? "Your access allows all households matching the filters to be fetched, not only this page." : "Your export includes only households on the current page."} Check the filters before downloading. It is disabled when no matching households are shown.` }
+      : step,
+  ), [canDelete, canUpdate]);
+
   return (
-    <div className="space-y-6">
+    <div className="families-tour-page space-y-6">
       <PageHeader
+        className="families-tour-heading"
         eyebrow="People · Families"
         title="Households, not just individuals."
         description="View household members, addresses and family care information together."
         actions={
           <>
+            <PageTour page="Families" account={profile ? `${profile.churchId}:${profile.profileId}` : undefined} ready={ready && list.isSuccess && !inspectorOpen && !formOpen && !deleteTarget && !addMemberTarget} steps={tourSteps} />
+            <div className="families-tour-export inline-flex">
             <ExportDropdown
               tableId="families"
               columns={EXPORT_COLUMNS}
@@ -304,8 +335,9 @@ export default function FamiliesPage() {
               disabled={!families.length}
               fetchAllRows={canDelete || canUpdate ? fetchAllExportRows : undefined}
             />
+            </div>
             {canCreate ? (
-              <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => { setEditTarget(null); setFormOpen(true); }}>
+              <Button className="families-tour-new h-9 gap-1.5 rounded-full text-sm" onClick={() => { setEditTarget(null); setFormOpen(true); }}>
                 <UserRoundPlus className="size-3.5" /> New household
               </Button>
             ) : null}
@@ -313,22 +345,24 @@ export default function FamiliesPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="families-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Households" value={total} tone="brand" icon={<Home className="size-4" />} deltaLabel={archivedView ? "archived" : "matching filters"} />
         <StatCard label="People on this page" value={people} tone="moss" icon={<Users className="size-4" />} />
         <StatCard label="Average size" value={families.length ? Math.round((people / families.length) * 10) / 10 : 0} decimals={1} tone="sky" />
         <StatCard label="Page" value={page} suffix={` / ${totalPages}`} tone="gold" />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={searchInput} onChange={setSearchInput} placeholder="Search households…" className="w-full max-w-xs" />
+      <ListToolbar
+ search={<SearchField value={searchInput} onChange={setSearchInput} placeholder="Search households…" className="families-tour-search w-full max-w-xs" />}
+ controls={<>
+<div className="families-tour-archive">
         <FilterChip active={archivedView} onClick={() => { setArchivedView((v) => !v); setPage(1); }}>
           Archived
         </FilterChip>
-        <div className="ml-auto flex flex-wrap items-center gap-2">
-          {isHq ? (
+        </div>
+{isHq ? (
             <Select value={branchId} onValueChange={(value) => { setBranchId(value); setPage(1); }}>
-              <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
+              <SelectTrigger aria-label="Filter households by branch" className="families-tour-branch h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
                 <SelectValue placeholder="All branches" />
               </SelectTrigger>
               <SelectContent>
@@ -341,8 +375,9 @@ export default function FamiliesPage() {
               </SelectContent>
             </Select>
           ) : null}
+<div className="families-tour-display flex flex-wrap items-center gap-2">
           <Select value={sortBy} onValueChange={(value) => { setSortBy(value as typeof sortBy); setPage(1); }}>
-            <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
+            <SelectTrigger aria-label="Sort households" className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -360,8 +395,11 @@ export default function FamiliesPage() {
               { value: "cards", label: "Cards", icon: <LayoutGrid /> },
             ]}
           />
-        </div>
-      </div>
+          </div>
+</>}
+>
+
+</ListToolbar>
 
       {list.isError ? (
         <EmptyState icon={<Home />} title="Couldn't load the households" description="The register didn't answer." action={<Button variant="outline" size="sm" className="rounded-full border-line text-sm" onClick={() => list.refetch()}>Retry</Button>} />
@@ -374,12 +412,14 @@ export default function FamiliesPage() {
           <div className="space-y-2">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}</div>
         )
       ) : families.length === 0 ? (
+        <div className="families-tour-empty">
         <EmptyState
           icon={<Home />}
           title="No households yet"
           description="Families link people who share a home, so care and giving read better together."
           action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => { setEditTarget(null); setFormOpen(true); }}>Start one</Button> : undefined}
         />
+        </div>
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
           <div className="overflow-x-auto">
@@ -395,7 +435,7 @@ export default function FamiliesPage() {
                   const head = family.members.find((m) => m.isHead);
                   return (
                     <div key={family.familyId} className="group grid grid-cols-[minmax(0,2fr)_1.2fr_1fr_auto] items-center gap-4 px-5 py-3 transition-colors hover:bg-muted/40">
-                      <button type="button" onClick={() => peek(family)} className="flex min-w-0 items-center gap-3 text-left">
+                      <button type="button" onClick={() => peek(family)} className="families-tour-preview flex min-w-0 items-center gap-3 text-left">
                         <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-muted text-ink-faint"><Home className="size-3.5" /></span>
                         <span className="min-w-0">
                           <span className="block truncate text-sm font-semibold">{family.name}</span>
@@ -409,7 +449,7 @@ export default function FamiliesPage() {
                         <span className="num text-sm text-ink-soft">{family.members.length}</span>
                         {family.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
                       </span>
-                      <span className="num text-sm text-ink-soft">{family.createdAt?.slice(0, 10) ?? "Not available"}</span>
+                      <span className="num text-sm text-ink-soft">{formatRecordDate(family.createdAt)}</span>
                       <RowActions actions={manageActions(family)} />
                     </div>
                   );
@@ -436,7 +476,7 @@ export default function FamiliesPage() {
                 <StaggerItem key={family.familyId}>
                   <div className="paper-card lift flex h-full flex-col rounded-2xl p-4">
                     <div className="flex items-start justify-between gap-2">
-                      <button type="button" onClick={() => peek(family)} className="flex min-w-0 items-center gap-2 text-left">
+                      <button type="button" onClick={() => peek(family)} className="families-tour-preview flex min-w-0 items-center gap-2 text-left">
                         <div className="min-w-0">
                           <p className="truncate font-display text-sm font-semibold">{family.name}</p>
                           {head ? (
@@ -453,11 +493,11 @@ export default function FamiliesPage() {
                     <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-sm">
                       <span className="flex items-center gap-2">
                         <AvatarStack people={family.members.map((m) => ({ name: `${m.firstName} ${m.lastName}` }))} size="xs" max={4} />
-                        <span className="text-ink-soft">{family.members.length} people</span>
+                        <span className="text-ink-soft">{family.members.length} {collectionLabel(family.members.length, "people")}</span>
                       </span>
                       <span className="flex items-center gap-1.5 text-ink-faint">
                         {family.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
-                        <span className="num">{family.createdAt?.slice(0, 10)}</span>
+                        <span className="num">{formatRecordDate(family.createdAt)}</span>
                       </span>
                     </div>
                   </div>

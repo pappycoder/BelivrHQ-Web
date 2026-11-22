@@ -1,0 +1,152 @@
+[
+  {
+    "dark": false,
+    "document": 1270,
+    "popovers": [
+      {
+        "bottom": 696.40625,
+        "content": 304,
+        "label": "Filter giving dates",
+        "left": 931,
+        "right": 1237,
+        "top": 406,
+        "width": 304
+      },
+      {
+        "bottom": 484.9375,
+        "content": 304,
+        "label": null,
+        "left": 949,
+        "right": 1255,
+        "top": 85,
+        "width": 304
+      }
+    ],
+    "width": 1280
+  },
+  {
+    "dark": false,
+    "document": 380,
+    "popovers": [
+      {
+        "bottom": 735.40625,
+        "content": 304,
+        "label": "Filter giving dates",
+        "left": 74,
+        "right": 380,
+        "top": 445,
+        "width": 304
+      },
+      {
+        "bottom": 523.9375,
+        "content": 304,
+        "label": null,
+        "left": 62,
+        "right": 368,
+        "top": 124,
+        "width": 304
+      }
+    ],
+    "width": 390
+  },
+  {
+    "dark": false,
+    "document": 310,
+    "popovers": [
+      {
+        "bottom": 735.40625,
+        "content": 286,
+        "label": "Filter giving dates",
+        "left": 17,
+        "right": 305,
+        "top": 445,
+        "width": 286
+      },
+      {
+        "bottom": 523.9375,
+        "content": 293,
+        "label": null,
+        "left": 12,
+        "right": 306.5,
+        "top": 124,
+        "width": 293
+      }
+    ],
+    "width": 320
+  },
+  {
+    "dark": true,
+    "document": 1270,
+    "popovers": [
+      {
+        "bottom": 696.40625,
+        "content": 304,
+        "label": "Filter giving dates",
+        "left": 931,
+        "right": 1237,
+        "top": 406,
+        "width": 304
+      },
+      {
+        "bottom": 484.9375,
+        "content": 304,
+        "label": null,
+        "left": 949,
+        "right": 1255,
+        "top": 85,
+        "width": 304
+      }
+    ],
+    "width": 1280
+  },
+  {
+    "dark": true,
+    "document": 380,
+    "popovers": [
+      {
+        "bottom": 735.40625,
+        "content": 304,
+        "label": "Filter giving dates",
+        "left": 74,
+        "right": 380,
+        "top": 445,
+        "width": 304
+      },
+      {
+        "bottom": 523.9375,
+        "content": 304,
+        "label": null,
+        "left": 62,
+        "right": 368,
+        "top": 124,
+        "width": 304
+      }
+    ],
+    "width": 390
+  },
+  {
+    "dark": true,
+    "document": 310,
+    "popovers": [
+      {
+        "bottom": 735.40625,
+        "content": 286,
+        "label": "Filter giving dates",
+        "left": 17,
+        "right": 305,
+        "top": 445,
+        "width": 286
+      },
+      {
+        "bottom": 523.9375,
+        "content": 293,
+        "label": null,
+        "left": 12,
+        "right": 306.5,
+        "top": 124,
+        "width": 293
+      }
+    ],
+    "width": 320
+  }
+]

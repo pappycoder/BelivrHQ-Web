@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -65,6 +67,8 @@ export default function CareCalendarPage() {
     };
   });
 
+  if (events.isError) return <PageQueryError title="Care calendar" />;
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -87,7 +91,7 @@ export default function CareCalendarPage() {
       {ready && (events.isLoading ? (
         <Skeleton className="h-24 rounded-2xl" />
       ) : (
-        <div className="paper-card overflow-x-auto rounded-2xl p-3">
+        <div data-tour-records className="paper-card overflow-x-auto rounded-2xl p-3">
           <div className="flex min-w-[560px]">
             {weekSlots.map((slot) => (
               <div

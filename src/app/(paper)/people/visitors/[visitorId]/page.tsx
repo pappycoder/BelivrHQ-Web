@@ -1,5 +1,17 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { collectionLabel } from "@/lib/collection-label";
+
+import { formatRecordDate } from "@/lib/record-date";
+
+import { DetailNavigation, DetailHeading } from "@/components/paper/section";
+
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
 
 import * as React from "react";
@@ -46,10 +58,7 @@ const FOLLOW_UP_OPTIONS: { value: FollowUpStatus; label: string }[] = [
 ];
 
 function formatDate(value?: string) {
-  if (!value) return "Not available";
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return value.slice(0, 10);
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  return formatRecordDate(value);
 }
 
 export default function VisitorDetailPage({
@@ -83,6 +92,10 @@ export default function VisitorDetailPage({
     );
   }
 
+  if (visitor.isError && !isMissingRecordError(visitor.error)) {
+    return <RecordQueryError title="Visitor details" error={visitor.error} backHref="/people/visitors" backLabel="Back to the pipeline" />;
+  }
+
   if (visitor.isError || !v) {
     return (
       <EmptyState
@@ -104,12 +117,12 @@ export default function VisitorDetailPage({
   return (
     <div className="space-y-6">
       {dialog}
-      <Link
+      <DetailNavigation><Link
         href="/people/visitors"
         className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink"
       >
         <ArrowLeft className="size-3" /> People · Visitors
-      </Link>
+      </Link></DetailNavigation>
 
       <div className="paper-card rounded-2xl p-5 md:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -117,9 +130,9 @@ export default function VisitorDetailPage({
             <PersonAvatar name={fullName} size="xl" />
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="font-display text-2xl font-semibold tracking-tight">{fullName}</h1>
+                <DetailHeading>{fullName}</DetailHeading>
                 <Tag tone={v.followUpStatus === "converted" ? "moss" : v.followUpStatus === "dropped_off" ? "neutral" : "gold"} dot>
-                  {FOLLOW_UP_OPTIONS.find((o) => o.value === v.followUpStatus)?.label ?? v.followUpStatus}
+                  {FOLLOW_UP_OPTIONS.find((o) => o.value === v.followUpStatus)?.label ?? formatStatusLabel(v.followUpStatus)}
                 </Tag>
                 {v.convertedMemberId ? (
                   <Link href={`/people/members/${v.convertedMemberId}`}>
@@ -190,7 +203,7 @@ export default function VisitorDetailPage({
               <select
                 value={v.followUpStatus}
                 disabled={updateVisitor.isPending}
-                onChange={(event) => { const nextStatus = event.target.value; confirm({ title: "Update follow-up status?", subject: fullName, description: `Change follow-up status to ${nextStatus.replaceAll("_", " ")}?`, onConfirm: () => updateVisitor.mutateAsync(
+                onChange={(event) => { const nextStatus = event.target.value; confirm({ title: "Update follow-up status?", subject: fullName, description: `Change follow-up status to ${formatStatusLabel(nextStatus)}?`, onConfirm: () => updateVisitor.mutateAsync(
                     { visitorId: v.id, input: { followUpStatus: nextStatus as FollowUpStatus } },
                     { onSuccess: () => toast("Status updated."), onError: () => toast.error("Couldn't update the status.") },
                   ) }); }}
@@ -202,7 +215,7 @@ export default function VisitorDetailPage({
               </select>
             ) : (
               <p className="text-sm font-medium">
-                {FOLLOW_UP_OPTIONS.find((o) => o.value === v.followUpStatus)?.label ?? v.followUpStatus}
+                {FOLLOW_UP_OPTIONS.find((o) => o.value === v.followUpStatus)?.label ?? formatStatusLabel(v.followUpStatus)}
               </p>
             )}
           </div>
@@ -237,7 +250,7 @@ export default function VisitorDetailPage({
         <SectionCard
           eyebrow="Being here"
           title="Visit history"
-          actions={<span className="num text-sm text-ink-faint">{visits.data?.meta?.total ?? visitsRows.length} check-ins</span>}
+          actions={<span className="num text-sm text-ink-faint">{visits.data?.meta?.total ?? visitsRows.length} {collectionLabel(visits.data?.meta?.total ?? visitsRows.length, "check-ins")}</span>}
           bodyClassName="p-0"
         >
           {visits.isLoading ? (

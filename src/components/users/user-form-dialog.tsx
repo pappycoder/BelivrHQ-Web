@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import { LoadingState } from "@/components/shared/loading-state";
@@ -14,7 +18,6 @@ import { z } from "zod";
 import { toast } from "@/lib/toast";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -171,7 +174,7 @@ export function UserFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <FormDialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
             {mode === "invite" ? "Invite User" : "Change Role"}
@@ -189,121 +192,123 @@ export function UserFormDialog({
               onSubmit={inviteForm.handleSubmit(handleInviteSubmit)}
               className="space-y-4"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <FormField required
-                  control={inviteForm.control}
-                  name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>First Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="John" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField required
-                  control={inviteForm.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Doe" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <FormField required
-                control={inviteForm.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="john@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={inviteForm.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone (Optional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="+1 (555) 000-0000" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField required
-                control={inviteForm.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Role</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value} disabled={isPending}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a role" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {assignableRoles.map((role) => (
-                          <SelectItem key={role.value} value={role.value}>
-                            {role.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField required
-                control={inviteForm.control}
-                name="branchId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Branch</FormLabel>
-                    <Select value={field.value} onValueChange={field.onChange} disabled={isPending || branchQuery.isLoading || !profile?.isAdminHq}>
-                      <FormControl>
-                        <SelectTrigger>
-                          {branchQuery.isLoading ? <LoadingState label="Loading branches" variant="inline" /> : <SelectValue placeholder="Select a branch" />}
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {branchOptions.map(branch => (
-                          <SelectItem key={branch.branchId} value={branch.branchId}>
-                            {branch.name}{branch.isHeadquarters ? " (HQ)" : ""}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>{profile?.isAdminHq ? "Assign the user’s home branch." : "Users you invite are assigned to your branch."}</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {loadBranches && branchQuery.isError && (
-                <div role="alert" className="space-y-2 text-sm text-destructive">
-                  <p>Could not load branches. Please try again.</p>
-                  <Button type="button" variant="outline" size="sm" onClick={() => void branchQuery.refetch()} disabled={branchQuery.isFetching}>
-                    Reload branches
-                  </Button>
+              <FormSection title="Account details">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField required
+                    control={inviteForm.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="John" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField required
+                    control={inviteForm.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Doe" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
-              )}
+
+                <FormField required
+                  control={inviteForm.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="john@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={inviteForm.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone (Optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="+1 (555) 000-0000" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField required
+                  control={inviteForm.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value} disabled={isPending}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {assignableRoles.map((role) => (
+                            <SelectItem key={role.value} value={role.value}>
+                              {role.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField required
+                  control={inviteForm.control}
+                  name="branchId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Branch</FormLabel>
+                      <Select value={field.value} onValueChange={field.onChange} disabled={isPending || branchQuery.isLoading || !profile?.isAdminHq}>
+                        <FormControl>
+                          <SelectTrigger>
+                            {branchQuery.isLoading ? <LoadingState label="Loading branches" variant="inline" /> : <SelectValue placeholder="Select a branch" />}
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {branchOptions.map(branch => (
+                            <SelectItem key={branch.branchId} value={branch.branchId}>
+                              {branch.name}{branch.isHeadquarters ? " (HQ)" : ""}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>{profile?.isAdminHq ? "Assign the user’s home branch." : "Users you invite are assigned to your branch."}</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {loadBranches && branchQuery.isError && (
+                  <div role="alert" className="space-y-2 text-sm text-destructive">
+                    <p>Could not load branches. Please try again.</p>
+                    <Button type="button" variant="outline" size="sm" onClick={() => void branchQuery.refetch()} disabled={branchQuery.isFetching}>
+                      Reload branches
+                    </Button>
+                  </div>
+                )}
+              </FormSection>
               <BotProtection path="/profiles/invite" authenticated />
               <DialogFooter>
                 <Button
@@ -326,30 +331,32 @@ export function UserFormDialog({
               onSubmit={updateRoleForm.handleSubmit(handleUpdateRoleSubmit)}
               className="space-y-4"
             >
-              <FormField required
-                control={updateRoleForm.control}
-                name="role"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Role</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a role" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {assignableRoles.map((role) => (
-                          <SelectItem key={role.value} value={role.value}>
-                            {role.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <FormSection title="Account details">
+                <FormField required
+                  control={updateRoleForm.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {assignableRoles.map((role) => (
+                            <SelectItem key={role.value} value={role.value}>
+                              {role.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </FormSection>
 
               <DialogFooter>
                 <Button
@@ -367,7 +374,7 @@ export function UserFormDialog({
             </ValidatedForm>
           </Form>
         )}
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }
