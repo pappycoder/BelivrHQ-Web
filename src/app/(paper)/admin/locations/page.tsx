@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import { collectionLabel } from "@/lib/collection-label";
 
 import { ListToolbar } from "@/components/shared/list-toolbar";
@@ -88,6 +90,8 @@ export default function AdminBranchesPage() {
     canUpdate && branch.archivedAt && { label: "Restore branch", icon: <ArchiveRestore />, tone: "success", onSelect: () => setArchiveState({ kind: "restore", branch }), bulk: { key: "restore", label: "Restore selected", run: () => restore.mutateAsync(branch.branchId) } },
     canDelete && branch.archivedAt && { label: "Delete forever", icon: <Trash2 />, tone: "danger", onSelect: () => setArchiveState({ kind: "purge", branch }), bulk: { key: "delete", label: "Delete selected permanently", destructive: true, run: () => del.mutateAsync(branch.branchId) } },
   ];
+
+  if (branches.isError) return <PageQueryError title="Branches" />;
 
   return (
     <div className="space-y-6">

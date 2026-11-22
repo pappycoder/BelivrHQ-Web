@@ -1,5 +1,7 @@
 "use client";
 
+import { ErrorState } from "@/components/shared/error-state";
+
 import { formatStatusLabel } from "@/lib/status-label";
 
 
@@ -112,10 +114,12 @@ export default function MessagesPage() {
       />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <StatCard label="Messages this view" value={messages.data?.total ?? rows.length} tone="brand" icon={<MessageCircle className="size-4" />} />
-        <StatCard label="Outbound today" value={rows.filter((m) => m.direction === "outbound").length} tone="moss" deltaLabel="this page" />
-        <StatCard label="Inbound waiting" value={rows.filter((m) => m.direction === "inbound").length} tone="gold" deltaLabel="worth a reply" />
-        <StatCard label="Delivery failures" value={failed} tone={failed ? "rose" : "sky"} deltaLabel="recent sends" />
+        {messages.isPending ? Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-32 rounded-2xl" />) : <>
+        <StatCard unavailable={messages.isError} label="Messages this view" value={messages.data?.total ?? rows.length} tone="brand" icon={<MessageCircle className="size-4" />} />
+        <StatCard unavailable={messages.isError} label="Outbound today" value={rows.filter((m) => m.direction === "outbound").length} tone="moss" deltaLabel={messages.isError ? "Please try again" : "this page"} />
+        <StatCard unavailable={messages.isError} label="Inbound waiting" value={rows.filter((m) => m.direction === "inbound").length} tone="gold" deltaLabel={messages.isError ? "Please try again" : "worth a reply"} />
+        </>}
+        {analytics.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={analytics.isError} label="Delivery failures" value={failed} tone={failed ? "rose" : "sky"} deltaLabel={analytics.isError ? "Please try again" : "recent sends"} />}
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
@@ -125,7 +129,7 @@ export default function MessagesPage() {
         <FilterChip active={direction === "outbound"} onClick={() => setDirection("outbound")}>Outbound</FilterChip>
       </div>
 
-      {channels.length ? (
+      {analytics.isError ? <ErrorState title="Unable to load message delivery data" /> : channels.length ? (
         <div className="paper-card flex flex-wrap items-center gap-x-8 gap-y-2 rounded-2xl px-5 py-3">
           {channels.map((c) => (
             <span key={c.channel} className="flex items-center gap-2 text-sm text-ink-soft">
@@ -138,7 +142,7 @@ export default function MessagesPage() {
         </div>
       ) : null}
 
-      {messages.isLoading ? (
+      {messages.isError ? <ErrorState title="Unable to load messages" /> : messages.isPending ? (
         <div className="space-y-2">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}</div>
       ) : rows.length === 0 ? (
         <EmptyState

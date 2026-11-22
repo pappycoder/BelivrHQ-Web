@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import * as React from "react";
 import Link from "next/link";
 import { ArrowLeft, Gauge, RefreshCw, Search, TrendingUp } from "lucide-react";
@@ -59,6 +61,8 @@ export default function EngagementPage() {
   const rows = scores.data?.data ?? [];
   const total = scores.data?.meta?.total ?? 0;
   const dist = distribution.data;
+
+  if (distribution.isError || scores.isError) return <PageQueryError title="Engagement" />;
 
   return (
     <div className="space-y-6">

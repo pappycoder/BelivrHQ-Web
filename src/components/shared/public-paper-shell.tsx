@@ -12,7 +12,7 @@ export function PublicPaperShell({ children }: { children: React.ReactNode }) {
   return (
     <div data-paper-root className="flex min-h-svh flex-col bg-background text-foreground">
       <div className="print:hidden">
-        <MarketingNavigation />
+        <MarketingNavigation paper />
       </div>
       {/* The landing header is fixed — clear it. */}
       <main className="flex-1 pt-20 sm:pt-24">{children}</main>

@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -67,6 +69,8 @@ export default function AttendanceDashboardPage() {
 
   const data = summary.data;
   const avg = trends.data?.length ? Math.round((trends.data.reduce((sum, p) => sum + p.total, 0) / trends.data.length) * 10) / 10 : 0;
+
+  if ((canDash && (summary.isError || trends.isError || services.isError)) || (canSeeRecords && recent.isError)) return <PageQueryError title="Attendance overview" />;
 
   return (
     <div className="space-y-6">

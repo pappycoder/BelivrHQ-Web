@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import * as React from "react";
 import Link from "next/link";
 import { ArrowLeft, BarChart3, TrendingUp, Users } from "lucide-react";
@@ -74,6 +76,8 @@ export default function AttendanceReportsPage() {
     .map((svc) => ({ label: svc.name, count: svc.attendanceCount ?? 0 }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 8);
+
+  if (summary.isError || services.isError || (canTrends && trends.isError)) return <PageQueryError title="Attendance reports" />;
 
   return (
     <div className="space-y-6">

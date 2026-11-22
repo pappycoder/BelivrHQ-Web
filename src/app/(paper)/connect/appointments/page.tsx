@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import * as React from "react";
 import {
   CalendarClock,
@@ -92,6 +94,8 @@ export default function AppointmentsPage() {
   }, [rows]);
 
   const summary = appointments.data?.summary ?? {};
+
+  if (appointments.isError) return <PageQueryError title="Appointments" />;
 
   return (
     <div className="space-y-6">

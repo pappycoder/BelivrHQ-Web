@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import { collectionLabel } from "@/lib/collection-label";
 
 import { useId as useFormFieldId } from "react";
@@ -98,6 +100,8 @@ export default function SegmentsPage() {
   }
 
   const anyRail = canMembers || canVisitors || canRisk || canGiving;
+
+  if ((canMembers && (recent.isError || active.isError || quiet.isError)) || (canVisitors && visitors.isError) || (canRisk && risk.isError) || (canGiving && giving.isError)) return <PageQueryError title="Segments" />;
 
   return (
     <div className="space-y-6">

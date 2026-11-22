@@ -1,5 +1,8 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
 import { collectionLabel } from "@/lib/collection-label";
 
 import { DetailNavigation, DetailHeading } from "@/components/paper/section";
@@ -60,6 +63,10 @@ export default function FormDetailPage({
         <div className="h-44 animate-pulse rounded-2xl bg-line" />
       </div>
     );
+  }
+
+  if (form.isError && !isMissingRecordError(form.error)) {
+    return <RecordQueryError title="Form details" error={form.error} backHref="/library/forms" backLabel="Back to forms" />;
   }
 
   if (form.isError || !form.data) {

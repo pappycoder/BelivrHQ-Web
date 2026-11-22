@@ -3,7 +3,7 @@ import { NavigationPageTour } from "@/components/tours/navigation-page-tour";
 import { cn } from "@/lib/utils";
 
 export function DetailHeading({ className, ...props }: React.ComponentProps<"h1">) {
-  return <h1 {...props} className={cn("font-display text-[clamp(1.65rem,2.4vw,2.15rem)] leading-[1.1] font-semibold tracking-tight text-balance", className)} />;
+  return <h1 {...props} className={cn("min-w-0 max-w-full [overflow-wrap:anywhere] font-display text-[clamp(1.65rem,2.4vw,2.15rem)] leading-[1.1] font-semibold tracking-tight text-balance", className)} />;
 }
 
 /** Keep back navigation, record actions and the tour together on detail pages. */
@@ -36,13 +36,13 @@ export function PageHeader({
   return (
     <header className={cn("flex flex-col gap-4", className)}>
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="min-w-0 space-y-1.5">
+        <div className="min-w-0 max-w-full space-y-1.5">
           {eyebrow ? (
             <div className="rule-label flex items-center gap-2">{eyebrow}</div>
           ) : null}
           <h1
             className={cn(
-              "font-display font-semibold tracking-tight text-balance",
+              "[overflow-wrap:anywhere] font-display font-semibold tracking-tight text-balance",
               compact ? "text-2xl" : "text-[clamp(1.65rem,2.4vw,2.15rem)] leading-[1.1]",
             )}
           >
@@ -92,10 +92,10 @@ export function SectionCard({
     >
       {title || actions || eyebrow ? (
         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-line/80 px-5 py-4">
-          <div className="min-w-0 space-y-0.5">
+          <div className="min-w-0 max-w-full space-y-0.5">
             {eyebrow ? <div className="rule-label">{eyebrow}</div> : null}
             {title ? (
-              <h2 className="font-display text-lg font-semibold leading-tight">
+              <h2 className="[overflow-wrap:anywhere] font-display text-lg font-semibold leading-tight">
                 {title}
               </h2>
             ) : null}

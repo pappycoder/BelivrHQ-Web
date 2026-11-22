@@ -1,0 +1,9 @@
+
+ RUN  v4.1.12 /home/pappy-coder/Projects/belivrhq-project/BelivrHQ-Web
+
+
+ Test Files  2 passed (2)
+      Tests  13 passed (13)
+   Start at  11:07:22
+   Duration  7.43s (transform 1.00s, setup 0ms, import 8.20s, tests 216ms, environment 0ms)
+

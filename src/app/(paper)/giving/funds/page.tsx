@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import { DialogFooter, DialogClose } from "@/components/ui/dialog";
 
 import { useId as useFormFieldId } from "react";
@@ -91,6 +93,8 @@ export default function GivingFundsPage() {
 
   const rows = categories.data?.data ?? [];
   const activeCount = rows.filter((c) => !c.archivedAt).length;
+
+  if (categories.isError) return <PageQueryError title="Giving categories" />;
 
   return (
     <div className="space-y-6">

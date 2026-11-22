@@ -1,5 +1,8 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
 import { FormActions } from "@/components/shared/form-actions";
 
 import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
@@ -109,6 +112,19 @@ export default function EditEventPage({
     );
   }
 
+  if (event.isError && !isMissingRecordError(event.error)) {
+    return <RecordQueryError title="Edit event" error={event.error} backHref="/gatherings/events" backLabel="Back to the calendar" />;
+  }
+
+  if (event.isError || (!event.isPending && !event.data)) {
+    return (
+      <EmptyState
+        title="We couldn&apos;t open this event"
+        description="It may have been deleted, or the link is old."
+        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/gatherings/events">Back to the calendar</Link></Button>}
+      />
+    );
+  }
   if (!form) {
     return (
       <div className="space-y-4">
@@ -118,15 +134,6 @@ export default function EditEventPage({
     );
   }
 
-  if (event.isError) {
-    return (
-      <EmptyState
-        title="We couldn&apos;t open this event"
-        description="It may have been deleted, or the link is old."
-        action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/gatherings/events">Back to the calendar</Link></Button>}
-      />
-    );
-  }
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();

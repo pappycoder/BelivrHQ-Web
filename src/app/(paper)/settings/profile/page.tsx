@@ -185,7 +185,7 @@ export default function SettingsProfilePage() {
           <p className="font-display text-base font-semibold">
             {p.firstName} {p.lastName}
           </p>
-          <p className="text-sm text-ink-faint">
+          <p className="text-sm text-ink-faint [overflow-wrap:anywhere]">
             {p.email ?? "No email on file"}
           </p>
           <p className="mt-1.5 flex flex-wrap items-center gap-1.5">

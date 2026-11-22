@@ -1,5 +1,8 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
 import { DetailNavigation, DetailHeading } from "@/components/paper/section";
 
 import * as React from "react";
@@ -123,7 +126,11 @@ export default function RoleMatrixPage({
     );
   }
 
-  if (role.isLoading || !selectedIds) {
+  if (role.isError && !isMissingRecordError(role.error)) {
+    return <RecordQueryError title="Role details" error={role.error} backHref="/admin/permissions" backLabel="Back to roles" />;
+  }
+
+  if (role.isPending) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-4 w-40" />
@@ -140,6 +147,15 @@ export default function RoleMatrixPage({
         description="It may have been removed, or the link is old."
         action={<Button asChild variant="outline" size="sm" className="rounded-full border-line text-sm"><Link href="/admin/permissions">Back to roles</Link></Button>}
       />
+    );
+  }
+
+  if (!selectedIds) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-4 w-40" />
+        <Skeleton className="h-96 rounded-2xl" />
+      </div>
     );
   }
 

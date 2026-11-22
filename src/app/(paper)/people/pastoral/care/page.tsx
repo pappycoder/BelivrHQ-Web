@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -64,6 +66,8 @@ export default function CareCalendarPage() {
       events: rows.filter((event) => event.date?.slice(0, 10) === iso),
     };
   });
+
+  if (events.isError) return <PageQueryError title="Care calendar" />;
 
   return (
     <div className="space-y-6">

@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import { collectionLabel } from "@/lib/collection-label";
 
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
@@ -178,6 +180,8 @@ export default function PaperNotificationsPage() {
     else deleteOne.mutate(ids[0], { onSuccess: onDone, onError });
   };
 
+  if (list.isError) return <PageQueryError title="Notifications" />;
+
   return (
     <div className="space-y-6">
       {dialog}
@@ -186,7 +190,9 @@ export default function PaperNotificationsPage() {
         eyebrow="Today"
         title="Notifications"
         description={
-          list.data?.unreadCount
+          list.isPending
+            ? "Your updates in one place."
+            : list.data?.unreadCount
             ? `${list.data.unreadCount} ${collectionLabel(list.data.unreadCount, "things")} that happened while you were elsewhere.`
             : "Everything is quiet."
         }

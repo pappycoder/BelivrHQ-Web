@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import { collectionLabel } from "@/lib/collection-label";
 
 import { ListToolbar } from "@/components/shared/list-toolbar";
@@ -90,6 +92,8 @@ export default function MediaFoldersPage() {
       />
     </div>
   );
+
+  if (folders.isError) return <PageQueryError title="Media folders" />;
 
   return (
     <div className="space-y-6">

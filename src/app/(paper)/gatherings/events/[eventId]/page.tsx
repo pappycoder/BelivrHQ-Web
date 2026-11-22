@@ -1,5 +1,8 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
 import { formatRecordDateTime } from "@/lib/record-date";
 import { formatStatusLabel } from "@/lib/status-label";
 
@@ -88,6 +91,10 @@ export default function EventDetailPage({
         <div className="h-44 animate-pulse rounded-2xl bg-line" />
       </div>
     );
+  }
+
+  if (event.isError && !isMissingRecordError(event.error)) {
+    return <RecordQueryError title="Event details" error={event.error} backHref="/gatherings/events" backLabel="Back to the calendar" />;
   }
 
   if (event.isError || !event.data) {
@@ -230,18 +237,20 @@ export default function EventDetailPage({
               ) : registrations.data?.length ? (
                 <div className="divide-y divide-line/70">
                   {registrations.data.map((reg) => (
-                    <div key={reg.registrationId} className="flex items-center gap-3 px-5 py-3 text-sm">
+                    <div key={reg.registrationId} className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3 gap-y-2 px-5 py-3 text-sm sm:flex sm:items-center">
                       <PersonAvatar name={reg.memberName ?? "Guest"} size="xs" />
-                      <span className="min-w-0 flex-1 truncate font-medium">
+                      <span className="min-w-0 flex-1 break-words font-medium [overflow-wrap:anywhere]">
                         {reg.memberName ?? reg.memberId.slice(0, 10)}
                       </span>
-                      {reg.tierName ? <Tag tone="neutral">{reg.tierName}</Tag> : null}
+                      <div className="col-start-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2 sm:max-w-[60%] sm:justify-end">
+                      {reg.tierName ? <Tag tone="neutral" className="max-w-full whitespace-normal"><span className="min-w-0 [overflow-wrap:anywhere]">{reg.tierName}</span></Tag> : null}
                       <span className="num text-xs text-ink-faint">×{reg.quantity}</span>
                       <Tag tone={reg.paymentStatus === "paid" || reg.paymentStatus === "success" ? "moss" : reg.paymentStatus === "pending" ? "gold" : "rose"}>
                         {formatStatusLabel(reg.paymentStatus)}
                       </Tag>
                       <Tag tone={reg.checkedIn ? "moss" : "neutral"} dot>{reg.checkedIn ? "In" : "Awaiting"}</Tag>
-                      {reg.ticketCode ? <span className="hidden font-mono text-xs text-ink-faint sm:block">{reg.ticketCode}</span> : null}
+                      {reg.ticketCode ? <span className="hidden min-w-0 break-all font-mono text-xs text-ink-faint sm:block">{reg.ticketCode}</span> : null}
+                      </div>
                     </div>
                   ))}
                 </div>

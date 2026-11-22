@@ -1,5 +1,8 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
 import { DetailNavigation } from "@/components/paper/section";
 
 import * as React from "react";
@@ -19,6 +22,10 @@ export default function UserDetailPage({
 }) {
   const { profileId } = React.use(params);
   const user = useUser(profileId);
+
+  if (user.isError && !isMissingRecordError(user.error)) {
+    return <RecordQueryError title="Team member details" error={user.error} backHref="/admin/team" backLabel="Back to the team" />;
+  }
 
   return (
     <div className="space-y-4">

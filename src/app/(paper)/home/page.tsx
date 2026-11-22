@@ -1,5 +1,7 @@
 "use client";
 
+import { ErrorState } from "@/components/shared/error-state";
+
 import { collectionLabel } from "@/lib/collection-label";
 
 import * as React from "react";
@@ -66,9 +68,9 @@ export default function PaperHomePage() {
     ...(canAny("members:all:read") ? [{ target: ".home-tour-people", title: "Understand your congregation", description: "The ring and legend group members by their current status. Use this breakdown to understand the people represented in your total." }] : []),
     ...(canAny("events:calendar:read") ? [{ target: ".home-tour-events", title: "Find a gathering", description: "Review the listed gatherings, dates and locations. Select a gathering to open its details, or use Calendar to explore events. The tour itself will keep you on Home." }] : []),
     { target: ".home-tour-signals", title: "Catch up on activity", description: "This list shows your latest notifications. A coloured dot indicates an unread item. Use All or Notifications at the top of Home to review the full list." },
-    ...(canAny("members:all:read") && members.data?.growth?.length ? [{ target: ".home-tour-growth", title: "Follow membership growth", description: "Compare the member and visitor series across the dates shown. Hover or tap the chart to inspect a point. This section appears when growth data is available." }] : []),
+    ...(canAny("members:all:read") && !members.isError && members.data?.growth?.length ? [{ target: ".home-tour-growth", title: "Follow membership growth", description: "Compare the member and visitor series across the dates shown. Hover or tap the chart to inspect a point. This section appears when growth data is available." }] : []),
     { target: ".home-tour-shortcut", title: "Find your next page", description: "Press Command K on Mac or Control K on Windows and Linux to search for a page you have access to. The navigation also groups pages by area. Use the question-mark icons for quick explanations, or Take a tour to replay this guide." },
-  ], [canAny, members.data?.growth?.length]);
+  ], [canAny, members.isError, members.data?.growth?.length]);
 
   return (
     <div className="space-y-7">
@@ -102,16 +104,17 @@ export default function PaperHomePage() {
       <div className="flex items-center gap-1 text-sm font-medium">Your summary <SectionHelp title="Your summary">People counts members in your scope. Giving shows the total and gift count supplied by the giving dashboard for its reporting period. Gatherings is the calendar total. Unread signals counts your unread notifications. Only permitted metrics appear.</SectionHelp></div>
       <StaggerGroup className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <GatedMetric ready={ready} show={canAny("members:all:read")}>
-          <StatCard label="People" value={memberTotal} tone="moss" icon={<Users className="size-4" />} deltaLabel="known by name" />
+          <StatCard label="People" value={memberTotal} unavailable={members.isError} tone="moss" icon={<Users className="size-4" />} deltaLabel={members.isError ? "Please try again" : "known by name"} />
         </GatedMetric>
         <GatedMetric ready={ready} show={canAny("giving:dashboard:read")}>
           <StatCard
             label="Giving · period"
             value={giving.data?.total ?? 0}
-            prefix={givingCurrency === "NGN" ? "₦" : "$"}
+            unavailable={giving.isError}
+            prefix={giving.isError ? "" : givingCurrency === "NGN" ? "₦" : "$"}
             tone="brand"
             icon={<HandCoins className="size-4" />}
-            deltaLabel={`${number(giving.data?.count ?? 0)} ${collectionLabel(giving.data?.count ?? 0, "gifts")}`}
+            deltaLabel={giving.isError ? "Please try again" : `${number(giving.data?.count ?? 0)} ${collectionLabel(giving.data?.count ?? 0, "gifts")}`}
           />
         </GatedMetric>
         <GatedMetric ready={ready} show={canAny("events:calendar:read")}>
@@ -121,9 +124,10 @@ export default function PaperHomePage() {
           <StatCard
             label="Unread signals"
             value={notifications.data?.unreadCount ?? 0}
+            unavailable={notifications.isError}
             tone="gold"
             icon={<Sparkles className="size-4" />}
-            deltaLabel="waiting on you"
+            deltaLabel={notifications.isError ? "Please try again" : "waiting on you"}
           />
         </StaggerItem>
       </StaggerGroup>
@@ -135,13 +139,13 @@ export default function PaperHomePage() {
             className="home-tour-giving lg:col-span-7"
             eyebrow="Generosity"
             title={<span className="inline-flex items-center gap-1">Giving, month by month <SectionHelp title="Giving over time">This chart plots recorded giving on the dates shown, in the dashboard currency. Hover or tap a point to inspect its value. Open Ledger to review giving in detail.</SectionHelp></span>}
-            actions={
+            actions={canAny("giving:records:read") ? (
               <Button variant="ghost" size="sm" className="h-7 gap-1 rounded-full text-sm text-ink-faint" asChild>
-                <Link href="/giving">Ledger <ArrowRight className="size-3" /></Link>
+                <Link href="/giving/donations">Ledger <ArrowRight className="size-3" /></Link>
               </Button>
-            }
+            ) : undefined}
           >
-            {giving.isLoading ? (
+            {giving.isError ? (<ErrorState title="Unable to load giving" />) : giving.isLoading ? (
               <Skeleton className="h-[220px]" />
             ) : giving.data?.trend?.length ? (
               <TrendChart
@@ -165,7 +169,7 @@ export default function PaperHomePage() {
             eyebrow="Congregation"
             title={<span className="inline-flex items-center gap-1">How the room is made up <SectionHelp title="Membership status">The total and legend show members grouped by status, such as active or inactive, within the scope your account can access.</SectionHelp></span>}
           >
-            {members.isLoading ? (
+            {members.isError ? (<ErrorState title="Unable to load members" />) : members.isLoading ? (
               <Skeleton className="h-[200px]" />
             ) : members.data ? (
               <>
@@ -209,6 +213,7 @@ export default function PaperHomePage() {
           }
           bodyClassName="p-0"
         >
+          {notifications.isError ? <ErrorState title="Unable to load recent activity" /> : (
           <div className="divide-y divide-line/70">
             {(notifications.data?.data ?? []).map((item) => (
               <div key={item.id} className="flex gap-3 px-5 py-3">
@@ -234,9 +239,10 @@ export default function PaperHomePage() {
               </p>
             ) : null}
           </div>
+          )}
         </SectionCard>
 
-        {ready && canAny("members:all:read") && members.data?.growth?.length ? (
+        {ready && canAny("members:all:read") && !members.isError && members.data?.growth?.length ? (
           <SectionCard className="home-tour-growth lg:col-span-12" eyebrow="Becoming" title={<span className="inline-flex items-center gap-1">Membership growth <SectionHelp title="Membership growth">Compare the member and visitor series over the dates shown. Hover or tap a chart point for its values.</SectionHelp></span>}>
             <TrendChart
               data={members.data.growth.map((point) => ({
@@ -291,7 +297,7 @@ function UpcomingStat() {
   const events = useEventsSummary();
   const total = events.data?.total ?? 0;
   return (
-    <StatCard label="Gatherings" value={total} tone="sky" icon={<CalendarDays className="size-4" />} deltaLabel="on the calendar" />
+    <StatCard label="Gatherings" value={total} unavailable={events.isError} tone="sky" icon={<CalendarDays className="size-4" />} deltaLabel={events.isError ? "Please try again" : "on the calendar"} />
   );
 }
 
@@ -316,6 +322,7 @@ function UpcomingEvents({ className }: { className?: string }) {
       }
       bodyClassName="p-0"
     >
+      {events.isError ? <ErrorState title="Unable to load gatherings" /> : (
       <div className="divide-y divide-line/70">
         {upcoming.map(({ event, at }) => (
           <Link
@@ -343,6 +350,7 @@ function UpcomingEvents({ className }: { className?: string }) {
           </p>
         ) : null}
       </div>
+      )}
     </SectionCard>
   );
 }

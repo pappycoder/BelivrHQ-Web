@@ -1,0 +1,68 @@
+[
+  {
+    "theme": "light",
+    "width": 1280,
+    "background": "rgb(15, 118, 110)",
+    "buttonLeft": 1022.25,
+    "buttonRight": 1076.453125,
+    "color": "rgb(255, 255, 255)",
+    "disabled": false,
+    "documentWidth": 1270,
+    "viewport": 1280
+  },
+  {
+    "theme": "light",
+    "width": 390,
+    "background": "rgb(15, 118, 110)",
+    "buttonLeft": 323.25,
+    "buttonRight": 377.453125,
+    "color": "rgb(255, 255, 255)",
+    "disabled": false,
+    "documentWidth": 380,
+    "viewport": 390
+  },
+  {
+    "theme": "light",
+    "width": 320,
+    "background": "rgb(15, 118, 110)",
+    "buttonLeft": 323.25,
+    "buttonRight": 377.453125,
+    "color": "rgb(255, 255, 255)",
+    "disabled": false,
+    "documentWidth": 310,
+    "viewport": 320
+  },
+  {
+    "theme": "dark",
+    "width": 1280,
+    "background": "rgb(94, 213, 190)",
+    "buttonLeft": 1022.25,
+    "buttonRight": 1076.453125,
+    "color": "rgb(255, 255, 255)",
+    "disabled": false,
+    "documentWidth": 1270,
+    "viewport": 1280
+  },
+  {
+    "theme": "dark",
+    "width": 390,
+    "background": "rgb(94, 213, 190)",
+    "buttonLeft": 323.25,
+    "buttonRight": 377.453125,
+    "color": "rgb(255, 255, 255)",
+    "disabled": false,
+    "documentWidth": 380,
+    "viewport": 390
+  },
+  {
+    "theme": "dark",
+    "width": 320,
+    "background": "rgb(94, 213, 190)",
+    "buttonLeft": 323.25,
+    "buttonRight": 377.453125,
+    "color": "rgb(255, 255, 255)",
+    "disabled": false,
+    "documentWidth": 310,
+    "viewport": 320
+  }
+]

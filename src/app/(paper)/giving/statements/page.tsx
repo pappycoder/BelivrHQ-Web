@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import { collectionLabel } from "@/lib/collection-label";
 
 import * as React from "react";
@@ -161,6 +163,8 @@ export default function GivingStatementsPage() {
   );
 
   const rangeLabel = RANGES.find((r) => r.key === range)?.label ?? "All time";
+
+  if (canRecords && rowsQuery.isError) return <PageQueryError title="Giving statements" />;
 
   return (
     <div className="space-y-6">

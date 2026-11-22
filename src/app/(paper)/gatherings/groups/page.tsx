@@ -306,7 +306,7 @@ export default function DepartmentsPage() {
         />
       ) : view === "table" ? (
         <ListTable
-          className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl"
+          className="paper-card min-w-[840px] divide-y divide-line/70 overflow-hidden rounded-2xl"
           tableId="gatherings-groups-1"
           records={paged ?? []}
           recordKey="id"

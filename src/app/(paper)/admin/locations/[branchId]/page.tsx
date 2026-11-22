@@ -29,8 +29,9 @@ import { ActionTooltip } from "@/components/ui/tooltip";
 import { ArchiveConfirmDialog, type ArchiveDialogKind } from "@/components/shared/archive-confirm-dialog";
 import { BranchFormDialog } from "@/components/branches/branch-form-dialog";
 import { usePermissions } from "@/hooks/use-permissions";
+import { PageQueryError } from "@/components/shared/page-query-error";
 import {
-  useBranchesList,
+  useBranch,
   useArchiveBranch,
   useRestoreArchiveBranch,
   useDeleteBranch,
@@ -51,16 +52,17 @@ export default function BranchDetailPage({
   const [editOpen, setEditOpen] = React.useState(false);
   const [archiveState, setArchiveState] = React.useState<ArchiveDialogKind | null>(null);
 
-  const activeList = useBranchesList({ limit: 100 });
-  const archivedList = useBranchesList({ limit: 100, archived: true });
+  const branchQuery = useBranch(branchId);
   const archive = useArchiveBranch();
   const restore = useRestoreArchiveBranch();
   const del = useDeleteBranch();
 
-  const branch =
-    (activeList.data?.data ?? []).find((b) => b.branchId === branchId) ??
-    (archivedList.data?.data ?? []).find((b) => b.branchId === branchId);
-  const isLoading = activeList.isLoading && archivedList.isLoading;
+  const branch = branchQuery.isError ? undefined : branchQuery.data;
+  const isLoading = branchQuery.isLoading;
+
+  if (branchQuery.isError && (branchQuery.error as { statusCode?: number }).statusCode !== 404) {
+    return <PageQueryError title="Branch details" />;
+  }
 
   if (isLoading) {
     return (

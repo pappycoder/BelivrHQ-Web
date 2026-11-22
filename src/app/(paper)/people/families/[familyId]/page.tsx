@@ -1,5 +1,8 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
 import { formatRecordDate } from "@/lib/record-date";
 
 import { DetailNavigation, DetailHeading } from "@/components/paper/section";
@@ -59,6 +62,10 @@ export default function FamilyDetailPage({
         <div className="h-64 animate-pulse rounded-2xl bg-line" />
       </div>
     );
+  }
+
+  if (family.isError && !isMissingRecordError(family.error)) {
+    return <RecordQueryError title="Family details" error={family.error} backHref="/people/families" backLabel="Back to families" />;
   }
 
   if (family.isError || !family.data) {

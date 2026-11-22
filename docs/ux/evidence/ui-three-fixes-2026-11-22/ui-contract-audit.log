@@ -1,0 +1,15 @@
+
+> belivrhq-web@0.1.0 audit:ui
+> node scripts/audit-ui-contracts.mjs
+
+{
+  "counts": {
+    "pages": 104,
+    "dashboardPages": 0,
+    "links": 465,
+    "controls": 867,
+    "navigation": 61,
+    "dynamicDestinations": 45
+  },
+  "issues": []
+}

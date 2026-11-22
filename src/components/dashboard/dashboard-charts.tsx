@@ -185,8 +185,8 @@ export function DashboardCharts() {
       ? "/attendance/reports"
       : "/attendance";
   const givingHref = can("analytics:giving", "read")
-    ? "/analytics/giving"
-    : "/giving";
+    ? "/insights/analytics/giving"
+    : "/giving/overview";
   const membersHref = can("analytics:members", "read")
     ? "/analytics/members"
     : "/members";

@@ -1,5 +1,8 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
 import { DetailNavigation } from "@/components/paper/section";
 
 import * as React from "react";
@@ -72,6 +75,10 @@ export default function SermonDetailPage({
     );
   }
 
+  if (sermon.isError && !isMissingRecordError(sermon.error)) {
+    return <RecordQueryError title="Sermon details" error={sermon.error} backHref="/library/sermons" backLabel="Back to the archive" />;
+  }
+
   if (sermon.isError || !sermon.data) {
     return (
       <EmptyState
@@ -114,7 +121,7 @@ export default function SermonDetailPage({
               {s.branchName ? <Tag tone="sky">{s.branchName}</Tag> : null}
               {s.archivedAt ? <Tag tone="rose">Archived</Tag> : null}
             </div>
-            <h1 className="font-display text-[clamp(1.5rem,3vw,2.2rem)] font-semibold leading-tight tracking-tight">
+            <h1 className="min-w-0 max-w-full [overflow-wrap:anywhere] font-display text-[clamp(1.5rem,3vw,2.2rem)] font-semibold leading-tight tracking-tight">
               {s.title}
             </h1>
             <p className="text-sm text-ink-soft">

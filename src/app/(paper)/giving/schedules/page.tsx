@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { ListTable } from "@/components/shared/list-table";
@@ -66,6 +68,8 @@ export default function GivingSchedulesPage() {
       onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't reach the schedule.")),
     });
 
+  if (recurring.isError) return <PageQueryError title="Recurring giving" />;
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -82,10 +86,12 @@ export default function GivingSchedulesPage() {
       />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {recurring.isPending ? Array.from({ length: 4 }, (_, i) => <Skeleton key={i} className="h-32 rounded-2xl" />) : <>
         <StatCard label="Schedules" value={total} tone="brand" icon={<CalendarClock className="size-4" />} deltaLabel="in the book" />
         <StatCard label="Projected / month" value={activeMonthly} prefix="₦" tone="moss" deltaLabel="this page" />
         <StatCard label="Paused" value={rows.filter((r) => !r.isActive).length} tone="gold" deltaLabel="this page" />
         <StatCard label="Needing attention" value={rows.filter((r) => r.failedAttemptCount > 0).length} tone="rose" icon={<ShieldOff className="size-4" />} deltaLabel="failed attempts" />
+        </>}
       </div>
 
       <ListToolbar>
@@ -104,7 +110,7 @@ export default function GivingSchedulesPage() {
           description="Recurring gifts help your church plan ahead."
         />
       ) : (
-        <ListTable className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="giving-schedules-1" records={rows ?? []} recordKey="id"><StaggerGroup className="divide-y divide-line/70">
+        <ListTable className="paper-card min-w-[1040px] divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="giving-schedules-1" records={rows ?? []} recordKey="id"><StaggerGroup className="divide-y divide-line/70">
           <div className="rule-label grid grid-cols-[minmax(0,1.6fr)_1fr_0.9fr_1fr_1fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
             <span>Giver</span>
             <span>Fund</span>
@@ -118,11 +124,11 @@ export default function GivingSchedulesPage() {
               <div className="group flex flex-wrap items-center gap-3 px-5 py-3 sm:grid sm:grid-cols-[minmax(0,1.6fr)_1fr_0.9fr_1fr_1fr_auto] sm:gap-3">
                 <span className="flex min-w-0 flex-1 items-center gap-2.5">
                   <PersonAvatar name={schedule.memberName ?? "A giver"} size="xs" />
-                  <span className="min-w-0">
-                    <span className="flex items-center gap-2">
-                      <span className="truncate text-sm font-medium">{schedule.memberName ?? `Member ${schedule.memberId.slice(0, 6)}`}</span>
-                      <Tag tone={schedule.isActive ? "moss" : "neutral"} dot>{schedule.isActive ? "Active" : "Paused"}</Tag>
-                      {schedule.failedAttemptCount > 0 ? <Tag tone="rose">{schedule.failedAttemptCount} failed</Tag> : null}
+                  <span className="min-w-0 flex-1">
+                    <span className="flex min-w-0 flex-wrap items-center gap-2">
+                      <span className="min-w-0 flex-1 basis-24 truncate text-sm font-medium">{schedule.memberName ?? `Member ${schedule.memberId.slice(0, 6)}`}</span>
+                      <Tag className="shrink-0" tone={schedule.isActive ? "moss" : "neutral"} dot>{schedule.isActive ? "Active" : "Paused"}</Tag>
+                      {schedule.failedAttemptCount > 0 ? <Tag className="shrink-0" tone="rose">{schedule.failedAttemptCount} failed</Tag> : null}
                     </span>
                     <span className="block truncate text-xs text-ink-faint">
                       {schedule.lastChargeDate ? `last charged ${formatDate(schedule.lastChargeDate)}` : "not yet charged"}

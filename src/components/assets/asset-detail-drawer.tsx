@@ -133,7 +133,7 @@ export function AssetDetailDrawer({
   const asset = assetQuery.data;
 
   const content = (
-    <div className="px-6 pb-6">
+    <div className="min-w-0 [overflow-wrap:anywhere] px-6 pb-6">
       {dialog}
       {assetQuery.isLoading ? (
         <div className="space-y-4 pt-4">

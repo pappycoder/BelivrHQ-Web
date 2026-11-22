@@ -1,5 +1,8 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
 import { formatStatusLabel } from "@/lib/status-label";
 
 
@@ -87,6 +90,10 @@ export default function VisitorDetailPage({
         <div className="h-40 animate-pulse rounded-2xl bg-line" />
       </div>
     );
+  }
+
+  if (visitor.isError && !isMissingRecordError(visitor.error)) {
+    return <RecordQueryError title="Visitor details" error={visitor.error} backHref="/people/visitors" backLabel="Back to the pipeline" />;
   }
 
   if (visitor.isError || !v) {

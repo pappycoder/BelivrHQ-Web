@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { ListTable } from "@/components/shared/list-table";
@@ -104,6 +106,8 @@ export default function AdminRolesPage() {
       </Tag>
     );
   };
+
+  if (roles.isError || permissions.isError) return <PageQueryError title="Roles" />;
 
   return (
     <div className="space-y-6">

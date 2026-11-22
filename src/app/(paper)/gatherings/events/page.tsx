@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import { collectionLabel } from "@/lib/collection-label";
 
 import * as React from "react";
@@ -228,6 +230,8 @@ export default function EventsCalendarPage() {
 
   const showSkeleton =
     (canReadEvents && events.isLoading) || (canReadServices && services.isLoading);
+
+  if ((canReadEvents && events.isError) || (canReadServices && services.isError)) return <PageQueryError title="Calendar" />;
 
   return (
     <div className="space-y-6">

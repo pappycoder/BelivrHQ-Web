@@ -1,5 +1,8 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
 import { collectionLabel } from "@/lib/collection-label";
 
 import { DetailNavigation, DetailHeading } from "@/components/paper/section";
@@ -67,6 +70,10 @@ export default function ServiceDetailPage({
         <Skeleton className="h-40 rounded-2xl" />
       </div>
     );
+  }
+
+  if (service.isError && !isMissingRecordError(service.error)) {
+    return <RecordQueryError title="Service details" error={service.error} backHref="/gatherings/attendance/services" backLabel="Back to services" />;
   }
 
   if (service.isError || !service.data) {

@@ -1,0 +1,105 @@
+route_template,source,sample_path,desktop_light,mobile_light,desktop_dark,mobile_dark,scope
+/accept-invitation,src/app/(auth)/accept-invitation/page.tsx,/accept-invitation,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms
+/forgot-password,src/app/(auth)/forgot-password/page.tsx,/forgot-password,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms
+/login,src/app/(auth)/login/page.tsx,/login,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms
+/register,src/app/(auth)/register/page.tsx,/register,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms
+/reset-password,src/app/(auth)/reset-password/page.tsx,/reset-password,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms
+/subscription,src/app/(auth)/subscription/page.tsx,/subscription,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms
+/admin/channels,src/app/(paper)/admin/channels/page.tsx,/admin/channels,True,True,True,True,live Church Admin route rendering
+/admin/church,src/app/(paper)/admin/church/page.tsx,/admin/church,True,True,True,True,live Church Admin route rendering
+/admin/locations/[branchId],src/app/(paper)/admin/locations/[branchId]/page.tsx,/admin/locations/c9f4db77-b9da-471a-91bd-06ca05bbf780,True,True,True,True,live Church Admin route rendering
+/admin/locations,src/app/(paper)/admin/locations/page.tsx,/admin/locations,True,True,True,True,live Church Admin route rendering
+/admin/permissions/[roleName],src/app/(paper)/admin/permissions/[roleName]/page.tsx,/admin/permissions/church_admin,True,True,True,True,live Church Admin route rendering
+/admin/permissions,src/app/(paper)/admin/permissions/page.tsx,/admin/permissions,True,True,True,True,live Church Admin route rendering
+/admin/team/[profileId],src/app/(paper)/admin/team/[profileId]/page.tsx,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,True,True,True,True,live Church Admin route rendering
+/admin/team,src/app/(paper)/admin/team/page.tsx,/admin/team,True,True,True,True,live Church Admin route rendering
+/connect/appointments,src/app/(paper)/connect/appointments/page.tsx,/connect/appointments,True,True,True,True,live Church Admin route rendering
+/connect/broadcasts,src/app/(paper)/connect/broadcasts/page.tsx,/connect/broadcasts,True,True,True,True,live Church Admin route rendering
+/connect/inbox,src/app/(paper)/connect/inbox/page.tsx,/connect/inbox,True,True,True,True,live Church Admin route rendering
+/connect/messages,src/app/(paper)/connect/messages/page.tsx,/connect/messages,True,True,True,True,live Church Admin route rendering
+/connect/templates,src/app/(paper)/connect/templates/page.tsx,/connect/templates,True,True,True,True,live Church Admin route rendering
+/gatherings/attendance/check-in,src/app/(paper)/gatherings/attendance/check-in/page.tsx,/gatherings/attendance/check-in,True,True,True,True,live Church Admin route rendering
+/gatherings/attendance,src/app/(paper)/gatherings/attendance/page.tsx,/gatherings/attendance,True,True,True,True,live Church Admin route rendering
+/gatherings/attendance/records,src/app/(paper)/gatherings/attendance/records/page.tsx,/gatherings/attendance/records,True,True,True,True,live Church Admin route rendering
+/gatherings/attendance/reports,src/app/(paper)/gatherings/attendance/reports/page.tsx,/gatherings/attendance/reports,True,True,True,True,live Church Admin route rendering
+/gatherings/attendance/services/[serviceId],src/app/(paper)/gatherings/attendance/services/[serviceId]/page.tsx,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,True,True,True,True,live Church Admin route rendering
+/gatherings/attendance/services,src/app/(paper)/gatherings/attendance/services/page.tsx,/gatherings/attendance/services,True,True,True,True,live Church Admin route rendering
+/gatherings/events/[eventId]/edit,src/app/(paper)/gatherings/events/[eventId]/edit/page.tsx,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,True,True,True,True,live Church Admin route rendering
+/gatherings/events/[eventId],src/app/(paper)/gatherings/events/[eventId]/page.tsx,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,True,True,True,True,live Church Admin route rendering
+/gatherings/events/check-in,src/app/(paper)/gatherings/events/check-in/page.tsx,/gatherings/events/check-in,True,True,True,True,live Church Admin route rendering
+/gatherings/events/list,src/app/(paper)/gatherings/events/list/page.tsx,/gatherings/events/list,True,True,True,True,live Church Admin route rendering
+/gatherings/events/new,src/app/(paper)/gatherings/events/new/page.tsx,/gatherings/events/new,True,True,True,True,live Church Admin route rendering
+/gatherings/events,src/app/(paper)/gatherings/events/page.tsx,/gatherings/events,True,True,True,True,live Church Admin route rendering
+/gatherings/events/registrations,src/app/(paper)/gatherings/events/registrations/page.tsx,/gatherings/events/registrations,True,True,True,True,live Church Admin route rendering
+/gatherings/events/tickets,src/app/(paper)/gatherings/events/tickets/page.tsx,/gatherings/events/tickets,True,True,True,True,live Church Admin route rendering
+/gatherings/events/tiers,src/app/(paper)/gatherings/events/tiers/page.tsx,/gatherings/events/tiers,True,True,True,True,live Church Admin route rendering
+/gatherings/groups/[deptId],src/app/(paper)/gatherings/groups/[deptId]/page.tsx,/gatherings/groups/9b061845-a180-4f1c-ad0a-74e2075b4b79,True,True,True,True,live Church Admin route rendering
+/gatherings/groups/cell/[groupId],src/app/(paper)/gatherings/groups/cell/[groupId]/page.tsx,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,True,True,True,True,live Church Admin route rendering
+/gatherings/groups/cell,src/app/(paper)/gatherings/groups/cell/page.tsx,/gatherings/groups/cell,True,True,True,True,live Church Admin route rendering
+/gatherings/groups,src/app/(paper)/gatherings/groups/page.tsx,/gatherings/groups,True,True,True,True,live Church Admin route rendering
+/giving/donations,src/app/(paper)/giving/donations/page.tsx,/giving/donations,True,True,True,True,live Church Admin route rendering
+/giving/funds,src/app/(paper)/giving/funds/page.tsx,/giving/funds,True,True,True,True,live Church Admin route rendering
+/giving/overview,src/app/(paper)/giving/overview/page.tsx,/giving/overview,True,True,True,True,live Church Admin route rendering
+/giving/schedules,src/app/(paper)/giving/schedules/page.tsx,/giving/schedules,True,True,True,True,live Church Admin route rendering
+/giving/statements,src/app/(paper)/giving/statements/page.tsx,/giving/statements,True,True,True,True,live Church Admin route rendering
+/home,src/app/(paper)/home/page.tsx,/home,True,True,True,True,live Church Admin route rendering
+/insights/analytics/attendance,src/app/(paper)/insights/analytics/attendance/page.tsx,/insights/analytics/attendance,True,True,True,True,live Church Admin route rendering
+/insights/analytics/giving,src/app/(paper)/insights/analytics/giving/page.tsx,/insights/analytics/giving,True,True,True,True,live Church Admin route rendering
+/insights/analytics/members,src/app/(paper)/insights/analytics/members/page.tsx,/insights/analytics/members,True,True,True,True,live Church Admin route rendering
+/insights/analytics,src/app/(paper)/insights/analytics/page.tsx,/insights/analytics,True,True,True,True,live Church Admin route rendering
+/insights/reports,src/app/(paper)/insights/reports/page.tsx,/insights/reports,True,True,True,True,live Church Admin route rendering
+/library/forms/[formId]/edit,src/app/(paper)/library/forms/[formId]/edit/page.tsx,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,True,True,True,True,live Church Admin route rendering
+/library/forms/[formId]/fill,src/app/(paper)/library/forms/[formId]/fill/page.tsx,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,True,True,True,True,live Church Admin route rendering
+/library/forms/[formId],src/app/(paper)/library/forms/[formId]/page.tsx,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,True,True,True,True,live Church Admin route rendering
+/library/forms/new,src/app/(paper)/library/forms/new/page.tsx,/library/forms/new,True,True,True,True,live Church Admin route rendering
+/library/forms,src/app/(paper)/library/forms/page.tsx,/library/forms,True,True,True,True,live Church Admin route rendering
+/library/forms/submissions,src/app/(paper)/library/forms/submissions/page.tsx,/library/forms/submissions,True,True,True,True,live Church Admin route rendering
+/library/media/folders,src/app/(paper)/library/media/folders/page.tsx,/library/media/folders,True,True,True,True,live Church Admin route rendering
+/library/media,src/app/(paper)/library/media/page.tsx,/library/media,True,True,True,True,live Church Admin route rendering
+/library/sermons/[sermonId]/edit,src/app/(paper)/library/sermons/[sermonId]/edit/page.tsx,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,True,True,True,True,live Church Admin route rendering
+/library/sermons/[sermonId],src/app/(paper)/library/sermons/[sermonId]/page.tsx,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,True,True,True,True,live Church Admin route rendering
+/library/sermons/new,src/app/(paper)/library/sermons/new/page.tsx,/library/sermons/new,True,True,True,True,live Church Admin route rendering
+/library/sermons,src/app/(paper)/library/sermons/page.tsx,/library/sermons,True,True,True,True,live Church Admin route rendering
+/library/sermons/series,src/app/(paper)/library/sermons/series/page.tsx,/library/sermons/series,True,True,True,True,live Church Admin route rendering
+/library/sermons/speakers,src/app/(paper)/library/sermons/speakers/page.tsx,/library/sermons/speakers,True,True,True,True,live Church Admin route rendering
+/notifications,src/app/(paper)/notifications/page.tsx,/notifications,True,True,True,True,live Church Admin route rendering
+/operations/assets/[assetId]/edit,src/app/(paper)/operations/assets/[assetId]/edit/page.tsx,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,True,True,True,True,live Church Admin route rendering
+/operations/assets/[assetId],src/app/(paper)/operations/assets/[assetId]/page.tsx,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd,True,True,True,True,live Church Admin route rendering
+/operations/assets/categories,src/app/(paper)/operations/assets/categories/page.tsx,/operations/assets/categories,True,True,True,True,live Church Admin route rendering
+/operations/assets/loans,src/app/(paper)/operations/assets/loans/page.tsx,/operations/assets/loans,True,True,True,True,live Church Admin route rendering
+/operations/assets/maintenance,src/app/(paper)/operations/assets/maintenance/page.tsx,/operations/assets/maintenance,True,True,True,True,live Church Admin route rendering
+/operations/assets/new,src/app/(paper)/operations/assets/new/page.tsx,/operations/assets/new,True,True,True,True,live Church Admin route rendering
+/operations/assets,src/app/(paper)/operations/assets/page.tsx,/operations/assets,True,True,True,True,live Church Admin route rendering
+/people/families/[familyId],src/app/(paper)/people/families/[familyId]/page.tsx,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,True,True,True,True,live Church Admin route rendering
+/people/families,src/app/(paper)/people/families/page.tsx,/people/families,True,True,True,True,live Church Admin route rendering
+/people/members/[memberId],src/app/(paper)/people/members/[memberId]/page.tsx,/people/members/634a74c4-ad73-4506-933d-105295aafba7,True,True,True,True,live Church Admin route rendering
+/people/members/import,src/app/(paper)/people/members/import/page.tsx,/people/members/import,True,True,True,True,live Church Admin route rendering
+/people/members/new,src/app/(paper)/people/members/new/page.tsx,/people/members/new,True,True,True,True,live Church Admin route rendering
+/people/members,src/app/(paper)/people/members/page.tsx,/people/members,True,True,True,True,live Church Admin route rendering
+/people/pastoral/care,src/app/(paper)/people/pastoral/care/page.tsx,/people/pastoral/care,True,True,True,True,live Church Admin route rendering
+/people/pastoral/engagement,src/app/(paper)/people/pastoral/engagement/page.tsx,/people/pastoral/engagement,True,True,True,True,live Church Admin route rendering
+/people/pastoral/life-events,src/app/(paper)/people/pastoral/life-events/page.tsx,/people/pastoral/life-events,True,True,True,True,live Church Admin route rendering
+/people/pastoral,src/app/(paper)/people/pastoral/page.tsx,/people/pastoral,True,True,True,True,live Church Admin route rendering
+/people/pastoral/risk,src/app/(paper)/people/pastoral/risk/page.tsx,/people/pastoral/risk,True,True,True,True,live Church Admin route rendering
+/people/segments,src/app/(paper)/people/segments/page.tsx,/people/segments,True,True,True,True,live Church Admin route rendering
+/people/visitors/[visitorId],src/app/(paper)/people/visitors/[visitorId]/page.tsx,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,True,True,True,True,live Church Admin route rendering
+/people/visitors/follow-up,src/app/(paper)/people/visitors/follow-up/page.tsx,/people/visitors/follow-up,True,True,True,True,live Church Admin route rendering
+/people/visitors/import,src/app/(paper)/people/visitors/import/page.tsx,/people/visitors/import,True,True,True,True,live Church Admin route rendering
+/people/visitors,src/app/(paper)/people/visitors/page.tsx,/people/visitors,True,True,True,True,live Church Admin route rendering
+/search,src/app/(paper)/search/page.tsx,/search,True,True,True,True,live Church Admin route rendering
+/settings/appearance,src/app/(paper)/settings/appearance/page.tsx,/settings/appearance,True,True,True,True,live Church Admin route rendering
+/settings/billing,src/app/(paper)/settings/billing/page.tsx,/settings/billing,True,True,True,True,live Church Admin route rendering
+/settings/notifications,src/app/(paper)/settings/notifications/page.tsx,/settings/notifications,True,True,True,True,live Church Admin route rendering
+/settings/profile,src/app/(paper)/settings/profile/page.tsx,/settings/profile,True,True,True,True,live Church Admin route rendering
+/settings/security,src/app/(paper)/settings/security/page.tsx,/settings/security,True,True,True,True,live Church Admin route rendering
+/support,src/app/(paper)/support/page.tsx,/support,True,True,True,True,live Church Admin route rendering
+/[legalPage],src/app/[legalPage]/page.tsx,/privacy-policy,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms
+/docs,src/app/docs/page.tsx,/docs,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms
+/forms/public/[publicToken],src/app/forms/public/[publicToken]/page.tsx,/forms/public/ui-audit-public-form,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms
+/help/[slug],src/app/help/[slug]/page.tsx,/help/add-and-update-members,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms
+/help/contact-support,src/app/help/contact-support/page.tsx,/help/contact-support,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms
+/help,src/app/help/page.tsx,/help,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms
+/offline,src/app/offline/page.tsx,/offline,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms
+/,src/app/page.tsx,/,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms
+/payment/complete,src/app/payment/complete/page.tsx,/payment/complete,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms
+/register/public/[token],src/app/register/public/[token]/page.tsx,/register/public/ui-audit-member,True,True,True,True,public/anonymous initial or token-error state; synthetic metadata for public forms

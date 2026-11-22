@@ -1,6 +1,7 @@
 "use client";
 
 import { collectionLabel } from "@/lib/collection-label";
+import { PageQueryError } from "@/components/shared/page-query-error";
 
 import * as React from "react";
 import { ChevronRight, Layers, Radio } from "lucide-react";
@@ -12,6 +13,8 @@ import { formatDate } from "@/hooks/use-media";
 export default function SermonSeriesPage() {
   const series = useSermonsSeries();
   const rows = series.data ?? [];
+
+  if (series.isError) return <PageQueryError title="Sermon series" />;
 
   return (
     <SermonAggregateBrowser

@@ -1,5 +1,7 @@
 "use client";
 
+import { ErrorState } from "@/components/shared/error-state";
+
 import { formatStatusLabel } from "@/lib/status-label";
 
 
@@ -75,8 +77,13 @@ function TiersInner() {
   const paidEvent = selected && !selected.isFree;
   const rows = tiers.data ?? [];
   const ticketRows = (tickets.data?.data ?? []).slice(0, 10);
+  const visibleTicketRows = ticketRows.filter((ticket) =>
+    ticketFilter === "used" ? Boolean(ticket.usedAt) : ticketFilter === "open" ? !ticket.usedAt : true,
+  );
   const capacity = rows.reduce((sum, t) => sum + (t.capacity ?? 0), 0);
   const cappedCount = rows.filter((t) => t.capacity != null).length;
+  const eventReady = events.isSuccess && !events.isError && !!selected;
+  const tierDataReady = eventReady && tiers.isSuccess && !tiers.isError;
 
   return (
     <div className="space-y-6">
@@ -85,7 +92,7 @@ function TiersInner() {
         title="Pricing and capacity, decided kindly."
         description="Set ticket tiers and prices for each paid event before registration opens."
         actions={
-          canCreate && paidEvent ? (
+          canCreate && paidEvent && tierDataReady ? (
             <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setFormTarget({ open: true, tier: null })}>
               <Plus className="size-3.5" /> New tier
             </Button>
@@ -106,10 +113,10 @@ function TiersInner() {
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <StatCard label="Tiers" value={rows.length} tone="brand" icon={<Coins className="size-4" />} />
-            <StatCard label="Tickets issued" value={ticketRows.length} tone="moss" deltaLabel={`page of ${number(tickets.data?.total ?? 0)}`} />
-            <StatCard label="Tier capacity" value={capacity} tone="gold" deltaLabel={`${cappedCount} capped · ${rows.length - cappedCount} uncapped`} />
-            <StatCard label="Event capacity" value={selected?.capacity ?? 0} tone="sky" deltaLabel="from the event itself" />
+            {tiers.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={tiers.isError} label="Tiers" value={rows.length} tone="brand" icon={<Coins className="size-4" />} />}
+            {tickets.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={tickets.isError} label="Tickets issued" value={ticketRows.length} tone="moss" deltaLabel={tickets.isError ? "Please try again" : `page of ${number(tickets.data?.total ?? 0)}`} />}
+            {tiers.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={tiers.isError} label="Tier capacity" value={capacity} tone="gold" deltaLabel={tiers.isError ? "Please try again" : `${cappedCount} capped · ${rows.length - cappedCount} uncapped`} />}
+            {events.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={!eventReady} label="Event capacity" value={selected?.capacity ?? 0} tone="sky" deltaLabel="from the event itself" />}
           </div>
 
           <SectionCard
@@ -117,12 +124,14 @@ function TiersInner() {
             title={selected ? `Tickets for ${selected.title}` : "Ticket tiers"}
             bodyClassName="p-0"
           >
-            {tiers.isLoading ? (
+            {tiers.isError ? (
+              <ErrorState title="Unable to load ticket tiers" />
+            ) : tiers.isPending ? (
               <div className="space-y-2 p-5">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-12 rounded-xl" />)}</div>
             ) : rows.length === 0 ? (
               <div className="px-5 py-10 text-center">
                 <p className="text-sm text-ink-faint">{paidEvent ? "No tiers yet. The first one sets the price of entry." : "Free event: registrations stand in for tickets."}</p>
-                {canCreate && paidEvent ? (
+                {canCreate && paidEvent && tierDataReady ? (
                   <Button size="sm" variant="outline" className="mt-3 rounded-full border-line text-sm" onClick={() => setFormTarget({ open: true, tier: null })}>Create the first tier</Button>
                 ) : null}
               </div>
@@ -144,7 +153,7 @@ function TiersInner() {
                       <span className="num hidden w-28 text-right text-sm text-ink-soft md:block">
                         {tier.capacity != null ? <>{number(tier.capacity)} {collectionLabel(tier.capacity, "seats")}</> : "uncapped seats"}
                       </span>
-                      {(canUpdate || canDelete) && paidEvent ? (
+                      {(canUpdate || canDelete) && paidEvent && tierDataReady ? (
                         <RowActions
                           actions={[
                             canUpdate && {
@@ -180,21 +189,26 @@ function TiersInner() {
             }
             bodyClassName="p-0"
           >
-            {tickets.isLoading ? (
+            {tickets.isError ? (
+              <ErrorState title="Unable to load recent tickets" />
+            ) : tickets.isPending ? (
               <div className="space-y-2 p-5">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-10 rounded-xl" />)}</div>
             ) : (
               <div className="divide-y divide-line/70">
-                {ticketRows
-                  .filter((t) => (ticketFilter === "used" ? Boolean(t.usedAt) : ticketFilter === "open" ? !t.usedAt : true))
-                  .map((t) => (
-                    <div key={t.ticketId ?? t.code} className="flex items-center gap-3 px-5 py-2.5 text-sm">
-                      <span className="font-mono text-xs text-ink-faint">{t.code}</span>
-                      <span className="min-w-0 flex-1 truncate">{t.memberName ?? t.visitorName ?? "Unassigned"}</span>
-                      <span className="hidden truncate text-xs text-ink-faint sm:block">{t.tierName ?? "Not available"} · {formatDate(t.createdAt)}</span>
-                      <Tag tone={t.usedAt ? "moss" : "neutral"} dot>{formatStatusLabel(t.usedAt ? "used" : "open")}</Tag>
+                {visibleTicketRows.map((t) => (
+                    <div key={t.ticketId ?? t.code} className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-1 px-5 py-3 text-sm sm:flex sm:items-center">
+                      <span className="col-start-1 row-start-1 min-w-0 font-medium [overflow-wrap:anywhere] sm:flex-1 sm:truncate">{t.memberName ?? t.visitorName ?? "Unassigned"}</span>
+                      <span className="col-start-1 row-start-2 min-w-0 break-all font-mono text-xs text-ink-faint sm:order-first sm:w-40 sm:shrink-0 sm:truncate">{t.code}</span>
+                      <span className="col-start-1 row-start-3 min-w-0 text-xs text-ink-faint [overflow-wrap:anywhere] sm:max-w-[35%] sm:truncate">{t.tierName ?? "Not available"} · {formatDate(t.createdAt)}</span>
+                      <Tag className="col-start-2 row-start-1 self-start sm:order-last sm:shrink-0 sm:self-center" tone={t.usedAt ? "moss" : "neutral"} dot>{formatStatusLabel(t.usedAt ? "used" : "open")}</Tag>
                     </div>
                   ))}
-                {!ticketRows.length ? <p className="px-5 py-8 text-center text-sm text-ink-faint">No tickets issued for this event yet.</p> : null}
+                {!visibleTicketRows.length ? (
+                  <div role="status" className="space-y-3 px-5 py-8 text-center">
+                    <p className="text-sm text-ink-faint">{ticketRows.length ? `No ${ticketFilter === "used" ? "used" : "unused"} tickets in this recent list.` : "No tickets issued for this event yet."}</p>
+                    {ticketRows.length ? <Button size="sm" variant="outline" className="rounded-full" onClick={() => setTicketFilter("")}>Show all tickets</Button> : null}
+                  </div>
+                ) : null}
               </div>
             )}
             <div className="border-t border-line px-5 py-2.5 text-xs text-ink-faint">
@@ -209,7 +223,9 @@ function TiersInner() {
         onOpenChange={(value) => setFormTarget({ open: value, tier: value ? formTarget.tier : null })}
         tier={formTarget.tier}
         pending={create.isPending || update.isPending}
+        disabled={!tierDataReady}
         onSave={(values, existing) => {
+          if (!tierDataReady) return;
           const done = {
             onSuccess: () => { toast(existing ? "Tier updated." : "Tier created."); setFormTarget({ open: false, tier: null }); },
             onError: (e: unknown) => toast.error(getToastErrorMessage(e, "Couldn't save the tier. Capacity may already be sold out.")),
@@ -228,7 +244,7 @@ function TiersInner() {
         pending={del.isPending}
         pendingLabel="Deleting…"
         onConfirm={() => {
-          if (!canDelete || !deleteTarget) return;
+          if (!canDelete || !deleteTarget || !tierDataReady) return;
           del.mutate(deleteTarget.id, {
             onSuccess: () => { toast("Tier deleted."); setDeleteTarget(null); },
             onError: (e) => toast.error(getToastErrorMessage(e, "Couldn't delete it. Tickets may already be sold.")),
@@ -247,12 +263,14 @@ function TierFormDialog({
   tier,
   onSave,
   pending,
+  disabled = false,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   tier: EventTicketTier | null;
   onSave: (values: TierValues, existing: EventTicketTier | null) => void;
   pending: boolean;
+  disabled?: boolean;
 }) {
   const formFieldId = useFormFieldId();
   const [form, setForm] = React.useState({ name: "", price: "", capacity: "", description: "" });
@@ -303,7 +321,7 @@ function TierFormDialog({
 <DialogClose asChild><Button type="button" variant="outline" disabled={pending}>Cancel</Button></DialogClose>
 <Button
               className="h-10 rounded-lg text-sm"
-              disabled={!valid || pending}
+              disabled={disabled || !valid || pending}
               onClick={() => onSave(
                 {
                   name: form.name.trim(),

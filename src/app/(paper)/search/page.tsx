@@ -1,5 +1,8 @@
 "use client";
 
+import { ErrorState } from "@/components/shared/error-state";
+import { searchResultsState, type SearchRailState } from "@/lib/search-results-state";
+
 import { formatStatusLabel } from "@/lib/status-label";
 import { collectionLabel } from "@/lib/collection-label";
 
@@ -65,13 +68,19 @@ function writeRecent(query: string) {
   }
 }
 
-type RailProps = { search: string; onSettled: (count: number) => void };
+type RailProps = { search: string; onSettled: (state: SearchRailState) => void };
+
+function useReportSearchRail(query: { isPending: boolean; isError: boolean }, count: number, onSettled: RailProps["onSettled"]) {
+  const status = query.isError ? "error" : query.isPending ? "pending" : "success";
+  React.useEffect(() => { onSettled({ status, count: status === "success" ? count : 0 }); }, [status, count, onSettled]);
+}
 
 function MemberRail({ search, onSettled }: RailProps) {
   const members = useMembersList({ search, limit: 6, sortBy: "first_name", sortOrder: "asc" });
   const rows: Member[] = members.data?.data ?? [];
-  React.useEffect(() => { if (!members.isLoading) onSettled(rows.length); }, [members.isLoading, rows.length, onSettled]);
-  if (members.isLoading || !rows.length) return null;
+  useReportSearchRail(members, rows.length, onSettled);
+  if (members.isError) return <ErrorState title="Unable to search members" />;
+  if (members.isPending || !rows.length) return null;
   return (
     <SectionCard eyebrow="People" title={`${rows.length} member${rows.length === 1 ? "" : "s"}`} bodyClassName="p-0">
       <div className="divide-y divide-line/70">
@@ -93,8 +102,9 @@ function MemberRail({ search, onSettled }: RailProps) {
 function VisitorRail({ search, onSettled }: RailProps) {
   const visitors = useVisitorsList({ search, limit: 4 });
   const rows: Visitor[] = visitors.data?.data ?? [];
-  React.useEffect(() => { if (!visitors.isLoading) onSettled(rows.length); }, [visitors.isLoading, rows.length, onSettled]);
-  if (visitors.isLoading || !rows.length) return null;
+  useReportSearchRail(visitors, rows.length, onSettled);
+  if (visitors.isError) return <ErrorState title="Unable to search visitors" />;
+  if (visitors.isPending || !rows.length) return null;
   return (
     <SectionCard eyebrow="Guests" title={`${rows.length} visitor${rows.length === 1 ? "" : "s"}`} bodyClassName="p-0">
       <div className="divide-y divide-line/70">
@@ -116,8 +126,9 @@ function VisitorRail({ search, onSettled }: RailProps) {
 function EventRail({ search, onSettled }: RailProps) {
   const events = useEventsList({ search, limit: 4 });
   const rows: EventItem[] = events.data?.data ?? [];
-  React.useEffect(() => { if (!events.isLoading) onSettled(rows.length); }, [events.isLoading, rows.length, onSettled]);
-  if (events.isLoading || !rows.length) return null;
+  useReportSearchRail(events, rows.length, onSettled);
+  if (events.isError) return <ErrorState title="Unable to search events" />;
+  if (events.isPending || !rows.length) return null;
   return (
     <SectionCard eyebrow="Gatherings" title={`${rows.length} event${rows.length === 1 ? "" : "s"}`} bodyClassName="p-0">
       <div className="divide-y divide-line/70">
@@ -141,8 +152,9 @@ function EventRail({ search, onSettled }: RailProps) {
 function SermonRail({ search, onSettled }: RailProps) {
   const sermons = useSermonsList({ search, limit: 3 });
   const rows: Sermon[] = sermons.data?.data ?? [];
-  React.useEffect(() => { if (!sermons.isLoading) onSettled(rows.length); }, [sermons.isLoading, rows.length, onSettled]);
-  if (sermons.isLoading || !rows.length) return null;
+  useReportSearchRail(sermons, rows.length, onSettled);
+  if (sermons.isError) return <ErrorState title="Unable to search sermons" />;
+  if (sermons.isPending || !rows.length) return null;
   return (
     <SectionCard eyebrow="Sermons" title={`${rows.length} message${rows.length === 1 ? "" : "s"}`} bodyClassName="p-0">
       <div className="divide-y divide-line/70">
@@ -166,8 +178,9 @@ function SermonRail({ search, onSettled }: RailProps) {
 function FormRail({ search, onSettled }: RailProps) {
   const forms = useFormsList({ search, limit: 3 });
   const rows: Form[] = forms.data?.data ?? [];
-  React.useEffect(() => { if (!forms.isLoading) onSettled(rows.length); }, [forms.isLoading, rows.length, onSettled]);
-  if (forms.isLoading || !rows.length) return null;
+  useReportSearchRail(forms, rows.length, onSettled);
+  if (forms.isError) return <ErrorState title="Unable to search forms" />;
+  if (forms.isPending || !rows.length) return null;
   return (
     <SectionCard eyebrow="Forms" title={`${rows.length} form${rows.length === 1 ? "" : "s"}`} bodyClassName="p-0">
       <div className="divide-y divide-line/70">
@@ -197,7 +210,7 @@ function SearchInner() {
   const [search, setSearch] = React.useState("");
   const [scope, setScope] = React.useState<Scope>("All");
   const [recent, setRecent] = React.useState<string[]>([]);
-  const [settled, setSettled] = React.useState<{ query: string; counts: Record<string, number> }>({ query: "", counts: {} });
+  const [settled, setSettled] = React.useState<{ query: string; rails: Record<string, SearchRailState> }>({ query: "", rails: {} });
 
   React.useEffect(() => setRecent(readRecent()), []);
   React.useEffect(() => {
@@ -228,17 +241,18 @@ function SearchInner() {
     showForms && "forms",
   ].filter(Boolean) as string[];
 
-  const counts = settled.query === search ? settled.counts : {};
-  const allSettled = expected.every((name) => name in counts);
-  const total = expected.reduce((sum, name) => sum + (counts[name] ?? 0), 0);
+  const searchKey = `${scope}:${search}`;
+  const rails = settled.query === searchKey ? settled.rails : {};
+  const { settled: allSettled, total, failed, empty } = searchResultsState(expected, rails);
 
   const onSettled = React.useMemo(() => {
-    const report = (name: string) => (count: number) => setSettled((current) => {
-      const previous = current.query === search ? current.counts : {};
-      return previous[name] === count ? current : { query: search, counts: { ...previous, [name]: count } };
+    const report = (name: string) => (state: SearchRailState) => setSettled((current) => {
+      const previous = current.query === searchKey ? current.rails : {};
+      return previous[name]?.status === state.status && previous[name]?.count === state.count
+        ? current : { query: searchKey, rails: { ...previous, [name]: state } };
     });
     return { members: report("members"), visitors: report("visitors"), events: report("events"), sermons: report("sermons"), forms: report("forms") };
-  }, [search]);
+  }, [searchKey]);
 
   return (
     <div className="space-y-6">
@@ -282,7 +296,7 @@ function SearchInner() {
           <div className="search-tour-results space-y-1">
             <h2 className="font-display text-lg font-semibold">Search results</h2>
             <p role="status" className="text-sm text-ink-soft">
-              {!ready || !allSettled ? "Searching the records you can access…" : `${total} result${total === 1 ? "" : "s"} shown · only records your account can read.`}
+              {!ready || !allSettled ? "Searching the records you can access…" : failed.length ? (total ? `${total} result${total === 1 ? "" : "s"} shown · some categories are unavailable.` : "Some search results could not be loaded.") : `${total} result${total === 1 ? "" : "s"} shown · only records your account can read.`}
             </p>
           </div>
           {!ready || !allSettled ? (
@@ -295,7 +309,7 @@ function SearchInner() {
           {showEvents ? <EventRail key={`events:${search}`} search={search} onSettled={onSettled.events} /> : null}
           {showSermons ? <SermonRail key={`sermons:${search}`} search={search} onSettled={onSettled.sermons} /> : null}
           {showForms ? <FormRail key={`forms:${search}`} search={search} onSettled={onSettled.forms} /> : null}
-          {ready && allSettled && total === 0 ? (
+          {ready && empty ? (
             <div className="search-tour-empty paper-card rounded-2xl px-5 py-10 text-center">
               <p className="font-display text-sm font-semibold">Nothing answers to &ldquo;{search}&rdquo;</p>
               <p className="mt-1 text-sm text-ink-faint">Searches only reach what your role can read. Try another term or choose All to search more categories.</p>

@@ -1,5 +1,8 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
 import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -43,6 +46,10 @@ export default function EditFormPage({
         <Skeleton className="h-96 rounded-2xl" />
       </div>
     );
+  }
+
+  if (form.isError && !isMissingRecordError(form.error)) {
+    return <RecordQueryError title="Edit form" error={form.error} backHref="/library/forms" backLabel="Back to forms" />;
   }
 
   if (form.isError || !form.data) {

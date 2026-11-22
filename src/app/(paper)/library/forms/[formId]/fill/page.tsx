@@ -1,5 +1,8 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
 import { collectionLabel } from "@/lib/collection-label";
 
 import { RequiredFieldsNotice } from "@/components/ui/required-fields";
@@ -77,6 +80,10 @@ export default function FillFormPage({
         <Skeleton className="h-72 rounded-2xl" />
       </div>
     );
+  }
+
+  if (form.isError && !isMissingRecordError(form.error)) {
+    return <RecordQueryError title="Form" error={form.error} backHref="/library/forms" backLabel="Back to forms" />;
   }
 
   if (form.isError || !f) {

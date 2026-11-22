@@ -1,6 +1,7 @@
 "use client";
 
 import { collectionLabel } from "@/lib/collection-label";
+import { PageQueryError } from "@/components/shared/page-query-error";
 
 import * as React from "react";
 import { Mic2 } from "lucide-react";
@@ -12,6 +13,8 @@ import { formatDate } from "@/hooks/use-media";
 export default function SpeakersPage() {
   const speakers = useSermonsSpeakers();
   const rows = speakers.data ?? [];
+
+  if (speakers.isError) return <PageQueryError title="Sermon speakers" />;
 
   return (
     <SermonAggregateBrowser

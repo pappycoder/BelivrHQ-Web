@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ExportDropdown } from "@/components/shared/export-dropdown";
 import { StatusBadge } from "@/components/assets/status-badge";
 import { AssetDetailDrawer } from "@/components/assets/asset-detail-drawer";
+import { ErrorState } from "@/components/shared/error-state";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
   useArchiveAsset,
@@ -154,7 +155,9 @@ export default function AssetsPage() {
         </select>
 </ListToolbar>
 
-      {assets.isLoading ? (
+      {assets.isError ? (
+        <ErrorState title="Unable to load the asset register" description="The asset register could not reach the server. Please try again." />
+      ) : assets.isLoading ? (
         <div className="space-y-2">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}</div>
       ) : rows.length === 0 ? (
         <EmptyState

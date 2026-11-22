@@ -1,5 +1,8 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
 import * as React from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -41,6 +44,10 @@ export default function EditSermonPage({
         <Skeleton className="h-96 rounded-2xl" />
       </div>
     );
+  }
+
+  if (sermon.isError && !isMissingRecordError(sermon.error)) {
+    return <RecordQueryError title="Edit sermon" error={sermon.error} backHref="/library/sermons" backLabel="Back to the archive" />;
   }
 
   if (sermon.isError || !sermon.data) {

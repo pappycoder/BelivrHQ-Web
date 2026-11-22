@@ -1,0 +1,13 @@
+{
+  "checks": 48,
+  "invalid": 0,
+  "scenarios": [
+    "both-failed",
+    "empty",
+    "live",
+    "long",
+    "recovered",
+    "tickets-failed",
+    "tiers-failed"
+  ]
+}

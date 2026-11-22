@@ -1,5 +1,8 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
+import { formatRecordDateTime } from "@/lib/record-date";
 import { UserStatusBadge } from "@/components/users/user-status-badge";
 
 import { ListToolbar } from "@/components/shared/list-toolbar";
@@ -138,6 +141,8 @@ export default function AdminTeamPage() {
     },
   ];
 
+  if (users.isError) return <PageQueryError title="Team members" />;
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -236,7 +241,7 @@ export default function AdminTeamPage() {
                           {member.isAdminHq ? <Tag tone="sky" className="ml-1">HQ</Tag> : null}
                         </span>
                         <span className="num text-xs text-ink-faint">
-                          {member.lastSignInAt ? new Date(member.lastSignInAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "never"}
+                          {member.lastSignInAt ? formatRecordDateTime(member.lastSignInAt) : "Never signed in"}
                         </span>
                         <div className="flex justify-end">
                           <RowActions actions={manageActions(member)} />
@@ -248,10 +253,10 @@ export default function AdminTeamPage() {
               </div>
             </div>
           ) : (
-            <StaggerGroup className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <StaggerGroup className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {rows.map((member) => (
-                <StaggerItem key={member.profileId}>
-                  <div className="paper-card flex h-full flex-col rounded-2xl p-4">
+                <StaggerItem key={member.profileId} className="min-w-0">
+                  <div className="paper-card flex h-full min-w-0 flex-col rounded-2xl p-4">
                     <div className="flex items-start justify-between gap-2">
                       <button type="button" onClick={() => router.push(`/admin/team/${member.profileId}`)} className="flex min-w-0 items-center gap-3 text-left">
                         <PersonAvatar name={`${member.firstName} ${member.lastName}`} src={member.avatarUrl} size="md" />
@@ -263,13 +268,13 @@ export default function AdminTeamPage() {
                       <RowActions reveal={false} actions={manageActions(member)} />
                     </div>
                     <p className="mt-2 truncate text-xs text-ink-faint">{member.email ?? "No email on file"}</p>
-                    <div className="mt-3 flex items-center justify-between border-t border-line/70 pt-3 text-xs text-ink-faint">
+                    <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-line/70 pt-3 text-xs text-ink-faint">
                       <span className="flex items-center gap-1.5">
                         <UserStatusBadge status={member.status} />
                         {member.isAdminHq ? <Tag tone="sky">HQ</Tag> : null}
                         {member.branch ? <span className="truncate">· {member.branch.name}</span> : null}
                       </span>
-                      <span>{member.lastSignInAt ? new Date(member.lastSignInAt).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "never signed in"}</span>
+                      <span>{member.lastSignInAt ? formatRecordDateTime(member.lastSignInAt) : "Never signed in"}</span>
                     </div>
                   </div>
                 </StaggerItem>

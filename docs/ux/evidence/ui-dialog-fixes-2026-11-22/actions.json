@@ -1,0 +1,242 @@
+[
+  {
+    "theme": "light",
+    "width": 1280,
+    "height": 900,
+    "action": "Add custom value",
+    "selected": "UI Audit Denomination"
+  },
+  {
+    "theme": "light",
+    "width": 1280,
+    "height": 900,
+    "action": "Search and select existing",
+    "selected": "Anglican"
+  },
+  {
+    "theme": "light",
+    "width": 1280,
+    "height": 900,
+    "action": "Cancel custom entry",
+    "selected": "Anglican",
+    "customFieldCount": 0
+  },
+  {
+    "theme": "light",
+    "width": 1280,
+    "height": 900,
+    "action": "Escape closes popup",
+    "expanded": "false",
+    "focusedId": "registration-denomination"
+  },
+  {
+    "theme": "light",
+    "width": 390,
+    "height": 844,
+    "action": "Add custom value",
+    "selected": "UI Audit Denomination"
+  },
+  {
+    "theme": "light",
+    "width": 390,
+    "height": 844,
+    "action": "Search and select existing",
+    "selected": "Anglican"
+  },
+  {
+    "theme": "light",
+    "width": 390,
+    "height": 844,
+    "action": "Cancel custom entry",
+    "selected": "Anglican",
+    "customFieldCount": 0
+  },
+  {
+    "theme": "light",
+    "width": 390,
+    "height": 844,
+    "action": "Escape closes popup",
+    "expanded": "false",
+    "focusedId": "registration-denomination"
+  },
+  {
+    "theme": "light",
+    "width": 320,
+    "height": 844,
+    "action": "Enter custom value",
+    "selected": "UI Audit Denomination"
+  },
+  {
+    "theme": "light",
+    "width": 320,
+    "height": 844,
+    "action": "Search and select existing",
+    "selected": "Anglican"
+  },
+  {
+    "theme": "light",
+    "width": 320,
+    "height": 844,
+    "action": "Cancel custom entry",
+    "selected": "Anglican",
+    "customFieldCount": 0
+  },
+  {
+    "theme": "light",
+    "width": 320,
+    "height": 844,
+    "action": "Escape closes popup",
+    "expanded": "false",
+    "focusedId": "registration-denomination"
+  },
+  {
+    "theme": "dark",
+    "width": 1280,
+    "height": 900,
+    "action": "Add custom value",
+    "selected": "UI Audit Denomination"
+  },
+  {
+    "theme": "dark",
+    "width": 1280,
+    "height": 900,
+    "action": "Search and select existing",
+    "selected": "Anglican"
+  },
+  {
+    "theme": "dark",
+    "width": 1280,
+    "height": 900,
+    "action": "Cancel custom entry",
+    "selected": "Anglican",
+    "customFieldCount": 0
+  },
+  {
+    "theme": "dark",
+    "width": 1280,
+    "height": 900,
+    "action": "Escape closes popup",
+    "expanded": "false",
+    "focusedId": "registration-denomination"
+  },
+  {
+    "theme": "dark",
+    "width": 390,
+    "height": 844,
+    "action": "Add custom value",
+    "selected": "UI Audit Denomination"
+  },
+  {
+    "theme": "dark",
+    "width": 390,
+    "height": 844,
+    "action": "Search and select existing",
+    "selected": "Anglican"
+  },
+  {
+    "theme": "dark",
+    "width": 390,
+    "height": 844,
+    "action": "Cancel custom entry",
+    "selected": "Anglican",
+    "customFieldCount": 0
+  },
+  {
+    "theme": "dark",
+    "width": 390,
+    "height": 844,
+    "action": "Escape closes popup",
+    "expanded": "false",
+    "focusedId": "registration-denomination"
+  },
+  {
+    "theme": "dark",
+    "width": 320,
+    "height": 844,
+    "action": "Enter custom value",
+    "selected": "UI Audit Denomination"
+  },
+  {
+    "theme": "dark",
+    "width": 320,
+    "height": 844,
+    "action": "Search and select existing",
+    "selected": "Anglican"
+  },
+  {
+    "theme": "dark",
+    "width": 320,
+    "height": 844,
+    "action": "Cancel custom entry",
+    "selected": "Anglican",
+    "customFieldCount": 0
+  },
+  {
+    "theme": "dark",
+    "width": 320,
+    "height": 844,
+    "action": "Escape closes popup",
+    "expanded": "false",
+    "focusedId": "registration-denomination"
+  },
+  {
+    "theme": "light",
+    "width": 320,
+    "height": 568,
+    "action": "Enter custom value",
+    "selected": "UI Audit Denomination"
+  },
+  {
+    "theme": "light",
+    "width": 320,
+    "height": 568,
+    "action": "Search and select existing",
+    "selected": "Anglican"
+  },
+  {
+    "theme": "light",
+    "width": 320,
+    "height": 568,
+    "action": "Cancel custom entry",
+    "selected": "Anglican",
+    "customFieldCount": 0
+  },
+  {
+    "theme": "light",
+    "width": 320,
+    "height": 568,
+    "action": "Escape closes popup",
+    "expanded": "false",
+    "focusedId": "registration-denomination"
+  },
+  {
+    "theme": "dark",
+    "width": 320,
+    "height": 568,
+    "action": "Enter custom value",
+    "selected": "UI Audit Denomination"
+  },
+  {
+    "theme": "dark",
+    "width": 320,
+    "height": 568,
+    "action": "Search and select existing",
+    "selected": "Anglican"
+  },
+  {
+    "theme": "dark",
+    "width": 320,
+    "height": 568,
+    "action": "Cancel custom entry",
+    "selected": "Anglican",
+    "customFieldCount": 0
+  },
+  {
+    "theme": "dark",
+    "width": 320,
+    "height": 568,
+    "action": "Escape closes popup",
+    "expanded": "false",
+    "focusedId": "registration-denomination"
+  }
+]

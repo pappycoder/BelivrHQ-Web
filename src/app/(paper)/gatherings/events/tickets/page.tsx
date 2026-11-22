@@ -1,5 +1,7 @@
 "use client";
 
+import { ErrorState } from "@/components/shared/error-state";
+
 import { formatStatusLabel } from "@/lib/status-label";
 
 
@@ -68,6 +70,9 @@ function TicketsInner() {
   const usedCount = rows.filter((t) => t.usedAt).length;
   const paidEvent = !!selected && !selected.isFree;
 
+  const eventReady = events.isSuccess && !events.isError && !!selected;
+  const assignmentReady = canAssign && !!eventId && eventReady && tickets.isSuccess && !tickets.isError && (!paidEvent || (tiers.isSuccess && !tiers.isError));
+
   const download = async (ticket: AllTicketItem) => {
     setPdfBusy(ticket.ticketId);
     try {
@@ -80,6 +85,7 @@ function TicketsInner() {
   };
 
   const assign = () => {
+    if (!assignmentReady) return;
     if (!eventId || !assignMember) { toast.error("Pick the person first."); return; }
     createTicket.mutate(
       { eventId, input: { memberId: assignMember.id, tierId: paidEvent && assignTier ? assignTier : undefined } },
@@ -102,7 +108,7 @@ function TicketsInner() {
         title="Issued tickets."
         description="Assign, print and track tickets to keep event entry running smoothly."
         actions={
-          canAssign && eventId ? (
+          assignmentReady ? (
             <Button className="h-9 gap-1.5 rounded-full text-sm" onClick={() => setAssignOpen(true)}>
               <UserPlus className="size-3.5" /> Assign ticket
             </Button>
@@ -113,10 +119,10 @@ function TicketsInner() {
       <ListToolbar>
 <EventPicker query={events} value={eventId}
           onValueChange={value => { setEventId(value); setPage(1); router.replace(`/gatherings/events/tickets${value ? `?event=${value}` : ""}`); }} />
-{selected ? (
+{eventReady ? (
           <span className="flex items-center gap-1.5 text-xs text-ink-faint">
             {paidEvent ? <Tag tone="gold">Paid</Tag> : <Tag tone="moss">Free</Tag>}
-            {(tiers.data ?? []).length ? <span>{(tiers.data ?? []).length} {collectionLabel((tiers.data ?? []).length, "tiers")}</span> : paidEvent ? <span>no tiers (flat price)</span> : null}
+            {tiers.isError ? <span>Tier information unavailable</span> : tiers.isPending ? <Skeleton className="inline-block h-4 w-16" /> : (tiers.data ?? []).length ? <span>{(tiers.data ?? []).length} {collectionLabel((tiers.data ?? []).length, "tiers")}</span> : paidEvent ? <span>no tiers (flat price)</span> : null}
           </span>
         ) : null}
 {eventId ? (
@@ -128,24 +134,29 @@ function TicketsInner() {
 
       {eventId ? (
         <>
+          {tiers.isError ? <ErrorState title="Unable to load ticket tiers" /> : null}
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <StatCard label="Tickets issued" value={total} tone="brand" icon={<Ticket className="size-4" />} />
-            <StatCard label="Used this page" value={usedCount} tone="moss" deltaLabel={rows.length ? `${Math.round((usedCount / rows.length) * 100)}%` : "Not available"} />
-            <StatCard label="Open this page" value={rows.length - usedCount} tone="gold" />
-            <StatCard label="Capacity" value={selected?.capacity ?? 0} tone="sky" deltaLabel="event seats" />
+            {tickets.isPending ? Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-32 rounded-2xl" />) : <>
+            <StatCard unavailable={tickets.isError} label="Tickets issued" value={total} tone="brand" icon={<Ticket className="size-4" />} />
+            <StatCard unavailable={tickets.isError} label="Used this page" value={usedCount} tone="moss" deltaLabel={tickets.isError ? "Please try again" : rows.length ? `${Math.round((usedCount / rows.length) * 100)}%` : "Not available"} />
+            <StatCard unavailable={tickets.isError} label="Open this page" value={rows.length - usedCount} tone="gold" />
+            </>}
+            {events.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={!eventReady} label="Capacity" value={selected?.capacity ?? 0} tone="sky" deltaLabel="event seats" />}
           </div>
 
-          {tickets.isLoading ? (
+          {tickets.isError ? (
+            <ErrorState title="Unable to load issued tickets" />
+          ) : tickets.isPending ? (
             <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-12 rounded-xl" />)}</div>
           ) : rows.length === 0 ? (
             <EmptyState
               icon={<Users />}
               title="No tickets issued yet"
               description={paidEvent ? "Sales appear here automatically; you can also seat someone by hand." : "Free events still track attendance at the desk. Claim happens member-side."}
-              action={canAssign ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => setAssignOpen(true)}>Assign the first</Button> : undefined}
+              action={assignmentReady ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => setAssignOpen(true)}>Assign the first</Button> : undefined}
             />
           ) : (
-            <ListTable className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="gatherings-events-tickets-1" records={rows ?? []} recordKey="ticketId">
+            <ListTable className="paper-card min-w-[960px] divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="gatherings-events-tickets-1" records={rows ?? []} recordKey="ticketId">
               <div className="rule-label grid grid-cols-[minmax(0,1.6fr)_1fr_0.8fr_1fr_0.8fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
                 <span>Holder</span>
                 <span>Code</span>
@@ -165,13 +176,13 @@ function TicketsInner() {
                   </span>
                   <span className="truncate font-mono text-xs text-ink-faint">{ticket.code}</span>
                   <span className="truncate text-sm text-ink-soft">{ticket.tierName ?? "General"}</span>
-                  <span className="flex items-center gap-1.5">
+                  <span className="flex min-w-0 flex-wrap items-center gap-1.5">
                     <Tag tone={ticket.usedAt ? "moss" : ticket.status === "cancelled" || ticket.status === "refunded" ? "rose" : "gold"} dot>
                       {formatStatusLabel(ticket.usedAt ? "used" : ticket.status)}
                     </Tag>
                     {ticket.pricePaid ? <span className="num text-xs text-ink-faint">{formatNaira(ticket.pricePaid)}</span> : null}
                   </span>
-                  <span className="num text-right text-xs text-ink-faint">{formatDate(ticket.createdAt)}</span>
+                  <span className="num whitespace-nowrap text-right text-xs text-ink-faint">{formatDate(ticket.createdAt)}</span>
                   <Button
                     size="xs"
                     variant="ghost"
@@ -210,6 +221,7 @@ function TicketsInner() {
             <DialogDescription className="text-sm">Create a named ticket to help attendees get through the queue.</DialogDescription>
           </DialogHeader>
           <FormSection title="Details">
+            {!assignmentReady ? <p role="alert" className="text-sm text-destructive">Ticket information is unavailable. Close this dialog and try again.</p> : null}
             <div className="space-y-3">
               <div className="space-y-1.5">
                 <p className="text-sm font-medium">Member</p>
@@ -233,7 +245,7 @@ function TicketsInner() {
           </FormSection>
 <DialogFooter>
 <DialogClose asChild><Button type="button" variant="outline" disabled={createTicket.isPending}>Cancel</Button></DialogClose>
-<Button className="h-10 gap-2 rounded-lg text-sm" disabled={!assignMember || createTicket.isPending} onClick={assign}>
+<Button className="h-10 gap-2 rounded-lg text-sm" disabled={!assignmentReady || !assignMember || createTicket.isPending} onClick={assign}>
                 <UserPlus className="size-4" /> {createTicket.isPending ? "Assigning…" : "Assign ticket"}
               </Button>
 </DialogFooter>

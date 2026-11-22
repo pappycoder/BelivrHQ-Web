@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
 
 import * as React from "react";
@@ -48,6 +50,8 @@ export default function AssetCategoriesPage() {
   const del = useDeleteAssetCategory();
 
   const rows = categories.data ?? [];
+
+  if (categories.isError) return <PageQueryError title="Asset categories" />;
 
   return (
     <div className="space-y-6">

@@ -1,5 +1,7 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
 import { PageHeader } from "@/components/paper/section";
 
 import * as React from "react";
@@ -87,6 +89,8 @@ export default function LifeEventsPage() {
     return diff >= 0 && diff <= 7;
   }).length;
 
+  if (events.isError) return <PageQueryError title="Life events" />;
+
   return (
     <div className="space-y-6">
       <PageHeader eyebrow={<Link
@@ -101,8 +105,10 @@ export default function LifeEventsPage() {
         ) : null} />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {events.isPending ? <><Skeleton className="h-32 rounded-2xl" /><Skeleton className="h-32 rounded-2xl" /></> : <>
         <StatCard label="On the calendar" value={events.data?.meta?.total ?? rows.length} tone="brand" icon={<Gift className="size-4" />} />
         <StatCard label="Within seven days" value={upcomingSoon} tone="gold" deltaLabel="send something" />
+        </>}
         <StatCard label="Types tracked" value={LIFE_EVENT_TYPES.length} tone="sky" />
         <div className="paper-card flex flex-col justify-between gap-4 rounded-2xl p-5">
           <span className="rule-label">Filter</span>

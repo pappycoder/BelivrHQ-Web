@@ -1,5 +1,8 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
 import { formatStatusLabel } from "@/lib/status-label";
 
 
@@ -92,6 +95,10 @@ export default function MemberDetail({
         <div className="h-40 animate-pulse rounded-2xl bg-line" />
       </div>
     );
+  }
+
+  if (member.isError && !isMissingRecordError(member.error)) {
+    return <RecordQueryError title="Member details" error={member.error} backHref="/people/members" backLabel="Back to the register" />;
   }
 
   if (member.isError || !data) {

@@ -1,0 +1,3962 @@
+[
+  {
+    "role": "senior_pastor",
+    "route": "/admin/channels",
+    "allowed": false
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/admin/church",
+    "allowed": false
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/admin/locations/[branchId]",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/admin/locations",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/admin/permissions/[roleName]",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/admin/permissions",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/admin/team/[profileId]",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/admin/team",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/connect/appointments",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/connect/broadcasts",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/connect/inbox",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/connect/messages",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/connect/templates",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/attendance/check-in",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/attendance",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/attendance/records",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/attendance/reports",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/attendance/services/[serviceId]",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/attendance/services",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/events/[eventId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/events/[eventId]",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/events/check-in",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/events/list",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/events/new",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/events",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/events/registrations",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/events/tickets",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/events/tiers",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/groups/[deptId]",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/groups/cell/[groupId]",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/groups/cell",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/gatherings/groups",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/giving/donations",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/giving/funds",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/giving/overview",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/giving/schedules",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/giving/statements",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/home",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/insights/analytics/attendance",
+    "allowed": false
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/insights/analytics/giving",
+    "allowed": false
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/insights/analytics/members",
+    "allowed": false
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/insights/analytics",
+    "allowed": false
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/insights/reports",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/library/forms/[formId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/library/forms/[formId]/fill",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/library/forms/[formId]",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/library/forms/new",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/library/forms",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/library/forms/submissions",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/library/media/folders",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/library/media",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/library/sermons/[sermonId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/library/sermons/[sermonId]",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/library/sermons/new",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/library/sermons",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/library/sermons/series",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/library/sermons/speakers",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/notifications",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/operations/assets/[assetId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/operations/assets/[assetId]",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/operations/assets/categories",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/operations/assets/loans",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/operations/assets/maintenance",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/operations/assets/new",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/operations/assets",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/families/[familyId]",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/families",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/members/[memberId]",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/members/import",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/members/new",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/members",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/pastoral/care",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/pastoral/engagement",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/pastoral/life-events",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/pastoral",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/pastoral/risk",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/segments",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/visitors/[visitorId]",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/visitors/follow-up",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/visitors/import",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/people/visitors",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/search",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/settings/appearance",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/settings/billing",
+    "allowed": false
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/settings/notifications",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/settings/profile",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/settings/security",
+    "allowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "route": "/support",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/admin/channels",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/admin/church",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/admin/locations/[branchId]",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/admin/locations",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/admin/permissions/[roleName]",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/admin/permissions",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/admin/team/[profileId]",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/admin/team",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/connect/appointments",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/connect/broadcasts",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/connect/inbox",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/connect/messages",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/connect/templates",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/attendance/check-in",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/attendance",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/attendance/records",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/attendance/reports",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/attendance/services/[serviceId]",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/attendance/services",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/events/[eventId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/events/[eventId]",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/events/check-in",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/events/list",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/events/new",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/events",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/events/registrations",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/events/tickets",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/events/tiers",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/groups/[deptId]",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/groups/cell/[groupId]",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/groups/cell",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/gatherings/groups",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/giving/donations",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/giving/funds",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/giving/overview",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/giving/schedules",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/giving/statements",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/home",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/insights/analytics/attendance",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/insights/analytics/giving",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/insights/analytics/members",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/insights/analytics",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/insights/reports",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/library/forms/[formId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/library/forms/[formId]/fill",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/library/forms/[formId]",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/library/forms/new",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/library/forms",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/library/forms/submissions",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/library/media/folders",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/library/media",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/library/sermons/[sermonId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/library/sermons/[sermonId]",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/library/sermons/new",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/library/sermons",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/library/sermons/series",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/library/sermons/speakers",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/notifications",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/operations/assets/[assetId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/operations/assets/[assetId]",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/operations/assets/categories",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/operations/assets/loans",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/operations/assets/maintenance",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/operations/assets/new",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/operations/assets",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/families/[familyId]",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/families",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/members/[memberId]",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/members/import",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/members/new",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/members",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/pastoral/care",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/pastoral/engagement",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/pastoral/life-events",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/pastoral",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/pastoral/risk",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/segments",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/visitors/[visitorId]",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/visitors/follow-up",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/visitors/import",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/people/visitors",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/search",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/settings/appearance",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/settings/billing",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/settings/notifications",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/settings/profile",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/settings/security",
+    "allowed": true
+  },
+  {
+    "role": "church_admin",
+    "route": "/support",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/admin/channels",
+    "allowed": false
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/admin/church",
+    "allowed": false
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/admin/locations/[branchId]",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/admin/locations",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/admin/permissions/[roleName]",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/admin/permissions",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/admin/team/[profileId]",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/admin/team",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/connect/appointments",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/connect/broadcasts",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/connect/inbox",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/connect/messages",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/connect/templates",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/attendance/check-in",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/attendance",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/attendance/records",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/attendance/reports",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/attendance/services/[serviceId]",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/attendance/services",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/events/[eventId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/events/[eventId]",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/events/check-in",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/events/list",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/events/new",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/events",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/events/registrations",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/events/tickets",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/events/tiers",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/groups/[deptId]",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/groups/cell/[groupId]",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/groups/cell",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/gatherings/groups",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/giving/donations",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/giving/funds",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/giving/overview",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/giving/schedules",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/giving/statements",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/home",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/insights/analytics/attendance",
+    "allowed": false
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/insights/analytics/giving",
+    "allowed": false
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/insights/analytics/members",
+    "allowed": false
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/insights/analytics",
+    "allowed": false
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/insights/reports",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/library/forms/[formId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/library/forms/[formId]/fill",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/library/forms/[formId]",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/library/forms/new",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/library/forms",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/library/forms/submissions",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/library/media/folders",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/library/media",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/library/sermons/[sermonId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/library/sermons/[sermonId]",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/library/sermons/new",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/library/sermons",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/library/sermons/series",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/library/sermons/speakers",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/notifications",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/operations/assets/[assetId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/operations/assets/[assetId]",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/operations/assets/categories",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/operations/assets/loans",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/operations/assets/maintenance",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/operations/assets/new",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/operations/assets",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/families/[familyId]",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/families",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/members/[memberId]",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/members/import",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/members/new",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/members",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/pastoral/care",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/pastoral/engagement",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/pastoral/life-events",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/pastoral",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/pastoral/risk",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/segments",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/visitors/[visitorId]",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/visitors/follow-up",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/visitors/import",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/people/visitors",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/search",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/settings/appearance",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/settings/billing",
+    "allowed": false
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/settings/notifications",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/settings/profile",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/settings/security",
+    "allowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "route": "/support",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/admin/channels",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/admin/church",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/admin/locations/[branchId]",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/admin/locations",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/admin/permissions/[roleName]",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/admin/permissions",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/admin/team/[profileId]",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/admin/team",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/connect/appointments",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/connect/broadcasts",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/connect/inbox",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/connect/messages",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/connect/templates",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/attendance/check-in",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/attendance",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/attendance/records",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/attendance/reports",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/attendance/services/[serviceId]",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/attendance/services",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/events/[eventId]/edit",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/events/[eventId]",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/events/check-in",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/events/list",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/events/new",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/events",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/events/registrations",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/events/tickets",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/events/tiers",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/groups/[deptId]",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/groups/cell/[groupId]",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/groups/cell",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/gatherings/groups",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/giving/donations",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/giving/funds",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/giving/overview",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/giving/schedules",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/giving/statements",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/home",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/insights/analytics/attendance",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/insights/analytics/giving",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/insights/analytics/members",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/insights/analytics",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/insights/reports",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/library/forms/[formId]/edit",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/library/forms/[formId]/fill",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/library/forms/[formId]",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/library/forms/new",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/library/forms",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/library/forms/submissions",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/library/media/folders",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/library/media",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/library/sermons/[sermonId]/edit",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/library/sermons/[sermonId]",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/library/sermons/new",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/library/sermons",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/library/sermons/series",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/library/sermons/speakers",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/notifications",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/operations/assets/[assetId]/edit",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/operations/assets/[assetId]",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/operations/assets/categories",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/operations/assets/loans",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/operations/assets/maintenance",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/operations/assets/new",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/operations/assets",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/people/families/[familyId]",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/people/families",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/people/members/[memberId]",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/people/members/import",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/people/members/new",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/people/members",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/people/pastoral/care",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/people/pastoral/engagement",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/people/pastoral/life-events",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/people/pastoral",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/people/pastoral/risk",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/people/segments",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/people/visitors/[visitorId]",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/people/visitors/follow-up",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/people/visitors/import",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/people/visitors",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/search",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/settings/appearance",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/settings/billing",
+    "allowed": false
+  },
+  {
+    "role": "department_head",
+    "route": "/settings/notifications",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/settings/profile",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/settings/security",
+    "allowed": true
+  },
+  {
+    "role": "department_head",
+    "route": "/support",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/admin/channels",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/admin/church",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/admin/locations/[branchId]",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/admin/locations",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/admin/permissions/[roleName]",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/admin/permissions",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/admin/team/[profileId]",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/admin/team",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/connect/appointments",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/connect/broadcasts",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/connect/inbox",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/connect/messages",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/connect/templates",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/attendance/check-in",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/attendance",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/attendance/records",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/attendance/reports",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/attendance/services/[serviceId]",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/attendance/services",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/events/[eventId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/events/[eventId]",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/events/check-in",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/events/list",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/events/new",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/events",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/events/registrations",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/events/tickets",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/events/tiers",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/groups/[deptId]",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/groups/cell/[groupId]",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/groups/cell",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/gatherings/groups",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/giving/donations",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/giving/funds",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/giving/overview",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/giving/schedules",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/giving/statements",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/home",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/insights/analytics/attendance",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/insights/analytics/giving",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/insights/analytics/members",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/insights/analytics",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/insights/reports",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/library/forms/[formId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/library/forms/[formId]/fill",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/library/forms/[formId]",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/library/forms/new",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/library/forms",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/library/forms/submissions",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/library/media/folders",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/library/media",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/library/sermons/[sermonId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/library/sermons/[sermonId]",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/library/sermons/new",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/library/sermons",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/library/sermons/series",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/library/sermons/speakers",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/notifications",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/operations/assets/[assetId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/operations/assets/[assetId]",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/operations/assets/categories",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/operations/assets/loans",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/operations/assets/maintenance",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/operations/assets/new",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/operations/assets",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/people/families/[familyId]",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/people/families",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/people/members/[memberId]",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/people/members/import",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/people/members/new",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/people/members",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/people/pastoral/care",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/people/pastoral/engagement",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/people/pastoral/life-events",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/people/pastoral",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/people/pastoral/risk",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/people/segments",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/people/visitors/[visitorId]",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/people/visitors/follow-up",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/people/visitors/import",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/people/visitors",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/search",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/settings/appearance",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/settings/billing",
+    "allowed": false
+  },
+  {
+    "role": "secretary",
+    "route": "/settings/notifications",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/settings/profile",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/settings/security",
+    "allowed": true
+  },
+  {
+    "role": "secretary",
+    "route": "/support",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/admin/channels",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/admin/church",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/admin/locations/[branchId]",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/admin/locations",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/admin/permissions/[roleName]",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/admin/permissions",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/admin/team/[profileId]",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/admin/team",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/connect/appointments",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/connect/broadcasts",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/connect/inbox",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/connect/messages",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/connect/templates",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/attendance/check-in",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/attendance",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/attendance/records",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/attendance/reports",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/attendance/services/[serviceId]",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/attendance/services",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/events/[eventId]/edit",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/events/[eventId]",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/events/check-in",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/events/list",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/events/new",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/events",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/events/registrations",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/events/tickets",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/events/tiers",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/groups/[deptId]",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/groups/cell/[groupId]",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/groups/cell",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/gatherings/groups",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/giving/donations",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/giving/funds",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/giving/overview",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/giving/schedules",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/giving/statements",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/home",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/insights/analytics/attendance",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/insights/analytics/giving",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/insights/analytics/members",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/insights/analytics",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/insights/reports",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/library/forms/[formId]/edit",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/library/forms/[formId]/fill",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/library/forms/[formId]",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/library/forms/new",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/library/forms",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/library/forms/submissions",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/library/media/folders",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/library/media",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/library/sermons/[sermonId]/edit",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/library/sermons/[sermonId]",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/library/sermons/new",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/library/sermons",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/library/sermons/series",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/library/sermons/speakers",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/notifications",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/operations/assets/[assetId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/operations/assets/[assetId]",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/operations/assets/categories",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/operations/assets/loans",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/operations/assets/maintenance",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/operations/assets/new",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/operations/assets",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/families/[familyId]",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/families",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/members/[memberId]",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/members/import",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/members/new",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/members",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/pastoral/care",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/pastoral/engagement",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/pastoral/life-events",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/pastoral",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/pastoral/risk",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/segments",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/visitors/[visitorId]",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/visitors/follow-up",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/visitors/import",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/people/visitors",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/search",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/settings/appearance",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/settings/billing",
+    "allowed": false
+  },
+  {
+    "role": "treasurer",
+    "route": "/settings/notifications",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/settings/profile",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/settings/security",
+    "allowed": true
+  },
+  {
+    "role": "treasurer",
+    "route": "/support",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/admin/channels",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/admin/church",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/admin/locations/[branchId]",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/admin/locations",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/admin/permissions/[roleName]",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/admin/permissions",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/admin/team/[profileId]",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/admin/team",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/connect/appointments",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/connect/broadcasts",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/connect/inbox",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/connect/messages",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/connect/templates",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/attendance/check-in",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/attendance",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/attendance/records",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/attendance/reports",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/attendance/services/[serviceId]",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/attendance/services",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/events/[eventId]/edit",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/events/[eventId]",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/events/check-in",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/events/list",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/events/new",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/events",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/events/registrations",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/events/tickets",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/events/tiers",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/groups/[deptId]",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/groups/cell/[groupId]",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/groups/cell",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/gatherings/groups",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/giving/donations",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/giving/funds",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/giving/overview",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/giving/schedules",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/giving/statements",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/home",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/insights/analytics/attendance",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/insights/analytics/giving",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/insights/analytics/members",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/insights/analytics",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/insights/reports",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/library/forms/[formId]/edit",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/library/forms/[formId]/fill",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/library/forms/[formId]",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/library/forms/new",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/library/forms",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/library/forms/submissions",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/library/media/folders",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/library/media",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/library/sermons/[sermonId]/edit",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/library/sermons/[sermonId]",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/library/sermons/new",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/library/sermons",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/library/sermons/series",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/library/sermons/speakers",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/notifications",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/operations/assets/[assetId]/edit",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/operations/assets/[assetId]",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/operations/assets/categories",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/operations/assets/loans",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/operations/assets/maintenance",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/operations/assets/new",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/operations/assets",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/families/[familyId]",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/families",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/members/[memberId]",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/members/import",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/members/new",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/members",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/pastoral/care",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/pastoral/engagement",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/pastoral/life-events",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/pastoral",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/pastoral/risk",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/segments",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/visitors/[visitorId]",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/visitors/follow-up",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/visitors/import",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/people/visitors",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/search",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/settings/appearance",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/settings/billing",
+    "allowed": false
+  },
+  {
+    "role": "cell_leader",
+    "route": "/settings/notifications",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/settings/profile",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/settings/security",
+    "allowed": true
+  },
+  {
+    "role": "cell_leader",
+    "route": "/support",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/admin/channels",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/admin/church",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/admin/locations/[branchId]",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/admin/locations",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/admin/permissions/[roleName]",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/admin/permissions",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/admin/team/[profileId]",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/admin/team",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/connect/appointments",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/connect/broadcasts",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/connect/inbox",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/connect/messages",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/connect/templates",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/attendance/check-in",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/attendance",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/attendance/records",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/attendance/reports",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/attendance/services/[serviceId]",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/attendance/services",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/events/[eventId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/events/[eventId]",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/events/check-in",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/events/list",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/events/new",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/events",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/events/registrations",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/events/tickets",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/events/tiers",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/groups/[deptId]",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/groups/cell/[groupId]",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/groups/cell",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/gatherings/groups",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/giving/donations",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/giving/funds",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/giving/overview",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/giving/schedules",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/giving/statements",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/home",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/insights/analytics/attendance",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/insights/analytics/giving",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/insights/analytics/members",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/insights/analytics",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/insights/reports",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/library/forms/[formId]/edit",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/library/forms/[formId]/fill",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/library/forms/[formId]",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/library/forms/new",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/library/forms",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/library/forms/submissions",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/library/media/folders",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/library/media",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/library/sermons/[sermonId]/edit",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/library/sermons/[sermonId]",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/library/sermons/new",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/library/sermons",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/library/sermons/series",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/library/sermons/speakers",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/notifications",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/operations/assets/[assetId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/operations/assets/[assetId]",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/operations/assets/categories",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/operations/assets/loans",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/operations/assets/maintenance",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/operations/assets/new",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/operations/assets",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/people/families/[familyId]",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/people/families",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/people/members/[memberId]",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/people/members/import",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/people/members/new",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/people/members",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/people/pastoral/care",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/people/pastoral/engagement",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/people/pastoral/life-events",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/people/pastoral",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/people/pastoral/risk",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/people/segments",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/people/visitors/[visitorId]",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/people/visitors/follow-up",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/people/visitors/import",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/people/visitors",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/search",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/settings/appearance",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/settings/billing",
+    "allowed": false
+  },
+  {
+    "role": "usher",
+    "route": "/settings/notifications",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/settings/profile",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/settings/security",
+    "allowed": true
+  },
+  {
+    "role": "usher",
+    "route": "/support",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/admin/channels",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/admin/church",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/admin/locations/[branchId]",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/admin/locations",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/admin/permissions/[roleName]",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/admin/permissions",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/admin/team/[profileId]",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/admin/team",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/connect/appointments",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/connect/broadcasts",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/connect/inbox",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/connect/messages",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/connect/templates",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/attendance/check-in",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/attendance",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/attendance/records",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/attendance/reports",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/attendance/services/[serviceId]",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/attendance/services",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/events/[eventId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/events/[eventId]",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/events/check-in",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/events/list",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/events/new",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/events",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/events/registrations",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/events/tickets",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/events/tiers",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/groups/[deptId]",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/groups/cell/[groupId]",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/groups/cell",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/gatherings/groups",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/giving/donations",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/giving/funds",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/giving/overview",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/giving/schedules",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/giving/statements",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/home",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/insights/analytics/attendance",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/insights/analytics/giving",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/insights/analytics/members",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/insights/analytics",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/insights/reports",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/library/forms/[formId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/library/forms/[formId]/fill",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/library/forms/[formId]",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/library/forms/new",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/library/forms",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/library/forms/submissions",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/library/media/folders",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/library/media",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/library/sermons/[sermonId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/library/sermons/[sermonId]",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/library/sermons/new",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/library/sermons",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/library/sermons/series",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/library/sermons/speakers",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/notifications",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/operations/assets/[assetId]/edit",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/operations/assets/[assetId]",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/operations/assets/categories",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/operations/assets/loans",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/operations/assets/maintenance",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/operations/assets/new",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/operations/assets",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/families/[familyId]",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/families",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/members/[memberId]",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/members/import",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/members/new",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/members",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/pastoral/care",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/pastoral/engagement",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/pastoral/life-events",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/pastoral",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/pastoral/risk",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/segments",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/visitors/[visitorId]",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/visitors/follow-up",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/visitors/import",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/people/visitors",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/search",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/settings/appearance",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/settings/billing",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/settings/notifications",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/settings/profile",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/settings/security",
+    "allowed": true
+  },
+  {
+    "role": "super_admin",
+    "route": "/support",
+    "allowed": true
+  }
+]

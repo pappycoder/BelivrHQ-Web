@@ -1,0 +1,12 @@
+{
+  "amount": {
+    "content": 179,
+    "height": 21,
+    "lineHeight": "21.25px",
+    "text": "NGN 9,876,543,210",
+    "width": 179
+  },
+  "overflow": false,
+  "scrollLeft": 526,
+  "width": 320
+}

@@ -19,6 +19,7 @@ import {
 import { PageHeader } from "@/components/paper/section";
 import { Tag } from "@/components/paper/stat";
 import { EmptyState } from "@/components/paper/primitives";
+import { PageQueryError } from "@/components/shared/page-query-error";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -65,6 +66,8 @@ export default function SettingsBillingPage() {
       />
     );
   }
+
+  if (status.isError) return <PageQueryError title="Plan and billing" />;
 
   if (status.isLoading || !status.data) {
     return (
@@ -155,8 +158,8 @@ export default function SettingsBillingPage() {
       </div>
 
       {/* ── Plan comparison (server catalog, Abide card grammar) ──────── */}
-      <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
-        <div className="space-y-4">
+      <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="min-w-0 space-y-4">
           <div className="paper-card rounded-2xl p-5">
             <p data-tour-billing-compare className="rule-label mb-3">Change your plan when your church needs more room</p>
             <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
@@ -222,8 +225,8 @@ export default function SettingsBillingPage() {
                 No payments recorded yet.
               </div>
             ) : (
-              <ListTable className="divide-y divide-line/70" tableId="settings-billing-1" records={d.payments.slice(0, 12) ?? []} recordKey="reference"><StaggerGroup className="divide-y divide-line/70">
-                <div className="rule-label grid grid-cols-[1.2fr_1fr_0.8fr_1fr_0.9fr] items-center gap-3 border-b border-line px-5 py-2.5">
+              <ListTable className="min-w-[800px] divide-y divide-line/70" tableId="settings-billing-1" records={d.payments.slice(0, 12) ?? []} recordKey="reference"><StaggerGroup className="divide-y divide-line/70">
+                <div className="rule-label grid grid-cols-[1.2fr_1fr_0.8fr_1fr_minmax(200px,0.9fr)] items-center gap-3 border-b border-line px-5 py-2.5">
                   <span>Invoice</span>
                   <span>Date</span>
                   <span>Plan</span>
@@ -232,7 +235,7 @@ export default function SettingsBillingPage() {
                 </div>
                 {d.payments.slice(0, 12).map((p) => (
                   <StaggerItem key={p.reference}>
-                    <div className="grid grid-cols-[1.2fr_1fr_0.8fr_1fr_0.9fr] items-center gap-3 px-5 py-3 text-sm">
+                    <div className="grid grid-cols-[1.2fr_1fr_0.8fr_1fr_minmax(200px,0.9fr)] items-center gap-3 px-5 py-3 text-sm">
                       <span className="truncate font-mono text-xs text-ink-faint">{p.reference.slice(0, 16)}</span>
                       <span className="text-ink-soft">
                         {formatRecordDate(new Date(p.created_at))}
@@ -241,7 +244,7 @@ export default function SettingsBillingPage() {
                       <span className="flex items-center gap-1.5 text-sm">
                         <Tag tone={PAYMENT_TONES[p.status] ?? "neutral"} dot>{formatStatusLabel(p.status)}</Tag>
                       </span>
-                      <span className="num text-right font-semibold">{subscriptionMoney(p.amount, p.currency)}</span>
+                      <span className="num text-right font-semibold [overflow-wrap:anywhere]">{subscriptionMoney(p.amount, p.currency)}</span>
                     </div>
                   </StaggerItem>
                 ))}

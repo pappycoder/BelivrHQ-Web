@@ -276,7 +276,7 @@ export function FaqSection({ questions }: { questions: readonly (readonly [strin
   );
 }
 
-export function MarketingNavigation() {
+export function MarketingNavigation({ paper = false }: { paper?: boolean }) {
   const [open, setOpen] = React.useState(false);
   const trigger = React.useRef<HTMLButtonElement>(null);
   React.useEffect(() => {
@@ -290,7 +290,7 @@ export function MarketingNavigation() {
     return () => document.removeEventListener("keydown", escape);
   }, [open]);
   return (
-    <header className={styles.header}>
+    <header className={`${styles.header}${paper ? ` ${styles.paperHeader}` : ""}`}>
       <nav className={styles.navigation} aria-label="Main navigation">
         <Link href="/" className={styles.brand} aria-label="BelivrHQ home">
           <Image
@@ -304,10 +304,10 @@ export function MarketingNavigation() {
           <span className={styles.brandDot} />
         </Link>
         <div className={styles.desktopLinks}>
-          <a href="#product">The platform</a>
-          <a href="#enterprise">For your network</a>
-          <a href="#pricing">Pricing</a>
-          <a href="#questions">FAQs</a>
+          <Link href="/#product">The platform</Link>
+          <Link href="/#enterprise">For your network</Link>
+          <Link href="/#pricing">Pricing</Link>
+          <Link href="/#questions">FAQs</Link>
         </div>
         <div className={styles.navActions}>
           <Link href="/login" className={styles.signIn}>
@@ -332,10 +332,10 @@ export function MarketingNavigation() {
       {open && (
         <div id="marketing-mobile-navigation" className={styles.mobileLinks}>
           {[
-            ["#product", "The platform"],
-            ["#enterprise", "For your network"],
-            ["#pricing", "Pricing"],
-            ["#questions", "FAQs"],
+            ["/#product", "The platform"],
+            ["/#enterprise", "For your network"],
+            ["/#pricing", "Pricing"],
+            ["/#questions", "FAQs"],
           ].map(([href, label]) => (
             <Link key={href} href={href} onClick={() => setOpen(false)}>
               {label}

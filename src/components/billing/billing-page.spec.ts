@@ -4,8 +4,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { BillingStatus } from "@/types/billing";
 import SettingsBillingPage from "@/app/(paper)/settings/billing/page";
 
-const state = vi.hoisted(() => ({ data: null as BillingStatus | null }));
-vi.mock("@/hooks/use-billing", () => ({ useBillingStatus: () => ({ accessReady: true, allowed: true, isLoading: false, canPay: false, data: state.data }) }));
+const state = vi.hoisted(() => ({ data: null as BillingStatus | null, isError: false }));
+vi.mock("@/hooks/use-billing", () => ({ useBillingStatus: () => ({ accessReady: true, allowed: true, isLoading: false, canPay: false, data: state.data, isError: state.isError }) }));
 vi.mock("@/components/tours/navigation-page-tour", () => ({ NavigationPageTour: () => null }));
 vi.mock("@/components/shared/list-table", () => ({ ListTable: ({ children }: { children: ReactNode }) => createElement("div", null, children) }));
 vi.mock("@/components/paper/motion/primitives", () => ({
@@ -20,11 +20,28 @@ function render() { return renderToStaticMarkup(createElement(SettingsBillingPag
 
 describe("billing payment history presentation", () => {
   beforeEach(() => {
+    state.isError = false;
     state.data = {
       baseCurrency: "USD", gatewayCurrencies: {}, catalog: [], limits: { members: 100, staff: 2, locations: 1 },
       features: [], usage: { members: 1, staff: 1, locations: 1, pendingInvitations: 0 },
       payments: [], subscription: null, active: true, gateways: [], latestPayment: null,
     };
+  });
+  it("replaces loading placeholders with recovery feedback after a failed read", () => {
+    state.data = null;
+    state.isError = true;
+    const html = render();
+    expect(html).toContain('role="alert"');
+    expect(html).toContain("Unable to load plan and billing");
+    expect(html).toContain("Try again");
+    expect(html).not.toContain('data-slot="skeleton"');
+  });
+  it("does not present stale payment data as current after a failed refresh", () => {
+    state.data!.payments = [payment()];
+    state.isError = true;
+    const html = render();
+    expect(html).toContain("Try again");
+    expect(html).not.toContain("recorded-payment-reference");
   });
   it("shows a recorded payment even when there is no unfinished checkout", () => {
     state.data!.payments = [payment()];
