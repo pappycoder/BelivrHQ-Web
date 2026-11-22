@@ -1,5 +1,10 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import Link from "next/link";
 import { ArrowLeft, HandCoins, RefreshCcw } from "lucide-react";
@@ -58,7 +63,7 @@ export default function GivingAnalyticsPage() {
           </Link>
         }
         title="Giving, in depth."
-        description="Review giving totals, fund balances and trends without displaying donor names."
+        description="Review giving totals, category breakdowns and donor activity within your finance access."
         actions={
           <Button asChild variant="outline" className="h-9 gap-1.5 rounded-full border-line bg-card text-sm">
             <Link href="/insights/reports">
@@ -72,7 +77,7 @@ export default function GivingAnalyticsPage() {
         {PERIODS.map((item, index) => (
           <FilterChip key={item.label} active={period === index} onClick={() => setPeriod(index)}>{item.label}</FilterChip>
         ))}
-        <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="ml-auto h-8 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Branch filter">
+        <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="ml-auto h-9 rounded-full border border-line bg-card px-3 text-sm outline-none" aria-label="Branch filter">
           <option value="">All branches</option>
           {(branches.data?.data ?? []).map((branch) => <option key={branch.branchId} value={branch.branchId}>{branch.name}</option>)}
         </select>
@@ -88,7 +93,7 @@ export default function GivingAnalyticsPage() {
       ) : (
         <>
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-            <StatCard label="Total given" value={g.total} prefix="₦" tone="brand" deltaLabel={`${number(g.count)} gifts`} />
+            <StatCard label="Total given" value={g.total} prefix="₦" tone="brand" deltaLabel={`${number(g.count)} ${collectionLabel(g.count, "gifts")}`} />
             <StatCard label="Average gift" value={Math.round(g.average)} prefix="₦" tone="gold" />
             <StatCard label="Recurring givers" value={g.recurring.active} tone="moss" icon={<RefreshCcw className="size-4" />} deltaLabel={`${formatNaira(g.recurring.totalMonthlyAmount)}/month`} />
             <StatCard label="Scheduled gifts" value={g.recurring.totalScheduled} tone="sky" deltaLabel="in the book" />
@@ -138,7 +143,7 @@ export default function GivingAnalyticsPage() {
                         <PersonAvatar name={donor.memberName} size="xs" />
                         <span className="min-w-0 flex-1">
                           <span className="block truncate text-sm font-medium">{donor.memberName}</span>
-                          <span className="block text-xs text-ink-faint">{number(donor.count)} gifts</span>
+                          <span className="block text-xs text-ink-faint">{number(donor.count)} {collectionLabel(donor.count, "gifts")}</span>
                         </span>
                         <span className="num text-sm font-semibold">{formatNaira(donor.total)}</span>
                       </div>
@@ -158,7 +163,7 @@ export default function GivingAnalyticsPage() {
             <p className="rule-label mr-2">By status</p>
             {Object.entries(g.byStatus ?? {}).map(([status, count]) => (
               <Tag key={status} tone={status === "confirmed" || status === "paid" ? "moss" : status === "pending" ? "gold" : "neutral"} dot>
-                {status} · {number(count)}
+                {formatStatusLabel(status)} · {number(count)}
               </Tag>
             ))}
           </div>

@@ -1,0 +1,157 @@
+
+> belivrhq-web@0.1.0 build
+> next build
+
+   ▲ Next.js 15.5.28
+   - Environments: .env.local
+   - Experiments (use with caution):
+     · clientTraceMetadata
+
+   Creating an optimized production build ...
+ ✓ (serwist) Bundling the service worker script with the URL '/sw.js' and the scope '/'...
+(node:349110) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ Compiled successfully in 89s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/114) ...
+   Generating static pages (28/114) 
+   Generating static pages (56/114) 
+   Generating static pages (85/114) 
+ ✓ Generating static pages (114/114)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                         Size  First Load JS
+┌ ○ /                                              420 B         288 kB
+├ ○ /_not-found                                  1.17 kB         214 kB
+├ ● /[legalPage]                                   973 B         288 kB
+├   ├ /privacy-policy
+├   ├ /terms-of-service
+├   └ /terms-and-conditions
+├ ○ /accept-invitation                           2.73 kB         377 kB
+├ ○ /admin/channels                              17.6 kB         400 kB
+├ ○ /admin/church                                10.7 kB         511 kB
+├ ○ /admin/locations                             11.9 kB         713 kB
+├ ƒ /admin/locations/[branchId]                     6 kB         699 kB
+├ ○ /admin/permissions                           16.3 kB         459 kB
+├ ƒ /admin/permissions/[roleName]                9.56 kB         394 kB
+├ ○ /admin/team                                  20.2 kB         469 kB
+├ ƒ /admin/team/[profileId]                      16.1 kB         521 kB
+├ ƒ /api/backend/[...path]                         368 B         213 kB
+├ ƒ /api/health/ready                              366 B         213 kB
+├ ƒ /api/registration-checkout                     366 B         213 kB
+├ ƒ /api/sentry-test                               365 B         213 kB
+├ ƒ /api/session                                   367 B         213 kB
+├ ○ /connect/appointments                          24 kB         567 kB
+├ ○ /connect/broadcasts                          10.1 kB         418 kB
+├ ○ /connect/inbox                               18.4 kB         401 kB
+├ ○ /connect/messages                            6.41 kB         391 kB
+├ ○ /connect/templates                           8.58 kB         417 kB
+├ ○ /docs                                        4.08 kB         229 kB
+├ ○ /forgot-password                             2.02 kB         377 kB
+├ ƒ /forms/public/[publicToken]                  12.4 kB         333 kB
+├ ○ /gatherings/attendance                       11.5 kB         513 kB
+├ ○ /gatherings/attendance/check-in              6.48 kB         437 kB
+├ ○ /gatherings/attendance/records               13.4 kB         421 kB
+├ ○ /gatherings/attendance/reports               14.5 kB         535 kB
+├ ○ /gatherings/attendance/services              10.1 kB         422 kB
+├ ƒ /gatherings/attendance/services/[serviceId]  9.83 kB         438 kB
+├ ○ /gatherings/events                           13.7 kB         403 kB
+├ ƒ /gatherings/events/[eventId]                 7.43 kB         435 kB
+├ ƒ /gatherings/events/[eventId]/edit            10.5 kB         395 kB
+├ ○ /gatherings/events/check-in                  6.54 kB         442 kB
+├ ○ /gatherings/events/list                      13.6 kB         415 kB
+├ ○ /gatherings/events/new                       13.1 kB         347 kB
+├ ○ /gatherings/events/registrations             20.3 kB         436 kB
+├ ○ /gatherings/events/tickets                    158 kB         574 kB
+├ ○ /gatherings/events/tiers                     12.2 kB         399 kB
+├ ○ /gatherings/groups                           7.39 kB         588 kB
+├ ƒ /gatherings/groups/[deptId]                  11.8 kB         609 kB
+├ ○ /gatherings/groups/cell                      5.89 kB         587 kB
+├ ƒ /gatherings/groups/cell/[groupId]            18.6 kB         621 kB
+├ ○ /giving/donations                              11 kB         442 kB
+├ ○ /giving/funds                                11.5 kB         394 kB
+├ ○ /giving/overview                             8.67 kB         534 kB
+├ ○ /giving/schedules                            10.1 kB         433 kB
+├ ○ /giving/statements                           11.6 kB         530 kB
+├ ○ /help                                        9.06 kB         315 kB
+├ ● /help/[slug]                                 5.11 kB         339 kB
+├   ├ /help/set-up-your-church
+├   ├ /help/sign-in-and-account-recovery
+├   ├ /help/invite-staff-and-manage-access
+├   └ [+17 more paths]
+├ ○ /help/contact-support                         6.6 kB         285 kB
+├ ○ /home                                          11 kB         516 kB
+├ ○ /insights/analytics                          9.24 kB         511 kB
+├ ○ /insights/analytics/attendance               8.18 kB         510 kB
+├ ○ /insights/analytics/giving                   8.49 kB         511 kB
+├ ○ /insights/analytics/members                  7.93 kB         510 kB
+├ ○ /insights/reports                            8.45 kB         519 kB
+├ ○ /library/forms                               17.1 kB         425 kB
+├ ƒ /library/forms/[formId]                      5.34 kB         428 kB
+├ ƒ /library/forms/[formId]/edit                 2.59 kB         446 kB
+├ ƒ /library/forms/[formId]/fill                 7.61 kB         396 kB
+├ ○ /library/forms/new                           1.16 kB         445 kB
+├ ○ /library/forms/submissions                   3.33 kB         426 kB
+├ ○ /library/media                               9.74 kB         417 kB
+├ ○ /library/media/folders                       8.63 kB         416 kB
+├ ○ /library/sermons                             12.6 kB         421 kB
+├ ƒ /library/sermons/[sermonId]                  11.7 kB         394 kB
+├ ƒ /library/sermons/[sermonId]/edit             5.83 kB         458 kB
+├ ○ /library/sermons/new                         3.93 kB         456 kB
+├ ○ /library/sermons/series                      4.18 kB         420 kB
+├ ○ /library/sermons/speakers                    4.01 kB         420 kB
+├ ○ /login                                       8.61 kB         383 kB
+├ ○ /notifications                               14.1 kB         399 kB
+├ ○ /offline                                       716 B         288 kB
+├ ○ /operations/assets                           10.2 kB         450 kB
+├ ƒ /operations/assets/[assetId]                 4.27 kB         432 kB
+├ ƒ /operations/assets/[assetId]/edit             1.6 kB         455 kB
+├ ○ /operations/assets/categories                13.6 kB         444 kB
+├ ○ /operations/assets/loans                       983 B         586 kB
+├ ○ /operations/assets/maintenance                 877 B         586 kB
+├ ○ /operations/assets/new                       1.07 kB         454 kB
+├ ○ /payment/complete                              717 B         288 kB
+├ ○ /people/families                             19.8 kB         482 kB
+├ ƒ /people/families/[familyId]                  14.1 kB         450 kB
+├ ○ /people/members                              12.2 kB         484 kB
+├ ƒ /people/members/[memberId]                   18.6 kB         570 kB
+├ ○ /people/members/import                         922 B         444 kB
+├ ○ /people/members/new                            11 kB         444 kB
+├ ○ /people/pastoral                             15.6 kB         562 kB
+├ ○ /people/pastoral/care                        2.92 kB         391 kB
+├ ○ /people/pastoral/engagement                  3.76 kB         393 kB
+├ ○ /people/pastoral/life-events                 12.2 kB         564 kB
+├ ○ /people/pastoral/risk                        3.47 kB         392 kB
+├ ○ /people/segments                               15 kB         397 kB
+├ ○ /people/visitors                               10 kB         480 kB
+├ ƒ /people/visitors/[visitorId]                 13.5 kB         456 kB
+├ ○ /people/visitors/follow-up                   27.6 kB         482 kB
+├ ○ /people/visitors/import                        937 B         444 kB
+├ ○ /register                                    18.1 kB         393 kB
+├ ƒ /register/public/[token]                     6.62 kB         325 kB
+├ ○ /reset-password                              5.71 kB         380 kB
+├ ○ /robots.txt                                    367 B         213 kB
+├ ○ /search                                      13.2 kB         395 kB
+├ ○ /settings/appearance                         11.1 kB         332 kB
+├ ○ /settings/billing                            13.9 kB         416 kB
+├ ○ /settings/notifications                        368 B         213 kB
+├ ○ /settings/profile                            9.06 kB         391 kB
+├ ○ /settings/security                           9.84 kB         385 kB
+├ ○ /sitemap.xml                                   367 B         213 kB
+├ ○ /subscription                                24.4 kB         436 kB
+└ ○ /support                                     8.77 kB         297 kB
++ First Load JS shared by all                     213 kB
+  ├ chunks/4970-f4b496a5e7c97241.js               114 kB
+  ├ chunks/4a7b0c69-c1994b0770b189c5.js          38.3 kB
+  ├ chunks/4bd1b696-3ef94143676c707d.js          54.4 kB
+  └ other shared chunks (total)                  5.99 kB
+
+
+ƒ Middleware                                     85.7 kB
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+

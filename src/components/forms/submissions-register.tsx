@@ -1,5 +1,9 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import * as React from "react";
 import {
   CheckCheck,
@@ -20,7 +24,7 @@ import {
   SortDirectionToggle,
   ViewToggle,
 } from "@/components/paper/primitives";
-import { Tag } from "@/components/paper/stat";
+import { SubmissionStatusBadge } from "./submission-status-badge";
 import {
   Select,
   SelectContent,
@@ -229,7 +233,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
         <div>
           <h2 className="font-display text-lg font-semibold">Submissions</h2>
           <p className="mt-1 text-sm text-ink-soft">
-            {total} matching responses · {form.title}
+            {total} matching {collectionLabel(total, "responses")} · {form.title}
           </p>
         </div>
         <ExportDropdown
@@ -253,12 +257,8 @@ export function SubmissionsRegister({ form }: { form: Form }) {
           }
         />
       </div>
-      <div
-        role="group"
-        aria-label="Submission list controls"
-        className="flex flex-wrap items-center gap-2"
-      >
-        <SearchField
+      <ListToolbar role="group" aria-label="Submission list controls"
+ search={<SearchField
           value={query}
           onChange={(value) => {
             setQuery(value);
@@ -266,9 +266,36 @@ export function SubmissionsRegister({ form }: { form: Form }) {
           }}
           placeholder="Search answers or reference…"
           className="w-full max-w-xs"
-        />
-        <div className="ml-auto flex max-w-full flex-wrap items-center gap-2">
-          {select(
+        />}
+ controls={<>
+{select(
+            "Sort submissions",
+            sortBy,
+            (value) => setSortBy(value as typeof sortBy),
+            [
+              { value: "createdAt", label: "Date submitted" },
+              { value: "status", label: "Status" },
+              { value: "id", label: "Reference" },
+            ],
+          )}
+<SortDirectionToggle
+            ascending={ascending}
+            onToggle={() => {
+              setAscending((value) => !value);
+              setPage(1);
+            }}
+          />
+<ViewToggle
+            value={view}
+            onChange={setView}
+            options={[
+              { value: "table", label: "List view", icon: <Rows3 /> },
+              { value: "cards", label: "Card view", icon: <LayoutGrid /> },
+            ]}
+          />
+</>}
+>
+{select(
             "Submission status",
             status,
             (value) => setStatus(value as typeof status),
@@ -279,7 +306,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
               ),
             ],
           )}
-          {select(
+{select(
             "Submission source",
             source,
             (value) => setSource(value as typeof source),
@@ -289,32 +316,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
               { value: "member", label: "Signed in" },
             ],
           )}
-          {select(
-            "Sort submissions",
-            sortBy,
-            (value) => setSortBy(value as typeof sortBy),
-            [
-              { value: "createdAt", label: "Date submitted" },
-              { value: "status", label: "Status" },
-              { value: "id", label: "Reference" },
-            ],
-          )}
-          <SortDirectionToggle
-            ascending={ascending}
-            onToggle={() => {
-              setAscending((value) => !value);
-              setPage(1);
-            }}
-          />
-          <ViewToggle
-            value={view}
-            onChange={setView}
-            options={[
-              { value: "table", label: "List view", icon: <Rows3 /> },
-              { value: "cards", label: "Card view", icon: <LayoutGrid /> },
-            ]}
-          />
-          {filtered && (
+{filtered && (
             <button
               type="button"
               onClick={clear}
@@ -323,8 +325,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
               Clear filters
             </button>
           )}
-        </div>
-      </div>
+</ListToolbar>
       {submissions.isError ? (
         <EmptyState
           icon={<Inbox />}
@@ -407,17 +408,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
                   {answers(row, form)}
                 </span>
                 <span>
-                  <Tag
-                    tone={
-                      row.status === "approved"
-                        ? "moss"
-                        : row.status === "rejected"
-                          ? "rose"
-                          : "gold"
-                    }
-                  >
-                    {SUBMISSION_STATUS_LABELS[row.status]}
-                  </Tag>
+                  <SubmissionStatusBadge status={row.status} />
                 </span>
                 <span className="text-ink-soft">
                   {row.submittedBy ? "Signed in" : "Public"}
@@ -443,17 +434,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
                 {answers(row, form)}
               </p>
               <div className="flex flex-wrap items-center gap-2">
-                <Tag
-                  tone={
-                    row.status === "approved"
-                      ? "moss"
-                      : row.status === "rejected"
-                        ? "rose"
-                        : "gold"
-                  }
-                >
-                  {SUBMISSION_STATUS_LABELS[row.status]}
-                </Tag>
+                <SubmissionStatusBadge status={row.status} />
                 <span className="text-sm text-ink-faint">
                   {formatDate(row.createdAt)}
                 </span>

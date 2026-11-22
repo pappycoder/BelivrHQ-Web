@@ -68,6 +68,17 @@
   backdrop-filter: blur(18px);
   border-bottom: 1px solid rgba(24, 59, 64, 0.08);
 }
+.paperHeader {
+  background: color-mix(in srgb, var(--paper) 94%, transparent);
+  color: var(--ink);
+  border-bottom-color: var(--line);
+}
+.paperHeader :is(.smallButton, .primaryButton) {
+  color: var(--paper) !important;
+}
+.paperHeader :is(.desktopLinks a, .signIn):hover {
+  color: var(--brand);
+}
 .navigation {
   max-width: 1240px;
   min-height: 86px;

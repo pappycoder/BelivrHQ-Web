@@ -1,5 +1,8 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -25,7 +28,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { MemberScoringDialog } from "@/components/pastoral/member-scoring-dialog";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
-  useRiskScores,
+  useRiskScoresAll,
   useRecalculateScores,
   RISK_LEVEL_LABELS,
   RISK_FACTOR_LABELS,
@@ -60,7 +63,7 @@ export default function RiskRadarPage() {
   const { can, ready } = usePermissions();
   const canRecalculate = ready && can("pastoral", "update");
 
-  const scores = useRiskScores({ limit: 200, sortBy: "score", sortOrder: "desc" });
+  const scores = useRiskScoresAll({ sortBy: "score", sortOrder: "desc" });
   const recalculate = useRecalculateScores();
 
   const [query, setQuery] = React.useState("");
@@ -68,7 +71,7 @@ export default function RiskRadarPage() {
   const [scoring, setScoring] = React.useState<RiskScore | null>(null);
 
   const rows = React.useMemo(() => {
-    const all = scores.data?.data ?? [];
+    const all = scores.data ?? [];
     const q = query.trim().toLowerCase();
     return all.filter((r) => {
       const name = `${r.memberFirstName} ${r.memberLastName}`.toLowerCase();
@@ -77,7 +80,7 @@ export default function RiskRadarPage() {
   }, [scores.data, query, level]);
 
   const counts = React.useMemo(() => {
-    const all = scores.data?.data ?? [];
+    const all = scores.data ?? [];
     return {
       high: all.filter((r) => r.level === "critical" || r.level === "high").length,
       medium: all.filter((r) => r.level === "medium").length,
@@ -116,12 +119,12 @@ export default function RiskRadarPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {!scores.isError && <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="High signal" value={counts.high} tone="rose" icon={<HeartPulse className="size-4" />} deltaLabel="worth calling" />
         <StatCard label="Watching" value={counts.medium} tone="gold" />
         <StatCard label="Steady" value={counts.improving} tone="moss" deltaLabel="recent activity" />
         <StatCard label="Scored members" value={counts.total} tone="sky" icon={<Activity className="size-4" />} />
-      </div>
+      </div>}
 
       <div className="flex flex-wrap items-center gap-2">
         <SearchField value={query} onChange={setQuery} placeholder="Search by name…" className="w-full max-w-xs" />
@@ -136,6 +139,13 @@ export default function RiskRadarPage() {
         <div className="space-y-2">
           {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-2xl" />)}
         </div>
+      ) : scores.isError ? (
+        <EmptyState
+          icon={<HeartPulse />}
+          title="Risk scores could not be loaded"
+          description="Try loading the scores again. An unavailable score list does not mean there are no members needing care."
+          action={<Button variant="outline" onClick={() => void scores.refetch()}>Retry</Button>}
+        />
       ) : rows.length === 0 ? (
         <EmptyState
           icon={<HeartPulse />}
@@ -148,14 +158,14 @@ export default function RiskRadarPage() {
             const name = `${row.memberFirstName} ${row.memberLastName}`;
             return (
               <StaggerItem key={row.id}>
-                <div className="paper-card lift rounded-2xl p-4">
+                <div data-tour-records className="paper-card lift rounded-2xl p-4">
                   <div className="flex flex-wrap items-center gap-4">
                     <button type="button" onClick={() => setScoring(row)} className="flex min-w-0 flex-1 items-center gap-3 text-left">
                       <PersonAvatar name={name} size="md" />
                       <div className="min-w-0">
                         <p className="truncate text-sm font-semibold">{name}</p>
                         <p className="truncate text-xs text-ink-faint">
-                          {row.memberStatus ?? "member"} · last calculated {formatDate(row.calculatedAt)}
+                          {formatStatusLabel(row.memberStatus, "Member")} · last calculated {formatDate(row.calculatedAt)}
                         </p>
                       </div>
                     </button>

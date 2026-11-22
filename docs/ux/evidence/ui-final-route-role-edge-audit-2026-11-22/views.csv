@@ -1,0 +1,737 @@
+scenario,route,label,width,heading,overflow,skeletons,screenshotSettled
+live,/admin/channels,light-1280,1280,"Your tools, working together.",False,0,True
+live,/admin/channels,light-390,390,"Your tools, working together.",False,0,True
+live,/admin/channels,dark-1280,1280,"Your tools, working together.",False,0,True
+live,/admin/channels,dark-390,390,"Your tools, working together.",False,0,True
+live,/admin/church,light-1280,1280,The church's own details.,False,0,True
+live,/admin/church,light-390,390,The church's own details.,False,0,True
+live,/admin/church,dark-1280,1280,The church's own details.,False,0,True
+live,/admin/church,dark-390,390,The church's own details.,False,0,True
+live,/admin/locations/c9f4db77-b9da-471a-91bd-06ca05bbf780,light-1280,1280,Apapa Zone,False,0,True
+live,/admin/locations/c9f4db77-b9da-471a-91bd-06ca05bbf780,light-390,390,Apapa Zone,False,0,True
+live,/admin/locations/c9f4db77-b9da-471a-91bd-06ca05bbf780,dark-1280,1280,Apapa Zone,False,0,True
+live,/admin/locations/c9f4db77-b9da-471a-91bd-06ca05bbf780,dark-390,390,Apapa Zone,False,0,True
+live,/admin/locations,light-1280,1280,"Many rooms, one register.",False,0,True
+live,/admin/locations,light-390,390,"Many rooms, one register.",False,0,True
+live,/admin/locations,dark-1280,1280,"Many rooms, one register.",False,0,True
+live,/admin/locations,dark-390,390,"Many rooms, one register.",False,0,True
+live,/admin/permissions/church_admin,light-1280,1280,Church Admin,False,0,True
+live,/admin/permissions/church_admin,light-390,390,Church Admin,False,0,True
+live,/admin/permissions/church_admin,dark-1280,1280,Church Admin,False,0,True
+live,/admin/permissions/church_admin,dark-390,390,Church Admin,False,0,True
+live,/admin/permissions,light-1280,1280,What each role can reach.,False,0,True
+live,/admin/permissions,light-390,390,What each role can reach.,False,0,True
+live,/admin/permissions,dark-1280,1280,What each role can reach.,False,0,True
+live,/admin/permissions,dark-390,390,What each role can reach.,False,0,True
+live,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,light-1280,1280,Dennis Kolawole,False,0,True
+live,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,light-390,390,Dennis Kolawole,False,0,True
+live,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,dark-1280,1280,Dennis Kolawole,False,0,True
+live,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,dark-390,390,Dennis Kolawole,False,0,True
+live,/admin/team,light-1280,1280,The people behind the desk.,False,0,True
+live,/admin/team,light-390,390,The people behind the desk.,False,0,True
+live,/admin/team,dark-1280,1280,The people behind the desk.,False,0,True
+live,/admin/team,dark-390,390,The people behind the desk.,False,0,True
+live,/connect/appointments,light-1280,1280,Time set aside for people.,False,0,True
+live,/connect/appointments,light-390,390,Time set aside for people.,False,0,True
+live,/connect/appointments,dark-1280,1280,Time set aside for people.,False,0,True
+live,/connect/appointments,dark-390,390,Time set aside for people.,False,0,True
+live,/connect/broadcasts,light-1280,1280,"Say it once, well.",False,0,True
+live,/connect/broadcasts,light-390,390,"Say it once, well.",False,0,True
+live,/connect/broadcasts,dark-1280,1280,"Say it once, well.",False,0,True
+live,/connect/broadcasts,dark-390,390,"Say it once, well.",False,0,True
+live,/connect/inbox,light-1280,1280,A place to stay connected.,False,0,True
+live,/connect/inbox,light-390,390,A place to stay connected.,False,0,True
+live,/connect/inbox,dark-1280,1280,A place to stay connected.,False,0,True
+live,/connect/inbox,dark-390,390,A place to stay connected.,False,0,True
+live,/connect/messages,light-1280,1280,"SMS and WhatsApp, in one stream.",False,0,True
+live,/connect/messages,light-390,390,"SMS and WhatsApp, in one stream.",False,0,True
+live,/connect/messages,dark-1280,1280,"SMS and WhatsApp, in one stream.",False,0,True
+live,/connect/messages,dark-390,390,"SMS and WhatsApp, in one stream.",False,0,True
+live,/connect/templates,light-1280,1280,Words worth reusing.,False,0,True
+live,/connect/templates,light-390,390,Words worth reusing.,False,0,True
+live,/connect/templates,dark-1280,1280,Words worth reusing.,False,0,True
+live,/connect/templates,dark-390,390,Words worth reusing.,False,0,True
+live,/gatherings/attendance/check-in,light-1280,1280,Service attendance,False,0,True
+live,/gatherings/attendance/check-in,light-390,390,Service attendance,False,0,True
+live,/gatherings/attendance/check-in,dark-1280,1280,Service attendance,False,0,True
+live,/gatherings/attendance/check-in,dark-390,390,Service attendance,False,0,True
+live,/gatherings/attendance,light-1280,1280,"Who gathers, week by week.",False,0,True
+live,/gatherings/attendance,light-390,390,"Who gathers, week by week.",False,0,True
+live,/gatherings/attendance,dark-1280,1280,"Who gathers, week by week.",False,0,True
+live,/gatherings/attendance,dark-390,390,"Who gathers, week by week.",False,0,True
+live,/gatherings/attendance/records,light-1280,1280,The record book.,False,0,True
+live,/gatherings/attendance/records,light-390,390,The record book.,False,0,True
+live,/gatherings/attendance/records,dark-1280,1280,The record book.,False,0,True
+live,/gatherings/attendance/records,dark-390,390,The record book.,False,0,True
+live,/gatherings/attendance/reports,light-1280,1280,"The room, reported.",False,0,True
+live,/gatherings/attendance/reports,light-390,390,"The room, reported.",False,0,True
+live,/gatherings/attendance/reports,dark-1280,1280,"The room, reported.",False,0,True
+live,/gatherings/attendance/reports,dark-390,390,"The room, reported.",False,0,True
+live,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,light-1280,1280,Sunday Service,False,0,True
+live,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,light-390,390,Sunday Service,False,0,True
+live,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,dark-1280,1280,Sunday Service,False,0,True
+live,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,dark-390,390,Sunday Service,False,0,True
+live,/gatherings/attendance/services,light-1280,1280,The weekly rhythm.,False,0,True
+live,/gatherings/attendance/services,light-390,390,The weekly rhythm.,False,0,True
+live,/gatherings/attendance/services,dark-1280,1280,The weekly rhythm.,False,0,True
+live,/gatherings/attendance/services,dark-390,390,The weekly rhythm.,False,0,True
+live,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,light-1280,1280,Amend the plan.,False,0,True
+live,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,light-390,390,Amend the plan.,False,0,True
+live,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,dark-1280,1280,Amend the plan.,False,0,True
+live,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,dark-390,390,Amend the plan.,False,0,True
+live,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,light-1280,1280,Youth Conference 2026,False,0,True
+live,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,light-390,390,Youth Conference 2026,False,0,True
+live,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,dark-1280,1280,Youth Conference 2026,False,0,True
+live,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,dark-390,390,Youth Conference 2026,False,0,True
+live,/gatherings/events/check-in,light-1280,1280,Event attendance,False,0,True
+live,/gatherings/events/check-in,light-390,390,Event attendance,False,0,True
+live,/gatherings/events/check-in,dark-1280,1280,Event attendance,False,0,True
+live,/gatherings/events/check-in,dark-390,390,Event attendance,False,0,True
+live,/gatherings/events/list,light-1280,1280,"Every event, in one place.",False,0,True
+live,/gatherings/events/list,light-390,390,"Every event, in one place.",False,0,True
+live,/gatherings/events/list,dark-1280,1280,"Every event, in one place.",False,0,True
+live,/gatherings/events/list,dark-390,390,"Every event, in one place.",False,0,True
+live,/gatherings/events/new,light-1280,1280,Plan something new.,False,0,True
+live,/gatherings/events/new,light-390,390,Plan something new.,False,0,True
+live,/gatherings/events/new,dark-1280,1280,Plan something new.,False,0,True
+live,/gatherings/events/new,dark-390,390,Plan something new.,False,0,True
+live,/gatherings/events,light-1280,1280,"The season, laid out gently.",False,0,True
+live,/gatherings/events,light-390,390,"The season, laid out gently.",False,0,True
+live,/gatherings/events,dark-1280,1280,"The season, laid out gently.",False,0,True
+live,/gatherings/events,dark-390,390,"The season, laid out gently.",False,0,True
+live,/gatherings/events/registrations,light-1280,1280,Who's coming.,False,0,True
+live,/gatherings/events/registrations,light-390,390,Who's coming.,False,0,True
+live,/gatherings/events/registrations,dark-1280,1280,Who's coming.,False,0,True
+live,/gatherings/events/registrations,dark-390,390,Who's coming.,False,0,True
+live,/gatherings/events/tickets,light-1280,1280,Issued tickets.,False,0,True
+live,/gatherings/events/tickets,light-390,390,Issued tickets.,False,0,True
+live,/gatherings/events/tickets,dark-1280,1280,Issued tickets.,False,0,True
+live,/gatherings/events/tickets,dark-390,390,Issued tickets.,False,0,True
+live,/gatherings/events/tiers,light-1280,1280,"Pricing and capacity, decided kindly.",False,0,True
+live,/gatherings/events/tiers,light-390,390,"Pricing and capacity, decided kindly.",False,0,True
+live,/gatherings/events/tiers,dark-1280,1280,"Pricing and capacity, decided kindly.",False,0,True
+live,/gatherings/events/tiers,dark-390,390,"Pricing and capacity, decided kindly.",False,0,True
+live,/gatherings/groups/9b061845-a180-4f1c-ad0a-74e2075b4b79,light-1280,1280,Choir,False,0,True
+live,/gatherings/groups/9b061845-a180-4f1c-ad0a-74e2075b4b79,light-390,390,Choir,False,0,True
+live,/gatherings/groups/9b061845-a180-4f1c-ad0a-74e2075b4b79,dark-1280,1280,Choir,False,0,True
+live,/gatherings/groups/9b061845-a180-4f1c-ad0a-74e2075b4b79,dark-390,390,Choir,False,0,True
+live,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,light-1280,1280,Apapa Cell Group,False,0,True
+live,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,light-390,390,Apapa Cell Group,False,0,True
+live,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,dark-1280,1280,Apapa Cell Group,False,0,True
+live,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,dark-390,390,Apapa Cell Group,False,0,True
+live,/gatherings/groups/cell,light-1280,1280,Cell groups,False,0,True
+live,/gatherings/groups/cell,light-390,390,Cell groups,False,0,True
+live,/gatherings/groups/cell,dark-1280,1280,Cell groups,False,0,True
+live,/gatherings/groups/cell,dark-390,390,Cell groups,False,0,True
+live,/gatherings/groups,light-1280,1280,Manage the departments and teams that serve your church.,False,0,True
+live,/gatherings/groups,light-390,390,Manage the departments and teams that serve your church.,False,0,True
+live,/gatherings/groups,dark-1280,1280,Manage the departments and teams that serve your church.,False,0,True
+live,/gatherings/groups,dark-390,390,Manage the departments and teams that serve your church.,False,0,True
+live,/giving/donations,light-1280,1280,"Every gift, one feed.",False,0,True
+live,/giving/donations,light-390,390,"Every gift, one feed.",False,0,True
+live,/giving/donations,dark-1280,1280,"Every gift, one feed.",False,0,True
+live,/giving/donations,dark-390,390,"Every gift, one feed.",False,0,True
+live,/giving/funds,light-1280,1280,Giving categories.,False,0,True
+live,/giving/funds,light-390,390,Giving categories.,False,0,True
+live,/giving/funds,dark-1280,1280,Giving categories.,False,0,True
+live,/giving/funds,dark-390,390,Giving categories.,False,0,True
+live,/giving/overview,light-1280,1280,"Generosity, seen clearly.",False,0,True
+live,/giving/overview,light-390,390,"Generosity, seen clearly.",False,0,True
+live,/giving/overview,dark-1280,1280,"Generosity, seen clearly.",False,0,True
+live,/giving/overview,dark-390,390,"Generosity, seen clearly.",False,0,True
+live,/giving/schedules,light-1280,1280,The floor under the year.,False,0,True
+live,/giving/schedules,light-390,390,The floor under the year.,False,0,True
+live,/giving/schedules,dark-1280,1280,The floor under the year.,False,0,True
+live,/giving/schedules,dark-390,390,The floor under the year.,False,0,True
+live,/giving/statements,light-1280,1280,"Receipts-ready, year after year.",False,0,True
+live,/giving/statements,light-390,390,"Receipts-ready, year after year.",False,0,True
+live,/giving/statements,dark-1280,1280,"Receipts-ready, year after year.",False,0,True
+live,/giving/statements,dark-390,390,"Receipts-ready, year after year.",False,0,True
+live,/home,light-1280,1280,"Good morning, Dennis.",False,0,True
+live,/home,light-390,390,"Good morning, Dennis.",False,0,True
+live,/home,dark-1280,1280,"Good morning, Dennis.",False,0,True
+live,/home,dark-390,390,"Good morning, Dennis.",False,0,True
+live,/insights/analytics/attendance,light-1280,1280,"Attendance, in depth.",False,0,True
+live,/insights/analytics/attendance,light-390,390,"Attendance, in depth.",False,0,True
+live,/insights/analytics/attendance,dark-1280,1280,"Attendance, in depth.",False,0,True
+live,/insights/analytics/attendance,dark-390,390,"Attendance, in depth.",False,0,True
+live,/insights/analytics/giving,light-1280,1280,"Giving, in depth.",False,0,True
+live,/insights/analytics/giving,light-390,390,"Giving, in depth.",False,0,True
+live,/insights/analytics/giving,dark-1280,1280,"Giving, in depth.",False,0,True
+live,/insights/analytics/giving,dark-390,390,"Giving, in depth.",False,0,True
+live,/insights/analytics/members,light-1280,1280,The growing family.,False,0,True
+live,/insights/analytics/members,light-390,390,The growing family.,False,0,True
+live,/insights/analytics/members,dark-1280,1280,The growing family.,False,0,True
+live,/insights/analytics/members,dark-390,390,The growing family.,False,0,True
+live,/insights/analytics,light-1280,1280,The story the numbers tell.,False,0,True
+live,/insights/analytics,light-390,390,The story the numbers tell.,False,0,True
+live,/insights/analytics,dark-1280,1280,The story the numbers tell.,False,0,True
+live,/insights/analytics,dark-390,390,The story the numbers tell.,False,0,True
+live,/insights/reports,light-1280,1280,Report studio,False,0,True
+live,/insights/reports,light-390,390,Report studio,False,0,True
+live,/insights/reports,dark-1280,1280,Report studio,False,0,True
+live,/insights/reports,dark-390,390,Report studio,False,0,True
+live,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,light-1280,1280,Amend the form.,False,0,True
+live,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,light-390,390,Amend the form.,False,0,True
+live,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,dark-1280,1280,Amend the form.,False,0,True
+live,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,dark-390,390,Amend the form.,False,0,True
+live,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,light-1280,1280,Person Draft Form,False,0,True
+live,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,light-390,390,Person Draft Form,False,0,True
+live,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,dark-1280,1280,Person Draft Form,False,0,True
+live,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,dark-390,390,Person Draft Form,False,0,True
+live,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,light-1280,1280,Person Draft Form,False,0,True
+live,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,light-390,390,Person Draft Form,False,0,True
+live,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,dark-1280,1280,Person Draft Form,False,0,True
+live,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,dark-390,390,Person Draft Form,False,0,True
+live,/library/forms/new,light-1280,1280,Build a form.,False,0,True
+live,/library/forms/new,light-390,390,Build a form.,False,0,True
+live,/library/forms/new,dark-1280,1280,Build a form.,False,0,True
+live,/library/forms/new,dark-390,390,Build a form.,False,0,True
+live,/library/forms,light-1280,1280,"Ask once, read everything.",False,0,True
+live,/library/forms,light-390,390,"Ask once, read everything.",False,0,True
+live,/library/forms,dark-1280,1280,"Ask once, read everything.",False,0,True
+live,/library/forms,dark-390,390,"Ask once, read everything.",False,0,True
+live,/library/forms/submissions,light-1280,1280,"Every answer, one inbox.",False,0,True
+live,/library/forms/submissions,light-390,390,"Every answer, one inbox.",False,0,True
+live,/library/forms/submissions,dark-1280,1280,"Every answer, one inbox.",False,0,True
+live,/library/forms/submissions,dark-390,390,"Every answer, one inbox.",False,0,True
+live,/library/media/folders,light-1280,1280,"Folders, kept tidy on purpose.",False,0,True
+live,/library/media/folders,light-390,390,"Folders, kept tidy on purpose.",False,0,True
+live,/library/media/folders,dark-1280,1280,"Folders, kept tidy on purpose.",False,0,True
+live,/library/media/folders,dark-390,390,"Folders, kept tidy on purpose.",False,0,True
+live,/library/media,light-1280,1280,The church's visual memory.,False,0,True
+live,/library/media,light-390,390,The church's visual memory.,False,0,True
+live,/library/media,dark-1280,1280,The church's visual memory.,False,0,True
+live,/library/media,dark-390,390,The church's visual memory.,False,0,True
+live,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,light-1280,1280,Amend the record.,False,0,True
+live,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,light-390,390,Amend the record.,False,0,True
+live,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,dark-1280,1280,Amend the record.,False,0,True
+live,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,dark-390,390,Amend the record.,False,0,True
+live,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,light-1280,1280,Walking in Faith,False,0,True
+live,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,light-390,390,Walking in Faith,False,0,True
+live,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,dark-1280,1280,Walking in Faith,False,0,True
+live,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,dark-390,390,Walking in Faith,False,0,True
+live,/library/sermons/new,light-1280,1280,Publish this week's message.,False,0,True
+live,/library/sermons/new,light-390,390,Publish this week's message.,False,0,True
+live,/library/sermons/new,dark-1280,1280,Publish this week's message.,False,0,True
+live,/library/sermons/new,dark-390,390,Publish this week's message.,False,0,True
+live,/library/sermons,light-1280,1280,Words worth returning to.,False,0,True
+live,/library/sermons,light-390,390,Words worth returning to.,False,0,True
+live,/library/sermons,dark-1280,1280,Words worth returning to.,False,0,True
+live,/library/sermons,dark-390,390,Words worth returning to.,False,0,True
+live,/library/sermons/series,light-1280,1280,Organise related sermons into series.,False,0,True
+live,/library/sermons/series,light-390,390,Organise related sermons into series.,False,0,True
+live,/library/sermons/series,dark-1280,1280,Organise related sermons into series.,False,0,True
+live,/library/sermons/series,dark-390,390,Organise related sermons into series.,False,0,True
+live,/library/sermons/speakers,light-1280,1280,The voices in the room.,False,0,True
+live,/library/sermons/speakers,light-390,390,The voices in the room.,False,0,True
+live,/library/sermons/speakers,dark-1280,1280,The voices in the room.,False,0,True
+live,/library/sermons/speakers,dark-390,390,The voices in the room.,False,0,True
+live,/notifications,light-1280,1280,Notifications,False,0,True
+live,/notifications,light-390,390,Notifications,False,0,True
+live,/notifications,dark-1280,1280,Notifications,False,0,True
+live,/notifications,dark-390,390,Notifications,False,0,True
+live,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,light-1280,1280,Amend UI TEST — Portable projector.,False,0,True
+live,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,light-390,390,Amend UI TEST — Portable projector.,False,0,True
+live,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,dark-1280,1280,Amend UI TEST — Portable projector.,False,0,True
+live,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,dark-390,390,Amend UI TEST — Portable projector.,False,0,True
+live,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd,light-1280,1280,UI TEST — Portable projector,False,0,True
+live,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd,light-390,390,UI TEST — Portable projector,False,0,True
+live,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd,dark-1280,1280,UI TEST — Portable projector,False,0,True
+live,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd,dark-390,390,UI TEST — Portable projector,False,0,True
+live,/operations/assets/categories,light-1280,1280,Organise your asset register with categories.,False,0,True
+live,/operations/assets/categories,light-390,390,Organise your asset register with categories.,False,0,True
+live,/operations/assets/categories,dark-1280,1280,Organise your asset register with categories.,False,0,True
+live,/operations/assets/categories,dark-390,390,Organise your asset register with categories.,False,0,True
+live,/operations/assets/loans,light-1280,1280,"Borrowed out, expected back.",False,0,True
+live,/operations/assets/loans,light-390,390,"Borrowed out, expected back.",False,0,True
+live,/operations/assets/loans,dark-1280,1280,"Borrowed out, expected back.",False,0,True
+live,/operations/assets/loans,dark-390,390,"Borrowed out, expected back.",False,0,True
+live,/operations/assets/maintenance,light-1280,1280,"Service, scheduled before it's urgent.",False,0,True
+live,/operations/assets/maintenance,light-390,390,"Service, scheduled before it's urgent.",False,0,True
+live,/operations/assets/maintenance,dark-1280,1280,"Service, scheduled before it's urgent.",False,0,True
+live,/operations/assets/maintenance,dark-390,390,"Service, scheduled before it's urgent.",False,0,True
+live,/operations/assets/new,light-1280,1280,Register a new asset.,False,0,True
+live,/operations/assets/new,light-390,390,Register a new asset.,False,0,True
+live,/operations/assets/new,dark-1280,1280,Register a new asset.,False,0,True
+live,/operations/assets/new,dark-390,390,Register a new asset.,False,0,True
+live,/operations/assets,light-1280,1280,Everything we hold in trust.,False,0,True
+live,/operations/assets,light-390,390,Everything we hold in trust.,False,0,True
+live,/operations/assets,dark-1280,1280,Everything we hold in trust.,False,0,True
+live,/operations/assets,dark-390,390,Everything we hold in trust.,False,0,True
+live,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,light-1280,1280,The Williams,False,0,True
+live,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,light-390,390,The Williams,False,0,True
+live,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,dark-1280,1280,The Williams,False,0,True
+live,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,dark-390,390,The Williams,False,0,True
+live,/people/families,light-1280,1280,"Households, not just individuals.",False,0,True
+live,/people/families,light-390,390,"Households, not just individuals.",False,0,True
+live,/people/families,dark-1280,1280,"Households, not just individuals.",False,0,True
+live,/people/families,dark-390,390,"Households, not just individuals.",False,0,True
+live,/people/members/634a74c4-ad73-4506-933d-105295aafba7,light-1280,1280,Jane Garcia,False,0,True
+live,/people/members/634a74c4-ad73-4506-933d-105295aafba7,light-390,390,Jane Garcia,False,0,True
+live,/people/members/634a74c4-ad73-4506-933d-105295aafba7,dark-1280,1280,Jane Garcia,False,0,True
+live,/people/members/634a74c4-ad73-4506-933d-105295aafba7,dark-390,390,Jane Garcia,False,0,True
+live,/people/members/import,light-1280,1280,Bring your people across.,False,0,True
+live,/people/members/import,light-390,390,Bring your people across.,False,0,True
+live,/people/members/import,dark-1280,1280,Bring your people across.,False,0,True
+live,/people/members/import,dark-390,390,Bring your people across.,False,0,True
+live,/people/members/new,light-1280,1280,Introduce someone new.,False,0,True
+live,/people/members/new,light-390,390,Introduce someone new.,False,0,True
+live,/people/members/new,dark-1280,1280,Introduce someone new.,False,0,True
+live,/people/members/new,dark-390,390,Introduce someone new.,False,0,True
+live,/people/members,light-1280,1280,"Everyone, held in one place.",False,0,True
+live,/people/members,light-390,390,"Everyone, held in one place.",False,0,True
+live,/people/members,dark-1280,1280,"Everyone, held in one place.",False,0,True
+live,/people/members,dark-390,390,"Everyone, held in one place.",False,0,True
+live,/people/pastoral/care,light-1280,1280,"Care, kept on purpose.",False,0,True
+live,/people/pastoral/care,light-390,390,"Care, kept on purpose.",False,0,True
+live,/people/pastoral/care,dark-1280,1280,"Care, kept on purpose.",False,0,True
+live,/people/pastoral/care,dark-390,390,"Care, kept on purpose.",False,0,True
+live,/people/pastoral/engagement,light-1280,1280,Engagement.,False,0,True
+live,/people/pastoral/engagement,light-390,390,Engagement.,False,0,True
+live,/people/pastoral/engagement,dark-1280,1280,Engagement.,False,0,True
+live,/people/pastoral/engagement,dark-390,390,Engagement.,False,0,True
+live,/people/pastoral/life-events,light-1280,1280,Milestones the church should not miss.,False,0,True
+live,/people/pastoral/life-events,light-390,390,Milestones the church should not miss.,False,0,True
+live,/people/pastoral/life-events,dark-1280,1280,Milestones the church should not miss.,False,0,True
+live,/people/pastoral/life-events,dark-390,390,Milestones the church should not miss.,False,0,True
+live,/people/pastoral,light-1280,1280,The quiet record of caring.,False,0,True
+live,/people/pastoral,light-390,390,The quiet record of caring.,False,0,True
+live,/people/pastoral,dark-1280,1280,The quiet record of caring.,False,0,True
+live,/people/pastoral,dark-390,390,The quiet record of caring.,False,0,True
+live,/people/pastoral/risk,light-1280,1280,Risk radar.,False,0,True
+live,/people/pastoral/risk,light-390,390,Risk radar.,False,0,True
+live,/people/pastoral/risk,dark-1280,1280,Risk radar.,False,0,True
+live,/people/pastoral/risk,dark-390,390,Risk radar.,False,0,True
+live,/people/segments,light-1280,1280,Lists that keep themselves fresh.,False,0,True
+live,/people/segments,light-390,390,Lists that keep themselves fresh.,False,0,True
+live,/people/segments,dark-1280,1280,Lists that keep themselves fresh.,False,0,True
+live,/people/segments,dark-390,390,Lists that keep themselves fresh.,False,0,True
+live,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,light-1280,1280,Juliana Ayoze,False,0,True
+live,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,light-390,390,Juliana Ayoze,False,0,True
+live,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,dark-1280,1280,Juliana Ayoze,False,0,True
+live,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,dark-390,390,Juliana Ayoze,False,0,True
+live,/people/visitors/follow-up,light-1280,1280,Every guest's next hello.,False,0,True
+live,/people/visitors/follow-up,light-390,390,Every guest's next hello.,False,0,True
+live,/people/visitors/follow-up,dark-1280,1280,Every guest's next hello.,False,0,True
+live,/people/visitors/follow-up,dark-390,390,Every guest's next hello.,False,0,True
+live,/people/visitors/import,light-1280,1280,Bring last season's guests across.,False,0,True
+live,/people/visitors/import,light-390,390,Bring last season's guests across.,False,0,True
+live,/people/visitors/import,dark-1280,1280,Bring last season's guests across.,False,0,True
+live,/people/visitors/import,dark-390,390,Bring last season's guests across.,False,0,True
+live,/people/visitors,light-1280,1280,Guests in the room.,False,0,True
+live,/people/visitors,light-390,390,Guests in the room.,False,0,True
+live,/people/visitors,dark-1280,1280,Guests in the room.,False,0,True
+live,/people/visitors,dark-390,390,Guests in the room.,False,0,True
+live,/search,light-1280,1280,Who or what are you looking for?,False,0,True
+live,/search,light-390,390,Who or what are you looking for?,False,0,True
+live,/search,dark-1280,1280,Who or what are you looking for?,False,0,True
+live,/search,dark-390,390,Who or what are you looking for?,False,0,True
+live,/settings/appearance,light-1280,1280,"The light you work in, the colour you lead with.",False,0,True
+live,/settings/appearance,light-390,390,"The light you work in, the colour you lead with.",False,0,True
+live,/settings/appearance,dark-1280,1280,"The light you work in, the colour you lead with.",False,0,True
+live,/settings/appearance,dark-390,390,"The light you work in, the colour you lead with.",False,0,True
+live,/settings/billing,light-1280,1280,The plainest receipt the church ever kept.,False,0,True
+live,/settings/billing,light-390,390,The plainest receipt the church ever kept.,False,0,True
+live,/settings/billing,dark-1280,1280,The plainest receipt the church ever kept.,False,0,True
+live,/settings/billing,dark-390,390,The plainest receipt the church ever kept.,False,0,True
+live,/settings/notifications,light-1280,1280,Notifications,False,0,True
+live,/settings/notifications,light-390,390,Notifications,False,0,True
+live,/settings/notifications,dark-1280,1280,Notifications,False,0,True
+live,/settings/notifications,dark-390,390,Notifications,False,0,True
+live,/settings/profile,light-1280,1280,My profile,False,0,True
+live,/settings/profile,light-390,390,My profile,False,0,True
+live,/settings/profile,dark-1280,1280,My profile,False,0,True
+live,/settings/profile,dark-390,390,My profile,False,0,True
+live,/settings/security,light-1280,1280,Security,False,0,True
+live,/settings/security,light-390,390,Security,False,0,True
+live,/settings/security,dark-1280,1280,Security,False,0,True
+live,/settings/security,dark-390,390,Security,False,0,True
+live,/support,light-1280,1280,We're a message away.,False,0,True
+live,/support,light-390,390,We're a message away.,False,0,True
+live,/support,dark-1280,1280,We're a message away.,False,0,True
+live,/support,dark-390,390,We're a message away.,False,0,True
+public,/accept-invitation,light-1280,1280,Accept your invitation,False,0,True
+public,/accept-invitation,light-390,390,Accept your invitation,False,0,True
+public,/accept-invitation,dark-1280,1280,Accept your invitation,False,0,True
+public,/accept-invitation,dark-390,390,Accept your invitation,False,0,True
+public,/forgot-password,light-1280,1280,Forgot Password?,False,0,True
+public,/forgot-password,light-390,390,Forgot Password?,False,0,True
+public,/forgot-password,dark-1280,1280,Forgot Password?,False,0,True
+public,/forgot-password,dark-390,390,Forgot Password?,False,0,True
+public,/login,light-1280,1280,Sign In,False,0,True
+public,/login,light-390,390,Sign In,False,0,True
+public,/login,dark-1280,1280,Sign In,False,0,True
+public,/login,dark-390,390,Sign In,False,0,True
+public,/register,light-1280,1280,Create your workspace,False,0,True
+public,/register,light-390,390,Create your workspace,False,0,True
+public,/register,dark-1280,1280,Create your workspace,False,0,True
+public,/register,dark-390,390,Create your workspace,False,0,True
+public,/reset-password,light-1280,1280,Reset Password,False,0,True
+public,/reset-password,light-390,390,Reset Password,False,0,True
+public,/reset-password,dark-1280,1280,Reset Password,False,0,True
+public,/reset-password,dark-390,390,Reset Password,False,0,True
+public,/subscription,light-1280,1280,Continue your setup,False,0,True
+public,/subscription,light-390,390,Continue your setup,False,0,True
+public,/subscription,dark-1280,1280,Continue your setup,False,0,True
+public,/subscription,dark-390,390,Continue your setup,False,0,True
+public,/privacy-policy,light-1280,1280,Privacy Policy,False,0,True
+public,/privacy-policy,light-390,390,Privacy Policy,False,0,True
+public,/privacy-policy,dark-1280,1280,Privacy Policy,False,0,True
+public,/privacy-policy,dark-390,390,Privacy Policy,False,0,True
+public,/docs,light-1280,1280,Sign In,False,0,True
+public,/docs,light-390,390,Sign In,False,0,True
+public,/docs,dark-1280,1280,Sign In,False,0,True
+public,/docs,dark-390,390,Sign In,False,0,True
+public,/forms/public/ui-audit-public-form,light-1280,1280,UI audit public form,False,0,True
+public,/forms/public/ui-audit-public-form,light-390,390,UI audit public form,False,0,True
+public,/forms/public/ui-audit-public-form,dark-1280,1280,UI audit public form,False,0,True
+public,/forms/public/ui-audit-public-form,dark-390,390,UI audit public form,False,0,True
+public,/help/add-and-update-members,light-1280,1280,Add and update members,False,0,True
+public,/help/add-and-update-members,light-390,390,Add and update members,False,0,True
+public,/help/add-and-update-members,dark-1280,1280,Add and update members,False,0,True
+public,/help/add-and-update-members,dark-390,390,Add and update members,False,0,True
+public,/help/contact-support,light-1280,1280,Contact BelivrHQ Support,False,0,True
+public,/help/contact-support,light-390,390,Contact BelivrHQ Support,False,0,True
+public,/help/contact-support,dark-1280,1280,Contact BelivrHQ Support,False,0,True
+public,/help/contact-support,dark-390,390,Contact BelivrHQ Support,False,0,True
+public,/help,light-1280,1280,How can we help?,False,0,True
+public,/help,light-390,390,How can we help?,False,0,True
+public,/help,dark-1280,1280,How can we help?,False,0,True
+public,/help,dark-390,390,How can we help?,False,0,True
+public,/offline,light-1280,1280,Offline access is temporarily unavailable,False,0,True
+public,/offline,light-390,390,Offline access is temporarily unavailable,False,0,True
+public,/offline,dark-1280,1280,Offline access is temporarily unavailable,False,0,True
+public,/offline,dark-390,390,Offline access is temporarily unavailable,False,0,True
+public,/,light-1280,1280,A little less admin.A lot more ministry.,False,0,True
+public,/,light-390,390,A little less admin.A lot more ministry.,False,0,True
+public,/,dark-1280,1280,A little less admin.A lot more ministry.,False,0,True
+public,/,dark-390,390,A little less admin.A lot more ministry.,False,0,True
+public,/payment/complete,light-1280,1280,Your payment is being confirmed,False,0,True
+public,/payment/complete,light-390,390,Your payment is being confirmed,False,0,True
+public,/payment/complete,dark-1280,1280,Your payment is being confirmed,False,0,True
+public,/payment/complete,dark-390,390,Your payment is being confirmed,False,0,True
+public,/register/public/ui-audit-member,light-1280,1280,Member registration,False,0,True
+public,/register/public/ui-audit-member,light-390,390,Member registration,False,0,True
+public,/register/public/ui-audit-member,dark-1280,1280,Member registration,False,0,True
+public,/register/public/ui-audit-member,dark-390,390,Member registration,False,0,True
+role-secretary,/people/members,light-1280,1280,"Everyone, held in one place.",False,0,True
+role-secretary,/people/members,light-390,390,"Everyone, held in one place.",False,0,True
+role-secretary,/people/members,dark-1280,1280,"Everyone, held in one place.",False,0,True
+role-secretary,/people/members,dark-390,390,"Everyone, held in one place.",False,0,True
+role-secretary,/gatherings/events/tiers,light-1280,1280,"Pricing and capacity, decided kindly.",False,0,True
+role-secretary,/gatherings/events/tiers,light-390,390,"Pricing and capacity, decided kindly.",False,0,True
+role-secretary,/gatherings/events/tiers,dark-1280,1280,"Pricing and capacity, decided kindly.",False,0,True
+role-secretary,/gatherings/events/tiers,dark-390,390,"Pricing and capacity, decided kindly.",False,0,True
+role-secretary,/library/forms,light-1280,1280,"Ask once, read everything.",False,0,True
+role-secretary,/library/forms,light-390,390,"Ask once, read everything.",False,0,True
+role-secretary,/library/forms,dark-1280,1280,"Ask once, read everything.",False,0,True
+role-secretary,/library/forms,dark-390,390,"Ask once, read everything.",False,0,True
+role-secretary,/admin/permissions,light-1280,1280,,False,0,True
+role-secretary,/admin/permissions,light-390,390,,False,0,True
+role-secretary,/admin/permissions,dark-1280,1280,,False,0,True
+role-secretary,/admin/permissions,dark-390,390,,False,0,True
+role-treasurer,/giving/donations,light-1280,1280,"Every gift, one feed.",False,0,True
+role-treasurer,/giving/donations,light-390,390,"Every gift, one feed.",False,0,True
+role-treasurer,/giving/donations,dark-1280,1280,"Every gift, one feed.",False,0,True
+role-treasurer,/giving/donations,dark-390,390,"Every gift, one feed.",False,0,True
+role-treasurer,/insights/reports,light-1280,1280,Report studio,False,0,True
+role-treasurer,/insights/reports,light-390,390,Report studio,False,0,True
+role-treasurer,/insights/reports,dark-1280,1280,Report studio,False,0,True
+role-treasurer,/insights/reports,dark-390,390,Report studio,False,0,True
+role-treasurer,/gatherings/groups/cell,light-1280,1280,Cell groups,False,0,True
+role-treasurer,/gatherings/groups/cell,light-390,390,Cell groups,False,0,True
+role-treasurer,/gatherings/groups/cell,dark-1280,1280,Cell groups,False,0,True
+role-treasurer,/gatherings/groups/cell,dark-390,390,Cell groups,False,0,True
+role-treasurer,/people/members,light-1280,1280,,False,0,True
+role-treasurer,/people/members,light-390,390,,False,0,True
+role-treasurer,/people/members,dark-1280,1280,,False,0,True
+role-treasurer,/people/members,dark-390,390,,False,0,True
+role-usher,/gatherings/attendance/services,light-1280,1280,The weekly rhythm.,False,0,True
+role-usher,/gatherings/attendance/services,light-390,390,The weekly rhythm.,False,0,True
+role-usher,/gatherings/attendance/services,dark-1280,1280,The weekly rhythm.,False,0,True
+role-usher,/gatherings/attendance/services,dark-390,390,The weekly rhythm.,False,0,True
+role-usher,/gatherings/events/check-in,light-1280,1280,Event attendance,False,0,True
+role-usher,/gatherings/events/check-in,light-390,390,Event attendance,False,0,True
+role-usher,/gatherings/events/check-in,dark-1280,1280,Event attendance,False,0,True
+role-usher,/gatherings/events/check-in,dark-390,390,Event attendance,False,0,True
+role-usher,/gatherings/groups/cell,light-1280,1280,Cell groups,False,0,True
+role-usher,/gatherings/groups/cell,light-390,390,Cell groups,False,0,True
+role-usher,/gatherings/groups/cell,dark-1280,1280,Cell groups,False,0,True
+role-usher,/gatherings/groups/cell,dark-390,390,Cell groups,False,0,True
+role-usher,/admin/permissions,light-1280,1280,,False,0,True
+role-usher,/admin/permissions,light-390,390,,False,0,True
+role-usher,/admin/permissions,dark-1280,1280,,False,0,True
+role-usher,/admin/permissions,dark-390,390,,False,0,True
+role-department_head,/gatherings/groups,light-1280,1280,Manage the departments and teams that serve your church.,False,0,True
+role-department_head,/gatherings/groups,light-390,390,Manage the departments and teams that serve your church.,False,0,True
+role-department_head,/gatherings/groups,dark-1280,1280,Manage the departments and teams that serve your church.,False,0,True
+role-department_head,/gatherings/groups,dark-390,390,Manage the departments and teams that serve your church.,False,0,True
+role-department_head,/people/members,light-1280,1280,,False,0,True
+role-department_head,/people/members,light-390,390,,False,0,True
+role-department_head,/people/members,dark-1280,1280,,False,0,True
+role-department_head,/people/members,dark-390,390,,False,0,True
+role-department_head,/connect/messages,light-1280,1280,,False,0,True
+role-department_head,/connect/messages,light-390,390,,False,0,True
+role-department_head,/connect/messages,dark-1280,1280,,False,0,True
+role-department_head,/connect/messages,dark-390,390,,False,0,True
+role-department_head,/giving/donations,light-1280,1280,,False,0,True
+role-department_head,/giving/donations,light-390,390,,False,0,True
+role-department_head,/giving/donations,dark-1280,1280,,False,0,True
+role-department_head,/giving/donations,dark-390,390,,False,0,True
+role-cell_leader,/gatherings/groups/cell,light-1280,1280,Cell groups,False,0,True
+role-cell_leader,/gatherings/groups/cell,light-390,390,Cell groups,False,0,True
+role-cell_leader,/gatherings/groups/cell,dark-1280,1280,Cell groups,False,0,True
+role-cell_leader,/gatherings/groups/cell,dark-390,390,Cell groups,False,0,True
+role-cell_leader,/people/pastoral,light-1280,1280,,False,0,True
+role-cell_leader,/people/pastoral,light-390,390,,False,0,True
+role-cell_leader,/people/pastoral,dark-1280,1280,,False,0,True
+role-cell_leader,/people/pastoral,dark-390,390,,False,0,True
+role-cell_leader,/people/members,light-1280,1280,,False,0,True
+role-cell_leader,/people/members,light-390,390,,False,0,True
+role-cell_leader,/people/members,dark-1280,1280,,False,0,True
+role-cell_leader,/people/members,dark-390,390,,False,0,True
+role-cell_leader,/giving/donations,light-1280,1280,,False,0,True
+role-cell_leader,/giving/donations,light-390,390,,False,0,True
+role-cell_leader,/giving/donations,dark-1280,1280,,False,0,True
+role-cell_leader,/giving/donations,dark-390,390,,False,0,True
+role-branch_pastor,/people/pastoral,light-1280,1280,The quiet record of caring.,False,0,True
+role-branch_pastor,/people/pastoral,light-390,390,The quiet record of caring.,False,0,True
+role-branch_pastor,/people/pastoral,dark-1280,1280,The quiet record of caring.,False,0,True
+role-branch_pastor,/people/pastoral,dark-390,390,The quiet record of caring.,False,0,True
+role-branch_pastor,/insights/analytics/attendance,light-1280,1280,,False,0,True
+role-branch_pastor,/insights/analytics/attendance,light-390,390,,False,0,True
+role-branch_pastor,/insights/analytics/attendance,dark-1280,1280,,False,0,True
+role-branch_pastor,/insights/analytics/attendance,dark-390,390,,False,0,True
+role-branch_pastor,/gatherings/attendance/records,light-1280,1280,The record book.,False,0,True
+role-branch_pastor,/gatherings/attendance/records,light-390,390,The record book.,False,0,True
+role-branch_pastor,/gatherings/attendance/records,dark-1280,1280,The record book.,False,0,True
+role-branch_pastor,/gatherings/attendance/records,dark-390,390,The record book.,False,0,True
+role-branch_pastor,/settings/billing,light-1280,1280,,False,0,True
+role-branch_pastor,/settings/billing,light-390,390,,False,0,True
+role-branch_pastor,/settings/billing,dark-1280,1280,,False,0,True
+role-branch_pastor,/settings/billing,dark-390,390,,False,0,True
+role-senior_pastor,/people/pastoral/life-events,light-1280,1280,Milestones the church should not miss.,False,0,True
+role-senior_pastor,/people/pastoral/life-events,light-390,390,Milestones the church should not miss.,False,0,True
+role-senior_pastor,/people/pastoral/life-events,dark-1280,1280,Milestones the church should not miss.,False,0,True
+role-senior_pastor,/people/pastoral/life-events,dark-390,390,Milestones the church should not miss.,False,0,True
+role-senior_pastor,/admin/team,light-1280,1280,The people behind the desk.,False,0,True
+role-senior_pastor,/admin/team,light-390,390,The people behind the desk.,False,0,True
+role-senior_pastor,/admin/team,dark-1280,1280,The people behind the desk.,False,0,True
+role-senior_pastor,/admin/team,dark-390,390,The people behind the desk.,False,0,True
+role-senior_pastor,/insights/analytics/giving,light-1280,1280,,False,0,True
+role-senior_pastor,/insights/analytics/giving,light-390,390,,False,0,True
+role-senior_pastor,/insights/analytics/giving,dark-1280,1280,,False,0,True
+role-senior_pastor,/insights/analytics/giving,dark-390,390,,False,0,True
+role-senior_pastor,/admin/channels,light-1280,1280,,False,0,True
+role-senior_pastor,/admin/channels,light-390,390,,False,0,True
+role-senior_pastor,/admin/channels,dark-1280,1280,,False,0,True
+role-senior_pastor,/admin/channels,dark-390,390,,False,0,True
+role-church_admin,/admin/locations,light-1280,1280,"Many rooms, one register.",False,0,True
+role-church_admin,/admin/locations,light-390,390,"Many rooms, one register.",False,0,True
+role-church_admin,/admin/locations,dark-1280,1280,"Many rooms, one register.",False,0,True
+role-church_admin,/admin/locations,dark-390,390,"Many rooms, one register.",False,0,True
+role-church_admin,/admin/team,light-1280,1280,The people behind the desk.,False,0,True
+role-church_admin,/admin/team,light-390,390,The people behind the desk.,False,0,True
+role-church_admin,/admin/team,dark-1280,1280,The people behind the desk.,False,0,True
+role-church_admin,/admin/team,dark-390,390,The people behind the desk.,False,0,True
+role-church_admin,/operations/assets,light-1280,1280,Everything we hold in trust.,False,0,True
+role-church_admin,/operations/assets,light-390,390,Everything we hold in trust.,False,0,True
+role-church_admin,/operations/assets,dark-1280,1280,Everything we hold in trust.,False,0,True
+role-church_admin,/operations/assets,dark-390,390,Everything we hold in trust.,False,0,True
+role-church_admin,/settings/billing,light-1280,1280,The plainest receipt the church ever kept.,False,0,True
+role-church_admin,/settings/billing,light-390,390,The plainest receipt the church ever kept.,False,0,True
+role-church_admin,/settings/billing,dark-1280,1280,The plainest receipt the church ever kept.,False,0,True
+role-church_admin,/settings/billing,dark-390,390,The plainest receipt the church ever kept.,False,0,True
+readonly,/operations/assets,light-1280,1280,Everything we hold in trust.,False,0,True
+readonly,/operations/assets,light-390,390,Everything we hold in trust.,False,0,True
+readonly,/operations/assets,dark-1280,1280,Everything we hold in trust.,False,0,True
+readonly,/operations/assets,dark-390,390,Everything we hold in trust.,False,0,True
+readonly,/operations/assets/new,light-1280,1280,,False,0,True
+readonly,/operations/assets/new,light-390,390,,False,0,True
+readonly,/operations/assets/new,dark-1280,1280,,False,0,True
+readonly,/operations/assets/new,dark-390,390,,False,0,True
+subscription-readonly,/operations/assets,light-1280,1280,Everything we hold in trust.,False,0,True
+subscription-readonly,/operations/assets,light-390,390,Everything we hold in trust.,False,0,True
+subscription-readonly,/operations/assets,dark-1280,1280,Everything we hold in trust.,False,0,True
+subscription-readonly,/operations/assets,dark-390,390,Everything we hold in trust.,False,0,True
+subscription-readonly,/connect/messages,light-1280,1280,"SMS and WhatsApp, in one stream.",False,0,True
+subscription-readonly,/connect/messages,light-390,390,"SMS and WhatsApp, in one stream.",False,0,True
+subscription-readonly,/connect/messages,dark-1280,1280,"SMS and WhatsApp, in one stream.",False,0,True
+subscription-readonly,/connect/messages,dark-390,390,"SMS and WhatsApp, in one stream.",False,0,True
+no-permissions,/home,light-1280,1280,"Good morning, Dennis.",False,0,True
+no-permissions,/home,light-390,390,"Good morning, Dennis.",False,0,True
+no-permissions,/home,dark-1280,1280,"Good morning, Dennis.",False,0,True
+no-permissions,/home,dark-390,390,"Good morning, Dennis.",False,0,True
+no-permissions,/people/members,light-1280,1280,,False,0,True
+no-permissions,/people/members,light-390,390,,False,0,True
+no-permissions,/people/members,dark-1280,1280,,False,0,True
+no-permissions,/people/members,dark-390,390,,False,0,True
+essentials,/operations/assets,light-1280,1280,This feature is available on a different plan,False,0,True
+essentials,/operations/assets,light-390,390,This feature is available on a different plan,False,0,True
+essentials,/operations/assets,dark-1280,1280,This feature is available on a different plan,False,0,True
+essentials,/operations/assets,dark-390,390,This feature is available on a different plan,False,0,True
+essentials,/giving/overview,light-1280,1280,"Generosity, seen clearly.",False,0,True
+essentials,/giving/overview,light-390,390,"Generosity, seen clearly.",False,0,True
+essentials,/giving/overview,dark-1280,1280,"Generosity, seen clearly.",False,0,True
+essentials,/giving/overview,dark-390,390,"Generosity, seen clearly.",False,0,True
+populated-table,/giving/schedules,light-1280,1280,The floor under the year.,False,0,True
+populated-table,/giving/schedules,light-390,390,The floor under the year.,False,0,True
+populated-table,/giving/schedules,dark-1280,1280,The floor under the year.,False,0,True
+populated-table,/giving/schedules,dark-390,390,The floor under the year.,False,0,True
+populated-table,/settings/billing,light-1280,1280,The plainest receipt the church ever kept.,False,0,True
+populated-table,/settings/billing,light-390,390,The plainest receipt the church ever kept.,False,0,True
+populated-table,/settings/billing,dark-1280,1280,The plainest receipt the church ever kept.,False,0,True
+populated-table,/settings/billing,dark-390,390,The plainest receipt the church ever kept.,False,0,True
+detail-failure,/admin/locations/c9f4db77-b9da-471a-91bd-06ca05bbf780,light-1280,1280,Branch details,False,0,True
+detail-failure,/admin/locations/c9f4db77-b9da-471a-91bd-06ca05bbf780,light-390,390,Branch details,False,0,True
+detail-failure,/admin/locations/c9f4db77-b9da-471a-91bd-06ca05bbf780,dark-1280,1280,Branch details,False,0,True
+detail-failure,/admin/locations/c9f4db77-b9da-471a-91bd-06ca05bbf780,dark-390,390,Branch details,False,0,True
+detail-failure,/admin/permissions/church_admin,light-1280,1280,,False,2,True
+detail-failure,/admin/permissions/church_admin,light-390,390,,False,2,True
+detail-failure,/admin/permissions/church_admin,dark-1280,1280,,False,2,True
+detail-failure,/admin/permissions/church_admin,dark-390,390,,False,2,True
+detail-failure,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,light-1280,1280,,False,0,True
+detail-failure,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,light-390,390,,False,0,True
+detail-failure,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,dark-1280,1280,,False,0,True
+detail-failure,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,dark-390,390,,False,0,True
+detail-failure,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,light-1280,1280,,False,0,True
+detail-failure,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,light-390,390,,False,0,True
+detail-failure,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,dark-1280,1280,,False,0,True
+detail-failure,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,dark-390,390,,False,0,True
+detail-failure,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,light-1280,1280,,False,2,True
+detail-failure,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,light-390,390,,False,2,True
+detail-failure,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,dark-1280,1280,,False,2,True
+detail-failure,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,dark-390,390,,False,2,True
+detail-failure,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,light-1280,1280,,False,0,True
+detail-failure,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,light-390,390,,False,0,True
+detail-failure,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,dark-1280,1280,,False,0,True
+detail-failure,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,dark-390,390,,False,0,True
+detail-failure,/gatherings/groups/9b061845-a180-4f1c-ad0a-74e2075b4b79,light-1280,1280,,False,0,True
+detail-failure,/gatherings/groups/9b061845-a180-4f1c-ad0a-74e2075b4b79,light-390,390,,False,0,True
+detail-failure,/gatherings/groups/9b061845-a180-4f1c-ad0a-74e2075b4b79,dark-1280,1280,,False,0,True
+detail-failure,/gatherings/groups/9b061845-a180-4f1c-ad0a-74e2075b4b79,dark-390,390,,False,0,True
+detail-failure,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,light-1280,1280,,False,0,True
+detail-failure,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,light-390,390,,False,0,True
+detail-failure,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,dark-1280,1280,,False,0,True
+detail-failure,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,dark-390,390,,False,0,True
+detail-failure,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,light-1280,1280,,False,0,True
+detail-failure,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,light-390,390,,False,0,True
+detail-failure,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,dark-1280,1280,,False,0,True
+detail-failure,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,dark-390,390,,False,0,True
+detail-failure,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,light-1280,1280,,False,0,True
+detail-failure,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,light-390,390,,False,0,True
+detail-failure,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,dark-1280,1280,,False,0,True
+detail-failure,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,dark-390,390,,False,0,True
+detail-failure,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,light-1280,1280,,False,0,True
+detail-failure,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,light-390,390,,False,0,True
+detail-failure,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,dark-1280,1280,,False,0,True
+detail-failure,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,dark-390,390,,False,0,True
+detail-failure,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,light-1280,1280,,False,0,True
+detail-failure,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,light-390,390,,False,0,True
+detail-failure,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,dark-1280,1280,,False,0,True
+detail-failure,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,dark-390,390,,False,0,True
+detail-failure,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,light-1280,1280,,False,0,True
+detail-failure,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,light-390,390,,False,0,True
+detail-failure,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,dark-1280,1280,,False,0,True
+detail-failure,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,dark-390,390,,False,0,True
+detail-failure,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,light-1280,1280,,False,0,True
+detail-failure,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,light-390,390,,False,0,True
+detail-failure,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,dark-1280,1280,,False,0,True
+detail-failure,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,dark-390,390,,False,0,True
+detail-failure,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd,light-1280,1280,,False,0,True
+detail-failure,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd,light-390,390,,False,0,True
+detail-failure,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd,dark-1280,1280,,False,0,True
+detail-failure,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd,dark-390,390,,False,0,True
+detail-failure,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,light-1280,1280,,False,0,True
+detail-failure,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,light-390,390,,False,0,True
+detail-failure,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,dark-1280,1280,,False,0,True
+detail-failure,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,dark-390,390,,False,0,True
+detail-failure,/people/members/634a74c4-ad73-4506-933d-105295aafba7,light-1280,1280,,False,0,True
+detail-failure,/people/members/634a74c4-ad73-4506-933d-105295aafba7,light-390,390,,False,0,True
+detail-failure,/people/members/634a74c4-ad73-4506-933d-105295aafba7,dark-1280,1280,,False,0,True
+detail-failure,/people/members/634a74c4-ad73-4506-933d-105295aafba7,dark-390,390,,False,0,True
+detail-failure,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,light-1280,1280,,False,0,True
+detail-failure,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,light-390,390,,False,0,True
+detail-failure,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,dark-1280,1280,,False,0,True
+detail-failure,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,dark-390,390,,False,0,True
+long-record,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,light-1280,1280,UI AUDIT — LongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbroke,False,0,True
+long-record,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,light-390,390,UI AUDIT — LongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbroke,False,0,True
+long-record,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,dark-1280,1280,UI AUDIT — LongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbroke,False,0,True
+long-record,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,dark-390,390,UI AUDIT — LongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbroke,False,0,True
+long-record,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,light-1280,1280,Amend UI AUDIT — LongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheck.,False,0,True
+long-record,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,light-390,390,Amend UI AUDIT — LongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheck.,False,0,True
+long-record,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,dark-1280,1280,Amend UI AUDIT — LongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheck.,False,0,True
+long-record,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,dark-390,390,Amend UI AUDIT — LongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheck.,False,0,True
+long-record,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd,light-1280,1280,UI AUDIT — LongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheck,False,0,True
+long-record,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd,light-390,390,UI AUDIT — LongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheck,False,0,True
+long-record,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd,dark-1280,1280,UI AUDIT — LongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheck,False,0,True
+long-record,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd,dark-390,390,UI AUDIT — LongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheckWrappingLongUnbrokenNameToCheck,False,0,True
+long-record,/people/members/634a74c4-ad73-4506-933d-105295aafba7,light-1280,1280,LongUnbrokenPersonNameLongUnbrokenPersonNameLongUnbrokenPersonNameLong LongUnbrokenPersonNameLongUnbrokenPersonNameLongUnbrokenPersonNameLong,False,0,True
+long-record,/people/members/634a74c4-ad73-4506-933d-105295aafba7,light-390,390,LongUnbrokenPersonNameLongUnbrokenPersonNameLongUnbrokenPersonNameLong LongUnbrokenPersonNameLongUnbrokenPersonNameLongUnbrokenPersonNameLong,False,0,True
+long-record,/people/members/634a74c4-ad73-4506-933d-105295aafba7,dark-1280,1280,LongUnbrokenPersonNameLongUnbrokenPersonNameLongUnbrokenPersonNameLong LongUnbrokenPersonNameLongUnbrokenPersonNameLongUnbrokenPersonNameLong,False,0,True
+long-record,/people/members/634a74c4-ad73-4506-933d-105295aafba7,dark-390,390,LongUnbrokenPersonNameLongUnbrokenPersonNameLongUnbrokenPersonNameLong LongUnbrokenPersonNameLongUnbrokenPersonNameLongUnbrokenPersonNameLong,False,0,True
+missing-record,/admin/locations/00000000-0000-4000-8000-000000000001,light-1280,1280,,False,0,True
+missing-record,/admin/locations/00000000-0000-4000-8000-000000000001,light-390,390,,False,0,True
+missing-record,/admin/locations/00000000-0000-4000-8000-000000000001,dark-1280,1280,,False,0,True
+missing-record,/admin/locations/00000000-0000-4000-8000-000000000001,dark-390,390,,False,0,True
+missing-record,/gatherings/events/00000000-0000-4000-8000-000000000001,light-1280,1280,,False,0,True
+missing-record,/gatherings/events/00000000-0000-4000-8000-000000000001,light-390,390,,False,0,True
+missing-record,/gatherings/events/00000000-0000-4000-8000-000000000001,dark-1280,1280,,False,0,True
+missing-record,/gatherings/events/00000000-0000-4000-8000-000000000001,dark-390,390,,False,0,True
+missing-record,/library/forms/00000000-0000-4000-8000-000000000001,light-1280,1280,,False,0,True
+missing-record,/library/forms/00000000-0000-4000-8000-000000000001,light-390,390,,False,0,True
+missing-record,/library/forms/00000000-0000-4000-8000-000000000001,dark-1280,1280,,False,0,True
+missing-record,/library/forms/00000000-0000-4000-8000-000000000001,dark-390,390,,False,0,True
+missing-record,/people/visitors/00000000-0000-4000-8000-000000000001,light-1280,1280,,False,0,True
+missing-record,/people/visitors/00000000-0000-4000-8000-000000000001,light-390,390,,False,0,True
+missing-record,/people/visitors/00000000-0000-4000-8000-000000000001,dark-1280,1280,,False,0,True
+missing-record,/people/visitors/00000000-0000-4000-8000-000000000001,dark-390,390,,False,0,True
+missing-record,/operations/assets/00000000-0000-4000-8000-000000000001,light-1280,1280,,False,0,True
+missing-record,/operations/assets/00000000-0000-4000-8000-000000000001,light-390,390,,False,0,True
+missing-record,/operations/assets/00000000-0000-4000-8000-000000000001,dark-1280,1280,,False,0,True
+missing-record,/operations/assets/00000000-0000-4000-8000-000000000001,dark-390,390,,False,0,True
+focused-table,/gatherings/groups,light-1280,1280,Manage the departments and teams that serve your church.,False,0,True
+focused-table,/gatherings/groups,light-390,390,Manage the departments and teams that serve your church.,False,0,True
+focused-table,/gatherings/groups,dark-1280,1280,Manage the departments and teams that serve your church.,False,0,True
+focused-table,/gatherings/groups,dark-390,390,Manage the departments and teams that serve your church.,False,0,True
+focused-table,/gatherings/groups,light-320,320,Manage the departments and teams that serve your church.,False,0,True
+focused-table,/gatherings/groups,dark-320,320,Manage the departments and teams that serve your church.,False,0,True
+focused-table,/library/sermons,light-1280,1280,Words worth returning to.,False,0,True
+focused-table,/library/sermons,light-390,390,Words worth returning to.,False,0,True
+focused-table,/library/sermons,dark-1280,1280,Words worth returning to.,False,0,True
+focused-table,/library/sermons,dark-390,390,Words worth returning to.,False,0,True
+focused-table,/library/sermons,light-320,320,Words worth returning to.,False,0,True
+focused-table,/library/sermons,dark-320,320,Words worth returning to.,False,0,True
+focused-table,/giving/schedules,light-1280,1280,The floor under the year.,False,0,True
+focused-table,/giving/schedules,light-390,390,The floor under the year.,False,0,True
+focused-table,/giving/schedules,dark-1280,1280,The floor under the year.,False,0,True
+focused-table,/giving/schedules,dark-390,390,The floor under the year.,False,0,True
+focused-table,/giving/schedules,light-320,320,The floor under the year.,False,0,True
+focused-table,/giving/schedules,dark-320,320,The floor under the year.,False,0,True
+focused-table,/settings/billing,light-1280,1280,The plainest receipt the church ever kept.,False,0,True
+focused-table,/settings/billing,light-390,390,The plainest receipt the church ever kept.,False,0,True
+focused-table,/settings/billing,dark-1280,1280,The plainest receipt the church ever kept.,False,0,True
+focused-table,/settings/billing,dark-390,390,The plainest receipt the church ever kept.,False,0,True
+focused-table,/settings/billing,light-320,320,The plainest receipt the church ever kept.,False,0,True
+focused-table,/settings/billing,dark-320,320,The plainest receipt the church ever kept.,False,0,True
+public-legal,/terms-of-service,light-1280,1280,Terms of Service,False,0,True
+public-legal,/terms-of-service,light-390,390,Terms of Service,False,0,True
+public-legal,/terms-of-service,dark-1280,1280,Terms of Service,False,0,True
+public-legal,/terms-of-service,dark-390,390,Terms of Service,False,0,True
+public-legal,/terms-and-conditions,light-1280,1280,Website Terms and Conditions,False,0,True
+public-legal,/terms-and-conditions,light-390,390,Website Terms and Conditions,False,0,True
+public-legal,/terms-and-conditions,dark-1280,1280,Website Terms and Conditions,False,0,True
+public-legal,/terms-and-conditions,dark-390,390,Website Terms and Conditions,False,0,True
+role-super_admin,/admin/permissions,light-1280,1280,What each role can reach.,False,0,True
+role-super_admin,/admin/permissions,light-390,390,What each role can reach.,False,0,True
+role-super_admin,/admin/permissions,dark-1280,1280,What each role can reach.,False,0,True
+role-super_admin,/admin/permissions,dark-390,390,What each role can reach.,False,0,True
+role-super_admin,/admin/team,light-1280,1280,The people behind the desk.,False,0,True
+role-super_admin,/admin/team,light-390,390,The people behind the desk.,False,0,True
+role-super_admin,/admin/team,dark-1280,1280,The people behind the desk.,False,0,True
+role-super_admin,/admin/team,dark-390,390,The people behind the desk.,False,0,True
+role-super_admin,/settings/billing,light-1280,1280,The plainest receipt the church ever kept.,False,0,True
+role-super_admin,/settings/billing,light-390,390,The plainest receipt the church ever kept.,False,0,True
+role-super_admin,/settings/billing,dark-1280,1280,The plainest receipt the church ever kept.,False,0,True
+role-super_admin,/settings/billing,dark-390,390,The plainest receipt the church ever kept.,False,0,True

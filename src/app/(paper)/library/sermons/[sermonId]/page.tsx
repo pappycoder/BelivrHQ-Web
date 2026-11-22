@@ -1,5 +1,10 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
+import { DetailNavigation } from "@/components/paper/section";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -70,6 +75,10 @@ export default function SermonDetailPage({
     );
   }
 
+  if (sermon.isError && !isMissingRecordError(sermon.error)) {
+    return <RecordQueryError title="Sermon details" error={sermon.error} backHref="/library/sermons" backLabel="Back to the archive" />;
+  }
+
   if (sermon.isError || !sermon.data) {
     return (
       <EmptyState
@@ -94,9 +103,9 @@ export default function SermonDetailPage({
 
   return (
     <div className="space-y-6">
-      <Link href="/library/sermons" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
+      <DetailNavigation><Link href="/library/sermons" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
         <ArrowLeft className="size-3" /> Library · Sermons
-      </Link>
+      </Link></DetailNavigation>
 
       <div className="paper-card overflow-hidden rounded-2xl">
         <div className="h-2 bg-[linear-gradient(90deg,var(--brand),var(--gold)_55%,var(--moss))]" />
@@ -112,7 +121,7 @@ export default function SermonDetailPage({
               {s.branchName ? <Tag tone="sky">{s.branchName}</Tag> : null}
               {s.archivedAt ? <Tag tone="rose">Archived</Tag> : null}
             </div>
-            <h1 className="font-display text-[clamp(1.5rem,3vw,2.2rem)] font-semibold leading-tight tracking-tight">
+            <h1 className="min-w-0 max-w-full [overflow-wrap:anywhere] font-display text-[clamp(1.5rem,3vw,2.2rem)] font-semibold leading-tight tracking-tight">
               {s.title}
             </h1>
             <p className="text-sm text-ink-soft">

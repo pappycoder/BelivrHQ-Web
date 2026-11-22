@@ -1,5 +1,12 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { formatRecordDate } from "@/lib/record-date";
+
+import { collectionLabel } from "@/lib/collection-label";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
@@ -12,6 +19,7 @@ import {
 import { PageHeader } from "@/components/paper/section";
 import { Tag } from "@/components/paper/stat";
 import { EmptyState } from "@/components/paper/primitives";
+import { PageQueryError } from "@/components/shared/page-query-error";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -59,6 +67,8 @@ export default function SettingsBillingPage() {
     );
   }
 
+  if (status.isError) return <PageQueryError title="Plan and billing" />;
+
   if (status.isLoading || !status.data) {
     return (
       <div className="space-y-4">
@@ -71,6 +81,8 @@ export default function SettingsBillingPage() {
 
   const d = status.data;
   const sub = d.subscription;
+  // The history is newest first; latestPayment is an unfinished checkout.
+  const latestRecordedPayment = d.payments[0];
   const planName = (p?: string | null) =>
     p ? p.charAt(0).toUpperCase() + p.slice(1) : "Not subscribed";
   const priceFor = (planId: string) => {
@@ -88,7 +100,7 @@ export default function SettingsBillingPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div data-tour-billing className="space-y-6">
       <PageHeader
         eyebrow="Settings · Billing"
         title="The plainest receipt the church ever kept."
@@ -97,7 +109,7 @@ export default function SettingsBillingPage() {
 
       {/* ── Current plan band ─────────────────────────────────────────── */}
       <div className="paper-card overflow-hidden rounded-2xl">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line bg-muted/30 px-5 py-4">
+        <div data-tour-billing-plan className="flex flex-wrap items-center justify-between gap-4 border-b border-line bg-muted/30 px-5 py-4">
           <div className="flex items-center gap-3">
             <span className="grid size-10 place-items-center rounded-xl bg-brand-soft text-brand">
               <Sparkles className="size-4" />
@@ -146,10 +158,10 @@ export default function SettingsBillingPage() {
       </div>
 
       {/* ── Plan comparison (server catalog, Abide card grammar) ──────── */}
-      <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
-        <div className="space-y-4">
+      <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="min-w-0 space-y-4">
           <div className="paper-card rounded-2xl p-5">
-            <p className="rule-label mb-3">Change your plan when your church needs more room</p>
+            <p data-tour-billing-compare className="rule-label mb-3">Change your plan when your church needs more room</p>
             <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
               {d.catalog.map((entry) => {
                 const current = sub?.plan === entry.id;
@@ -170,9 +182,9 @@ export default function SettingsBillingPage() {
                       <span className="text-xs font-normal text-ink-faint">/mo</span>
                     </p>
                     <p className="mt-1 text-xs text-ink-faint">
-                      {entry.limits.members > 0 ? number(entry.limits.members) : "Unlimited"} people ·{" "}
+                      {entry.limits.members > 0 ? number(entry.limits.members) : "Unlimited"} {collectionLabel(entry.limits.members, "people")} ·{" "}
                       {entry.limits.locations > 0 ? `${number(entry.limits.locations)} branch${entry.limits.locations === 1 ? "" : "es"}` : "unlimited branches"} ·{" "}
-                      {entry.limits.staff > 0 ? `${number(entry.limits.staff)} staff seats` : "unlimited staff"}
+                      {entry.limits.staff > 0 ? `${number(entry.limits.staff)} ${collectionLabel(entry.limits.staff, "staff seats")}` : "unlimited staff"}
                     </p>
                     {!current && status.canPay ? (
                       <Button asChild size="sm" variant="outline" className="mt-3 h-8 w-full rounded-full border-line text-sm">
@@ -182,7 +194,7 @@ export default function SettingsBillingPage() {
                   </div>
                 );
               })}
-              <div className="rounded-xl border border-line p-4">
+              <div className="paper-card rounded-2xl p-4">
                 <p className="flex items-center justify-between text-sm font-semibold">
                   Enterprise
                   <Tag tone="gold">By agreement</Tag>
@@ -205,7 +217,7 @@ export default function SettingsBillingPage() {
           {/* ── Payments ledger ─────────────────────────────────────── */}
           <div className="paper-card overflow-hidden rounded-2xl">
             <div className="flex items-center justify-between border-b border-line px-5 py-3.5">
-              <p className="font-display text-sm font-semibold">Payment history</p>
+              <p data-tour-billing-history className="font-display text-sm font-semibold">Payment history</p>
               <span className="text-xs text-ink-faint">Every invoice is church-business receipts-ready.</span>
             </div>
             {d.payments.length === 0 ? (
@@ -213,26 +225,26 @@ export default function SettingsBillingPage() {
                 No payments recorded yet.
               </div>
             ) : (
-              <ListTable className="divide-y divide-line/70" tableId="settings-billing-1" records={d.payments.slice(0, 12) ?? []} recordKey="reference"><StaggerGroup className="divide-y divide-line/70">
-                <div className="rule-label grid grid-cols-[1.2fr_1fr_0.8fr_1fr_0.9fr] items-center gap-3 border-b border-line px-5 py-2.5">
+              <ListTable className="min-w-[800px] divide-y divide-line/70" tableId="settings-billing-1" records={d.payments.slice(0, 12) ?? []} recordKey="reference"><StaggerGroup className="divide-y divide-line/70">
+                <div className="rule-label grid grid-cols-[1.2fr_1fr_0.8fr_1fr_minmax(200px,0.9fr)] items-center gap-3 border-b border-line px-5 py-2.5">
                   <span>Invoice</span>
                   <span>Date</span>
                   <span>Plan</span>
-                  <span>Method</span>
+                  <span>Status</span>
                   <span className="text-right">Amount</span>
                 </div>
                 {d.payments.slice(0, 12).map((p) => (
                   <StaggerItem key={p.reference}>
-                    <div className="grid grid-cols-[1.2fr_1fr_0.8fr_1fr_0.9fr] items-center gap-3 px-5 py-3 text-sm">
+                    <div className="grid grid-cols-[1.2fr_1fr_0.8fr_1fr_minmax(200px,0.9fr)] items-center gap-3 px-5 py-3 text-sm">
                       <span className="truncate font-mono text-xs text-ink-faint">{p.reference.slice(0, 16)}</span>
                       <span className="text-ink-soft">
-                        {new Date(p.created_at).toLocaleDateString("en-GB", { month: "short", day: "numeric", year: "numeric" })}
+                        {formatRecordDate(new Date(p.created_at))}
                       </span>
                       <span>{planName(p.plan)}</span>
                       <span className="flex items-center gap-1.5 text-sm">
-                        <Tag tone={PAYMENT_TONES[p.status] ?? "neutral"} dot>{p.status}</Tag>
+                        <Tag tone={PAYMENT_TONES[p.status] ?? "neutral"} dot>{formatStatusLabel(p.status)}</Tag>
                       </span>
-                      <span className="num text-right font-semibold">{subscriptionMoney(p.amount, p.currency)}</span>
+                      <span className="num text-right font-semibold [overflow-wrap:anywhere]">{subscriptionMoney(p.amount, p.currency)}</span>
                     </div>
                   </StaggerItem>
                 ))}
@@ -256,23 +268,26 @@ export default function SettingsBillingPage() {
                 </li>
               ))}
               {d.features.length > 10 ? (
-                <li className="text-xs text-ink-faint">+ {number(d.features.length - 10)} more feature surfaces</li>
+                <li className="text-xs text-ink-faint">+ {number(d.features.length - 10)} more {collectionLabel(d.features.length - 10, "feature surfaces")}</li>
               ) : null}
             </ul>
           </div>
-          {d.latestPayment ? (
+          {latestRecordedPayment ? (
             <div className="paper-card rounded-2xl p-5">
-              <p className="rule-label mb-2">Last charge</p>
+              <p className="rule-label mb-2">Latest payment</p>
               <p className="num font-display text-lg font-semibold">
-                {subscriptionMoney(d.latestPayment.amount, d.latestPayment.currency)}
+                {subscriptionMoney(latestRecordedPayment.amount, latestRecordedPayment.currency)}
               </p>
-              <p className="mt-0.5 text-xs text-ink-faint">
-                via {d.latestPayment.gateway} · exact reference {d.latestPayment.reference.slice(0, 10)}…
+              <div className="mt-2">
+                <Tag tone={PAYMENT_TONES[latestRecordedPayment.status] ?? "neutral"} dot>{formatStatusLabel(latestRecordedPayment.status)}</Tag>
+              </div>
+              <p className="mt-2 text-xs text-ink-faint">
+                {formatRecordDate(new Date(latestRecordedPayment.created_at))} · reference {latestRecordedPayment.reference.slice(0, 10)}…
               </p>
             </div>
           ) : (
             <div className="rounded-2xl border border-dashed border-line p-5 text-xs leading-relaxed text-ink-faint">
-              No payment charges yet. Choose a plan above to get started.
+              No payments recorded yet.
             </div>
           )}
           <div className="rounded-2xl border border-dashed border-line p-5 text-xs leading-relaxed text-ink-faint">

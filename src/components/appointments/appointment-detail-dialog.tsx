@@ -1,7 +1,8 @@
 "use client";
 
+import { formatRecordDateTime } from "@/lib/record-date";
+
 import * as React from "react";
-import { format } from "date-fns";
 import {
   CalendarClock,
   MapPin,
@@ -15,11 +16,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
+import { AppointmentStatusBadge } from "./appointment-status-badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-  APPOINTMENT_STATUS_LABELS,
-  APPOINTMENT_STATUS_TEXT,
   type Appointment,
 } from "@/hooks/use-appointments";
 
@@ -92,19 +91,10 @@ export function AppointmentDetailDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[520px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between gap-2 pr-8">
-            {appointment?.title ?? "Appointment"}
+          <DialogTitle className="flex flex-wrap items-center justify-between gap-2">
+            <span className="min-w-0 max-w-full break-words">{appointment?.title ?? "Appointment"}</span>
             {appointment && (
-              <Badge
-                variant="secondary"
-                className={
-                  APPOINTMENT_STATUS_TEXT[appointment.status as keyof typeof APPOINTMENT_STATUS_TEXT] ??
-                  "bg-gray-100 text-gray-800"
-                }
-              >
-                {APPOINTMENT_STATUS_LABELS[appointment.status as keyof typeof APPOINTMENT_STATUS_LABELS] ??
-                  appointment.status}
-              </Badge>
+              <AppointmentStatusBadge status={appointment.status} />
             )}
           </DialogTitle>
           <DialogDescription>Appointment details</DialogDescription>
@@ -148,7 +138,7 @@ export function AppointmentDetailDialog({
               <CalendarClock className="size-4 shrink-0 text-muted-foreground" />
               <span className="text-muted-foreground">Scheduled</span>
               <span className="font-medium">
-                {format(new Date(appointment.scheduledAt), "EEE, MMM d, yyyy · h:mm a")}
+                {formatRecordDateTime(appointment.scheduledAt)}
               </span>
             </div>
 

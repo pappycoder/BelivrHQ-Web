@@ -1,0 +1,215 @@
+[
+  {
+    "role": "secretary",
+    "path": "/people/members",
+    "port": 3201,
+    "expectedAllowed": true
+  },
+  {
+    "role": "secretary",
+    "path": "/gatherings/events/tiers",
+    "port": 3201,
+    "expectedAllowed": true
+  },
+  {
+    "role": "secretary",
+    "path": "/library/forms",
+    "port": 3201,
+    "expectedAllowed": true
+  },
+  {
+    "role": "secretary",
+    "path": "/admin/permissions",
+    "port": 3201,
+    "expectedAllowed": false
+  },
+  {
+    "role": "treasurer",
+    "path": "/giving/donations",
+    "port": 3202,
+    "expectedAllowed": true
+  },
+  {
+    "role": "treasurer",
+    "path": "/insights/reports",
+    "port": 3202,
+    "expectedAllowed": true
+  },
+  {
+    "role": "treasurer",
+    "path": "/gatherings/groups/cell",
+    "port": 3202,
+    "expectedAllowed": true
+  },
+  {
+    "role": "treasurer",
+    "path": "/people/members",
+    "port": 3202,
+    "expectedAllowed": false
+  },
+  {
+    "role": "usher",
+    "path": "/gatherings/attendance/services",
+    "port": 3203,
+    "expectedAllowed": true
+  },
+  {
+    "role": "usher",
+    "path": "/gatherings/events/check-in",
+    "port": 3203,
+    "expectedAllowed": true
+  },
+  {
+    "role": "usher",
+    "path": "/gatherings/groups/cell",
+    "port": 3203,
+    "expectedAllowed": true
+  },
+  {
+    "role": "usher",
+    "path": "/admin/permissions",
+    "port": 3203,
+    "expectedAllowed": false
+  },
+  {
+    "role": "department_head",
+    "path": "/gatherings/groups",
+    "port": 3204,
+    "expectedAllowed": true
+  },
+  {
+    "role": "department_head",
+    "path": "/people/members",
+    "port": 3204,
+    "expectedAllowed": false
+  },
+  {
+    "role": "department_head",
+    "path": "/connect/messages",
+    "port": 3204,
+    "expectedAllowed": false
+  },
+  {
+    "role": "department_head",
+    "path": "/giving/donations",
+    "port": 3204,
+    "expectedAllowed": false
+  },
+  {
+    "role": "cell_leader",
+    "path": "/gatherings/groups/cell",
+    "port": 3205,
+    "expectedAllowed": true
+  },
+  {
+    "role": "cell_leader",
+    "path": "/people/pastoral",
+    "port": 3205,
+    "expectedAllowed": false
+  },
+  {
+    "role": "cell_leader",
+    "path": "/people/members",
+    "port": 3205,
+    "expectedAllowed": false
+  },
+  {
+    "role": "cell_leader",
+    "path": "/giving/donations",
+    "port": 3205,
+    "expectedAllowed": false
+  },
+  {
+    "role": "branch_pastor",
+    "path": "/people/pastoral",
+    "port": 3206,
+    "expectedAllowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "path": "/insights/analytics/attendance",
+    "port": 3206,
+    "expectedAllowed": false
+  },
+  {
+    "role": "branch_pastor",
+    "path": "/gatherings/attendance/records",
+    "port": 3206,
+    "expectedAllowed": true
+  },
+  {
+    "role": "branch_pastor",
+    "path": "/settings/billing",
+    "port": 3206,
+    "expectedAllowed": false
+  },
+  {
+    "role": "senior_pastor",
+    "path": "/people/pastoral/life-events",
+    "port": 3207,
+    "expectedAllowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "path": "/admin/team",
+    "port": 3207,
+    "expectedAllowed": true
+  },
+  {
+    "role": "senior_pastor",
+    "path": "/insights/analytics/giving",
+    "port": 3207,
+    "expectedAllowed": false
+  },
+  {
+    "role": "senior_pastor",
+    "path": "/admin/channels",
+    "port": 3207,
+    "expectedAllowed": false
+  },
+  {
+    "role": "church_admin",
+    "path": "/admin/locations",
+    "port": 3208,
+    "expectedAllowed": true
+  },
+  {
+    "role": "church_admin",
+    "path": "/admin/team",
+    "port": 3208,
+    "expectedAllowed": true
+  },
+  {
+    "role": "church_admin",
+    "path": "/operations/assets",
+    "port": 3208,
+    "expectedAllowed": true
+  },
+  {
+    "role": "church_admin",
+    "path": "/settings/billing",
+    "port": 3208,
+    "expectedAllowed": true
+  },
+  {
+    "role": "super_admin",
+    "path": "/admin/permissions",
+    "port": 3220,
+    "fixtureMode": "platform",
+    "expectedAllowed": true
+  },
+  {
+    "role": "super_admin",
+    "path": "/admin/team",
+    "port": 3220,
+    "fixtureMode": "platform",
+    "expectedAllowed": true
+  },
+  {
+    "role": "super_admin",
+    "path": "/settings/billing",
+    "port": 3220,
+    "fixtureMode": "platform",
+    "expectedAllowed": true
+  }
+]

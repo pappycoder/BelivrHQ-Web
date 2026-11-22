@@ -1,0 +1,146 @@
+[
+  {
+    "theme": "light",
+    "width": 1280,
+    "item": "The platform",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 100.296875,
+    "url": "http://localhost:3214/#product"
+  },
+  {
+    "theme": "light",
+    "width": 1280,
+    "item": "For your network",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 183.25,
+    "url": "http://localhost:3214/#enterprise"
+  },
+  {
+    "theme": "light",
+    "width": 1280,
+    "item": "Pricing",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 100.25,
+    "url": "http://localhost:3214/#pricing"
+  },
+  {
+    "theme": "light",
+    "width": 1280,
+    "item": "FAQs",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 99.671875,
+    "url": "http://localhost:3214/#questions"
+  },
+  {
+    "theme": "dark",
+    "width": 1280,
+    "item": "The platform",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 100.296875,
+    "url": "http://localhost:3214/#product"
+  },
+  {
+    "theme": "dark",
+    "width": 1280,
+    "item": "For your network",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 183.25,
+    "url": "http://localhost:3214/#enterprise"
+  },
+  {
+    "theme": "dark",
+    "width": 1280,
+    "item": "Pricing",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 100.25,
+    "url": "http://localhost:3214/#pricing"
+  },
+  {
+    "theme": "dark",
+    "width": 1280,
+    "item": "FAQs",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 99.671875,
+    "url": "http://localhost:3214/#questions"
+  },
+  {
+    "theme": "light",
+    "width": 390,
+    "item": "The platform",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 100.46875,
+    "url": "http://localhost:3214/#product"
+  },
+  {
+    "theme": "light",
+    "width": 390,
+    "item": "For your network",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 112.8125,
+    "url": "http://localhost:3214/#enterprise"
+  },
+  {
+    "theme": "light",
+    "width": 390,
+    "item": "Pricing",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 99.5,
+    "url": "http://localhost:3214/#pricing"
+  },
+  {
+    "theme": "light",
+    "width": 390,
+    "item": "FAQs",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 100.453125,
+    "url": "http://localhost:3214/#questions"
+  },
+  {
+    "theme": "dark",
+    "width": 390,
+    "item": "The platform",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 100.46875,
+    "url": "http://localhost:3214/#product"
+  },
+  {
+    "theme": "dark",
+    "width": 390,
+    "item": "For your network",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 112.8125,
+    "url": "http://localhost:3214/#enterprise"
+  },
+  {
+    "theme": "dark",
+    "width": 390,
+    "item": "Pricing",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 99.5,
+    "url": "http://localhost:3214/#pricing"
+  },
+  {
+    "theme": "dark",
+    "width": 390,
+    "item": "FAQs",
+    "overflow": false,
+    "targetExists": true,
+    "targetTop": 100.453125,
+    "url": "http://localhost:3214/#questions"
+  }
+]

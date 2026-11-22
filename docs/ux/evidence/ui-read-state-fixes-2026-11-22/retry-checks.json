@@ -1,0 +1,48 @@
+[
+  {
+    "route": "/notifications",
+    "alerts": [],
+    "skeletons": 0,
+    "heading": "Notifications",
+    "url": "http://localhost:3213/notifications"
+  },
+  {
+    "route": "/connect/messages",
+    "alerts": [],
+    "skeletons": 0,
+    "heading": "SMS and WhatsApp, in one stream.",
+    "url": "http://localhost:3213/connect/messages"
+  },
+  {
+    "route": "/giving/schedules",
+    "alerts": [],
+    "skeletons": 0,
+    "heading": "The floor under the year.",
+    "url": "http://localhost:3213/giving/schedules"
+  },
+  {
+    "route": "/people/pastoral/life-events",
+    "alerts": [],
+    "skeletons": 0,
+    "heading": "Milestones the church should not miss.",
+    "url": "http://localhost:3213/people/pastoral/life-events",
+    "captions": [
+      "Remember birthdays, healings, homecomings and losses with a card, call or meal.",
+      "No milestones recorded",
+      "Life events are how a church learns to celebrate and mourn on time."
+    ]
+  },
+  {
+    "route": "/search?q=Chioma",
+    "alerts": [],
+    "skeletons": 0,
+    "heading": "Who or what are you looking for?",
+    "url": "http://localhost:3213/search?q=Chioma",
+    "captions": [
+      "Everything, one box",
+      "Search results",
+      "1 result shown · only records your account can read.",
+      "1 member"
+    ]
+  }
+]

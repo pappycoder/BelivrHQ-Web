@@ -1,5 +1,12 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
+import { FormActions } from "@/components/shared/form-actions";
+
+import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
+import Link from "next/link";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import {
@@ -85,6 +92,7 @@ const formSchema = z
 type FormValues = z.infer<typeof formSchema>;
 
 export interface FormFormProps {
+  withPreview?: boolean;
   form?: FormType;
   onSubmit: (input: CreateFormInput) => Promise<void>;
   submitLabel: string;
@@ -101,7 +109,7 @@ const EMPTY_VALUES: FormValues = {
   submissionLimit: 0,
 };
 
-export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
+export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: FormFormProps) {
   const branchAssignment = useBranchAssignment(form);
   const { data: profile } = useCurrentProfile();
   const builderId = useId();
@@ -207,7 +215,7 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
               <strong className="font-semibold text-ink">
                 {builderFields.length}
               </strong>{" "}
-              questions
+              {collectionLabel(builderFields.length, "questions")}
             </span>
             <span>
               <strong className="font-semibold text-ink">
@@ -224,7 +232,7 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
               · {settingsValues.isPublic ? "Public link" : "Members only"}
             </span>
           </div>
-          <Button
+          {!withPreview && <Button
             type="submit"
             form={builderId}
             className="rounded-full"
@@ -232,9 +240,9 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
             loading={saving}
           >
             {saving ? "Saving..." : submitLabel}
-          </Button>
+          </Button>}
         </div>
-        <div
+        {!withPreview && <div
           className="flex rounded-full border border-line bg-card p-1 xl:hidden"
           aria-label="Builder view"
         >
@@ -256,7 +264,7 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
           >
             <Eye className="size-4" /> Preview form
           </Button>
-        </div>
+        </div>}
         {saveError && (
           <p
             role="alert"
@@ -265,7 +273,7 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
             {saveError}
           </p>
         )}
-        <div className="grid min-w-0 items-start gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+        <div className={withPreview ? CREATE_FORM_LAYOUT : "grid min-w-0 items-start gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]"}>
           <ValidatedForm schemaValidation
             id={builderId}
             onSubmit={formControl.handleSubmit(handleSubmit, () =>
@@ -273,7 +281,7 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
             )}
             className={cn(
               "min-w-0 space-y-5 xl:block",
-              mode === "preview" && "hidden",
+              !withPreview && mode === "preview" && "hidden",
             )}
           >
             <SectionCard
@@ -368,6 +376,30 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
               />
             </SectionCard>
           </ValidatedForm>
+          {withPreview ? <CreatePreviewSidebar>
+            <CreatePreviewCard editing={!!form} eyebrow="Form preview" title={formControl.watch("title") || "Untitled form"}>
+              <dl className="space-y-3 text-sm">
+                <div><dt className="rule-label">Questions</dt><dd className="mt-1">{builderFields.length} {collectionLabel(builderFields.length, "questions")} · {builderFields.filter(field => field.required).length} required</dd></div>
+                <div><dt className="rule-label">Status</dt><dd className="mt-1 capitalize">{settingsValues.status || "draft"}</dd></div>
+                <div><dt className="rule-label">Sharing</dt><dd className="mt-1">{settingsValues.isPublic ? "Public link" : "Members only"}</dd></div>
+                {formControl.watch("description") && <div><dt className="rule-label">Description</dt><dd className="mt-1 break-words">{formControl.watch("description")}</dd></div>}
+              </dl>
+            </CreatePreviewCard>
+            <FormActions>
+              <Button type="submit" form={builderId} disabled={saving} loading={saving} className="w-full">{submitLabel}</Button>
+              <Button asChild variant="ghost" className="w-full"><Link href={form ? `/library/forms/${form.id}` : "/library/forms"}>Cancel</Link></Button>
+            </FormActions>
+            <details className="min-w-0">
+              <summary className="cursor-pointer rounded-xl border border-line bg-card p-3 text-sm font-medium">Preview as a respondent</summary>
+            <FormBuilderPreview
+              title={formControl.watch("title")}
+              description={formControl.watch("description")}
+              fields={builderFields}
+              churchName={profile?.church?.name}
+              churchLogoUrl={profile?.church?.logoUrl}
+            />
+            </details>
+          </CreatePreviewSidebar> : (
           <aside
             className={cn(
               "min-w-0 xl:sticky xl:top-6 xl:block",
@@ -382,6 +414,7 @@ export function FormForm({ form, onSubmit, submitLabel }: FormFormProps) {
               churchLogoUrl={profile?.church?.logoUrl}
             />
           </aside>
+          )}
         </div>
       </div>
     </Form>

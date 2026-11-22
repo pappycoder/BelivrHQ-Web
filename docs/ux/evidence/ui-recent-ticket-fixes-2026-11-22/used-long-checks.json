@@ -1,0 +1,818 @@
+[
+  {
+    "scenario": "used-long",
+    "theme": "light",
+    "width": 1280,
+    "all": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [],
+      "rows": [
+        {
+          "cells": [
+            {
+              "content": 861,
+              "height": 21,
+              "overflow": "hidden",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "ellipsis",
+              "width": 441
+            },
+            {
+              "content": 170,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "EVT-20261103-9CC9A8",
+              "textOverflow": "ellipsis",
+              "width": 170
+            },
+            {
+              "content": 365,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "Professional admission with extended descriptive title · 3 Nov 2026",
+              "textOverflow": "ellipsis",
+              "width": 365
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 1116,
+          "rowWidth": 1116
+        },
+        {
+          "cells": [
+            {
+              "content": 861,
+              "height": 21,
+              "overflow": "hidden",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "ellipsis",
+              "width": 437
+            },
+            {
+              "content": 170,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "EVT-20261025-FB2550",
+              "textOverflow": "ellipsis",
+              "width": 170
+            },
+            {
+              "content": 369,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "Professional admission with extended descriptive title · 25 Oct 2026",
+              "textOverflow": "ellipsis",
+              "width": 369
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 1116,
+          "rowWidth": 1116
+        },
+        {
+          "cells": [
+            {
+              "content": 861,
+              "height": 21,
+              "overflow": "hidden",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "ellipsis",
+              "width": 437
+            },
+            {
+              "content": 170,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "EVT-20261025-4E24AE",
+              "textOverflow": "ellipsis",
+              "width": 170
+            },
+            {
+              "content": 369,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "Professional admission with extended descriptive title · 25 Oct 2026",
+              "textOverflow": "ellipsis",
+              "width": 369
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 1116,
+          "rowWidth": 1116
+        }
+      ]
+    },
+    "filtered": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [
+        "No unused tickets in this recent list.Show all tickets"
+      ],
+      "rows": []
+    },
+    "recovered": true,
+    "matchingRows": 3
+  },
+  {
+    "scenario": "used-long",
+    "theme": "light",
+    "width": 390,
+    "all": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [],
+      "rows": [
+        {
+          "cells": [
+            {
+              "content": 230,
+              "height": 106,
+              "overflow": "visible",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 230,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261103-9CC9A8",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 230,
+              "height": 34,
+              "overflow": "visible",
+              "text": "Professional admission with extended descriptive title · 3 Nov 2026",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 344,
+          "rowWidth": 344
+        },
+        {
+          "cells": [
+            {
+              "content": 230,
+              "height": 106,
+              "overflow": "visible",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 230,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-FB2550",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 230,
+              "height": 34,
+              "overflow": "visible",
+              "text": "Professional admission with extended descriptive title · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 344,
+          "rowWidth": 344
+        },
+        {
+          "cells": [
+            {
+              "content": 230,
+              "height": 106,
+              "overflow": "visible",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 230,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-4E24AE",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 230,
+              "height": 34,
+              "overflow": "visible",
+              "text": "Professional admission with extended descriptive title · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 344,
+          "rowWidth": 344
+        }
+      ]
+    },
+    "filtered": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [
+        "No unused tickets in this recent list.Show all tickets"
+      ],
+      "rows": []
+    },
+    "recovered": true,
+    "matchingRows": 3
+  },
+  {
+    "scenario": "used-long",
+    "theme": "light",
+    "width": 320,
+    "all": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [],
+      "rows": [
+        {
+          "cells": [
+            {
+              "content": 160,
+              "height": 149,
+              "overflow": "visible",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 160,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261103-9CC9A8",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 160,
+              "height": 51,
+              "overflow": "visible",
+              "text": "Professional admission with extended descriptive title · 3 Nov 2026",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 274,
+          "rowWidth": 274
+        },
+        {
+          "cells": [
+            {
+              "content": 160,
+              "height": 149,
+              "overflow": "visible",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 160,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-FB2550",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 160,
+              "height": 51,
+              "overflow": "visible",
+              "text": "Professional admission with extended descriptive title · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 274,
+          "rowWidth": 274
+        },
+        {
+          "cells": [
+            {
+              "content": 160,
+              "height": 149,
+              "overflow": "visible",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 160,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-4E24AE",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 160,
+              "height": 51,
+              "overflow": "visible",
+              "text": "Professional admission with extended descriptive title · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 274,
+          "rowWidth": 274
+        }
+      ]
+    },
+    "filtered": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [
+        "No unused tickets in this recent list.Show all tickets"
+      ],
+      "rows": []
+    },
+    "recovered": true,
+    "matchingRows": 3
+  },
+  {
+    "scenario": "used-long",
+    "theme": "dark",
+    "width": 1280,
+    "all": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [],
+      "rows": [
+        {
+          "cells": [
+            {
+              "content": 861,
+              "height": 21,
+              "overflow": "hidden",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "ellipsis",
+              "width": 441
+            },
+            {
+              "content": 170,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "EVT-20261103-9CC9A8",
+              "textOverflow": "ellipsis",
+              "width": 170
+            },
+            {
+              "content": 365,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "Professional admission with extended descriptive title · 3 Nov 2026",
+              "textOverflow": "ellipsis",
+              "width": 365
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 1116,
+          "rowWidth": 1116
+        },
+        {
+          "cells": [
+            {
+              "content": 861,
+              "height": 21,
+              "overflow": "hidden",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "ellipsis",
+              "width": 437
+            },
+            {
+              "content": 170,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "EVT-20261025-FB2550",
+              "textOverflow": "ellipsis",
+              "width": 170
+            },
+            {
+              "content": 369,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "Professional admission with extended descriptive title · 25 Oct 2026",
+              "textOverflow": "ellipsis",
+              "width": 369
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 1116,
+          "rowWidth": 1116
+        },
+        {
+          "cells": [
+            {
+              "content": 861,
+              "height": 21,
+              "overflow": "hidden",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "ellipsis",
+              "width": 437
+            },
+            {
+              "content": 170,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "EVT-20261025-4E24AE",
+              "textOverflow": "ellipsis",
+              "width": 170
+            },
+            {
+              "content": 369,
+              "height": 17,
+              "overflow": "hidden",
+              "text": "Professional admission with extended descriptive title · 25 Oct 2026",
+              "textOverflow": "ellipsis",
+              "width": 369
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 1116,
+          "rowWidth": 1116
+        }
+      ]
+    },
+    "filtered": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [
+        "No unused tickets in this recent list.Show all tickets"
+      ],
+      "rows": []
+    },
+    "recovered": true,
+    "matchingRows": 3
+  },
+  {
+    "scenario": "used-long",
+    "theme": "dark",
+    "width": 390,
+    "all": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [],
+      "rows": [
+        {
+          "cells": [
+            {
+              "content": 230,
+              "height": 106,
+              "overflow": "visible",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 230,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261103-9CC9A8",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 230,
+              "height": 34,
+              "overflow": "visible",
+              "text": "Professional admission with extended descriptive title · 3 Nov 2026",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 344,
+          "rowWidth": 344
+        },
+        {
+          "cells": [
+            {
+              "content": 230,
+              "height": 106,
+              "overflow": "visible",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 230,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-FB2550",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 230,
+              "height": 34,
+              "overflow": "visible",
+              "text": "Professional admission with extended descriptive title · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 344,
+          "rowWidth": 344
+        },
+        {
+          "cells": [
+            {
+              "content": 230,
+              "height": 106,
+              "overflow": "visible",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 230,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-4E24AE",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 230,
+              "height": 34,
+              "overflow": "visible",
+              "text": "Professional admission with extended descriptive title · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 230
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 344,
+          "rowWidth": 344
+        }
+      ]
+    },
+    "filtered": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [
+        "No unused tickets in this recent list.Show all tickets"
+      ],
+      "rows": []
+    },
+    "recovered": true,
+    "matchingRows": 3
+  },
+  {
+    "scenario": "used-long",
+    "theme": "dark",
+    "width": 320,
+    "all": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [],
+      "rows": [
+        {
+          "cells": [
+            {
+              "content": 160,
+              "height": 149,
+              "overflow": "visible",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 160,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261103-9CC9A8",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 160,
+              "height": 51,
+              "overflow": "visible",
+              "text": "Professional admission with extended descriptive title · 3 Nov 2026",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 274,
+          "rowWidth": 274
+        },
+        {
+          "cells": [
+            {
+              "content": 160,
+              "height": 149,
+              "overflow": "visible",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 160,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-FB2550",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 160,
+              "height": 51,
+              "overflow": "visible",
+              "text": "Professional admission with extended descriptive title · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 274,
+          "rowWidth": 274
+        },
+        {
+          "cells": [
+            {
+              "content": 160,
+              "height": 149,
+              "overflow": "visible",
+              "text": "Alexandra Montgomery-Wellington · LongUnbrokenAttendeeNameToVerifyWrappingLongUnbrokenAttendeeNameToVerifyWrapping",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 160,
+              "height": 17,
+              "overflow": "visible",
+              "text": "EVT-20261025-4E24AE",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 160,
+              "height": 51,
+              "overflow": "visible",
+              "text": "Professional admission with extended descriptive title · 25 Oct 2026",
+              "textOverflow": "clip",
+              "width": 160
+            },
+            {
+              "content": 59,
+              "height": 26,
+              "overflow": "visible",
+              "text": "Used",
+              "textOverflow": "clip",
+              "width": 59
+            }
+          ],
+          "rowContent": 274,
+          "rowWidth": 274
+        }
+      ]
+    },
+    "filtered": {
+      "overflow": false,
+      "unavailable": 0,
+      "messages": [
+        "No unused tickets in this recent list.Show all tickets"
+      ],
+      "rows": []
+    },
+    "recovered": true,
+    "matchingRows": 3
+  }
+]

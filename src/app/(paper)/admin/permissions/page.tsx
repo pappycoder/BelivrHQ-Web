@@ -1,5 +1,9 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
@@ -103,6 +107,8 @@ export default function AdminRolesPage() {
     );
   };
 
+  if (roles.isError || permissions.isError) return <PageQueryError title="Roles" />;
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -157,14 +163,8 @@ export default function AdminRolesPage() {
         />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <FilterChip active={!onlyCustom} onClick={() => setOnlyCustom(false)}>
-          All roles
-        </FilterChip>
-        <FilterChip active={onlyCustom} onClick={() => setOnlyCustom(true)}>
-          Custom & tweaked
-        </FilterChip>
-        <span className="ml-auto">
+      <ListToolbar controls={<>
+<span className="ml-auto">
           <ViewToggle
             value={view}
             onChange={setView}
@@ -174,7 +174,14 @@ export default function AdminRolesPage() {
             ]}
           />
         </span>
-      </div>
+</>}>
+<FilterChip active={!onlyCustom} onClick={() => setOnlyCustom(false)}>
+          All roles
+        </FilterChip>
+<FilterChip active={onlyCustom} onClick={() => setOnlyCustom(true)}>
+          Custom & tweaked
+        </FilterChip>
+</ListToolbar>
 
       {roles.isLoading ? (
         <div className="space-y-2">
@@ -360,8 +367,8 @@ export default function AdminRolesPage() {
         </p>
         Template roles are additive. Ticks grant extras for this church; global
         defaults can&apos;t be revoked from here. Church-owned roles edit their
-        own full set, revocations included. The matrix editor opens in the
-        classic surface while the Paper version matures.
+        own full set, revocations included. Open a role to review its permissions;
+        changes take effect when you save.
       </div>
 
       <CreateRoleDialog

@@ -136,11 +136,13 @@ export function periodLabel(date: string): string {
 
 export function useAnalyticsDashboard(params: AnalyticsDateRangeParams = {}) {
   const { can } = usePermissions();
+  // The aggregate endpoint accepts date/branch scope, not trend grouping or currency.
+  const filters = { startDate: params.startDate, endDate: params.endDate, branchId: params.branchId };
   return useQuery({
-    queryKey: ["analytics", "dashboard", params],
+    queryKey: ["analytics", "dashboard", filters],
     enabled: can("analytics:dashboard", "read"),
     queryFn: ({ signal }) =>
-      api.get<DashboardOverview>(`/analytics/dashboard${buildQuery(params)}`, {
+      api.get<DashboardOverview>(`/analytics/dashboard${buildQuery(filters)}`, {
         signal,
       }),
     staleTime: 3 * 60 * 1000,

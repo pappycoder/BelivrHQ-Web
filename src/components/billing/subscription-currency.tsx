@@ -1,4 +1,6 @@
 "use client";
+
+import { formatRecordDate } from "@/lib/record-date";
 import { LoadingState } from "@/components/shared/loading-state";
 import {
   subscriptionCurrencies,
@@ -32,7 +34,7 @@ export function SubscriptionCurrencySwitcher() {
           {pricing.isError ? (
             "Conversion unavailable. Try again or select USD. "
           ) : pricing.data?.rateUpdatedAt ? (
-            `Rate updated ${new Date(pricing.data.rateUpdatedAt).toLocaleDateString()}. `
+            `Rate updated ${formatRecordDate(new Date(pricing.data.rateUpdatedAt))}. `
           ) : pricing.isPending ? (
             <LoadingState label="Loading conversion" variant="inline" />
           ) : (

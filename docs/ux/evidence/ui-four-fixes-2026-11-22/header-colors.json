@@ -1,0 +1,50 @@
+[
+  {
+    "buttonBackground": "rgb(25, 24, 19)",
+    "buttonForeground": "rgb(247, 244, 236)",
+    "headerBackground": "color(srgb 0.968627 0.956863 0.92549 / 0.94)",
+    "headerForeground": "rgb(25, 24, 19)",
+    "ink": "#191813",
+    "menuOpen": "true",
+    "overflow": false,
+    "paper": "#f7f4ec",
+    "theme": "__variable_7c3874 __variable_2c73bd __variable_29c649 h-full antialiased light",
+    "viewport": 390
+  },
+  {
+    "buttonBackground": "rgb(25, 24, 19)",
+    "buttonForeground": "rgb(247, 244, 236)",
+    "headerBackground": "color(srgb 0.968627 0.956863 0.92549 / 0.94)",
+    "headerForeground": "rgb(25, 24, 19)",
+    "ink": "#191813",
+    "menuOpen": "true",
+    "overflow": false,
+    "paper": "#f7f4ec",
+    "theme": "__variable_7c3874 __variable_2c73bd __variable_29c649 h-full antialiased light",
+    "viewport": 320
+  },
+  {
+    "buttonBackground": "rgb(243, 238, 225)",
+    "buttonForeground": "rgb(20, 19, 15)",
+    "headerBackground": "color(srgb 0.0784314 0.0745098 0.0588235 / 0.94)",
+    "headerForeground": "rgb(243, 238, 225)",
+    "ink": "#f3eee1",
+    "menuOpen": "true",
+    "overflow": false,
+    "paper": "#14130f",
+    "theme": "__variable_7c3874 __variable_2c73bd __variable_29c649 h-full antialiased dark",
+    "viewport": 390
+  },
+  {
+    "buttonBackground": "rgb(243, 238, 225)",
+    "buttonForeground": "rgb(20, 19, 15)",
+    "headerBackground": "color(srgb 0.0784314 0.0745098 0.0588235 / 0.94)",
+    "headerForeground": "rgb(243, 238, 225)",
+    "ink": "#f3eee1",
+    "menuOpen": "true",
+    "overflow": false,
+    "paper": "#14130f",
+    "theme": "__variable_7c3874 __variable_2c73bd __variable_29c649 h-full antialiased dark",
+    "viewport": 320
+  }
+]

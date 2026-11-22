@@ -1,8 +1,10 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import * as React from "react";
 import { ArrowUpDown, LayoutGrid, Rows3 } from "lucide-react";
-import { SearchField, SortDirectionToggle, ViewToggle } from "@/components/paper/primitives";
+import { FilterChip, SearchField, SortDirectionToggle, ViewToggle } from "@/components/paper/primitives";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Choice = { value: string; label: string };
@@ -43,17 +45,20 @@ export function CommunicationRegisterControls({ controls: c, kind, channels, sta
     </Select>
   );
   return (
-    <div role="group" aria-label={`${kind} list controls`} className="flex flex-wrap items-center gap-2">
-      <SearchField value={c.query} onChange={value => { c.setQuery(value); c.setPage(1); }} placeholder={kind === "Templates" ? "Search name or text…" : "Search broadcasts or templates…"} className="w-full max-w-xs" />
-      <div className="ml-auto flex max-w-full flex-wrap items-center gap-2">
-        {select("Channel", c.channel, c.setChannel, [{ value: "all", label: "All channels" }, ...channels])}
-        {select("Status", c.status, c.setStatus, [{ value: "all", label: "Any status" }, ...statuses])}
-        {branches && select("Branch", c.branch, c.setBranch, [{ value: "all", label: "All branches" }, ...branches])}
-        {select(`Sort ${kind.toLowerCase()}`, c.sort, c.setSort, sorts, true)}
-        <SortDirectionToggle ascending={c.ascending} onToggle={() => { c.setAscending(value => !value); c.setPage(1); }} />
-        <ViewToggle value={c.view} onChange={c.setView} options={[{ value: "table", label: "List view", icon: <Rows3 /> }, { value: "cards", label: "Card view", icon: <LayoutGrid /> }]} />
-        {(c.query || c.channel !== "all" || c.status !== "all" || c.branch !== "all") && <button type="button" className="text-sm text-ink-soft underline underline-offset-4" onClick={c.reset}>Clear filters</button>}
-      </div>
-    </div>
+    <ListToolbar role="group" aria-label={`${kind} list controls`}
+ search={<SearchField value={c.query} onChange={value => { c.setQuery(value); c.setPage(1); }} placeholder={kind === "Templates" ? "Search name or text…" : "Search broadcasts or templates…"} className="w-full max-w-xs" />}
+ controls={<>
+{statuses.some(item => item.value === "archived") && <FilterChip active={c.status === "archived"} onClick={() => { c.setStatus(c.status === "archived" ? "all" : "archived"); c.setPage(1); }}>Archived</FilterChip>}
+{branches && select("Branch", c.branch, c.setBranch, [{ value: "all", label: "All branches" }, ...branches])}
+{select(`Sort ${kind.toLowerCase()}`, c.sort, c.setSort, sorts, true)}
+<SortDirectionToggle ascending={c.ascending} onToggle={() => { c.setAscending(value => !value); c.setPage(1); }} />
+<ViewToggle value={c.view} onChange={c.setView} options={[{ value: "table", label: "List view", icon: <Rows3 /> }, { value: "cards", label: "Card view", icon: <LayoutGrid /> }]} />
+</>}
+>
+{select("Channel", c.channel, c.setChannel, [{ value: "all", label: "All channels" }, ...channels])}
+<div role="group" aria-label={`${kind} status filters`} className="flex flex-wrap gap-1.5"><FilterChip active={c.status === "all"} onClick={() => { c.setStatus("all"); c.setPage(1); }}>All</FilterChip>{statuses.filter(item => item.value !== "archived").map(item => <FilterChip key={item.value} active={c.status === item.value} onClick={() => { c.setStatus(item.value); c.setPage(1); }}>{item.label}</FilterChip>)}</div>
+
+{(c.query || c.channel !== "all" || c.status !== "all" || c.branch !== "all") && <button type="button" className="text-sm text-ink-soft underline underline-offset-4" onClick={c.reset}>Clear filters</button>}
+</ListToolbar>
   );
 }

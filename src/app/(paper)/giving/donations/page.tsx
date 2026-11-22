@@ -1,5 +1,10 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { useManageConfirmation } from "@/components/shared/manage-confirmation";
 
 import { ListTable } from "@/components/shared/list-table";
@@ -318,11 +323,11 @@ export default function GivingDonationsPage() {
         />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <FilterChip active={!anyFilter} onClick={clearFilters}>
+      <ListToolbar>
+<FilterChip active={!anyFilter} onClick={clearFilters}>
           All gifts
         </FilterChip>
-        {(["success", "pending", "failed", "reversed"] as const).map((s) => (
+{(["success", "pending", "failed", "reversed"] as const).map((s) => (
           <FilterChip
             key={s}
             active={status === s}
@@ -331,16 +336,16 @@ export default function GivingDonationsPage() {
               setPage(1);
             }}
           >
-            {s}
+            {formatStatusLabel(s)}
           </FilterChip>
         ))}
-        <select
+<select
           value={type}
           onChange={(e) => {
             setType(e.target.value);
             setPage(1);
           }}
-          className="h-8 rounded-full border border-line bg-card px-3 text-sm outline-none"
+          className="h-9 rounded-full border border-line bg-card px-3 text-sm outline-none"
           aria-label="Method filter"
         >
           <option value="">Any method</option>
@@ -348,13 +353,13 @@ export default function GivingDonationsPage() {
           <option value="bank_transfer">Bank</option>
           <option value="digital">Online</option>
         </select>
-        <select
+<select
           value={categoryId}
           onChange={(e) => {
             setCategoryId(e.target.value);
             setPage(1);
           }}
-          className="h-8 rounded-full border border-line bg-card px-3 text-sm outline-none"
+          className="h-9 rounded-full border border-line bg-card px-3 text-sm outline-none"
           aria-label="Category filter"
         >
           <option value="">All categories</option>
@@ -364,7 +369,7 @@ export default function GivingDonationsPage() {
             </option>
           ))}
         </select>
-        <Popover open={dateOpen} onOpenChange={open => {
+<Popover open={dateOpen} onOpenChange={open => {
           if (open) setDateDraft({ from: startDate, to: endDate });
           setDateOpen(open);
         }}>
@@ -380,13 +385,13 @@ export default function GivingDonationsPage() {
             <p className="text-sm font-medium">Giving date range</p>
             <div className="space-y-2">
               <Label htmlFor="giving-date-from">From date</Label>
-              <Input id="giving-date-from" name="fromDate" picker="native" type="date"
+              <Input id="giving-date-from" name="fromDate" picker="popover" type="date"
                 value={dateDraft.from} max={dateDraft.to || undefined}
                 onChange={event => setDateDraft(value => ({ ...value, from: event.target.value }))} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="giving-date-to">To date</Label>
-              <Input id="giving-date-to" name="toDate" picker="native" type="date"
+              <Input id="giving-date-to" name="toDate" picker="popover" type="date"
                 value={dateDraft.to} min={dateDraft.from || undefined}
                 aria-invalid={invalidRange || undefined} aria-describedby={invalidRange ? "giving-date-error" : undefined}
                 onChange={event => setDateDraft(value => ({ ...value, to: event.target.value }))} />
@@ -402,7 +407,7 @@ export default function GivingDonationsPage() {
             </div>
           </PopoverContent>
         </Popover>
-      </div>
+</ListToolbar>
 
       {transactions.isLoading ? (
         <div className="space-y-2">
@@ -492,7 +497,7 @@ export default function GivingDonationsPage() {
                       {TYPE_LABELS[tx.type] ?? tx.type}
                     </span>
                     <Tag tone={STATUS_TONES[tx.status]} dot>
-                      {tx.status}
+                      {formatStatusLabel(tx.status)}
                     </Tag>
                   </span>
                   <span className="num text-right text-sm font-semibold">

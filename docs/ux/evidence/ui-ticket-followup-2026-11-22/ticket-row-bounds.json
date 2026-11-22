@@ -1,0 +1,68 @@
+[
+  {
+    "theme": "light",
+    "width": 1280,
+    "dateClient": 140,
+    "dateScroll": 140,
+    "holderClient": 77,
+    "holderScroll": 77,
+    "statusClient": 175,
+    "statusScroll": 175,
+    "tableWidth": 1126
+  },
+  {
+    "theme": "light",
+    "width": 390,
+    "dateClient": 20,
+    "dateScroll": 31,
+    "holderClient": 3,
+    "holderScroll": 77,
+    "statusClient": 25,
+    "statusScroll": 54,
+    "tableWidth": 344
+  },
+  {
+    "theme": "light",
+    "width": 320,
+    "dateClient": 9,
+    "dateScroll": 31,
+    "holderClient": 0,
+    "holderScroll": 77,
+    "statusClient": 11,
+    "statusScroll": 54,
+    "tableWidth": 274
+  },
+  {
+    "theme": "dark",
+    "width": 1280,
+    "dateClient": 140,
+    "dateScroll": 140,
+    "holderClient": 77,
+    "holderScroll": 77,
+    "statusClient": 175,
+    "statusScroll": 175,
+    "tableWidth": 1126
+  },
+  {
+    "theme": "dark",
+    "width": 390,
+    "dateClient": 20,
+    "dateScroll": 31,
+    "holderClient": 3,
+    "holderScroll": 77,
+    "statusClient": 25,
+    "statusScroll": 54,
+    "tableWidth": 344
+  },
+  {
+    "theme": "dark",
+    "width": 320,
+    "dateClient": 9,
+    "dateScroll": 31,
+    "holderClient": 0,
+    "holderScroll": 77,
+    "statusClient": 11,
+    "statusScroll": 54,
+    "tableWidth": 274
+  }
+]

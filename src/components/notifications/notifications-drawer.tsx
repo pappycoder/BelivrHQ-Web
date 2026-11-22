@@ -218,7 +218,7 @@ export function NotificationsDrawer({
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <Input picker="native"
+            <Input picker="popover"
               type="date"
               value={startDate}
               onChange={(e) => {
@@ -230,7 +230,7 @@ export function NotificationsDrawer({
               aria-label="Start date"
             />
             <span className="text-sm text-muted-foreground">to</span>
-            <Input picker="native"
+            <Input picker="popover"
               type="date"
               value={endDate}
               onChange={(e) => {

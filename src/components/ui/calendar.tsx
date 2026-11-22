@@ -198,9 +198,10 @@ function CalendarDayButton({
   day,
   modifiers,
   hasEvent = false,
+  disableTooltip = false,
   children,
   ...props
-}: React.ComponentProps<typeof DayButton> & { hasEvent?: boolean }) {
+}: React.ComponentProps<typeof DayButton> & { hasEvent?: boolean; disableTooltip?: boolean }) {
   const defaultClassNames = getDefaultClassNames()
 
   const ref = React.useRef<HTMLButtonElement>(null)
@@ -211,6 +212,7 @@ function CalendarDayButton({
   return (
     <Button
       ref={ref}
+      disableTooltip={disableTooltip}
       variant="ghost"
       size="icon"
       data-day={day.date.toLocaleDateString()}

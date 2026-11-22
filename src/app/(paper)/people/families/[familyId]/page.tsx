@@ -1,5 +1,12 @@
 "use client";
 
+import { RecordQueryError } from "@/components/shared/record-query-error";
+import { isMissingRecordError } from "@/lib/record-query-error";
+
+import { formatRecordDate } from "@/lib/record-date";
+
+import { DetailNavigation, DetailHeading } from "@/components/paper/section";
+
 import * as React from "react";
 import Link from "next/link";
 import {
@@ -29,10 +36,7 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { useFamily, type FamilyMemberInfo } from "@/hooks/use-families";
 
 function formatDate(value?: string) {
-  if (!value) return "Not available";
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return value.slice(0, 10);
-  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  return formatRecordDate(value);
 }
 
 export default function FamilyDetailPage({
@@ -60,6 +64,10 @@ export default function FamilyDetailPage({
     );
   }
 
+  if (family.isError && !isMissingRecordError(family.error)) {
+    return <RecordQueryError title="Family details" error={family.error} backHref="/people/families" backLabel="Back to families" />;
+  }
+
   if (family.isError || !family.data) {
     return (
       <EmptyState
@@ -80,12 +88,12 @@ export default function FamilyDetailPage({
 
   return (
     <div className="space-y-6">
-      <Link
+      <DetailNavigation><Link
         href="/people/families"
         className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink"
       >
         <ArrowLeft className="size-3" /> People · Families
-      </Link>
+      </Link></DetailNavigation>
 
       <div className="paper-card rounded-2xl p-5 md:p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -95,7 +103,7 @@ export default function FamilyDetailPage({
             </span>
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="font-display text-2xl font-semibold tracking-tight">{f.name}</h1>
+                <DetailHeading>{f.name}</DetailHeading>
                 {f.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
               </div>
               <p className="text-sm text-ink-soft">
@@ -104,7 +112,7 @@ export default function FamilyDetailPage({
               </p>
             </div>
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div data-tour-actions className="flex flex-wrap gap-2">
             {canUpdate ? (
               <>
                 <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-full border-line bg-card text-sm" onClick={() => setEditOpen(true)}>
@@ -135,7 +143,7 @@ export default function FamilyDetailPage({
 
       <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
         <StaggerGroup className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl">
-          <div className="rule-label px-5 py-2.5">Family members</div>
+          <div data-tour-family-roster className="rule-label px-5 py-2.5">Family members</div>
           {f.members.length ? (
             f.members.map((member) => (
               <StaggerItem key={member.id}>
@@ -182,7 +190,7 @@ export default function FamilyDetailPage({
 
         <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
           <div className="paper-card rounded-2xl p-4">
-            <p className="rule-label mb-2">Household notes</p>
+            <p data-tour-family-notes className="rule-label mb-2">Household notes</p>
             <DataList>
               <FieldRow label="Head">{head ? `${head.firstName} ${head.lastName}` : "Not available"}</FieldRow>
               <FieldRow label="Members">{f.members.length}</FieldRow>

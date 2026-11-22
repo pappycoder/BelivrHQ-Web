@@ -56,7 +56,7 @@ export default function NewSermonPage() {
           </Button>
         }
       />
-      <SermonForm onSubmit={onSubmit} />
+      <SermonForm withPreview onSubmit={onSubmit} />
     </div>
   );
 }

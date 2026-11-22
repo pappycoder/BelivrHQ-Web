@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import { AttendanceHeadcountCharts } from "./attendance-headcount-charts";
 
 import {
@@ -51,7 +53,7 @@ export function GeneralAttendanceSummaryCard({
           )}
         </div>
         <CardDescription>
-          {summary.reportCount} service headcount records. Separate from
+          {summary.reportCount} {collectionLabel(summary.reportCount, "service headcount records")}. Separate from
           individual check-ins; age and gender are overlapping breakdowns of the
           same total.
         </CardDescription>

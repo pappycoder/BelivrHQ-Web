@@ -1,5 +1,7 @@
 "use client";
 
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 import { WorkspaceFormSection } from "@/components/workspace/workspace-presentation";
 
@@ -10,7 +12,6 @@ import { z } from "zod";
 import { toast } from "@/lib/toast";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -100,7 +101,7 @@ export function LoanFormDialog({
       expectedReturnDate: values.expectedReturnDate,
       borrowerMemberId: values.borrowerMemberId || undefined,
       borrowedByName: values.borrowedByName?.trim() || undefined,
-      conditionBefore: values.conditionBefore as AssetCondition | undefined,
+      conditionBefore: (values.conditionBefore || undefined) as AssetCondition | undefined,
       notes: values.notes?.trim() || undefined,
     };
     createMutation.mutate(payload as never, {
@@ -121,7 +122,7 @@ export function LoanFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[520px] max-h-[90vh] overflow-y-auto">
+      <FormDialogContent className="sm:max-w-[520px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Loan Out Asset</DialogTitle>
           <DialogDescription>
@@ -253,7 +254,7 @@ export function LoanFormDialog({
             </DialogFooter>
           </ValidatedForm>
         </Form>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

@@ -1,10 +1,13 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import * as React from "react";
 import { Activity, AlertTriangle, ShieldAlert, Sparkles } from "lucide-react";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
@@ -80,103 +83,105 @@ export function MemberScoringDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[520px] max-h-[90vh] overflow-y-auto">
+      <FormDialogContent className="sm:max-w-[520px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{memberName || "Member"}</DialogTitle>
           <DialogDescription>Factors are normalised indicators from 0% to 100%, rather than the probability of a future outcome.</DialogDescription>
         </DialogHeader>
 
-        {query.isLoading || query.isFetching ? (
-          <div className="space-y-6">
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-40 w-full" />
-          </div>
-        ) : query.isError ? (
-          <div className="flex flex-col items-center gap-2 py-8 text-center">
-            <AlertTriangle className="h-8 w-8 text-red-500" />
-            <p className="text-sm text-muted-foreground">
-              Could not load scoring for this member.
-            </p>
-          </div>
-        ) : !hasRisk && !hasEngagement ? (
-          <div className="flex flex-col items-center gap-2 py-8 text-center">
-            <ShieldAlert className="h-8 w-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">
-              No scoring yet. Run &quot;Recalculate Scores&quot; to generate risk and
-              engagement values for all members.
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {hasRisk && data?.risk && (
-              <section>
-                <div className="mb-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-sm font-medium">
-                    <Activity className="h-4 w-4 text-red-500" />
-                    Disengagement Risk
+        <FormSection title="Details">
+          {query.isLoading || query.isFetching ? (
+            <div className="space-y-6">
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-40 w-full" />
+            </div>
+          ) : query.isError ? (
+            <div className="flex flex-col items-center gap-2 py-8 text-center">
+              <AlertTriangle className="h-8 w-8 text-red-500" />
+              <p className="text-sm text-muted-foreground">
+                Could not load scoring for this member.
+              </p>
+            </div>
+          ) : !hasRisk && !hasEngagement ? (
+            <div className="flex flex-col items-center gap-2 py-8 text-center">
+              <ShieldAlert className="h-8 w-8 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">
+                No scoring yet. Run &quot;Recalculate Scores&quot; to generate risk and
+                engagement values for all members.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {hasRisk && data?.risk && (
+                <section>
+                  <div className="mb-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <Activity className="h-4 w-4 text-red-500" />
+                      Disengagement Risk
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          "text-sm",
+                          RISK_LEVEL_TEXT[data.risk.level as keyof typeof RISK_LEVEL_TEXT] ??
+                            ""
+                        )}
+                      >
+                        {RISK_LEVEL_LABELS[data.risk.level as keyof typeof RISK_LEVEL_LABELS] ??
+                          data.risk.level}
+                      </Badge>
+                      <span className="text-2xl font-semibold">
+                        {Math.round(data.risk.score)}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        "text-sm",
-                        RISK_LEVEL_TEXT[data.risk.level as keyof typeof RISK_LEVEL_TEXT] ??
-                          ""
-                      )}
-                    >
-                      {RISK_LEVEL_LABELS[data.risk.level as keyof typeof RISK_LEVEL_LABELS] ??
-                        data.risk.level}
-                    </Badge>
+                  <FactorBars
+                    factors={data.risk.factors}
+                    labels={RISK_FACTOR_LABELS}
+                    danger
+                  />
+                </section>
+              )}
+
+              {hasEngagement && data?.engagement && (
+                <section>
+                  <div className="mb-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <Sparkles className="h-4 w-4 text-emerald-500" />
+                      Engagement Score
+                    </div>
                     <span className="text-2xl font-semibold">
-                      {Math.round(data.risk.score)}
+                      {Math.round(data.engagement.score)}
                     </span>
                   </div>
-                </div>
-                <FactorBars
-                  factors={data.risk.factors}
-                  labels={RISK_FACTOR_LABELS}
-                  danger
-                />
-              </section>
-            )}
+                  <FactorBars
+                    factors={data.engagement.factors}
+                    labels={ENGAGEMENT_FACTOR_LABELS}
+                  />
+                </section>
+              )}
 
-            {hasEngagement && data?.engagement && (
-              <section>
-                <div className="mb-3 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-sm font-medium">
-                    <Sparkles className="h-4 w-4 text-emerald-500" />
-                    Engagement Score
-                  </div>
-                  <span className="text-2xl font-semibold">
-                    {Math.round(data.engagement.score)}
-                  </span>
-                </div>
-                <FactorBars
-                  factors={data.engagement.factors}
-                  labels={ENGAGEMENT_FACTOR_LABELS}
-                />
-              </section>
-            )}
-
-            {data?.suggestions && data.suggestions.length > 0 && (
-              <section>
-                <h3 className="mb-2 text-sm font-medium">Suggested follow-ups</h3>
-                <ul className="space-y-1.5">
-                  {data.suggestions.map((suggestion, index) => (
-                    <li
-                      key={index}
-                      className="flex items-start gap-2 text-sm text-muted-foreground"
-                    >
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
-                      {suggestion}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-          </div>
-        )}
-      </DialogContent>
+              {data?.suggestions && data.suggestions.length > 0 && (
+                <section>
+                  <h3 className="mb-2 text-sm font-medium">Suggested follow-ups</h3>
+                  <ul className="space-y-1.5">
+                    {data.suggestions.map((suggestion, index) => (
+                      <li
+                        key={index}
+                        className="flex items-start gap-2 text-sm text-muted-foreground"
+                      >
+                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
+                        {suggestion}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+            </div>
+          )}
+        </FormSection>
+      </FormDialogContent>
     </Dialog>
   );
 }

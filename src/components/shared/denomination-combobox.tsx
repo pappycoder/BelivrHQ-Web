@@ -82,20 +82,20 @@ export function DenominationCombobox({
           id={id}
           aria-expanded={open}
           className={cn(
-            "flex h-10 w-full items-center justify-between rounded-md border bg-background px-3 py-2 text-sm",
-            "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+            "flex h-10 min-w-0 w-full items-center justify-between rounded-md border bg-background px-3 py-2 text-sm",
+            "hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
             "disabled:cursor-not-allowed disabled:opacity-50",
             className,
           )}
         >
-          <span className={cn("truncate", !value && "text-gray-400")}>
+          <span className={cn("truncate", !value && "text-muted-foreground")}>
             {value || placeholder}
           </span>
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </button>
       </PopoverTrigger>
       <PopoverContent
-        className="w-[--radix-popover-trigger-width] p-0"
+        className="w-[var(--radix-popover-trigger-width)] min-w-0 max-w-[min(calc(100vw-1rem),var(--radix-popover-content-available-width))] max-h-[var(--radix-popover-content-available-height)] overflow-y-auto p-0"
         align="start"
       >
         <Command>
@@ -155,11 +155,11 @@ export function DenominationCombobox({
 
           {/* Inline custom input panel */}
           {customMode && (
-            <div className="border-t p-3">
+            <div className="min-w-0 border-t p-3">
               <p className="text-sm text-muted-foreground mb-2">
                 Enter your denomination (auto-capitalized):
               </p>
-              <div className="flex gap-2">
+              <div className="flex min-w-0 gap-2">
                 <input
                   ref={customInputRef}
                   type="text"
@@ -176,14 +176,13 @@ export function DenominationCombobox({
                     }
                   }}
                   placeholder="e.g. Living Spring Assembly"
-                  className="flex-1 rounded-md border px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+                  className="min-w-0 flex-1 rounded-md border px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring"
                 />
                 <button
                   type="button"
                   onClick={handleCustomSubmit}
                   disabled={!customInput.trim()}
-                  className="rounded-md px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
-                  style={{ backgroundColor: "var(--primary)" }}
+                  className="shrink-0 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground disabled:opacity-50"
                 >
                   Add
                 </button>

@@ -1,0 +1,62 @@
+[
+  {
+    "template": "/people/visitors/[visitorId]",
+    "path": "/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc"
+  },
+  {
+    "template": "/people/families/[familyId]",
+    "path": "/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5"
+  },
+  {
+    "template": "/people/members/[memberId]",
+    "path": "/people/members/634a74c4-ad73-4506-933d-105295aafba7"
+  },
+  {
+    "template": "/gatherings/attendance/services/[serviceId]",
+    "path": "/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0"
+  },
+  {
+    "template": "/gatherings/events/[eventId]",
+    "path": "/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9"
+  },
+  {
+    "template": "/gatherings/events/[eventId]/edit",
+    "path": "/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit"
+  },
+  {
+    "template": "/gatherings/groups/cell/[groupId]",
+    "path": "/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844"
+  },
+  {
+    "template": "/library/sermons/[sermonId]",
+    "path": "/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df"
+  },
+  {
+    "template": "/library/sermons/[sermonId]/edit",
+    "path": "/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit"
+  },
+  {
+    "template": "/library/forms/[formId]",
+    "path": "/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47"
+  },
+  {
+    "template": "/library/forms/[formId]/edit",
+    "path": "/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit"
+  },
+  {
+    "template": "/library/forms/[formId]/fill",
+    "path": "/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill"
+  },
+  {
+    "template": "/operations/assets/[assetId]/edit",
+    "path": "/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit"
+  },
+  {
+    "template": "/admin/team/[profileId]",
+    "path": "/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a"
+  },
+  {
+    "template": "/admin/permissions/[roleName]",
+    "path": "/admin/permissions/church_admin"
+  }
+]

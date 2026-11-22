@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,7 +18,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFamiliesList, type Family } from "@/hooks/use-families";
 
-interface FamilyComboboxProps {
+interface FamilyComboboxProps extends Pick<React.ComponentProps<"button">, "id" | "aria-label" | "aria-labelledby" | "aria-describedby" | "aria-invalid" | "aria-required"> {
   /** Selected family id ("" = none). */
   value: string;
   onChange: (familyId: string, family?: Family) => void;
@@ -30,8 +32,10 @@ export function FamilyCombobox({
   onChange,
   selectedName,
   placeholder = "Select family...",
+  ...accessibilityProps
 }: FamilyComboboxProps) {
   const [open, setOpen] = React.useState(false);
+  const listId = React.useId();
   const [searchTerm, setSearchTerm] = React.useState("");
 
   const initialQuery = useFamiliesList({ limit: 20 });
@@ -55,10 +59,14 @@ export function FamilyCombobox({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
+          {...accessibilityProps}
           type="button"
+          role="combobox"
+          aria-expanded={open}
+          aria-controls={listId}
           className={cn(
-            "flex h-10 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm",
-            "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+            "flex h-10 min-w-0 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm",
+            "hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
             "disabled:cursor-not-allowed disabled:opacity-50"
           )}
         >
@@ -75,7 +83,7 @@ export function FamilyCombobox({
             value={searchTerm}
             onValueChange={setSearchTerm}
           />
-          <CommandList>
+          <CommandList id={listId}>
             {searchTerm.trim().length >= 2 && searchQuery.isFetching ? (
               <div className="p-3 space-y-2">
                 <Skeleton className="h-8 w-full" />
@@ -99,7 +107,7 @@ export function FamilyCombobox({
                     />
                     <span>{family.name}</span>
                     <span className="ml-auto text-sm text-muted-foreground">
-                      {family.members.length} member(s)
+                      {family.members.length} {collectionLabel(family.members.length, "members")}
                     </span>
                   </CommandItem>
                 ))}

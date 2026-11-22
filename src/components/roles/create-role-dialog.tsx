@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import * as React from "react";
@@ -10,7 +14,6 @@ import { toast } from "@/lib/toast";
 import { ShieldPlus } from "lucide-react";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -92,7 +95,7 @@ export function CreateRoleDialog({ open, onOpenChange, onCreated }: CreateRoleDi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <FormDialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ShieldPlus className="h-4 w-4" />
@@ -105,42 +108,44 @@ export function CreateRoleDialog({ open, onOpenChange, onCreated }: CreateRoleDi
 
         <Form {...form}>
           <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField required
-              control={form.control}
-              name="label"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Role Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g. Media Team" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    {showPreview
-                      ? `Will be created as "${slugPreview}", shown as-is across the app.`
-                      : "Letters and numbers only; stored in lowercase."}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="What does this role do?"
-                      className="resize-none"
-                      rows={3}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <FormSection title="Role details">
+              <FormField required
+                control={form.control}
+                name="label"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Role Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. Media Team" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      {showPreview
+                        ? `Will be created as "${slugPreview}", shown as-is across the app.`
+                        : "Letters and numbers only; stored in lowercase."}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="What does this role do?"
+                        className="resize-none"
+                        rows={3}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </FormSection>
             <DialogFooter>
               <Button
                 type="button"
@@ -156,7 +161,7 @@ export function CreateRoleDialog({ open, onOpenChange, onCreated }: CreateRoleDi
             </DialogFooter>
           </ValidatedForm>
         </Form>
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

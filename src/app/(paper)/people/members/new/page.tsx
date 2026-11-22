@@ -1,5 +1,10 @@
 "use client";
 
+import { FormActions } from "@/components/shared/form-actions";
+
+import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
+
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import * as React from "react";
@@ -12,6 +17,7 @@ import { Camera, ImagePlus, Loader2, Trash2 } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { api } from "@/lib/api";
 import { PageHeader, SectionCard } from "@/components/paper/section";
+import { PageTour, type TourStep } from "@/components/tours/page-tour";
 import { PersonAvatar } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,6 +52,21 @@ import { usePermissions } from "@/hooks/use-permissions";
 import { confirmDiscardChanges } from "@/hooks/use-unsaved-changes";
 
 const MAX_PHOTO_MB = 5;
+
+const NEW_MEMBER_TOUR_STEPS: TourStep[] = [
+  { target: ".new-member-tour-heading", title: "Introduce a new member", description: "Use this form to create a member record directly. Fields marked with an asterisk are required. This guide explains the form without entering information or saving a member." },
+  { target: ".new-member-tour-name", title: "Start with their name", description: "First name and Last name are both required. Enter the person's details after the tour. The profile preview updates as you type, so you can check how the name will appear." },
+  { target: ".new-member-tour-contact", title: "Add contact details", description: "Email, Phone and WhatsApp are optional. Enter an email address in a valid format if you supply one, and include the country code when useful for phone numbers. Leave unavailable details blank." },
+  { target: ".new-member-tour-birthday", title: "Personal details are optional", description: "Choose Birthday and Gender if those details are available. You can leave them blank and continue. Check the date carefully before saving." },
+  { target: ".new-member-tour-branch", title: "Check the member's branch", description: "A branch is required. HQ accounts can select one from the available branches; branch accounts use their assigned branch and cannot change it here. Check this before creating the record." },
+  { target: ".new-member-tour-address", title: "Record their location", description: "Address, City and State are optional. Add the details you have, or leave them blank. These fields do not replace the required branch assignment." },
+  { target: ".new-member-tour-household", title: "Link an existing household", description: "Household is optional. Select an existing family to reveal Relationship and Head of household controls. Set those only if appropriate. Creating the member and linking the household are separate operations; a warning will tell you if the link needs attention." },
+  { target: ".new-member-tour-custom > div:first-child", title: "Add other useful details", description: "Add field creates a label-and-value pair for an extra detail. Supply a distinct label for each entry. Entries without a label are ignored, and a repeated label keeps the last value. You can remove a row before saving." },
+  { target: ".new-member-tour-notes", title: "Add a note if needed", description: "Use Notes for relevant context that helps your team care for this member. This is optional and is saved with the member record." },
+  { target: ".new-member-tour-preview", title: "Check the profile preview", description: "The preview reflects the name, email and selected photo from this form. It helps you review the entry; it does not mean the member has been saved." },
+  { target: ".new-member-tour-photo", title: "Choose an optional photo", description: "Add a photo accepts an image up to 5 MB. A selected photo can be replaced or removed before saving. Upload happens after the member is created; if it fails, the member is still saved and you will see a warning." },
+  { target: ".new-member-tour-save", title: "Save only when you are ready", description: "Create member validates the form and saves a new record when the required details are valid. Review any field errors and try again. Cancel returns to the directory and asks before discarding changed form fields. Finishing this tour does not submit the form." },
+];
 
 const RELATIONSHIP_OPTIONS = ["spouse", "child", "parent", "sibling", "ward", "other"];
 
@@ -167,6 +188,8 @@ export default function NewMemberPage() {
   return (
     <div className="space-y-6">
       <PageHeader
+        className="new-member-tour-heading"
+        actions={<PageTour page="Add a member" account={profile ? `${profile.churchId}:${profile.profileId}` : undefined} ready={ready && canCreate && !saving} steps={NEW_MEMBER_TOUR_STEPS} />}
         eyebrow={
           <Link href="/people/members" className="flex items-center gap-1.5 hover:text-ink">
             ← People · Members
@@ -177,33 +200,33 @@ export default function NewMemberPage() {
       />
 
       <Form {...form}>
-        <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 lg:grid-cols-[1fr_320px]">
+        <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className={CREATE_FORM_LAYOUT}>
           <div className="min-w-0 space-y-4">
             <SectionCard eyebrow="Identity" title="Who are they?">
               <div className="grid gap-4 sm:grid-cols-2">
-                <RhfField name="firstName" label="First name" required autoFocus />
+                <RhfField name="firstName" label="First name" className="new-member-tour-name" required autoFocus />
                 <RhfField name="lastName" label="Last name" required />
-                <RhfField name="email" label="Email" type="email" />
+                <RhfField name="email" label="Email" className="new-member-tour-contact" type="email" />
                 <RhfField name="phone" label="Phone" placeholder="(415) 555-0100" />
                 <RhfField name="whatsappNumber" label="WhatsApp" placeholder="+1 415 555 0100" />
-                <RhfField name="dateOfBirth" label="Birthday" type="date" />
+                <RhfField name="dateOfBirth" label="Birthday" className="new-member-tour-birthday" type="date" />
                 <SelectField name="gender" label="Gender" options={["female", "male", "unspecified"]} />
-                <SelectField name="branchId" label="Branch" options={(branches.data?.data ?? []).map((b) => ({ value: b.branchId, label: b.name }))} disabled={!isHq} />
+                <SelectField name="branchId" label="Branch" className="new-member-tour-branch" options={(branches.data?.data ?? []).map((b) => ({ value: b.branchId, label: b.name }))} disabled={!isHq} />
               </div>
             </SectionCard>
 
             <SectionCard eyebrow="Contact & household" title="Where they are">
               <div className="grid gap-4 sm:grid-cols-2">
-                <RhfField name="address" label="Address" className="sm:col-span-2" />
+                <RhfField name="address" label="Address" className="new-member-tour-address sm:col-span-2" />
                 <RhfField name="city" label="City" />
                 <RhfField name="state" label="State" />
-                <div className="space-y-1.5 sm:col-span-2">
-                  <FormLabel className="text-sm">Household</FormLabel>
+                <div className="new-member-tour-household space-y-1.5 sm:col-span-2">
                   <FormField
                     control={form.control}
                     name="familyId"
                     render={({ field }) => (
                       <FormItem>
+                        <FormLabel className="text-sm">Household</FormLabel>
                         <FormControl>
                           <FamilyCombobox
                             value={field.value ?? ""}
@@ -239,6 +262,7 @@ export default function NewMemberPage() {
             </SectionCard>
 
             <SectionCard
+              className="new-member-tour-custom"
               eyebrow="Their story"
               title="Custom fields"
               description="Useful details such as a nickname, shift pattern or dietary requirement."
@@ -261,7 +285,7 @@ export default function NewMemberPage() {
               )}
             </SectionCard>
 
-            <SectionCard eyebrow="Notes" title="A first word">
+            <SectionCard className="new-member-tour-notes" eyebrow="Notes" title="A first word">
               <FormField
                 control={form.control}
                 name="notes"
@@ -277,12 +301,9 @@ export default function NewMemberPage() {
             </SectionCard>
           </div>
 
-          <aside className="lg:sticky lg:top-20 lg:self-start">
-            <div className="paper-card overflow-hidden rounded-2xl">
-              <div className="border-b border-line bg-muted/30 px-4 py-3">
-                <p className="rule-label">Profile preview</p>
-              </div>
-              <div className="space-y-4 p-4">
+          <CreatePreviewSidebar>
+            <CreatePreviewCard className="new-member-tour-preview" eyebrow="Profile preview" title={`${form.watch("firstName")} ${form.watch("lastName")}`.trim() || "New member"}>
+              <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   {photoPreview ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -300,7 +321,7 @@ export default function NewMemberPage() {
                     <p className="truncate text-sm text-ink-faint">{form.watch("email") || "no email yet"}</p>
                   </div>
                 </div>
-                <label className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-line py-3 text-sm text-ink-soft transition-colors hover:border-brand/40">
+                <label className="new-member-tour-photo flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-line py-3 text-sm text-ink-soft transition-colors hover:border-brand/40">
                   {photoPreview ? <Camera className="size-3.5" /> : <ImagePlus className="size-3.5" />}
                   {photoPreview ? "Replace photo" : "Add a photo"}
                   <input
@@ -321,8 +342,8 @@ export default function NewMemberPage() {
                 ) : null}
                 {familyName ? <p className="text-sm text-ink-soft">Household: <span className="font-medium">{familyName}</span></p> : null}
               </div>
-            </div>
-            <div className="mt-3 space-y-2">
+            </CreatePreviewCard>
+            <FormActions className="new-member-tour-save">
               <Button type="submit" disabled={saving || !canCreate} className="h-10 w-full rounded-lg text-sm">
                 {saving ? <><Loader2 className="mr-2 size-4 animate-spin" /> Adding…</> : "Create member"}
               </Button>
@@ -337,11 +358,11 @@ export default function NewMemberPage() {
               >
                 Cancel
               </Button>
-            </div>
+            </FormActions>
             {!canCreate && ready ? (
               <p className="mt-3 text-center text-xs text-ink-faint">Your role can view the register but not add to it.</p>
             ) : null}
-          </aside>
+          </CreatePreviewSidebar>
         </ValidatedForm>
       </Form>
     </div>
@@ -394,11 +415,13 @@ function SelectField({
   label,
   options,
   disabled,
+  className,
 }: {
   name: keyof Values;
   label: string;
   options: { value: string; label: string }[] | string[];
   disabled?: boolean;
+  className?: string;
 }) {
   const form = useFormContextLike();
   const items = options.map((o) => (typeof o === "string" ? { value: o, label: o } : o));
@@ -407,7 +430,7 @@ function SelectField({
       control={form.control}
       name={name as never}
       render={({ field }) => (
-        <FormItem className="space-y-1.5">
+        <FormItem className={`space-y-1.5 ${className ?? ""}`}>
           <FormLabel className="text-sm">{label}</FormLabel>
           <Select
             disabled={disabled}

@@ -1,0 +1,42 @@
+[
+  {
+    "theme": "light",
+    "width": 1280,
+    "screenshot": "/tmp/belivrhq-dialog-fixes/normal-return-light-1280.jpg",
+    "dialogClient": 478,
+    "dialogScroll": 478,
+    "title": "Return UI TEST — Portable projector",
+    "titleClient": 393,
+    "titleScroll": 393
+  },
+  {
+    "theme": "light",
+    "width": 390,
+    "screenshot": "/tmp/belivrhq-dialog-fixes/normal-return-light-390.jpg",
+    "dialogClient": 354,
+    "dialogScroll": 354,
+    "title": "Return UI TEST — Portable projector",
+    "titleClient": 278,
+    "titleScroll": 278
+  },
+  {
+    "theme": "dark",
+    "width": 1280,
+    "screenshot": "/tmp/belivrhq-dialog-fixes/normal-return-dark-1280.jpg",
+    "dialogClient": 478,
+    "dialogScroll": 478,
+    "title": "Return UI TEST — Portable projector",
+    "titleClient": 393,
+    "titleScroll": 393
+  },
+  {
+    "theme": "dark",
+    "width": 390,
+    "screenshot": "/tmp/belivrhq-dialog-fixes/normal-return-dark-390.jpg",
+    "dialogClient": 354,
+    "dialogScroll": 354,
+    "title": "Return UI TEST — Portable projector",
+    "titleClient": 278,
+    "titleScroll": 278
+  }
+]

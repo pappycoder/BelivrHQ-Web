@@ -1,5 +1,7 @@
 "use client";
 
+import { DetailNavigation } from "@/components/paper/section";
+
 import * as React from "react";
 import Link from "next/link";
 import { ArrowLeft, PencilLine } from "lucide-react";
@@ -20,7 +22,7 @@ export default function AssetDetailPage({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <DetailNavigation>
         <Link href="/operations/assets" className="inline-flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
           <ArrowLeft className="size-3" /> Operations · Assets
         </Link>
@@ -31,7 +33,7 @@ export default function AssetDetailPage({
             </Link>
           </Button>
         ) : null}
-      </div>
+      </DetailNavigation>
       <AssetDetailDrawer
         presentation="page"
         open

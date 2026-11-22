@@ -74,6 +74,9 @@ function labelText(node: Node): string {
   return Array.from(node.childNodes).map(labelText).join(" ");
 }
 function hasPrefix(control: AdornableControl) {
+  // A custom Select may already render a leading icon as well as its trailing chevron.
+  if (control instanceof HTMLButtonElement && control.matches('[data-slot="select-trigger"]') &&
+    Array.from(control.children).some((child, index, children) => child.tagName.toLowerCase() === "svg" && index < children.length - 1)) return true;
   const parent = control.parentElement;
   if (!parent) return false;
   if (
@@ -83,6 +86,7 @@ function hasPrefix(control: AdornableControl) {
   return Array.from(parent.children).some(
     (node) =>
       node !== control &&
+      !isAdornable(node) &&
       (node.hasAttribute("data-field-prefix") ||
         (/absolute/.test(node.getAttribute("class") ?? "") &&
           /(?:left|start)-/.test(node.getAttribute("class") ?? ""))),
@@ -174,14 +178,12 @@ export function FieldFeedback() {
       }
       const label = [
         control.dataset.fieldLabel,
-        control.getAttribute("name"),
         control.getAttribute("aria-label"),
-        control.getAttribute("autocomplete"),
         ...Array.from(control.labels ?? []).map(labelText),
-        control.getAttribute("placeholder"),
-      ]
-        .filter(Boolean)
-        .join(" ");
+      ].filter(Boolean).join(" ") || [
+        control.getAttribute("name"),
+        control.getAttribute("autocomplete"),
+      ].filter(Boolean).join(" ");
       const explicit = control.dataset.prefixIcon;
       const icon =
         explicit && Object.hasOwn(FIELD_ICON_PATHS, explicit)
@@ -191,6 +193,7 @@ export function FieldFeedback() {
                 ? "textarea"
                 : control.type,
               label,
+              control.getAttribute("placeholder") ?? "",
             );
       control.dataset.fieldIcon = icon;
       if (hasPrefix(control)) {

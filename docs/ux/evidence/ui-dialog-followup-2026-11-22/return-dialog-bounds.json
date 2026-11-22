@@ -1,0 +1,62 @@
+[
+  {
+    "theme": "light",
+    "width": 1280,
+    "dialogClient": 478,
+    "dialogScroll": 611,
+    "titleClient": 393,
+    "titleLength": 196,
+    "titleScroll": 585,
+    "wrap": "normal"
+  },
+  {
+    "theme": "light",
+    "width": 390,
+    "dialogClient": 344,
+    "dialogScroll": 607,
+    "titleClient": 268,
+    "titleLength": 196,
+    "titleScroll": 585,
+    "wrap": "normal"
+  },
+  {
+    "theme": "light",
+    "width": 320,
+    "dialogClient": 274,
+    "dialogScroll": 607,
+    "titleClient": 198,
+    "titleLength": 196,
+    "titleScroll": 585,
+    "wrap": "normal"
+  },
+  {
+    "theme": "dark",
+    "width": 1280,
+    "dialogClient": 478,
+    "dialogScroll": 611,
+    "titleClient": 393,
+    "titleLength": 196,
+    "titleScroll": 585,
+    "wrap": "normal"
+  },
+  {
+    "theme": "dark",
+    "width": 390,
+    "dialogClient": 346,
+    "dialogScroll": 607,
+    "titleClient": 270,
+    "titleLength": 196,
+    "titleScroll": 585,
+    "wrap": "normal"
+  },
+  {
+    "theme": "dark",
+    "width": 320,
+    "dialogClient": 274,
+    "dialogScroll": 607,
+    "titleClient": 198,
+    "titleLength": 196,
+    "titleScroll": 585,
+    "wrap": "normal"
+  }
+]

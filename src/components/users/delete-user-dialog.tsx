@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import { toast } from "@/lib/toast";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -43,16 +45,16 @@ export function DeleteUserDialog({ open, onOpenChange, users, mode = "deactivate
       onCompleted?.();
     }
     if (!failures.length) onOpenChange(false);
-    else setError(`${succeeded ? `${succeeded} of ${users.length} users completed. ` : ""}${failures[0].reason?.message || "Unable to complete this action. Please try again."}`);
+    else setError(`${succeeded ? `${succeeded} of ${users.length} ${collectionLabel(users.length, "users")} completed. ` : ""}${failures[0].reason?.message || "Unable to complete this action. Please try again."}`);
   };
 
   return <Dialog open={open} onOpenChange={next => { if (!pending) onOpenChange(next); }}>
     <DialogContent className="sm:max-w-[420px]">
       <DialogHeader>
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10"><AlertTriangle className="h-6 w-6 text-destructive" /></div>
-        <DialogTitle className="text-center">{single ? `${verb} User` : `${verb} ${users.length} Users`}</DialogTitle>
+        <DialogTitle className="text-center">{single ? `${verb} User` : `${verb} ${users.length} ${collectionLabel(users.length, "Users")}`}</DialogTitle>
         <DialogDescription className="text-center">
-          {verb} {single ? `${single.firstName} ${single.lastName}` : `${users.length} users`}?
+          {verb} {single ? `${single.firstName} ${single.lastName}` : `${users.length} ${collectionLabel(users.length, "users")}`}?
           {deleting ? " Their login accounts will be permanently removed. Member records, giving, attendance and church history will be preserved. This cannot be undone." : " They will no longer be able to sign in. You can reactivate them later."}
         </DialogDescription>
       </DialogHeader>

@@ -10,12 +10,13 @@ import {
   Bell,
   Phone,
   ShieldCheck,
-  UserRound,
   X,
 } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import { PageHeader, SectionCard } from "@/components/paper/section";
 import { Tag } from "@/components/paper/stat";
+import { UserStatusBadge } from "@/components/users/user-status-badge";
+import { formatRecordDate } from "@/lib/record-date";
 import {
   DataList,
   EmptyState,
@@ -184,7 +185,7 @@ export default function SettingsProfilePage() {
           <p className="font-display text-base font-semibold">
             {p.firstName} {p.lastName}
           </p>
-          <p className="text-sm text-ink-faint">
+          <p className="text-sm text-ink-faint [overflow-wrap:anywhere]">
             {p.email ?? "No email on file"}
           </p>
           <p className="mt-1.5 flex flex-wrap items-center gap-1.5">
@@ -339,17 +340,10 @@ export default function SettingsProfilePage() {
                 {p.branch?.isHeadquarters ? " · HQ" : ""}
               </FieldRow>
               <FieldRow label="Since">
-                {new Date(p.createdAt).toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
+                {formatRecordDate(p.createdAt)}
               </FieldRow>
               <FieldRow label="Status">
-                <span className="flex items-center gap-1">
-                  <UserRound className="size-3" />
-                  {p.status}
-                </span>
+                <UserStatusBadge status={p.status} />
               </FieldRow>
             </DataList>
           </SectionCard>

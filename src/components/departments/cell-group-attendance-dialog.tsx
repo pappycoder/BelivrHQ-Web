@@ -1,5 +1,9 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
 import { RequiredFieldsNotice } from "@/components/ui/required-fields";
 
 import * as React from "react";
@@ -7,7 +11,6 @@ import { toast } from "@/lib/toast";
 import { ClipboardCheck } from "lucide-react";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -168,7 +171,7 @@ export function CellGroupAttendanceDialog({
         if (!pending) onOpenChange(value);
       }}
     >
-      <DialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
+      <FormDialogContent className="sm:max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ClipboardCheck className="h-4 w-4" /> Record Attendance
@@ -178,168 +181,170 @@ export function CellGroupAttendanceDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <fieldset disabled={savingRoster} className="space-y-4">
-          <RequiredFieldsNotice className="col-span-full" />
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="meeting-date">Meeting Date *</Label>
-              <Input picker="wheel"
-                id="meeting-date"
-                type="date"
-                value={meetingDate}
-                onChange={(e) => setMeetingDate(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label required htmlFor="attendance-status">Status</Label>
-              <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger id="attendance-status">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {ATTENDANCE_STATUSES.map((s) => (
-                    <SelectItem key={s.value} value={s.value}>
-                      {s.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <Tabs value={tab} onValueChange={setTab} className="mt-4">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="member">Members (Roster)</TabsTrigger>
-              <TabsTrigger value="visitor">Visitor</TabsTrigger>
-              <TabsTrigger value="new">New Visitor</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="member" className="pt-4">
-              <MeetingAttendanceRoster
-                type="cell_group"
-                onBusyChange={setSavingRoster}
-                id={groupId}
-                members={members}
-                meetingDate={meetingDate}
-                status={status}
-                notes={notes}
-                loading={loadingMembers}
-                error={membersError}
-                onRetry={onRetryMembers}
-              />
-            </TabsContent>
-
-            <TabsContent value="visitor" className="pt-4">
-              <VisitorCombobox
-                value={visitorId}
-                onChange={(id, visitor) => {
-                  setVisitorId(id);
-                  setVisitorName(
-                    visitor ? `${visitor.firstName} ${visitor.lastName}` : "",
-                  );
-                }}
-                selectedName={visitorName}
-                placeholder="Select visitor..."
-              />
-              <Button
-                className="w-full mt-4"
-                onClick={submitVisitor}
-                disabled={pending || !visitorId}
-              >
-                {pending ? "Recording..." : "Record Attendance"}
-              </Button>
-            </TabsContent>
-
-            <TabsContent value="new" className="pt-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="new-first-name">First Name *</Label>
-                  <Input
-                    id="new-first-name"
-                    placeholder="First name"
-                    value={newVisitor.firstName}
-                    onChange={(e) =>
-                      setNewVisitor({
-                        ...newVisitor,
-                        firstName: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="new-last-name">Last Name</Label>
-                  <Input
-                    id="new-last-name"
-                    placeholder="Last name"
-                    value={newVisitor.lastName}
-                    onChange={(e) =>
-                      setNewVisitor({ ...newVisitor, lastName: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="new-phone">Phone</Label>
-                  <Input
-                    id="new-phone"
-                    placeholder="+234..."
-                    value={newVisitor.phone}
-                    onChange={(e) =>
-                      setNewVisitor({ ...newVisitor, phone: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="new-email">Email</Label>
-                  <Input
-                    id="new-email"
-                    type="email"
-                    placeholder="name@example.com"
-                    value={newVisitor.email}
-                    onChange={(e) =>
-                      setNewVisitor({ ...newVisitor, email: e.target.value })
-                    }
-                  />
-                </div>
+        <FormSection title="Details">
+          <fieldset disabled={savingRoster} className="space-y-4">
+            <RequiredFieldsNotice className="col-span-full" />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="meeting-date">Meeting Date *</Label>
+                <Input picker="wheel"
+                  id="meeting-date"
+                  type="date"
+                  value={meetingDate}
+                  onChange={(e) => setMeetingDate(e.target.value)}
+                />
               </div>
-              <p className="text-sm text-muted-foreground mt-2">
-                Creates a visitor record, then checks them in automatically.
-              </p>
+              <div className="space-y-2">
+                <Label required htmlFor="attendance-status">Status</Label>
+                <Select value={status} onValueChange={setStatus}>
+                  <SelectTrigger id="attendance-status">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ATTENDANCE_STATUSES.map((s) => (
+                      <SelectItem key={s.value} value={s.value}>
+                        {s.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <Tabs value={tab} onValueChange={setTab} className="mt-4">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="member">Members (Roster)</TabsTrigger>
+                <TabsTrigger value="visitor">Visitor</TabsTrigger>
+                <TabsTrigger value="new">New Visitor</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="member" className="pt-4">
+                <MeetingAttendanceRoster
+                  type="cell_group"
+                  onBusyChange={setSavingRoster}
+                  id={groupId}
+                  members={members}
+                  meetingDate={meetingDate}
+                  status={status}
+                  notes={notes}
+                  loading={loadingMembers}
+                  error={membersError}
+                  onRetry={onRetryMembers}
+                />
+              </TabsContent>
+
+              <TabsContent value="visitor" className="pt-4">
+                <VisitorCombobox
+                  value={visitorId}
+                  onChange={(id, visitor) => {
+                    setVisitorId(id);
+                    setVisitorName(
+                      visitor ? `${visitor.firstName} ${visitor.lastName}` : "",
+                    );
+                  }}
+                  selectedName={visitorName}
+                  placeholder="Select visitor..."
+                />
+                <Button
+                  className="w-full mt-4"
+                  onClick={submitVisitor}
+                  disabled={pending || !visitorId}
+                >
+                  {pending ? "Recording..." : "Record Attendance"}
+                </Button>
+              </TabsContent>
+
+              <TabsContent value="new" className="pt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="new-first-name">First Name *</Label>
+                    <Input
+                      id="new-first-name"
+                      placeholder="First name"
+                      value={newVisitor.firstName}
+                      onChange={(e) =>
+                        setNewVisitor({
+                          ...newVisitor,
+                          firstName: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="new-last-name">Last Name</Label>
+                    <Input
+                      id="new-last-name"
+                      placeholder="Last name"
+                      value={newVisitor.lastName}
+                      onChange={(e) =>
+                        setNewVisitor({ ...newVisitor, lastName: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="new-phone">Phone</Label>
+                    <Input
+                      id="new-phone"
+                      placeholder="+234..."
+                      value={newVisitor.phone}
+                      onChange={(e) =>
+                        setNewVisitor({ ...newVisitor, phone: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="new-email">Email</Label>
+                    <Input
+                      id="new-email"
+                      type="email"
+                      placeholder="name@example.com"
+                      value={newVisitor.email}
+                      onChange={(e) =>
+                        setNewVisitor({ ...newVisitor, email: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Creates a visitor record, then checks them in automatically.
+                </p>
+                <Button
+                  className="w-full mt-4"
+                  onClick={submitNewVisitor}
+                  disabled={pending}
+                >
+                  {pending
+                    ? createVisitor.isPending
+                      ? "Creating visitor..."
+                      : "Recording..."
+                    : "Create Visitor & Check In"}
+                </Button>
+              </TabsContent>
+            </Tabs>
+
+            <div className="space-y-2">
+              <Label htmlFor="attendance-notes">Notes</Label>
+              <Input
+                id="attendance-notes"
+                placeholder="Optional note..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
+            </div>
+
+            <DialogFooter>
               <Button
-                className="w-full mt-4"
-                onClick={submitNewVisitor}
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
                 disabled={pending}
               >
-                {pending
-                  ? createVisitor.isPending
-                    ? "Creating visitor..."
-                    : "Recording..."
-                  : "Create Visitor & Check In"}
+                Cancel
               </Button>
-            </TabsContent>
-          </Tabs>
-
-          <div className="space-y-2">
-            <Label htmlFor="attendance-notes">Notes</Label>
-            <Input
-              id="attendance-notes"
-              placeholder="Optional note..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            />
-          </div>
-
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              disabled={pending}
-            >
-              Cancel
-            </Button>
-          </DialogFooter>
-        </fieldset>
-      </DialogContent>
+            </DialogFooter>
+          </fieldset>
+        </FormSection>
+      </FormDialogContent>
     </Dialog>
   );
 }

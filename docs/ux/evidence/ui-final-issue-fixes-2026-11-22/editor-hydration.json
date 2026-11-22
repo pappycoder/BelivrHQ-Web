@@ -1,0 +1,11 @@
+{
+  "event": {
+    "title": "UI TEST — Ticket layout review",
+    "skeletons": 0
+  },
+  "role": {
+    "alerts": 0,
+    "matrixReady": true,
+    "skeletons": 0
+  }
+}

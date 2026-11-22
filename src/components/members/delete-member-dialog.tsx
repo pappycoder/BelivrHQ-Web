@@ -1,5 +1,7 @@
 "use client";
 
+import { collectionLabel } from "@/lib/collection-label";
+
 import * as React from "react";
 import { toast } from "@/lib/toast";
 import {
@@ -63,14 +65,14 @@ export function DeleteMemberDialog({
           if (done === members.length) {
             if (!single && members.length > 3 && failed > 0) {
               toast.warning(
-                `Deactivated ${succeeded} of ${members.length} members`,
+                `Deactivated ${succeeded} of ${members.length} ${collectionLabel(members.length, "members")}`,
                 {
                   description:
                     "Some members could not be deactivated. They may already be inactive.",
                 },
               );
             } else if (!single && succeeded > 0) {
-              toast.success(`${succeeded} member(s) deactivated`);
+              toast.success(`${succeeded} ${collectionLabel(succeeded, "members")} deactivated`);
             }
             setPendingCount(0);
             // Single deletes stay open on failure so the error stays visible.
@@ -112,7 +114,7 @@ export function DeleteMemberDialog({
           <DialogTitle className="text-center">
             {single
               ? "Deactivate Member"
-              : `Deactivate ${members.length} Members`}
+              : `Deactivate ${members.length} ${collectionLabel(members.length, "Members")}`}
           </DialogTitle>
           <DialogDescription className="text-center">
             {single ? (
@@ -128,7 +130,7 @@ export function DeleteMemberDialog({
               <>
                 Are you sure you want to deactivate{" "}
                 <span className="font-medium text-foreground">
-                  {members.length} members
+                  {members.length} {collectionLabel(members.length, "members")}
                 </span>
                 ? Their records are kept but they will be marked inactive.
               </>

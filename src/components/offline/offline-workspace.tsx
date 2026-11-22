@@ -1,5 +1,9 @@
 "use client";
 
+import { formatRecordDateTime } from "@/lib/record-date";
+
+import { collectionLabel } from "@/lib/collection-label";
+
 import { RequiredFieldsNotice } from "@/components/ui/required-fields";
 import { LEGACY_BRAND } from "@/lib/brand/identity";
 
@@ -507,13 +511,13 @@ export function OfflineWorkspace() {
                     {expired
                       ? "Offline access expired"
                       : workspace.outbox.length
-                        ? `${workspace.outbox.length} changes waiting to sync or review`
+                        ? `${workspace.outbox.length} ${collectionLabel(workspace.outbox.length, "changes")} waiting to sync or review`
                         : "All changes synced"}
                   </p>
                   <p className="text-sm text-muted-foreground">
                     {expired
                       ? "Connect and sign in with the original account to renew access. Pending changes are retained."
-                      : `Last refreshed ${new Date(workspace.lastSyncedAt ?? workspace.issuedAt).toLocaleString()}`}
+                      : `Last refreshed ${formatRecordDateTime(workspace.lastSyncedAt ?? workspace.issuedAt)}`}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">

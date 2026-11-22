@@ -1,0 +1,68 @@
+[
+  {
+    "bottom": 819.46875,
+    "client": 746,
+    "content": 746,
+    "dark": false,
+    "heading": "Starts",
+    "left": 266,
+    "right": 1014,
+    "top": 80.53125,
+    "width": 1280
+  },
+  {
+    "bottom": 820.15625,
+    "client": 354,
+    "content": 354,
+    "dark": false,
+    "heading": "Starts",
+    "left": 17,
+    "right": 373,
+    "top": 23.84375,
+    "width": 390
+  },
+  {
+    "bottom": 806.921875,
+    "client": 284,
+    "content": 284,
+    "dark": false,
+    "heading": "Starts",
+    "left": 17,
+    "right": 303,
+    "top": 37.078125,
+    "width": 320
+  },
+  {
+    "bottom": 819.46875,
+    "client": 746,
+    "content": 746,
+    "dark": true,
+    "heading": "Starts",
+    "left": 266,
+    "right": 1014,
+    "top": 80.53125,
+    "width": 1280
+  },
+  {
+    "bottom": 820.15625,
+    "client": 354,
+    "content": 354,
+    "dark": true,
+    "heading": "Starts",
+    "left": 17,
+    "right": 373,
+    "top": 23.84375,
+    "width": 390
+  },
+  {
+    "bottom": 806.921875,
+    "client": 284,
+    "content": 284,
+    "dark": true,
+    "heading": "Starts",
+    "left": 17,
+    "right": 303,
+    "top": 37.078125,
+    "width": 320
+  }
+]

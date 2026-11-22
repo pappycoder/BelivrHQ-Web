@@ -12,7 +12,11 @@ function Label({
   children,
   ...props
 }: React.ComponentProps<typeof LabelPrimitive.Root> & { required?: boolean }) {
-  const marked = typeof children === "string" && /\s*\*$/.test(children);
+  const content = React.Children.toArray(children);
+  const last = content.length - 1;
+  const suffix = content[last];
+  const marked = typeof suffix === "string" && /\s*\*+\s*$/.test(suffix);
+  if (marked) content[last] = suffix.replace(/\s*\*+\s*$/, "");
   return (
     <LabelPrimitive.Root
       data-slot="label"
@@ -22,7 +26,7 @@ function Label({
       )}
       {...props}
     >
-      {marked ? (children as string).replace(/\s*\*$/, "") : children}
+      {content}
       {(required || marked) && <RequiredIndicator />}
     </LabelPrimitive.Root>
   )

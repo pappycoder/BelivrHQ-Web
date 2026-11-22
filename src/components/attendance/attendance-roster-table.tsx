@@ -1,5 +1,7 @@
 "use client";
 
+import { formatStatusLabel } from "@/lib/status-label";
+
 import { PersonAvatar } from "@/components/paper/primitives";
 import { Tag } from "@/components/paper/stat";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -184,7 +186,7 @@ export function AttendanceRosterTable({
                       ? "Saved"
                       : selected.has(row.id)
                         ? "Selected"
-                        : (row.status ?? "Ready")}
+                        : formatStatusLabel(row.status, "Ready")}
                   </Tag>
                 </td>
               </tr>

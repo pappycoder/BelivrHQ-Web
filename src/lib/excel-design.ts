@@ -1,3 +1,4 @@
+import { formatRecordDate } from "./record-date";
 import type { CellValue, Workbook, Worksheet } from "exceljs";
 import type { ExportBranding, ExportLogo } from "./export-branding";
 
@@ -85,7 +86,7 @@ export function addDesignedSheet(workbook: Workbook, spec: ExcelSheet, index: nu
       sheet.addImage(id, { tl: { col: 0.1, row: 0.15 }, ext: { width: churchLogo.width * scale, height: churchLogo.height * scale }, editAs: "absolute" });
     }
     sheet.mergeCells(2, 1, 2, titleWidth);
-    sheet.getCell("A2").value = [...(spec.metadata ?? []).map((item) => `${item.label}: ${item.value}`), `Generated: ${new Date().toLocaleDateString("en-NG")}`].join("  |  ");
+    sheet.getCell("A2").value = [...(spec.metadata ?? []).map((item) => `${item.label}: ${item.value}`), `Generated: ${formatRecordDate(new Date())}`].join("  |  ");
     sheet.getRow(2).height = 28;
     sheet.getCell("A2").font = { name: "Aptos", size: 10, color: { argb: colors.muted } };
     sheet.getCell("A2").alignment = { vertical: "middle", wrapText: true, indent: 1 };

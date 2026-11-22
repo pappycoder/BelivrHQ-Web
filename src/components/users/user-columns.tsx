@@ -25,7 +25,7 @@ import type { UserProfile } from "@/hooks/use-users";
 import { useRoleLabelMap, resolveRoleLabel } from "@/hooks/use-roles";
 import { useAuth } from "@/hooks/use-auth";
 import { usePermissions } from "@/hooks/use-permissions";
-import { format } from "date-fns";
+import { formatRecordDate } from "@/lib/record-date";
 
 function getRoleBadgeVariant(
   role: string,
@@ -245,7 +245,7 @@ export function UserStatusCell({ status }: { status: string }) {
 export function UserCreatedCell({ createdAt }: { createdAt: string }) {
   return (
     <span className="text-muted-foreground">
-      {format(new Date(createdAt), "MMM d, yyyy")}
+      {formatRecordDate(createdAt)}
     </span>
   );
 }

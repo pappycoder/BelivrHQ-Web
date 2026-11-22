@@ -38,7 +38,7 @@ function initials(name: string): string {
     .join("");
 }
 
-interface ContactComboboxProps {
+interface ContactComboboxProps extends Pick<React.ComponentProps<"button">, "id" | "aria-label" | "aria-labelledby" | "aria-describedby" | "aria-invalid" | "aria-required"> {
   kind: "with" | "who";
   /** Selected contact id ("" = none). */
   value: string;
@@ -56,6 +56,7 @@ export function ContactCombobox({
   value,
   onSelect,
   placeholder,
+  ...accessibilityProps
 }: ContactComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -88,13 +89,14 @@ export function ContactCombobox({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button
+          {...accessibilityProps}
           type="button"
           role="combobox"
           aria-expanded={open}
           aria-controls={listId}
           className={cn(
-            "flex h-10 w-full items-center gap-2 rounded-md border border-input bg-transparent px-3 py-2 text-sm",
-            "hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+            "flex h-10 min-w-0 w-full items-center gap-2 rounded-md border border-input bg-transparent px-3 py-2 text-sm",
+            "hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
             "disabled:cursor-not-allowed disabled:opacity-50"
           )}
         >

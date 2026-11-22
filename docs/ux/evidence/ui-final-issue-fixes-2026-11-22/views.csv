@@ -1,0 +1,221 @@
+scenario,route,label,heading,overflow,skeletons,screenshotSettled
+http-503,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,light-1280,Visitor details,False,0,True
+http-503,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,light-390,Visitor details,False,0,True
+http-503,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,dark-1280,Visitor details,False,0,True
+http-503,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,dark-390,Visitor details,False,0,True
+http-503,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,light-1280,Family details,False,0,True
+http-503,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,light-390,Family details,False,0,True
+http-503,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,dark-1280,Family details,False,0,True
+http-503,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,dark-390,Family details,False,0,True
+http-503,/people/members/634a74c4-ad73-4506-933d-105295aafba7,light-1280,Member details,False,0,True
+http-503,/people/members/634a74c4-ad73-4506-933d-105295aafba7,light-390,Member details,False,0,True
+http-503,/people/members/634a74c4-ad73-4506-933d-105295aafba7,dark-1280,Member details,False,0,True
+http-503,/people/members/634a74c4-ad73-4506-933d-105295aafba7,dark-390,Member details,False,0,True
+http-503,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,light-1280,Service details,False,0,True
+http-503,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,light-390,Service details,False,0,True
+http-503,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,dark-1280,Service details,False,0,True
+http-503,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,dark-390,Service details,False,0,True
+http-503,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,light-1280,Event details,False,0,True
+http-503,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,light-390,Event details,False,0,True
+http-503,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,dark-1280,Event details,False,0,True
+http-503,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,dark-390,Event details,False,0,True
+http-503,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,light-1280,Edit event,False,0,True
+http-503,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,light-390,Edit event,False,0,True
+http-503,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,dark-1280,Edit event,False,0,True
+http-503,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,dark-390,Edit event,False,0,True
+http-503,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,light-1280,Cell group details,False,0,True
+http-503,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,light-390,Cell group details,False,0,True
+http-503,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,dark-1280,Cell group details,False,0,True
+http-503,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,dark-390,Cell group details,False,0,True
+http-503,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,light-1280,Sermon details,False,0,True
+http-503,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,light-390,Sermon details,False,0,True
+http-503,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,dark-1280,Sermon details,False,0,True
+http-503,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,dark-390,Sermon details,False,0,True
+http-503,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,light-1280,Edit sermon,False,0,True
+http-503,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,light-390,Edit sermon,False,0,True
+http-503,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,dark-1280,Edit sermon,False,0,True
+http-503,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,dark-390,Edit sermon,False,0,True
+http-503,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,light-1280,Form details,False,0,True
+http-503,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,light-390,Form details,False,0,True
+http-503,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,dark-1280,Form details,False,0,True
+http-503,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,dark-390,Form details,False,0,True
+http-503,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,light-1280,Edit form,False,0,True
+http-503,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,light-390,Edit form,False,0,True
+http-503,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,dark-1280,Edit form,False,0,True
+http-503,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,dark-390,Edit form,False,0,True
+http-503,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,light-1280,Form,False,0,True
+http-503,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,light-390,Form,False,0,True
+http-503,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,dark-1280,Form,False,0,True
+http-503,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,dark-390,Form,False,0,True
+http-503,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,light-1280,Edit asset,False,0,True
+http-503,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,light-390,Edit asset,False,0,True
+http-503,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,dark-1280,Edit asset,False,0,True
+http-503,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,dark-390,Edit asset,False,0,True
+http-503,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,light-1280,Team member details,False,0,True
+http-503,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,light-390,Team member details,False,0,True
+http-503,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,dark-1280,Team member details,False,0,True
+http-503,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,dark-390,Team member details,False,0,True
+http-503,/admin/permissions/church_admin,light-1280,Role details,False,0,True
+http-503,/admin/permissions/church_admin,light-390,Role details,False,0,True
+http-503,/admin/permissions/church_admin,dark-1280,Role details,False,0,True
+http-503,/admin/permissions/church_admin,dark-390,Role details,False,0,True
+http-404,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,light-1280,,False,0,True
+http-404,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,light-390,,False,0,True
+http-404,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,dark-1280,,False,0,True
+http-404,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,dark-390,,False,0,True
+http-404,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,light-1280,,False,0,True
+http-404,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,light-390,,False,0,True
+http-404,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,dark-1280,,False,0,True
+http-404,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,dark-390,,False,0,True
+http-404,/people/members/634a74c4-ad73-4506-933d-105295aafba7,light-1280,,False,0,True
+http-404,/people/members/634a74c4-ad73-4506-933d-105295aafba7,light-390,,False,0,True
+http-404,/people/members/634a74c4-ad73-4506-933d-105295aafba7,dark-1280,,False,0,True
+http-404,/people/members/634a74c4-ad73-4506-933d-105295aafba7,dark-390,,False,0,True
+http-404,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,light-1280,,False,0,True
+http-404,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,light-390,,False,0,True
+http-404,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,dark-1280,,False,0,True
+http-404,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,dark-390,,False,0,True
+http-404,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,light-1280,,False,0,True
+http-404,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,light-390,,False,0,True
+http-404,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,dark-1280,,False,0,True
+http-404,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,dark-390,,False,0,True
+http-404,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,light-1280,,False,0,True
+http-404,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,light-390,,False,0,True
+http-404,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,dark-1280,,False,0,True
+http-404,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,dark-390,,False,0,True
+http-404,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,light-1280,,False,0,True
+http-404,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,light-390,,False,0,True
+http-404,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,dark-1280,,False,0,True
+http-404,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,dark-390,,False,0,True
+http-404,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,light-1280,,False,0,True
+http-404,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,light-390,,False,0,True
+http-404,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,dark-1280,,False,0,True
+http-404,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,dark-390,,False,0,True
+http-404,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,light-1280,,False,0,True
+http-404,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,light-390,,False,0,True
+http-404,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,dark-1280,,False,0,True
+http-404,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,dark-390,,False,0,True
+http-404,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,light-1280,,False,0,True
+http-404,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,light-390,,False,0,True
+http-404,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,dark-1280,,False,0,True
+http-404,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,dark-390,,False,0,True
+http-404,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,light-1280,,False,0,True
+http-404,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,light-390,,False,0,True
+http-404,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,dark-1280,,False,0,True
+http-404,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,dark-390,,False,0,True
+http-404,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,light-1280,,False,0,True
+http-404,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,light-390,,False,0,True
+http-404,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,dark-1280,,False,0,True
+http-404,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,dark-390,,False,0,True
+http-404,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,light-1280,,False,0,True
+http-404,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,light-390,,False,0,True
+http-404,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,dark-1280,,False,0,True
+http-404,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,dark-390,,False,0,True
+http-404,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,light-1280,,False,0,True
+http-404,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,light-390,,False,0,True
+http-404,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,dark-1280,,False,0,True
+http-404,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,dark-390,,False,0,True
+http-404,/admin/permissions/church_admin,light-1280,,False,0,True
+http-404,/admin/permissions/church_admin,light-390,,False,0,True
+http-404,/admin/permissions/church_admin,dark-1280,,False,0,True
+http-404,/admin/permissions/church_admin,dark-390,,False,0,True
+retry-recovered,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,light-1280,Juliana Ayoze,False,0,True
+retry-recovered,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,light-390,Juliana Ayoze,False,0,True
+retry-recovered,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,dark-1280,Juliana Ayoze,False,0,True
+retry-recovered,/people/visitors/06198be6-9e10-46ec-9d2a-92a24bec01bc,dark-390,Juliana Ayoze,False,0,True
+retry-recovered,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,light-1280,The Williams,False,0,True
+retry-recovered,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,light-390,The Williams,False,0,True
+retry-recovered,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,dark-1280,The Williams,False,0,True
+retry-recovered,/people/families/5e0490db-9e31-4188-a3ae-aef38bb1fdb5,dark-390,The Williams,False,0,True
+retry-recovered,/people/members/634a74c4-ad73-4506-933d-105295aafba7,light-1280,Jane Garcia,False,0,True
+retry-recovered,/people/members/634a74c4-ad73-4506-933d-105295aafba7,light-390,Jane Garcia,False,0,True
+retry-recovered,/people/members/634a74c4-ad73-4506-933d-105295aafba7,dark-1280,Jane Garcia,False,0,True
+retry-recovered,/people/members/634a74c4-ad73-4506-933d-105295aafba7,dark-390,Jane Garcia,False,0,True
+retry-recovered,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,light-1280,Sunday Service,False,0,True
+retry-recovered,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,light-390,Sunday Service,False,0,True
+retry-recovered,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,dark-1280,Sunday Service,False,0,True
+retry-recovered,/gatherings/attendance/services/f32307c5-5af4-4f42-8203-644cfb5976a0,dark-390,Sunday Service,False,0,True
+retry-recovered,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,light-1280,Youth Conference 2026,False,0,True
+retry-recovered,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,light-390,Youth Conference 2026,False,0,True
+retry-recovered,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,dark-1280,Youth Conference 2026,False,0,True
+retry-recovered,/gatherings/events/7c6677bf-09fc-4e12-80f6-98c0f37698e9,dark-390,Youth Conference 2026,False,0,True
+retry-recovered,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,light-1280,Amend the plan.,False,0,True
+retry-recovered,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,light-390,Amend the plan.,False,0,True
+retry-recovered,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,dark-1280,Amend the plan.,False,0,True
+retry-recovered,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,dark-390,Amend the plan.,False,0,True
+retry-recovered,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,light-1280,Apapa Cell Group,False,0,True
+retry-recovered,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,light-390,Apapa Cell Group,False,0,True
+retry-recovered,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,dark-1280,Apapa Cell Group,False,0,True
+retry-recovered,/gatherings/groups/cell/58624c50-5b85-4532-8672-0d394f236844,dark-390,Apapa Cell Group,False,0,True
+retry-recovered,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,light-1280,Walking in Faith,False,0,True
+retry-recovered,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,light-390,Walking in Faith,False,0,True
+retry-recovered,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,dark-1280,Walking in Faith,False,0,True
+retry-recovered,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df,dark-390,Walking in Faith,False,0,True
+retry-recovered,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,light-1280,Amend the record.,False,0,True
+retry-recovered,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,light-390,Amend the record.,False,0,True
+retry-recovered,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,dark-1280,Amend the record.,False,0,True
+retry-recovered,/library/sermons/f2e85a7d-fbb4-4ffb-b143-5bbdf8bfb0df/edit,dark-390,Amend the record.,False,0,True
+retry-recovered,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,light-1280,Person Draft Form,False,0,True
+retry-recovered,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,light-390,Person Draft Form,False,0,True
+retry-recovered,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,dark-1280,Person Draft Form,False,0,True
+retry-recovered,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47,dark-390,Person Draft Form,False,0,True
+retry-recovered,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,light-1280,Amend the form.,False,0,True
+retry-recovered,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,light-390,Amend the form.,False,0,True
+retry-recovered,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,dark-1280,Amend the form.,False,0,True
+retry-recovered,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/edit,dark-390,Amend the form.,False,0,True
+retry-recovered,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,light-1280,Person Draft Form,False,0,True
+retry-recovered,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,light-390,Person Draft Form,False,0,True
+retry-recovered,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,dark-1280,Person Draft Form,False,0,True
+retry-recovered,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,dark-390,Person Draft Form,False,0,True
+retry-recovered,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,light-1280,Amend UI TEST — Portable projector.,False,0,True
+retry-recovered,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,light-390,Amend UI TEST — Portable projector.,False,0,True
+retry-recovered,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,dark-1280,Amend UI TEST — Portable projector.,False,0,True
+retry-recovered,/operations/assets/8e707c73-4cb7-4a5a-9dee-0d24b2ddbccd/edit,dark-390,Amend UI TEST — Portable projector.,False,0,True
+retry-recovered,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,light-1280,Dennis Kolawole,False,0,True
+retry-recovered,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,light-390,Dennis Kolawole,False,0,True
+retry-recovered,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,dark-1280,Dennis Kolawole,False,0,True
+retry-recovered,/admin/team/79696d9f-dd41-4ac5-a4a8-c8b205d63b0a,dark-390,Dennis Kolawole,False,0,True
+retry-recovered,/admin/permissions/church_admin,light-1280,Church Admin,False,0,True
+retry-recovered,/admin/permissions/church_admin,light-390,Church Admin,False,0,True
+retry-recovered,/admin/permissions/church_admin,dark-1280,Church Admin,False,0,True
+retry-recovered,/admin/permissions/church_admin,dark-390,Church Admin,False,0,True
+populated-table,/gatherings/groups,light-1280,Manage the departments and teams that serve your church.,False,0,True
+populated-table,/gatherings/groups,light-390,Manage the departments and teams that serve your church.,False,0,True
+populated-table,/gatherings/groups,dark-1280,Manage the departments and teams that serve your church.,False,0,True
+populated-table,/gatherings/groups,dark-390,Manage the departments and teams that serve your church.,False,0,True
+populated-table,/gatherings/groups,light-320,Manage the departments and teams that serve your church.,False,0,True
+populated-table,/gatherings/groups,dark-320,Manage the departments and teams that serve your church.,False,0,True
+populated-table,/library/sermons,light-1280,Words worth returning to.,False,0,True
+populated-table,/library/sermons,light-390,Words worth returning to.,False,0,True
+populated-table,/library/sermons,light-320,Words worth returning to.,False,0,True
+populated-table,/library/sermons,dark-1280,Words worth returning to.,False,0,True
+populated-table,/library/sermons,dark-390,Words worth returning to.,False,0,True
+populated-table,/library/sermons,dark-320,Words worth returning to.,False,0,True
+populated-table,/giving/schedules,light-1280,The floor under the year.,False,0,True
+populated-table,/giving/schedules,light-390,The floor under the year.,False,0,True
+populated-table,/giving/schedules,light-320,The floor under the year.,False,0,True
+populated-table,/giving/schedules,dark-1280,The floor under the year.,False,0,True
+populated-table,/giving/schedules,dark-390,The floor under the year.,False,0,True
+populated-table,/giving/schedules,dark-320,The floor under the year.,False,0,True
+populated-table,/settings/billing,light-1280,The plainest receipt the church ever kept.,False,0,True
+populated-table,/settings/billing,light-390,The plainest receipt the church ever kept.,False,0,True
+populated-table,/settings/billing,light-320,The plainest receipt the church ever kept.,False,0,True
+populated-table,/settings/billing,dark-1280,The plainest receipt the church ever kept.,False,0,True
+populated-table,/settings/billing,dark-390,The plainest receipt the church ever kept.,False,0,True
+populated-table,/settings/billing,dark-320,The plainest receipt the church ever kept.,False,0,True
+http-403,/people/members/634a74c4-ad73-4506-933d-105295aafba7,light-1280,Member details,False,0,True
+http-403,/people/members/634a74c4-ad73-4506-933d-105295aafba7,light-390,Member details,False,0,True
+http-403,/people/members/634a74c4-ad73-4506-933d-105295aafba7,dark-1280,Member details,False,0,True
+http-403,/people/members/634a74c4-ad73-4506-933d-105295aafba7,dark-390,Member details,False,0,True
+http-403,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,light-1280,Edit event,False,0,True
+http-403,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,light-390,Edit event,False,0,True
+http-403,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,dark-1280,Edit event,False,0,True
+http-403,/gatherings/events/ac16a691-63a5-4f4b-afec-53e58fbdcce5/edit,dark-390,Edit event,False,0,True
+http-403,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,light-1280,Form,False,0,True
+http-403,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,light-390,Form,False,0,True
+http-403,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,dark-1280,Form,False,0,True
+http-403,/library/forms/5f4f8eb9-f340-4d7b-b2cf-77d8c2d69b47/fill,dark-390,Form,False,0,True
+http-403,/admin/permissions/church_admin,light-1280,Role details,False,0,True
+http-403,/admin/permissions/church_admin,light-390,Role details,False,0,True
+http-403,/admin/permissions/church_admin,dark-1280,Role details,False,0,True
+http-403,/admin/permissions/church_admin,dark-390,Role details,False,0,True

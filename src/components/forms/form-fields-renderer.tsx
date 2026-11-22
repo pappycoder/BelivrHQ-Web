@@ -4,7 +4,6 @@ import { useState, useEffect, useId } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { RequiredIndicator } from "@/components/ui/required-fields";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -69,7 +68,6 @@ export function FormFieldsRenderer({ fields, disabled, onChange, initialValues, 
             className="text-sm"
           >
             {field.label}
-            {field.required && <RequiredIndicator />}
             {showOptional && !field.required && <span className="ml-2 text-sm text-muted-foreground">(optional)</span>}
           </Label>
 

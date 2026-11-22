@@ -1,5 +1,13 @@
 "use client";
 
+import { FormActions } from "@/components/shared/form-actions";
+
+import { FormDialogContent } from "@/components/shared/form-dialog";
+
+import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
+import { SectionCard } from "@/components/paper/section";
+import { cn } from "@/lib/utils";
+
 import { ValidatedForm } from "@/components/ui/validated-form";
 
 import * as React from "react";
@@ -9,7 +17,6 @@ import { z } from "zod";
 import { toast } from "@/lib/toast";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -230,21 +237,22 @@ export function AssetFormDialog({
 
   const pending = createMutation.isPending || updateMutation.isPending;
 
+  const Actions = presentation === "page" ? FormActions : DialogFooter;
+
   const editor = (
     <Form {...form}>
-      <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className={cn(presentation === "page" ? CREATE_FORM_LAYOUT : "grid gap-4")}>
         {(categoriesQuery.error ||
           branchesQuery.error ||
           departmentsQuery.error) && (
           <ErrorState
+            className="col-span-full"
             title="Some assignment options are unavailable"
-            description="Retry to load categories, branches and departments. Your entered asset details are preserved."
+            description="Retry to load categories, branches and departments. Reload this page to try again. Unsaved asset details will be cleared."
           />
         )}
-        <fieldset className="space-y-4 rounded-lg border p-5">
-          <legend className="px-2">
-            <h2 className="text-lg font-semibold">Identity and description</h2>
-          </legend>
+        <div className="min-w-0 space-y-4">
+        <SectionCard eyebrow="Identity" title="Identity and description">
           <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
             <FormField required
               control={form.control}
@@ -280,7 +288,7 @@ export function AssetFormDialog({
                   <FormLabel>Category</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                     </FormControl>
@@ -366,11 +374,8 @@ export function AssetFormDialog({
               />
             </div>
           </div>
-        </fieldset>
-        <fieldset className="space-y-4 rounded-lg border p-5">
-          <legend className="px-2">
-            <h2 className="text-lg font-semibold">Assignment and location</h2>
-          </legend>
+        </SectionCard>
+        <SectionCard eyebrow="Responsibility" title="Assignment and location">
           <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
             <FormField required
               control={form.control}
@@ -392,7 +397,7 @@ export function AssetFormDialog({
                     disabled={!profile?.isAdminHq}
                   >
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select branch" />
                       </SelectTrigger>
                     </FormControl>
@@ -422,7 +427,7 @@ export function AssetFormDialog({
                   <FormLabel>Department</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select department" />
                       </SelectTrigger>
                     </FormControl>
@@ -486,7 +491,7 @@ export function AssetFormDialog({
                   <FormLabel>Condition</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select condition" />
                       </SelectTrigger>
                     </FormControl>
@@ -511,7 +516,7 @@ export function AssetFormDialog({
                     <FormLabel>Status</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select status" />
                         </SelectTrigger>
                       </FormControl>
@@ -529,11 +534,8 @@ export function AssetFormDialog({
               />
             )}
           </div>
-        </fieldset>
-        <fieldset className="space-y-4 rounded-lg border p-5">
-          <legend className="px-2">
-            <h2 className="text-lg font-semibold">Purchase and valuation</h2>
-          </legend>
+        </SectionCard>
+        <SectionCard eyebrow="Value" title="Purchase and valuation">
           <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
             <FormField
               control={form.control}
@@ -618,7 +620,7 @@ export function AssetFormDialog({
                   <FormLabel>Depreciation Method</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue />
                       </SelectTrigger>
                     </FormControl>
@@ -635,11 +637,8 @@ export function AssetFormDialog({
               )}
             />
           </div>
-        </fieldset>
-        <fieldset className="space-y-4 rounded-lg border p-5">
-          <legend className="px-2">
-            <h2 className="text-lg font-semibold">Additional notes</h2>
-          </legend>
+        </SectionCard>
+        <SectionCard eyebrow="Notes" title="Additional notes">
           <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <FormField
@@ -661,8 +660,20 @@ export function AssetFormDialog({
               />
             </div>
           </div>
-        </fieldset>
-        <DialogFooter className="pt-2">
+        </SectionCard>
+        </div>
+        <CreatePreviewSidebar className={presentation !== "page" ? "static!" : undefined}>
+          {presentation === "page" && (
+            <CreatePreviewCard editing={isEdit} eyebrow="Register preview" title={form.watch("name") || "New asset"}>
+              <dl className="space-y-3 text-sm">
+                <div><dt className="rule-label">Asset tag</dt><dd className="mt-1 break-words">{form.watch("assetTag") || "Not entered yet"}</dd></div>
+                <div><dt className="rule-label">Branch</dt><dd className="mt-1 break-words">{branchesQuery.data?.data?.find(branch => branch.branchId === selectedBranchId)?.name || "Select a branch"}</dd></div>
+                <div><dt className="rule-label">Condition</dt><dd className="mt-1 capitalize">{form.watch("condition") || "good"}</dd></div>
+                <div><dt className="rule-label">Status</dt><dd className="mt-1 capitalize">{form.watch("status") || "active"}</dd></div>
+              </dl>
+            </CreatePreviewCard>
+          )}
+        <Actions className={presentation === "page" ? "flex-col-reverse gap-2 sm:flex-col-reverse [&>button]:w-full" : "pt-2"}>
           <Button
             type="button"
             variant="outline"
@@ -680,7 +691,8 @@ export function AssetFormDialog({
                 ? "Save Changes"
                 : "Register Asset"}
           </Button>
-        </DialogFooter>
+        </Actions>
+        </CreatePreviewSidebar>
       </ValidatedForm>
     </Form>
   );
@@ -688,7 +700,7 @@ export function AssetFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[640px] max-h-[90vh] overflow-y-auto">
+      <FormDialogContent className="sm:max-w-[640px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {isEdit ? "Edit Asset" : "Register New Asset"}
@@ -701,7 +713,7 @@ export function AssetFormDialog({
         </DialogHeader>
 
         {editor}
-      </DialogContent>
+      </FormDialogContent>
     </Dialog>
   );
 }

@@ -23,6 +23,13 @@
   --color-rose-soft: var(--rose-soft);
 }
 
+/* Public introductions keep white copy legible even when the workspace accent
+   becomes brighter in dark mode or a custom palette is selected. */
+.public-form-panel {
+  background-color: color-mix(in srgb, var(--brand) 35%, #10231f);
+  color: #fff;
+}
+
 /* Light "Paper" values — safe at :root because no existing rule reads them. */
 :root {
   --paper: #f7f4ec;
@@ -37,7 +44,7 @@
   --brand-soft: #d8eae7;
   --moss: #4c5f3d;
   --moss-soft: #dfe6d5;
-  --gold: #a97e26;
+  --gold: #76551a;
   --gold-soft: #f2e6c8;
   --sky: #3d6b7d;
   --sky-soft: #d9e6ea;
@@ -104,10 +111,53 @@
   --ring: #5ed5be66;
 }
 
+/* Keep every register's search and filter controls within the member-list bounds. */
+[data-paper-root] [data-list-toolbar] > [data-tour-search] { width: 100%; max-width: 20rem; }
+[data-paper-root] [data-list-toolbar] select:not([data-event-picker-control]) { width: 11rem; max-width: 100%; text-overflow: ellipsis; }
+[data-paper-root] [data-list-controls] [role="combobox"][aria-label^="Sort"] { width: 12rem; max-width: 100%; }
+[data-paper-root] [data-slot="table"] tbody [data-slot="table-cell"] { border-color: color-mix(in srgb, var(--line) 70%, transparent); }
+
+/* Registers share the member directory's white surface, header and row rhythm.
+   Native tables keep sticky identifiers, without the old cream header blocks. */
+[data-paper-root] [data-register-table] { background: var(--card); }
+[data-paper-root] [data-list-table] [role="table"],
+[data-paper-root] [data-list-table] [role="row"] { column-gap: 1rem; }
+[data-paper-root] [data-list-table] [role="row"] { padding-inline: 1.25rem; }
+[data-paper-root] [data-list-table] [role="row"]:has([role="columnheader"]) { padding-block: .625rem; }
+[data-paper-root] [data-list-table] [role="row"]:not(:has([role="columnheader"])) { padding-block: .75rem; font-size: .875rem; line-height: 1.25rem; border-width: 0; border-style: solid; border-color: color-mix(in srgb, var(--line) 70%, transparent); }
+[data-paper-root] [data-list-table] [role="row"]:not(:has([role="columnheader"])) + [role="row"]:not(:has([role="columnheader"])) { border-top-width: 1px; }
+[data-paper-root] [data-slot="table-head"] {
+  height: auto;
+  padding: .625rem 1.25rem;
+  font-size: .75rem;
+  line-height: 1.625;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  background: var(--card);
+}
+[data-paper-root] [data-slot="table-cell"] { padding: .75rem 1.25rem; font-size: .875rem; line-height: 1.25rem; }
+[data-paper-root] [data-slot="table"] thead :is([data-pinned-column], [data-pinned-selection="true"]) { background: var(--card); }
+[data-paper-root] [data-slot="table"] tbody tr:is(:hover, :focus-within),
+[data-paper-root] [data-slot="table"] tbody tr:is(:hover, :focus-within, :has([data-state="open"])) :is([data-pinned-column], [data-pinned-selection="true"]) { background: color-mix(in srgb, var(--muted) 40%, var(--card)); }
+[data-paper-root] [data-slot="table"] [data-selection-column] { width: 40px; min-width: 40px; padding-inline: calc((40px - 1rem) / 2); }
+[data-paper-root] [data-list-table][data-compact-rows="true"] [role="row"]:not(:has([role="columnheader"])),
+[data-paper-root] [data-slot="table"][data-compact-rows="true"] [data-slot="table-cell"] { padding-block: .6rem; }
+
 @layer utilities {
-  [data-paper-root] {
-    font-family: var(--font-inter-tight), var(--font-inter), Inter, sans-serif;
+  [data-paper-root],
+  [data-slot="paper-tag"] {
+    font-family: var(--font-inter-tight, Inter), var(--font-inter, Inter), Inter, sans-serif;
   }
+
+  /* These accent colors need a darker foreground on their pale badge fills. */
+  [data-slot="paper-tag"][data-tone="brand"] { color: color-mix(in srgb, var(--brand) 90%, #000); }
+  [data-slot="paper-tag"][data-tone="sky"] { color: color-mix(in srgb, var(--sky) 90%, #000); }
+  [data-slot="paper-tag"][data-tone="rose"] { color: color-mix(in srgb, var(--rose) 90%, #000); }
+  .dark [data-slot="paper-tag"][data-tone="brand"] { color: var(--brand); }
+  .dark [data-slot="paper-tag"][data-tone="sky"] { color: var(--sky); }
+  .dark [data-slot="paper-tag"][data-tone="rose"] { color: var(--rose); }
 
   [data-paper-root] h1,
   [data-paper-root] h2,
@@ -116,6 +166,29 @@
     font-family: var(--font-fraunces), Georgia, serif;
     font-optical-sizing: auto;
     letter-spacing: -0.015em;
+  }
+
+  /* Editor fields fill their columns; toolbar and pagination selects stay compact. */
+  :root:has([data-paper-root]) :is([data-paper-root], [data-slot="dialog-content"], [data-slot="sheet-content"]) form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]), textarea, button[role="combobox"], [data-slot="select-trigger"], select:not([aria-hidden="true"])):not(:disabled) { background-color: var(--card); }
+
+  :root:has([data-paper-root]) :is([data-paper-root], [data-slot="dialog-content"], [data-slot="sheet-content"]) form :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]), [data-slot="select-trigger"], button[role="combobox"], select:not([aria-hidden="true"])) {
+    min-height: 2.5rem;
+    border-radius: .8rem;
+  }
+
+  :root:has([data-paper-root]) :is([data-paper-root], [data-slot="dialog-content"], [data-slot="sheet-content"]) form button[role="combobox"],
+  :root:has([data-paper-root]) :is([data-paper-root], [data-slot="dialog-content"], [data-slot="sheet-content"]) form [data-slot="select-trigger"],
+  [data-paper-root] [data-slot="form-item"] [data-slot="select-trigger"],
+  [data-paper-root] [data-slot="form-item"] button[role="combobox"] {
+    width: 100%;
+  }
+
+  [data-paper-root] [data-list-table][data-compact-rows="true"] [role="row"]:not(.rule-label) {
+    padding-block: .6rem;
+  }
+
+  [data-paper-root] [data-slot="table"][data-compact-rows="true"] [data-slot="table-cell"] {
+    padding-block: .6rem;
   }
 
   .rule-label {
@@ -237,7 +310,7 @@
 
 /* Full-bleed footer band, as in the Abide dialogs (only when a dialog
    actually uses DialogFooter — content padding is p-5 / sm:p-6). */
-:root:has([data-paper-root]) [data-slot="dialog-footer"] {
+:root:has([data-paper-root]) [data-slot="dialog-content"] [data-slot="dialog-footer"] {
   margin: 0.5rem -1.25rem -1.25rem;
   padding: 1rem 1.25rem 1.25rem;
   border-top: 1px solid var(--line);
@@ -246,7 +319,7 @@
 }
 
 @media (min-width: 640px) {
-  :root:has([data-paper-root]) [data-slot="dialog-footer"] {
+  :root:has([data-paper-root]) [data-slot="dialog-content"] [data-slot="dialog-footer"] {
     margin: 0.5rem -1.5rem -1.5rem;
     padding: 1.1rem 1.5rem 1.5rem;
   }
@@ -266,3 +339,42 @@
   background: color-mix(in oklab, var(--muted) 78%, transparent);
   color: var(--foreground);
 }
+
+/* Add/edit dialogs share page-form cards while keeping compact modal actions. */
+:root:has([data-paper-root]) [data-form-dialog] {
+  background: var(--background);
+  max-height: calc(100dvh - 2rem);
+}
+:root:has([data-paper-root]) [data-form-dialog] :is(form, fieldset, [data-slot="form-item"]) { min-width: 0; }
+:root:has([data-paper-root]) [data-form-dialog] [data-slot="dialog-footer"] {
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--card);
+}
+@media (max-width: 639px) {
+  :root:has([data-paper-root]) [data-form-dialog] { max-width: calc(100vw - 2rem); }
+  :root:has([data-paper-root]) [data-form-dialog] [data-slot="dialog-footer"] > :is(button, a) { width: 100%; }
+}
+:root:has([data-paper-root]) [data-form-dialog] [data-slot="dialog-footer"] > :is(button, a) {
+  min-height: 2.5rem;
+  height: 2.5rem;
+  border-radius: .8rem;
+}
+:root:has([data-paper-root]) [data-form-dialog] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]), textarea, button[role="combobox"], [data-slot="select-trigger"], select:not([aria-hidden="true"])) {
+  max-width: 100%;
+  border-radius: .8rem;
+}
+:root:has([data-paper-root]) [data-form-dialog] :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="range"]):not([type="color"]), button[role="combobox"], [data-slot="select-trigger"], select:not([aria-hidden="true"])) {
+  min-height: 2.5rem;
+}
+
+/* Preview actions use the same dimensions and spacing in create and edit modes. */
+:root:has([data-paper-root]) [data-form-actions] :is(button, a[data-slot="button"]) {
+  height: 2.5rem;
+  min-height: 2.5rem;
+  border-radius: .8rem;
+  margin-block: 0;
+}
+:root:has([data-paper-root]) [data-form-actions] > :is(button, a[data-slot="button"]) { width: 100%; }

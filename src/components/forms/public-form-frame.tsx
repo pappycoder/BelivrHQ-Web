@@ -74,7 +74,7 @@ export function PublicFormFrame({
       >
         <aside
           className={cn(
-            "relative overflow-hidden rounded-t-3xl bg-[var(--brand)] text-white",
+            "public-form-panel relative overflow-hidden rounded-t-3xl text-white",
             embedded ? "p-5" : "px-6 py-8 sm:p-10",
             !stacked && "lg:rounded-l-3xl lg:rounded-tr-none",
           )}
@@ -84,7 +84,7 @@ export function PublicFormFrame({
             className="pointer-events-none absolute -right-28 -top-28 size-80 rounded-full border-[40px] border-white/5"
           />
           <div className="relative lg:sticky lg:top-10">
-            <p className="text-sm font-semibold uppercase tracking-[.2em] text-[#d6e5ba]">
+            <p className="text-sm font-semibold uppercase tracking-[.2em] text-white">
               {eyebrow}
             </p>
             {loading ? (
@@ -110,13 +110,13 @@ export function PublicFormFrame({
                 >
                   {title}
                 </Heading>
-                <p className="mt-5 whitespace-pre-line break-words text-sm leading-7 text-white/75">
+                <p className="mt-5 whitespace-pre-line break-words text-sm leading-7 text-white">
                   {description}
                 </p>
                 {aside}
               </>
             )}
-            <p className="mt-8 flex gap-2 border-t border-white/15 pt-5 text-sm leading-6 text-white/70">
+            <p className="mt-8 flex gap-2 border-t border-white/15 pt-5 text-sm leading-6 text-white">
               <LockKeyhole className="mt-1 size-4 shrink-0" />
               Your response goes to the church team that shared this form.
             </p>

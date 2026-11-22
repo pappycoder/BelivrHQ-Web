@@ -1,5 +1,7 @@
 "use client";
 
+import { FormSection } from "@/components/shared/form-section";
+
 import { LoadingState } from "@/components/shared/loading-state";
 
 import * as React from "react";
@@ -15,7 +17,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DashboardDonut } from "@/components/dashboard/dashboard-plots";
-import { useRemainingWorkspace } from "./remaining-workspace";
 import { cn } from "@/lib/utils";
 export {
   PeopleAvatar as WorkspaceAvatar,
@@ -190,7 +191,7 @@ export function DistributionChart({
   );
 }
 
-/** Shared forms retain their previous presentation outside the opted-in sections. */
+/** Shared editor sections use the same card surface as the member form. */
 export function WorkspaceFormSection({
   title,
   children,
@@ -198,14 +199,5 @@ export function WorkspaceFormSection({
   title: string;
   children: React.ReactNode;
 }) {
-  const enabled = useRemainingWorkspace();
-  if (!enabled) return children;
-  return (
-    <fieldset className="min-w-0 space-y-4 rounded-xl border p-4">
-      <legend className="px-1 text-sm font-semibold text-muted-foreground">
-        {title}
-      </legend>
-      {children}
-    </fieldset>
-  );
+  return <FormSection title={title}>{children}</FormSection>;
 }

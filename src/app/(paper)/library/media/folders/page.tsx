@@ -1,5 +1,11 @@
 "use client";
 
+import { PageQueryError } from "@/components/shared/page-query-error";
+
+import { collectionLabel } from "@/lib/collection-label";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
@@ -87,6 +93,8 @@ export default function MediaFoldersPage() {
     </div>
   );
 
+  if (folders.isError) return <PageQueryError title="Media folders" />;
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -112,15 +120,29 @@ export default function MediaFoldersPage() {
         <StatCard label="Most recent activity" value={rows.filter((f) => f.newestAt).length} tone="sky" deltaLabel="folders with new arrivals" />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField
+      <ListToolbar
+ search={<SearchField
           value={query}
           onChange={(value) => { setQuery(value); setPage(1); }}
           placeholder="Search folders…"
           className="w-full max-w-xs"
-        />
-        <div className="ml-auto flex flex-wrap items-center gap-2">
-          <Select value={sortBy} onValueChange={(value) => { setSortBy(value as SortValue); setPage(1); }}>
+        />}
+ controls={<>
+<SortDirectionToggle
+            ascending={sortOrder === "asc"}
+            onToggle={() => { setSortOrder((o) => (o === "asc" ? "desc" : "asc")); setPage(1); }}
+          />
+<ViewToggle
+            value={view}
+            onChange={setView}
+            options={[
+              { value: "table", label: "Table", icon: <Rows3 /> },
+              { value: "cards", label: "Cards", icon: <LayoutGrid /> },
+            ]}
+          />
+</>}
+>
+<Select value={sortBy} onValueChange={(value) => { setSortBy(value as SortValue); setPage(1); }}>
             <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
               <ArrowUpDownIcon /> <SelectValue />
             </SelectTrigger>
@@ -130,20 +152,7 @@ export default function MediaFoldersPage() {
               <SelectItem value="newestAt">Recently active</SelectItem>
             </SelectContent>
           </Select>
-          <SortDirectionToggle
-            ascending={sortOrder === "asc"}
-            onToggle={() => { setSortOrder((o) => (o === "asc" ? "desc" : "asc")); setPage(1); }}
-          />
-          <ViewToggle
-            value={view}
-            onChange={setView}
-            options={[
-              { value: "table", label: "Table", icon: <Rows3 /> },
-              { value: "cards", label: "Cards", icon: <LayoutGrid /> },
-            ]}
-          />
-        </div>
-      </div>
+</ListToolbar>
 
       {folders.isLoading ? (
         <div className={view === "cards" ? "grid gap-3 sm:grid-cols-2 lg:grid-cols-3" : "space-y-2"}>
@@ -223,7 +232,7 @@ export default function MediaFoldersPage() {
         </div>
       ) : (
         <>
-          <StaggerGroup className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <StaggerGroup className="navigation-tour-records grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {pageRows.map((folder) => (
               <StaggerItem key={folder.folder}>
                 <Link
@@ -234,7 +243,7 @@ export default function MediaFoldersPage() {
                   <div className="mt-3 flex flex-1 items-start justify-between">
                     <div>
                       <p className="font-display text-sm font-semibold">{folder.folder}</p>
-                      <p className="num mt-1 text-sm text-ink-soft">{number(folder.count)} files</p>
+                      <p className="num mt-1 text-sm text-ink-soft">{number(folder.count)} {collectionLabel(folder.count, "files")}</p>
                     </div>
                     <FolderClosed className="size-4 text-ink-faint" />
                   </div>
@@ -255,7 +264,7 @@ export default function MediaFoldersPage() {
           {filtered.slice(0, 5).map((folder) => (
             <span
               key={folder.folder}
-              title={`${folder.folder}: ${folder.count} files`}
+              title={`${folder.folder}: ${folder.count} ${collectionLabel(folder.count, "files")}`}
               style={{
                 width: `${totalFiles ? Math.max(4, Math.round((folder.count / totalFiles) * 100)) : 20}%`,
                 background: colorOf(folder.folder),

@@ -1,7 +1,6 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
 import { VisibleDataExport } from "@/components/shared/visible-data-export";
 import * as React from "react";
 
@@ -11,8 +10,7 @@ import {
   BulkRowContext,
   type BulkRowRegistration,
 } from "@/contexts/list-bulk-context";
-import { ColumnSelector } from "@/components/shared/column-selector";
-import { TableOptions } from "@/components/shared/table-options";
+import { RegisterTableToolbar } from "@/components/shared/register-table-toolbar";
 import {
   useTableColumns,
   type TableColumn,
@@ -141,7 +139,6 @@ function Table({
   const sourceColumns = headerColumns(children);
   const supportsSelection =
     (selectable ?? true) &&
-    (providedRecords === undefined || records.length > 0) &&
     sourceColumns.length > 0 &&
     !!sourceColumns[0].label;
   const baseColumns = supportsSelection
@@ -239,67 +236,23 @@ function Table({
     <BulkRegistryContext.Provider value={registry}>
       <RowSelection.Provider value={selection}>
         <TableVisibility.Provider value={visibility}>
-          <div className="w-full" ref={exportRoot}>
-            {
-              <div className="flex flex-wrap justify-end gap-2 px-4 py-2 border-b bg-muted/20">
-                {supportsSelection && selected.length > 0 && (
-                  <div className="mr-auto flex flex-wrap items-center gap-2">
-                    <span role="status" className="text-sm font-medium">
-                      {selected.length} rows selected on this page
-                    </span>
-                    <VisibleDataExport
-                      getRoot={() => exportRoot.current}
-                      selectedOnly
-                      label="Export selected rows"
-                    />
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => setSelected([])}
-                    >
-                      Clear rows
-                    </Button>
-                  </div>
-                )}
-                <BulkManage
-                  selected={selected}
-                  rows={bulkRows}
-                  onResolved={(ids) =>
-                    setSelected((previous) =>
-                      previous.filter((id) => !ids.includes(id)),
-                    )
-                  }
-                />
-                <ColumnSelector
-                  columns={state.columns}
-                  hidden={state.hidden}
-                  onChange={state.setHidden}
-                />
-                {exportable && (
-                  <VisibleDataExport getRoot={() => exportRoot.current} />
-                )}
-                <TableOptions
-                  view={{
-                    compactRows,
-                    compactColumns,
-                    onRowsChange: setCompactRows,
-                    onColumnsChange: (compact) => {
-                      setCompactColumns(compact);
-                      setWidths({});
-                    },
-                  }}
-                  columns={state.columns}
-                  hidden={state.hidden}
-                  onHiddenChange={state.setHidden}
-                  onWidthChange={(ids, size) =>
-                    setWidths((previous) => ({
-                      ...previous,
-                      ...Object.fromEntries(ids.map((id) => [id, size])),
-                    }))
-                  }
-                />
-              </div>
-            }
+          <div className="w-full" data-register-table ref={exportRoot}>
+            <RegisterTableToolbar
+              visibleCount={visible.length}
+              selectedCount={selected.length}
+              selectable={supportsSelection}
+              allSelected={visible.length > 0 && visible.every((id) => selected.includes(id))}
+              onToggleAll={selection.toggleAll}
+              onClearSelection={() => setSelected([])}
+              bulkActions={<BulkManage selected={selected} rows={bulkRows} onResolved={(ids) => setSelected((previous) => previous.filter((id) => !ids.includes(id)))} />}
+              selectionExport={<VisibleDataExport getRoot={() => exportRoot.current} selectedOnly label="Export selected rows" />}
+              exportAction={exportable ? <VisibleDataExport getRoot={() => exportRoot.current} /> : undefined}
+              columns={state.columns}
+              hidden={state.hidden}
+              onHiddenChange={state.setHidden}
+              view={{ compactRows, compactColumns, onRowsChange: setCompactRows, onColumnsChange: (compact) => { setCompactColumns(compact); setWidths({}); } }}
+              onWidthChange={(ids, size) => setWidths((previous) => ({ ...previous, ...Object.fromEntries(ids.map((id) => [id, size])) }))}
+            />
             <div
               data-slot="table-container"
               tabIndex={0}
@@ -510,8 +463,9 @@ function TableRow({
     >
       {autoSelect &&
         (section === "head" ? (
-          <TableHead className="w-10" hideable={false}>
+          <TableHead data-selection-column className="w-10" hideable={false}>
             <Checkbox
+              disabled={!selection!.visible.length}
               aria-label="Select all visible rows"
               checked={
                 selection!.visible.length > 0 &&
@@ -528,6 +482,7 @@ function TableRow({
           </TableHead>
         ) : (
           <TableCell
+            data-selection-column
             className="w-10"
             onClick={(event) => event.stopPropagation()}
           >
@@ -575,7 +530,7 @@ function TableHead({ className, valueType, ...props }: HeadProps) {
           : undefined)
       }
       className={cn(
-        "h-11 px-4 text-left align-middle text-sm font-medium whitespace-nowrap text-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "h-11 px-5 text-left align-middle text-xs font-semibold uppercase tracking-[0.1em] whitespace-nowrap text-ink-faint [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         className,
       )}
       {...props}
@@ -594,7 +549,7 @@ function TableCell({
     <td
       data-slot="table-cell"
       className={cn(
-        "px-4 py-3.5 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "px-5 py-3.5 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         className,
       )}
       {...props}

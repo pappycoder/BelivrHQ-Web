@@ -1,5 +1,7 @@
 "use client";
 
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
 import Link from "next/link";
@@ -159,6 +161,12 @@ function SermonsInner() {
         description="Find sermons by title, speaker and scripture, and share them with your church."
         actions={
           <>
+<Button asChild variant="ghost" size="sm" className="gap-1.5 rounded-full text-sm text-brand">
+          <Link href="/library/sermons/series"><Rows3 className="size-3" /> Series</Link>
+        </Button>
+<Button asChild variant="ghost" size="sm" className="rounded-full text-sm text-brand">
+          <Link href="/library/sermons/speakers">Speakers</Link>
+        </Button>
             <ExportDropdown
               tableId="sermons"
               columns={EXPORT_COLUMNS}
@@ -184,17 +192,11 @@ function SermonsInner() {
         <StatCard label="With media" value={rows.filter((s) => s.audioUrl || s.videoUrl).length} tone="gold" deltaLabel="on this page" />
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={query} onChange={setQuery} placeholder="Search title, speaker or scripture…" className="w-full max-w-xs" />
-        <FilterChip active={sortBy === "sermonDate"} onClick={() => { setSortBy("sermonDate"); setPage(1); }}>Newest</FilterChip>
-        <FilterChip active={sortBy === "title"} onClick={() => { setSortBy("title"); setPage(1); }}>A–Z</FilterChip>
-        <FilterChip active={sortBy === "createdAt"} onClick={() => { setSortBy("createdAt"); setPage(1); }}>Recently added</FilterChip>
-        <FilterChip active={archivedView} onClick={() => { setArchivedView((v) => !v); setPage(1); }}>Archived</FilterChip>
-        <SortDirectionToggle
-          ascending={sortOrder === "asc"}
-          onToggle={() => { setSortOrder((o) => (o === "asc" ? "desc" : "asc")); setPage(1); }}
-        />
-        {isHq ? (
+      <ListToolbar
+ search={<SearchField value={query} onChange={setQuery} placeholder="Search title, speaker or scripture…" className="w-full max-w-xs" />}
+ controls={<>
+<FilterChip active={archivedView} onClick={() => { setArchivedView((v) => !v); setPage(1); }}>Archived</FilterChip>
+{isHq ? (
           <Select value={branchId} onValueChange={(value) => { setBranchId(value); setPage(1); }}>
             <SelectTrigger className="h-9 w-44 rounded-full border-line bg-card text-sm shadow-none">
               <SelectValue placeholder="All branches" />
@@ -207,7 +209,12 @@ function SermonsInner() {
             </SelectContent>
           </Select>
         ) : null}
-        <ViewToggle
+<Select value={sortBy} onValueChange={(value) => { setSortBy(value as typeof sortBy); setPage(1); }}><SelectTrigger aria-label="Sort sermons" className="h-9 w-40 rounded-full border-line bg-card text-sm shadow-none"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="sermonDate">Date preached</SelectItem><SelectItem value="title">Title</SelectItem><SelectItem value="createdAt">Date added</SelectItem></SelectContent></Select>
+<SortDirectionToggle
+          ascending={sortOrder === "asc"}
+          onToggle={() => { setSortOrder((o) => (o === "asc" ? "desc" : "asc")); setPage(1); }}
+        />
+<ViewToggle
           value={view}
           onChange={setView}
           options={[
@@ -215,13 +222,14 @@ function SermonsInner() {
             { value: "grid", label: "Card view", icon: <LayoutGrid className="size-3.5" /> },
           ]}
         />
-        <Button asChild variant="ghost" size="sm" className="ml-auto gap-1.5 rounded-full text-sm text-brand">
-          <Link href="/library/sermons/series"><Rows3 className="size-3" /> Series</Link>
-        </Button>
-        <Button asChild variant="ghost" size="sm" className="rounded-full text-sm text-brand">
-          <Link href="/library/sermons/speakers">Speakers</Link>
-        </Button>
-      </div>
+</>}
+>
+<FilterChip active={sortBy === "sermonDate"} onClick={() => { setSortBy("sermonDate"); setPage(1); }}>Newest</FilterChip>
+<FilterChip active={sortBy === "title"} onClick={() => { setSortBy("title"); setPage(1); }}>A–Z</FilterChip>
+<FilterChip active={sortBy === "createdAt"} onClick={() => { setSortBy("createdAt"); setPage(1); }}>Recently added</FilterChip>
+
+
+</ListToolbar>
 
       {(series || speaker) ? (
         <div className="flex flex-wrap items-center gap-2 rounded-xl border border-brand/30 bg-brand-soft/30 px-4 py-2.5 text-sm">
@@ -259,7 +267,7 @@ function SermonsInner() {
                         {sermon.videoUrl ? <Video className="size-4" /> : <Headphones className="size-4" />}
                       </span>
                       <span className="flex min-w-0 flex-wrap items-center gap-1.5">
-                        {sermon.seriesName ? <Tag tone="gold">{sermon.seriesName}</Tag> : null}
+                        {sermon.seriesName ? <Tag tone="gold" className="max-w-full"><span className="truncate">{sermon.seriesName}</span></Tag> : null}
                         {sermon.archivedAt ? <Tag tone="neutral">Archived</Tag> : null}
                       </span>
                     </button>
@@ -291,7 +299,7 @@ function SermonsInner() {
           </div>
         </>
       ) : (
-        <ListTable className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="library-sermons-1" records={rows ?? []} recordKey="sermonId">
+        <ListTable className="paper-card min-w-[1100px] divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="library-sermons-1" records={rows ?? []} recordKey="sermonId">
           <div className="rule-label grid grid-cols-[minmax(0,2.4fr)_1fr_0.8fr_0.9fr_0.8fr_1fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
             <span>Sermon</span>
             <span>Speaker</span>
@@ -312,9 +320,9 @@ function SermonsInner() {
                   <span className="block truncate font-mono text-xs text-brand">{sermon.scriptureReference ?? ""}</span>
                 </button>
                 <span className="truncate text-sm text-ink-soft">{sermon.speaker ?? "Not available"}</span>
-                <span className="truncate">
+                <span className="min-w-0" title={sermon.seriesName ?? undefined}>
                   {sermon.seriesName ? (
-                    <Tag tone="gold">{sermon.seriesName}</Tag>
+                    <Tag tone="gold" className="max-w-full"><span className="truncate">{sermon.seriesName}</span></Tag>
                   ) : (
                     <span className="text-sm text-ink-faint">: </span>
                   )}
@@ -322,8 +330,8 @@ function SermonsInner() {
                 <span className="num text-sm text-ink-soft">{formatDate(sermon.sermonDate)}</span>
                 <span className="num text-sm text-ink-faint">{duration(sermon.durationSeconds) ?? "Not available"}</span>
                 <span className="flex items-center gap-1.5 text-ink-faint">
-                  {sermon.audioUrl ? <Headphones className="size-3.5 text-moss" aria-label="Has audio" /> : null}
-                  {sermon.videoUrl ? <Video className="size-3.5 text-sky" aria-label="Has video" /> : null}
+                  {sermon.audioUrl ? <Headphones className="size-3.5 shrink-0 text-moss" aria-label="Has audio" /> : null}
+                  {sermon.videoUrl ? <Video className="size-3.5 shrink-0 text-sky" aria-label="Has video" /> : null}
                   {sermon.tags?.length ? <span className="truncate text-xs">#{sermon.tags[0]}</span> : null}
                 </span>
                 <RowActions actions={manageActions(sermon)} />

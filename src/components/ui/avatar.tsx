@@ -3,6 +3,8 @@
 import * as React from "react"
 import { Avatar as AvatarPrimitive } from "radix-ui"
 
+import { IdentityImage } from "@/components/shared/identity-image"
+
 import { cn } from "@/lib/utils"
 
 function Avatar({
@@ -40,6 +42,7 @@ function AvatarImage({
 
 function AvatarFallback({
   className,
+  children,
   ...props
 }: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
   return (
@@ -50,7 +53,10 @@ function AvatarFallback({
         className
       )}
       {...props}
-    />
+    >
+      <IdentityImage />
+      <span className="sr-only">{children}</span>
+    </AvatarPrimitive.Fallback>
   )
 }
 

@@ -1,0 +1,19 @@
+route_template,classification,caption,skeletons
+/admin/locations/[branchId],explicit load error with recovery,Unable to load branch details We couldn’t retrieve the data for this page. Please try again.,0
+/admin/permissions/[roleName],loading persists,,2
+/admin/team/[profileId],misleading missing-record state,"We couldn't find this seat The profile may have been removed, or the link is old.",0
+/gatherings/attendance/services/[serviceId],misleading missing-record state,"We couldn't find this service It may have been retired, or the link is old.",0
+/gatherings/events/[eventId]/edit,loading persists,,2
+/gatherings/events/[eventId],misleading missing-record state,"We couldn't find that gathering It may have been archived, or the link is old.",0
+/gatherings/groups/[deptId],explicit load error with recovery,Department could not be loaded Try again or return to the department list.,0
+/gatherings/groups/cell/[groupId],misleading missing-record state,"We couldn't find this group It may have been archived away from your view, or the link is old.",0
+/library/forms/[formId]/edit,misleading missing-record state,"We couldn't open that form It may have been deleted, or the link is old.",0
+/library/forms/[formId]/fill,misleading missing-record state,"We couldn't open this form It may have been deleted, or the link is old.",0
+/library/forms/[formId],misleading missing-record state,"We couldn't find that form It may have been deleted, or the link is old.",0
+/library/sermons/[sermonId]/edit,misleading missing-record state,"We couldn't open this sermon It may have been deleted, or the link is old.",0
+/library/sermons/[sermonId],misleading missing-record state,"We couldn't find this message It may have been deleted, or the link is old.",0
+/operations/assets/[assetId]/edit,misleading missing-record state,"We couldn't open this asset It may have been deleted, or the link is old.",0
+/operations/assets/[assetId],explicit load error with recovery,"Unable to load asset Please try again. If this continues, come back in a moment.",0
+/people/families/[familyId],misleading missing-record state,"We couldn't find that household The link may be old, or the family removed.",0
+/people/members/[memberId],misleading missing-record state,"We couldn't find this person. They may have been removed, or the link is old.",0
+/people/visitors/[visitorId],misleading missing-record state,"We couldn't find this guest The link may be old, or the record removed.",0
