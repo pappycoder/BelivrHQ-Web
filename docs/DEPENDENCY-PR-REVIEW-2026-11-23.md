@@ -13,3 +13,7 @@ Dependabot groups React/React DOM and their declaration packages, and leaves Nod
 Validate the consolidated dependency tree with a clean npm install, full lint, unit/UI contracts, dependency audit, TypeScript, production build and the hosted browser suite before merging into main and staging.
 
 References: [React version matching](https://react.dev/warnings/version-mismatch), [Next.js ESLint configuration](https://nextjs.org/docs/app/api-reference/config/eslint), [DefinitelyTyped version conventions](https://github.com/DefinitelyTyped/DefinitelyTyped#how-do-definitelytyped-package-versions-relate-to-versions-of-the-corresponding-library).
+
+## Additional bot batch
+
+Dependabot refreshed its queue after the configuration update and opened #92–#96. Integrate all five commits in a second consolidated, fully checked release: Motion 14.14.0, React Hook Form 7.92.0, Serwist 9.5.15, React Day Picker 10.0.2 and Tailwind CSS 4.3.5. Align @serwist/next and @tailwindcss/postcss with their patched runtime/build counterparts. [Motion's upgrade guide](https://motion.dev/docs/upgrade-guide) documents no public breaking changes in version 14. Preserve existing animation APIs, form behavior, date controls, offline visibility, configuration and required gates; no application-source changes are needed.
