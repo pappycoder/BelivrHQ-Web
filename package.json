@@ -68,7 +68,7 @@
     "react-dom": "19.3.1",
     "react-hook-form": "^7.92.0",
     "recharts": "^3.8.0",
-    "serwist": "^9.5.13",
+    "serwist": "^9.5.15",
     "sharp": "^0.35.5",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.6.0",
