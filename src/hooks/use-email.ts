@@ -2,6 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
+import { useCurrentProfile } from "@/hooks/use-profile";
 
 // ─── Types ───────────────────────────────────────────────
 
@@ -85,6 +86,7 @@ function buildEmailQuery(params: ListEmailsParams): string {
 function invalidateEmails(qc: ReturnType<typeof useQueryClient>) {
   qc.invalidateQueries({ queryKey: ["email-list"] });
   qc.invalidateQueries({ queryKey: ["email-detail"] });
+  qc.invalidateQueries({ queryKey: ["email-thread"] });
   qc.invalidateQueries({ queryKey: ["email-unread"] });
 }
 
@@ -238,4 +240,9 @@ export function useDeleteEmailForever() {
       api.delete<{ success: boolean }>(`/email/${messageId}/permanent`),
     onSuccess: () => invalidateEmails(queryClient),
   });
+}
+
+export function useEmailThread(messageId:string|null) {
+ const {data:profile}=useCurrentProfile();
+ return useQuery({queryKey:["email-thread",profile?.churchId,profile?.profileId,messageId],queryFn:()=>api.get<{data:EmailDetail[];truncated:boolean}>(`/email/${messageId}/thread`),enabled:!!messageId&&!!profile?.profileId});
 }

@@ -1,4 +1,8 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { PageQueryError } from "@/components/shared/page-query-error";
 
@@ -67,8 +71,8 @@ export default function AppointmentsPage() {
   const canCreate = ready && can("appointments", "create");
   const canUpdate = ready && can("appointments", "update");
 
-  const [status, setStatus] = React.useState<string>("all");
-  const [query, setQuery] = React.useState("");
+  const [status, setStatus] = useListFilterState<string>("status", "all");
+  const [query, setQuery] = useListFilterState("query", "");
   const [formOpen, setFormOpen] = React.useState(false);
   const [detailOpen, setDetailOpen] = React.useState(false);
   const [target, setTarget] = React.useState<Appointment | null>(null);
@@ -112,22 +116,22 @@ export default function AppointmentsPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Pending" value={summary.pending ?? 0} tone="gold" icon={<CircleDashed className="size-4" />} deltaLabel="to confirm" />
         <StatCard label="Confirmed" value={summary.confirmed ?? 0} tone="moss" icon={<CheckCircle2 className="size-4" />} />
         <StatCard label="Completed · page" value={rows.filter((a) => a.status === "completed").length} tone="sky" icon={<CalendarClock className="size-4" />} />
         <StatCard label="On the books" value={appointments.data?.total ?? 0} tone="brand" icon={<Clock className="size-4" />} />
-      </div>
+      </CompactListSummary>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={query} onChange={setQuery} placeholder="Search title or people…" className="w-full max-w-[240px]" />
+      <ListToolbar filterLabel="Appointment status" search={<SearchField value={query} onChange={setQuery} placeholder="Search title or people…" className="w-full max-w-[240px]" />}>
+
         <FilterChip active={status === "all"} onClick={() => setStatus("all")}>Any state</FilterChip>
         {APPOINTMENT_STATUSES.map((s) => (
           <FilterChip key={s} active={status === s} onClick={() => setStatus(s)}>
             {APPOINTMENT_STATUS_LABELS[s]}
           </FilterChip>
         ))}
-      </div>
+      </ListToolbar>
 
       {appointments.isLoading ? (
         <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-2xl" />)}</div>

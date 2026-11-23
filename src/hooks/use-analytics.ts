@@ -1,4 +1,5 @@
 "use client";
+import { formatMoney } from "@/lib/money";
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -191,5 +192,5 @@ export function useAnalyticsMembers(params: Pick<AnalyticsDateRangeParams, "bran
 }
 
 export function formatNaira(value: number): string {
-  return `₦${value.toLocaleString("en-NG")}`;
+  return formatMoney(value, "NGN");
 }

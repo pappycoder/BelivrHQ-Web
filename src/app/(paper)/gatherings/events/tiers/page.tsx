@@ -1,4 +1,11 @@
 "use client";
+import { SearchNoResults } from "@/components/shared/search-no-results";
+import { useListSearch } from "@/hooks/use-list-search";
+
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { ErrorState } from "@/components/shared/error-state";
 
@@ -60,8 +67,8 @@ function TiersInner() {
   const canUpdate = ready && can("events:tickets", "update");
   const canDelete = ready && can("events:tickets", "delete");
 
-  const [eventId, setEventId] = React.useState(searchParams.get("event") ?? "");
-  const [ticketFilter, setTicketFilter] = React.useState("");
+  const [eventId, setEventId] = useListFilterState("eventId", searchParams.get("event") ?? "");
+  const [ticketFilter, setTicketFilter] = useListFilterState("ticketFilter", "");
   const [formTarget, setFormTarget] = React.useState<{ open: boolean; tier: EventTicketTier | null }>({ open: false, tier: null });
   const [deleteTarget, setDeleteTarget] = React.useState<EventTicketTier | null>(null);
 
@@ -75,8 +82,8 @@ function TiersInner() {
   const eventList = events.data?.data ?? [];
   const selected = eventList.find((e) => e.eventId === eventId);
   const paidEvent = selected && !selected.isFree;
-  const rows = tiers.data ?? [];
-  const ticketRows = (tickets.data?.data ?? []).slice(0, 10);
+  const { rows, query: tierQuery, clearSearch: clearTierSearch, search: tierSearch } = useListSearch(tiers.data ?? [],"tiers:query","Search ticket tiers…");
+  const { rows: ticketRows, query: ticketQuery, clearSearch: clearTicketSearch, search: ticketSearch } = useListSearch((tickets.data?.data ?? []).slice(0, 10),"tickets:query","Search recent tickets…");
   const visibleTicketRows = ticketRows.filter((ticket) =>
     ticketFilter === "used" ? Boolean(ticket.usedAt) : ticketFilter === "open" ? !ticket.usedAt : true,
   );
@@ -100,24 +107,24 @@ function TiersInner() {
         }
       />
 
-      <div className="flex flex-wrap items-center gap-2">
+      <ListToolbar search={tierSearch}>
         <EventPicker query={events} value={eventId} showPricing
           onValueChange={value => { setEventId(value); router.replace(`/gatherings/events/tiers${value ? `?event=${value}` : ""}`); }} />
         {selected && !selected.isFree ? <Tag tone="gold">paid event</Tag> : null}
         {selected?.isFree ? (
           <span className="text-sm text-ink-faint">Free events use registration check-in; no tiers needed.</span>
         ) : null}
-      </div>
+      </ListToolbar>
 
       {!eventId ? (events.isSuccess && eventList.length ? <EmptyState icon={<Ticket />} title="Pick an event to manage its tickets" description="Tiers, capacity and every issued ticket sit on one honest screen." /> : null
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             {tiers.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={tiers.isError} label="Tiers" value={rows.length} tone="brand" icon={<Coins className="size-4" />} />}
             {tickets.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={tickets.isError} label="Tickets issued" value={ticketRows.length} tone="moss" deltaLabel={tickets.isError ? "Please try again" : `page of ${number(tickets.data?.total ?? 0)}`} />}
             {tiers.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={tiers.isError} label="Tier capacity" value={capacity} tone="gold" deltaLabel={tiers.isError ? "Please try again" : `${cappedCount} capped · ${rows.length - cappedCount} uncapped`} />}
             {events.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={!eventReady} label="Event capacity" value={selected?.capacity ?? 0} tone="sky" deltaLabel="from the event itself" />}
-          </div>
+          </CompactListSummary>
 
           <SectionCard
             eyebrow="Tiers"
@@ -128,7 +135,7 @@ function TiersInner() {
               <ErrorState title="Unable to load ticket tiers" />
             ) : tiers.isPending ? (
               <div className="space-y-2 p-5">{Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-12 rounded-xl" />)}</div>
-            ) : rows.length === 0 ? (
+            ) : rows.length === 0 && tierQuery.trim() ? <SearchNoResults onClear={clearTierSearch} /> : rows.length === 0 ? (
               <div className="px-5 py-10 text-center">
                 <p className="text-sm text-ink-faint">{paidEvent ? "No tiers yet. The first one sets the price of entry." : "Free event: registrations stand in for tickets."}</p>
                 {canCreate && paidEvent && tierDataReady ? (
@@ -181,11 +188,11 @@ function TiersInner() {
             eyebrow="Issued tickets"
             title="Recent tickets"
             actions={
-              <div className="flex items-center gap-2">
+              <ListToolbar search={ticketSearch}>
                 <FilterChip active={ticketFilter === ""} onClick={() => setTicketFilter("")}>All</FilterChip>
                 <FilterChip active={ticketFilter === "used"} onClick={() => setTicketFilter("used")}>Used</FilterChip>
                 <FilterChip active={ticketFilter === "open"} onClick={() => setTicketFilter("open")}>Not used</FilterChip>
-              </div>
+              </ListToolbar>
             }
             bodyClassName="p-0"
           >
@@ -203,7 +210,7 @@ function TiersInner() {
                       <Tag className="col-start-2 row-start-1 self-start sm:order-last sm:shrink-0 sm:self-center" tone={t.usedAt ? "moss" : "neutral"} dot>{formatStatusLabel(t.usedAt ? "used" : "open")}</Tag>
                     </div>
                   ))}
-                {!visibleTicketRows.length ? (
+                {!visibleTicketRows.length && ticketQuery.trim() ? <SearchNoResults onClear={clearTicketSearch} /> : !visibleTicketRows.length ? (
                   <div role="status" className="space-y-3 px-5 py-8 text-center">
                     <p className="text-sm text-ink-faint">{ticketRows.length ? `No ${ticketFilter === "used" ? "used" : "unused"} tickets in this recent list.` : "No tickets issued for this event yet."}</p>
                     {ticketRows.length ? <Button size="sm" variant="outline" className="rounded-full" onClick={() => setTicketFilter("")}>Show all tickets</Button> : null}

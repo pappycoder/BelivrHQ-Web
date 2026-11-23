@@ -1,4 +1,7 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { PageQueryError } from "@/components/shared/page-query-error";
 
@@ -51,12 +54,12 @@ export default function MediaFoldersPage() {
   const rows = React.useMemo(() => folders.data ?? [], [folders.data]);
   const totalFiles = rows.reduce((sum, f) => sum + f.count, 0);
 
-  const [query, setQuery] = React.useState("");
-  const [sortBy, setSortBy] = React.useState<SortValue>("count");
-  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
-  const [view, setView] = React.useState<"table" | "cards">("cards");
+  const [query, setQuery] = useListFilterState("query", "");
+  const [sortBy, setSortBy] = useListFilterState<SortValue>("sortBy", "count");
+  const [sortOrder, setSortOrder] = useListFilterState<"asc" | "desc">("sortOrder", "desc");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
+  const [view, setView] = useListFilterState<"table" | "cards">("view", "table");
 
   // The folders endpoint returns the full folded summary (and is cached
   // server-side), so the controls run client-side over it.
@@ -114,11 +117,11 @@ export default function MediaFoldersPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-3">
         <StatCard label="Folders" value={rows.length} tone="brand" icon={<FolderClosed className="size-4" />} />
         <StatCard label="Files inside" value={totalFiles} tone="moss" deltaLabel="counted" />
         <StatCard label="Most recent activity" value={rows.filter((f) => f.newestAt).length} tone="sky" deltaLabel="folders with new arrivals" />
-      </div>
+      </CompactListSummary>
 
       <ListToolbar
  search={<SearchField

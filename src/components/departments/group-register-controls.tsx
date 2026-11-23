@@ -1,4 +1,5 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
 
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
@@ -24,13 +25,13 @@ import {
 } from "@/lib/group-register";
 
 export function useGroupRegister<T extends GroupRegisterRecord>(records: T[]) {
-  const [search, setSearch] = React.useState("");
-  const [branch, setBranch] = React.useState("all");
-  const [leadership, setLeadership] = React.useState("all");
-  const [day, setDay] = React.useState("all");
-  const [sort, setSort] = React.useState<GroupSort>("name");
-  const [ascending, setAscending] = React.useState(true);
-  const [view, setView] = React.useState<"cards" | "table">("table");
+  const [search, setSearch] = useListFilterState("search", "");
+  const [branch, setBranch] = useListFilterState("branch", "all");
+  const [leadership, setLeadership] = useListFilterState("leadership", "all");
+  const [day, setDay] = useListFilterState("day", "all");
+  const [sort, setSort] = useListFilterState<GroupSort>("sort", "name");
+  const [ascending, setAscending] = useListFilterState("ascending", true);
+  const [view, setView] = useListFilterState<"cards" | "table">("view", "table");
   const rows = React.useMemo(
     () =>
       filterGroupRegister(records, {

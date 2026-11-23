@@ -1,4 +1,7 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
@@ -68,19 +71,19 @@ export default function AssetsPage() {
   const archive = useArchiveAsset();
   const restore = useRestoreAsset();
 
-  const [query, setQuery] = React.useState("");
-  const [search, setSearch] = React.useState("");
-  const [status, setStatus] = React.useState<AssetStatus | "">("");
-  const [categoryId, setCategoryId] = React.useState("");
-  const [archivedView, setArchivedView] = React.useState(false);
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
+  const [query, setQuery] = useListFilterState("query", "");
+  const [search, setSearch] = useListFilterState("search", "");
+  const [status, setStatus] = useListFilterState<AssetStatus | "">("status", "");
+  const [categoryId, setCategoryId] = useListFilterState("categoryId", "");
+  const [archivedView, setArchivedView] = useListFilterState("archivedView", false);
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
   const [drawerAssetId, setDrawerAssetId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     const t = setTimeout(() => { setSearch(query); setPage(1); }, 350);
     return () => clearTimeout(t);
-  }, [query]);
+  }, [query, setPage, setSearch]);
 
   const params = React.useMemo(() => ({
     page,
@@ -132,12 +135,12 @@ export default function AssetsPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Tracked items" value={total} tone="brand" icon={<Boxes className="size-4" />} deltaLabel={archivedView ? "archived" : "in the register"} />
         <StatCard label="Purchase value" value={stats.data?.totalPurchaseValue ?? 0} prefix="₦" tone="moss" />
         <StatCard label="Current value" value={stats.data?.totalCurrentValue ?? 0} prefix="₦" tone="sky" deltaLabel="after depreciation" />
         <StatCard label="Needs service" value={maintenanceTotal} tone="gold" deltaLabel="see schedule" />
-      </div>
+      </CompactListSummary>
 
       <ListToolbar
  search={<SearchField value={query} onChange={setQuery} placeholder="Search name, tag or serial…" className="w-full max-w-xs" />}

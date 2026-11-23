@@ -44,6 +44,7 @@ export interface PdfReportSection {
 export interface PdfReportOptions {
   metadata?: import("@/lib/pdf-design").PdfMetadata[];
   branding?: ExportBranding;
+  overview?: import("./report-overview").ReportOverview;
 }
 
 /** Builds a structured document; every section keeps its own column schema. */
@@ -58,18 +59,22 @@ export async function createReportPDF(
     import("@/lib/pdf-design"),
   ]);
   const { PDF_COLORS: colors, PDF_FONT, preparePdf, pdfText, pdfLabel, drawPdfHeader, drawPdfFooters } = design;
-  const landscape = sections.some((section) => section.columns.length > 5);
+  const landscape = !options.overview && sections.some((section) => section.columns.length > 5);
   const doc = new jsPDF({ orientation: landscape ? "landscape" : "portrait", putOnlyUsedFonts: true });
   const assets = await preparePdf(doc);
   const churchLogo = await loadExportLogo(options.branding);
   const generatedAt = new Date();
   doc.setProperties({ title, author: options.branding?.churchName || "BelivrHQ", creator: "BelivrHQ", subject: "Church administration report" });
 
+  const studio = options.overview ? await import("./report-overview") : undefined;
+  const churchName = options.branding?.churchName || "Your church";
+  if (options.overview && studio) studio.drawReportOverview(doc,options.overview,churchName);
+  const drawHeader = (paintPage=true) => studio ? studio.drawStudioHeader(doc,churchName,true,paintPage) : drawPdfHeader(doc,assets.logo,"REPORT",options.branding,churchLogo);
   sections.forEach((section, index) => {
-    if (index) doc.addPage();
+    if (index || options.overview) doc.addPage();
     const width = doc.internal.pageSize.getWidth();
     const usable = width - 28;
-    drawPdfHeader(doc, assets.logo, "REPORT", options.branding, churchLogo);
+    drawHeader();
     let y = 39;
     pdfLabel(doc, sections.length > 1 ? `SECTION ${index + 1} OF ${sections.length}` : "EXPORTED REPORT", 14, y);
     y += 9;
@@ -114,14 +119,14 @@ export async function createReportPDF(
       body,
       theme: "plain",
       styles: { font: PDF_FONT, fontSize: 8.5, cellPadding: 3.5, overflow: "linebreak", textColor: colors.ink, lineColor: colors.line, lineWidth: { bottom: 0.15 } },
-      headStyles: { fillColor: colors.navy, textColor: colors.white, fontStyle: "bold", fontSize: 8, cellPadding: 4 },
-      alternateRowStyles: { fillColor: colors.soft },
+      headStyles: { fillColor: studio ? "#efeade" : colors.navy, textColor: studio ? "#191813" : colors.white, fontStyle: "bold", fontSize: 8, cellPadding: 4 },
+      alternateRowStyles: { fillColor: studio ? "#fcfaf4" : colors.soft },
       rowPageBreak: "avoid",
       showHead: "everyPage",
       horizontalPageBreak: section.columns.length > 9,
       horizontalPageBreakRepeat: section.columns[0]?.key,
       willDrawPage: ({ pageNumber }) => {
-        drawPdfHeader(doc, assets.logo, "REPORT", options.branding, churchLogo);
+        drawHeader(pageNumber > 1);
         if (pageNumber > 1) pdfText(doc, `${section.title} · continued`, 14, 32, usable, 8, true, colors.muted);
       },
       didParseCell: (cell) => {
@@ -144,7 +149,7 @@ export async function createReportPDF(
       },
     });
   });
-  drawPdfFooters(doc, generatedAt);
+  if (studio) studio.drawStudioFooters(doc); else drawPdfFooters(doc, generatedAt);
   return doc;
 }
 

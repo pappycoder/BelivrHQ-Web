@@ -1,4 +1,10 @@
 "use client";
+import { SearchNoResults } from "@/components/shared/search-no-results";
+import { useListSearch } from "@/hooks/use-list-search";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { PageQueryError } from "@/components/shared/page-query-error";
 
@@ -40,7 +46,7 @@ export default function AssetCategoriesPage() {
   const canUpdate = ready && can("assets:categories", "update");
   const canDelete = ready && can("assets:categories", "delete");
 
-  const [archivedView, setArchivedView] = React.useState(false);
+  const [archivedView, setArchivedView] = useListFilterState("archivedView", false);
   const [formTarget, setFormTarget] = React.useState<{ open: boolean; category: AssetCategory | null }>({ open: false, category: null });
   const [deleteTarget, setDeleteTarget] = React.useState<AssetCategory | null>(null);
 
@@ -49,7 +55,7 @@ export default function AssetCategoriesPage() {
   const restore = useRestoreAssetCategory();
   const del = useDeleteAssetCategory();
 
-  const rows = categories.data ?? [];
+  const { rows, query: listQuery, clearSearch, search: listSearch } = useListSearch(categories.data ?? [], "query", "Search asset categories…");
 
   if (categories.isError) return <PageQueryError title="Asset categories" />;
 
@@ -71,26 +77,26 @@ export default function AssetCategoriesPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-3">
         <StatCard label="Categories" value={rows.length} tone="brand" deltaLabel={archivedView ? "archived" : "in rotation"} />
         <StatCard label="In use" value={rows.filter((c) => !c.archivedAt).length} tone="moss" />
         <StatCard label="Recently added" value={rows.filter((c) => c.createdAt >= new Date(Date.now() - 30 * 86_400_000).toISOString()).length} tone="sky" deltaLabel="last 30 days" />
-      </div>
+      </CompactListSummary>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <ListToolbar search={listSearch}>
         <FilterChip active={!archivedView} onClick={() => setArchivedView(false)}>Active</FilterChip>
         <FilterChip active={archivedView} onClick={() => setArchivedView(true)}>Archived</FilterChip>
-      </div>
+      </ListToolbar>
 
       {categories.isLoading ? (
         <div className="space-y-2">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}</div>
       ) : rows.length === 0 ? (
-        <EmptyState
+        (listQuery.trim() ? <SearchNoResults onClear={clearSearch} /> : <EmptyState
           icon={<Plus />}
           title={archivedView ? "No archived categories" : "No categories yet"}
           description="Categories keep the register readable. Make the first one now."
           action={canCreate ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => setFormTarget({ open: true, category: null })}>Add a category</Button> : undefined}
-        />
+        />)
       ) : (
         <StaggerGroup className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl">
           {rows.map((category) => (

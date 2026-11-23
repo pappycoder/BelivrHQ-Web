@@ -2,7 +2,7 @@
 
 import { FormDialogContent } from "@/components/shared/form-dialog";
 
-import { ValidatedForm } from "@/components/ui/validated-form";
+import { GuidedRecordForm } from "@/components/shared/guided-record-form";
 
 import * as React from "react";
 import { confirmDiscardChanges } from "@/hooks/use-unsaved-changes";
@@ -204,7 +204,7 @@ export function MemberFormDialog({
             requestAnimationFrame(() => { if (target.isConnected) target.focus(); });
           }
         } : undefined}
-        className={`${peopleWorkspaceClass} sm:max-w-[600px] max-h-[90vh] overflow-y-auto rounded-2xl`}
+        className={`${peopleWorkspaceClass} sm:max-w-[1000px] max-h-[90vh] overflow-y-auto rounded-2xl`}
       >
         <DialogHeader>
           <DialogTitle>{isEdit ? "Edit Member" : "Add Member"}</DialogTitle>
@@ -216,7 +216,7 @@ export function MemberFormDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <GuidedRecordForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <PeopleFormSection title="Identity & contact">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField required
@@ -490,7 +490,7 @@ export function MemberFormDialog({
                     : "Add Member"}
               </Button>
             </DialogFooter>
-          </ValidatedForm>
+          </GuidedRecordForm>
         </Form>
       </FormDialogContent>
     </Dialog>

@@ -9,14 +9,14 @@ import { formatStatusLabel } from "@/lib/status-label";
 
 import { collectionLabel } from "@/lib/collection-label";
 
-import { DetailNavigation, DetailHeading } from "@/components/paper/section";
+import { GatheringWorkspace } from "@/components/gatherings/gathering-workspace";
+import { DetailNavigation } from "@/components/paper/section";
 
 import * as React from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
   CalendarDays,
-  MapPin,
   PencilLine,
   ScanLine,
   Ticket,
@@ -48,7 +48,6 @@ import {
   stepOccurrence,
   todayKey,
 } from "@/lib/schedule-occurrence";
-import { cn } from "@/lib/utils";
 
 function fullDate(value?: string) {
   if (!value) return "Not available";
@@ -125,7 +124,7 @@ export default function EventDetailPage({
         ? todayKey()
         : stepOccurrence((d) => eventOccursOn(schedule, d), todayKey(), 1)
       : null;
-  const filled = e.capacity ? Math.min(100, Math.round(((e.registrationCount ?? 0) / e.capacity) * 100)) : null;
+
 
   return (
     <div className="space-y-6">
@@ -133,36 +132,7 @@ export default function EventDetailPage({
         <ArrowLeft className="size-3" /> Gatherings · Events
       </Link></DetailNavigation>
 
-      <div className="paper-card overflow-hidden rounded-2xl">
-        <div className="h-2 bg-[linear-gradient(90deg,var(--brand),var(--gold)_55%,var(--moss))]" />
-        <div className="flex flex-wrap items-start justify-between gap-4 p-5 md:p-6">
-          <div className="min-w-0 space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <Tag tone={upcoming ? "gold" : "moss"} dot>{upcoming ? "Upcoming" : "Past"}</Tag>
-              <Tag tone="neutral">{EVENT_TYPE_MAP[e.type] ?? e.type}</Tag>
-              {e.branchName ? <Tag tone="sky">{e.branchName}</Tag> : null}
-              {e.archivedAt ? <Tag tone="rose">Archived</Tag> : null}
-            </div>
-            <DetailHeading>{e.title}</DetailHeading>
-            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-soft">
-              <span>{fullDate(e.startDate)}{e.endDate && timeOf(e.endDate) ? ` → ${timeOf(e.endDate)}` : ""}</span>
-              <span className="flex items-center gap-1"><MapPin className="size-3" /> {e.location ?? "Location to be announced"}</span>
-            </p>
-            {recurrence !== "one_time" ? (
-              <p className="text-xs text-ink-faint">
-                {recurrence === "weekly"
-                  ? `Repeats every ${new Date(e.startDate).toLocaleDateString("en-GB", { weekday: "long" })}`
-                  : `Runs every day through ${e.endDate ? fullDate(e.endDate) : "its window"}`}
-                {nextDay
-                  ? ` · next up ${new Date(`${nextDay}T00:00:00`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}`
-                  : " · its window has closed"}
-              </p>
-            ) : null}
-            {e.description ? (
-              <p className="max-w-2xl text-sm leading-relaxed text-ink-soft">{e.description}</p>
-            ) : null}
-          </div>
-          <div data-tour-actions className="flex flex-wrap gap-2">
+      <GatheringWorkspace recordKey={`event:${e.eventId}`} title={e.title} kind={EVENT_TYPE_MAP[e.type]??e.type} date={fullDate(e.startDate)+(timeOf(e.startDate)?` · ${timeOf(e.startDate)}`:"")+(e.endDate&&timeOf(e.endDate)?` – ${timeOf(e.endDate)}`:"")+(recurrence!=="one_time"?` · ${recurrence==="weekly"?"Repeats weekly":"Daily gathering"}${nextDay?` · next ${fullDate(`${nextDay}T00:00:00`)}`:""}`:"")} location={e.location} description={e.description} capacity={e.capacity} registered={e.registrationCount} tags={<><Tag tone={upcoming?"gold":"moss"} dot>{upcoming?"Upcoming":"Past"}</Tag>{e.branchName&&<Tag tone="sky">{e.branchName}</Tag>}{e.archivedAt&&<Tag tone="rose">Archived</Tag>}</>} actions={          <div data-tour-actions className="flex flex-wrap gap-2">
             {canCheckIn ? (
               <Button asChild size="sm" className="h-8 gap-1.5 rounded-full text-sm">
                 <Link href={`/gatherings/events/check-in?event=${encodeURIComponent(e.eventId)}`}>
@@ -185,31 +155,12 @@ export default function EventDetailPage({
               </Button>
             ) : null}
             {e.isFree ? <Tag tone="moss">Free entry</Tag> : <Tag tone="gold">{e.price ? `${e.price} / seat` : "Ticketed"}</Tag>}
-          </div>
-        </div>
-        {e.capacity ? (
-          <div data-tour-event-capacity className="border-t border-line px-5 py-3 md:px-6">
-            <div className="flex items-center justify-between text-sm text-ink-soft">
-              <span className="num">{e.registrationCount ?? 0} registered of {e.capacity}</span>
-              <span className="num">{e.capacity - (e.registrationCount ?? 0)} {collectionLabel(e.capacity - (e.registrationCount ?? 0), "seats")} left</span>
-            </div>
-            <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-muted">
-              <div
-                className={cn("h-full rounded-full", filled !== null && filled >= 95 ? "bg-rose" : "bg-moss")}
-                style={{ width: `${filled ?? 0}%` }}
-              />
-            </div>
-          </div>
-        ) : null}
-      </div>
-
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          </div>} overview={<div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Registered" value={stats.data.registered} tone="brand" icon={<Users className="size-4" />} />
         <StatCard label="Attended" value={stats.data.attended} tone="moss" />
         <StatCard label="Walk-ins" value={stats.data.walkIns} tone="gold" />
         <StatCard label="No-shows" value={stats.data.noShows} tone="sky" deltaLabel="to follow up" />
-      </div>
-
+      </div>}>
       <Tabs defaultValue="registrations">
         <TabsList className="h-9 rounded-full border border-line bg-card p-0.5">
           {canSeeRegistrations ? (
@@ -328,6 +279,7 @@ export default function EventDetailPage({
           </TabsContent>
         ) : null}
       </Tabs>
+      </GatheringWorkspace>
     </div>
   );
 }

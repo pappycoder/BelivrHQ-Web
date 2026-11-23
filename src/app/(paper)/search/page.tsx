@@ -1,5 +1,9 @@
 "use client";
 
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
+
 import { ErrorState } from "@/components/shared/error-state";
 import { searchResultsState, type SearchRailState } from "@/lib/search-results-state";
 
@@ -206,9 +210,9 @@ function SearchInner() {
   const { can, ready } = usePermissions();
   const { data: profile } = useCurrentProfile();
 
-  const [query, setQuery] = React.useState(searchParams.get("q") ?? "");
-  const [search, setSearch] = React.useState("");
-  const [scope, setScope] = React.useState<Scope>("All");
+  const [query, setQuery] = useListFilterState("query", searchParams.get("q") ?? "");
+  const [search, setSearch] = useListFilterState("search", "");
+  const [scope, setScope] = useListFilterState<Scope>("scope", "All");
   const [recent, setRecent] = React.useState<string[]>([]);
   const [settled, setSettled] = React.useState<{ query: string; rails: Record<string, SearchRailState> }>({ query: "", rails: {} });
 
@@ -220,7 +224,7 @@ function SearchInner() {
       if (next.length >= 2) { writeRecent(next); setRecent(readRecent()); }
     }, 350);
     return () => clearTimeout(t);
-  }, [query]);
+  }, [query, setSearch]);
 
   const active = search.length >= 2;
   const inPeople = scope === "All" || scope === "People";
@@ -284,11 +288,11 @@ function SearchInner() {
             ))}
           </div>
         ) : null}
-        <div className="search-tour-scopes mt-4 flex flex-wrap justify-center gap-1.5">
+        <ListToolbar inlineFilters>
           {SCOPES.map((item) => (
             <FilterChip key={item} active={scope === item} onClick={() => setScope(item)}>{item}</FilterChip>
           ))}
-        </div>
+        </ListToolbar>
       </div>
 
       {active ? (

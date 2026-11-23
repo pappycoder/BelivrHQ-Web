@@ -1,4 +1,5 @@
 "use client";
+import { formatMoney } from "@/lib/money";
 import { useSyncExternalStore } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -49,12 +50,7 @@ export function selectSubscriptionCurrency(currency: string) {
   window.dispatchEvent(new Event(changeEvent));
 }
 export function subscriptionMoney(amount: number, currency: string) {
-  return new Intl.NumberFormat("en", {
-    style: "currency",
-    currency,
-    currencyDisplay: "code",
-    maximumFractionDigits: 0,
-  }).format(amount);
+  return formatMoney(amount, currency);
 }
 interface PricingCatalog {
   currency: string;

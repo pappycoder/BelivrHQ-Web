@@ -1,4 +1,7 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { DialogFooter, DialogClose } from "@/components/ui/dialog";
 
@@ -114,14 +117,14 @@ function MediaInner() {
   const canUpdate = ready && can("media", "update");
   const canDelete = ready && can("media", "delete");
 
-  const [kind, setKind] = React.useState<MediaKind | "all">("all");
-  const [folder, setFolder] = React.useState(searchParams.get("folder") ?? "all");
-  const [permissions, setPermissions] = React.useState("");
-  const [query, setQuery] = React.useState("");
-  const [search, setSearch] = React.useState("");
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
-  const [view, setView] = React.useState<"cards" | "table">("cards");
+  const [kind, setKind] = useListFilterState<MediaKind | "all">("kind", "all");
+  const [folder, setFolder] = useListFilterState("folder", searchParams.get("folder") ?? "all");
+  const [permissions, setPermissions] = useListFilterState("permissions", "");
+  const [query, setQuery] = useListFilterState("query", "");
+  const [search, setSearch] = useListFilterState("search", "");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
+  const [view, setView] = useListFilterState<"cards" | "table">("view", "table");
   const [preview, setPreview] = React.useState<MediaAsset | null>(null);
   const [deleteTarget, setDeleteTarget] = React.useState<MediaAsset | null>(null);
   const [permTarget, setPermTarget] = React.useState<MediaAsset | null>(null);
@@ -131,7 +134,7 @@ function MediaInner() {
   React.useEffect(() => {
     const t = setTimeout(() => { setSearch(query); setPage(1); }, 350);
     return () => clearTimeout(t);
-  }, [query]);
+  }, [query, setPage, setSearch]);
 
   const folders = useMediaFolders();
   const list = useMediaLibrary({
@@ -174,7 +177,7 @@ function MediaInner() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Files matched" value={total} tone="brand" icon={<ImageIcon className="size-4" />} deltaLabel={folder === "all" ? "all folders" : folder} />
         <StatCard label="Folders" value={folderList.length} tone="moss" />
         <StatCard label="This page" value={rows.length} tone="sky" deltaLabel={`page ${page}/${totalPages}`} />
@@ -182,9 +185,9 @@ function MediaInner() {
           <span className="rule-label">Limits</span>
           <span className="num text-sm font-semibold">{formatBytes(MEDIA_UPLOAD_LIMITS.imageBytes)} images · {formatBytes(MEDIA_UPLOAD_LIMITS.fileBytes)} files</span>
         </div>
-      </div>
+      </CompactListSummary>
 
-      <ListToolbar
+      <ListToolbar filterLabel="Media type"
  search={<SearchField value={query} onChange={setQuery} placeholder="Search filenames…" className="w-full max-w-[220px]" />}
  controls={<>
 <ViewToggle value={view} onChange={setView} options={[{ value: "table", label: "List view", icon: <Rows3 /> }, { value: "cards", label: "Card view", icon: <LayoutGrid /> }]} />

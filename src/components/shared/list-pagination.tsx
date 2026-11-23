@@ -14,6 +14,7 @@ export function ListPaginationFooter({
   itemName = "items",
   itemNameSingular,
   pending = false,
+  visibleMatches,
 }: {
   page: number;
   perPage: number;
@@ -24,6 +25,8 @@ export function ListPaginationFooter({
   itemName?: string;
   itemNameSingular?: string;
   pending?: boolean;
+  /** Match count within the loaded server page; paging continues through the original result set. */
+  visibleMatches?: number;
 }) {
   const totalPages = Math.max(1, Math.ceil(total / Math.max(1, perPage)));
   const from = total === 0 ? 0 : (page - 1) * perPage + 1;
@@ -36,7 +39,7 @@ export function ListPaginationFooter({
       )}
       aria-label="Pagination"
     >
-      <span>
+      {visibleMatches !== undefined ? <span><strong className="text-ink">{visibleMatches}</strong> {visibleMatches === 1 ? "match" : "matches"} on this page · {total.toLocaleString()} {collectionLabel(total,itemName,itemNameSingular)} across all pages</span> : <span>
         Showing{" "}
         <span className="num font-medium text-ink">
           {from}–{to}
@@ -46,7 +49,7 @@ export function ListPaginationFooter({
           {total.toLocaleString()}
         </span>{" "}
         {collectionLabel(total, itemName, itemNameSingular)}
-      </span>
+      </span>}
       <div className="flex flex-wrap items-center gap-3">
         {onPerPageChange ? (
           <label className="flex items-center gap-1.5 whitespace-nowrap">

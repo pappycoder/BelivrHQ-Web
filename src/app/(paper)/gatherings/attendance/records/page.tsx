@@ -1,5 +1,9 @@
 "use client";
 
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { ListTable } from "@/components/shared/list-table";
@@ -99,26 +103,26 @@ export default function AttendanceRecordsPage() {
   const { data: profile } = useCurrentProfile();
   const isHq = !!profile?.isAdminHq;
   const branches = useBranchesList({ limit: 100 }, { enabled: isHq });
-  const [branchId, setBranchId] = React.useState("all");
-  const [sortBy, setSortBy] = React.useState<"checkinAt" | "createdAt">(
-    "checkinAt",
+  const [branchId, setBranchId] = useListFilterState("branchId", "all");
+  const [sortBy, setSortBy] = useListFilterState<"checkinAt" | "createdAt">(
+    "sortBy", "checkinAt",
   );
-  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
-  const [search, setSearch] = React.useState("");
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
-  const [serviceId, setServiceId] = React.useState("all");
-  const [category, setCategory] = React.useState<"all" | AttendanceCategory>(
-    "all",
+  const [sortOrder, setSortOrder] = useListFilterState<"asc" | "desc">("sortOrder", "desc");
+  const [search, setSearch] = useListFilterState("search", "");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
+  const [serviceId, setServiceId] = useListFilterState("serviceId", "all");
+  const [category, setCategory] = useListFilterState<"all" | AttendanceCategory>(
+    "category", "all",
   );
-  const [startDate, setStartDate] = React.useState("");
-  const [endDate, setEndDate] = React.useState("");
+  const [startDate, setStartDate] = useListFilterState("startDate", "");
+  const [endDate, setEndDate] = useListFilterState("endDate", "");
   const [dateOpen, setDateOpen] = React.useState(false);
   const dateTriggerRef = React.useRef<HTMLButtonElement>(null);
   const restoreDateFocus = React.useRef(false);
   const [dateDraft, setDateDraft] = React.useState({ from: "", to: "" });
   const invalidRange = !!dateDraft.from && !!dateDraft.to && dateDraft.from > dateDraft.to;
-  const [query, setQuery] = React.useState("");
+  const [query, setQuery] = useListFilterState("query", "");
   const [deleteTarget, setDeleteTarget] =
     React.useState<AttendanceRecord | null>(null);
 
@@ -128,7 +132,7 @@ export default function AttendanceRecordsPage() {
       setPage(1);
     }, 300);
     return () => clearTimeout(timeout);
-  }, [query]);
+  }, [query, setPage, setSearch]);
   const services = useAttendanceServices({
     limit: 100,
     branchId: isHq && branchId !== "all" ? branchId : undefined,
@@ -198,7 +202,7 @@ export default function AttendanceRecordsPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard
           label="Matching records"
           value={total}
@@ -223,7 +227,7 @@ export default function AttendanceRecordsPage() {
           value={rows.filter((r) => r.category === "children").length}
           tone="sky"
         />
-      </div>
+      </CompactListSummary>
 
       <div
         role="group"

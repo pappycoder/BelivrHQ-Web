@@ -1,5 +1,10 @@
 "use client";
 
+import { useExportBranding } from "@/hooks/use-export-branding";
+import { ReportPresets } from "@/components/reports/report-presets";
+import { ReportPagePreview } from "@/components/reports/report-page-preview";
+import { useCurrentProfile } from "@/hooks/use-profile";
+
 import { REPORT_RANGES as RANGES, reportRangeParams as rangeParams } from "@/lib/report-range";
 import { formatRecordDate, formatRecordDateRange } from "@/lib/record-date";
 
@@ -11,7 +16,6 @@ import * as React from "react";
 import Link from "next/link";
 import {
   ArrowDown,
-  ArrowLeft,
   ArrowUp,
   BarChart3,
   CalendarClock,
@@ -19,13 +23,13 @@ import {
   Download,
   FileText,
   Loader2,
-  Plus,
+  GripVertical,
+  ShieldCheck,
   Users,
   X,
 } from "lucide-react";
 import { getToastErrorMessage, toast } from "@/lib/toast";
-import { SectionCard } from "@/components/paper/section";
-import { StatCard, Tag } from "@/components/paper/stat";
+import { StatCard } from "@/components/paper/stat";
 import { EmptyState } from "@/components/paper/primitives";
 import { TrendChart } from "@/components/paper/charts";
 import { Button } from "@/components/ui/button";
@@ -57,8 +61,12 @@ const BLOCKS: { id: BlockId; title: string; description: string; icon: React.Ele
 
 export default function ReportsStudioPage() {
   const { can, ready } = usePermissions();
-  const [blocks, setBlocks] = React.useState<BlockId[]>(["financial", "attendance"]);
-  const [range, setRange] = React.useState<(typeof RANGES)[number]>("Year to date");
+  const { data: profile } = useCurrentProfile();
+  const resolveBranding = useExportBranding();
+  const [zoom,setZoom]=React.useState(100);
+  const [previewMode, setPreviewMode] = React.useState<"print" | "overview">("print");
+  const [blocks, setBlocks] = React.useState<BlockId[]>(["financial", "attendance", "members"]);
+  const [range, setRange] = React.useState<(typeof RANGES)[number]>("This month");
   const [branchId, setBranchId] = React.useState("");
   const [format, setFormat] = React.useState<Format>("PDF");
   const [exporting, setExporting] = React.useState(false);
@@ -66,7 +74,9 @@ export default function ReportsStudioPage() {
   const branches = useBranchesList({ limit: 100 });
   const params = React.useMemo(() => ({ ...rangeParams(range), branchId: branchId || undefined }), [range, branchId]);
 
-  const want = (id: BlockId) => blocks.includes(id);
+  const canUse = (id: BlockId) => { const block = BLOCKS.find(block => block.id === id)!; return ready && can(block.permission[0],block.permission[1]); };
+  const activeBlocks = blocks.filter(canUse);
+  const want = (id: BlockId) => blocks.includes(id) && canUse(id);
   const financial = useFinancialReport(params, { enabled: want("financial") });
   const attendance = useAttendanceReport(params, { enabled: want("attendance") });
   const membersReport = useMemberReport(params, { enabled: want("members") });
@@ -160,8 +170,10 @@ export default function ReportsStudioPage() {
         ],
       });
     }
-    return out;
+    return activeBlocks.flatMap(id => out.filter(sheet => sheet.id === id));
   };
+
+  const overviewBlocks = () => sheetsFor().map(sheet => ({ title: sheet.title, sections: sheet.sections, metrics: sheet.id === "financial" && fin ? [{label:"Giving received",value:formatNaira(fin.grandTotal)},{label:"Gifts recorded",value:number(fin.transactionCount)}] : sheet.id === "attendance" && att ? [{label:"People welcomed",value:number(att.totalAttendance)},{label:"Gatherings held",value:number(att.serviceCount)}] : mem ? [{label:"New members",value:number(mem.newMembersInPeriod)},{label:"Active members",value:number(mem.activeMembers)}] : [], trend: sheet.id === "financial" && fin ? fin.monthlyTrend.map(item => ({label:monthLabel(item.month),value:item.total})) : [] }));
 
   const handleGenerate = async () => {
     const sheets = sheetsFor();
@@ -171,6 +183,7 @@ export default function ReportsStudioPage() {
     }
     setExporting(true);
     try {
+      const branding = await resolveBranding();
       const stamp = new Date().toISOString().slice(0, 10).replace(/-/g, "");
       const metadata = [
         { label: "Period", value: rangeLabel },
@@ -178,21 +191,17 @@ export default function ReportsStudioPage() {
       ];
       if (format === "PDF") {
         const sections = sheets.flatMap((s) => s.sections);
-        await exportReportPDF("Ministry report", sections, `belivrhq-report-${stamp}`, { metadata });
+        await exportReportPDF("Ministry report", sections, `belivrhq-report-${stamp}`, { metadata, branding, overview:{period:rangeLabel,branch:branchLabel,blocks:overviewBlocks()} });
       } else if (format === "XLSX") {
         await exportExcel(
-          sheets.map((s) => ({
-            name: s.title,
-            columns: s.sections[0]!.columns,
-            data: s.sections[0]!.data,
-            metadata,
-          })),
+          sheets.flatMap(s => s.sections.map(section => ({ name: section.title, columns: section.columns, data: section.data, metadata }))),
           `belivrhq-report-${stamp}`,
+          { branding },
         );
       } else {
         for (const s of sheets) {
           for (const section of s.sections) {
-            exportCSV(section.data, section.columns, `${s.id}-${section.title.toLowerCase().replace(/\s+/g, "-")}-${stamp}`);
+            exportCSV(section.data, section.columns, `${s.id}-${section.title.toLowerCase().replace(/\s+/g, "-")}-${stamp}`, branding);
           }
         }
       }
@@ -204,65 +213,51 @@ export default function ReportsStudioPage() {
     }
   };
 
-  const loadingBlocks = blocks.some((b) => {
+  const loadingBlocks = activeBlocks.some((b) => {
     if (b === "financial") return financial.isLoading;
     if (b === "attendance") return attendance.isLoading;
     return membersReport.isLoading;
   });
-  const anyError = blocks.some((b) => {
+  const anyError = activeBlocks.some((b) => {
     if (b === "financial") return financial.isError;
     if (b === "attendance") return attendance.isError;
     return membersReport.isError;
   });
 
-  const fin = financial.data;
-  const att = attendance.data;
-  const mem = membersReport.data;
+  const fin = want("financial") ? financial.data : undefined;
+  const att = want("attendance") ? attendance.data : undefined;
+  const mem = want("members") ? membersReport.data : undefined;
 
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow={<Link href="/insights/analytics" className="flex items-center gap-1.5 text-sm text-ink-faint hover:text-ink">
-            <ArrowLeft className="size-3" /> Insights
-          </Link>} title="Report studio" description="Prepare a report using your church’s recorded figures." actions={<Button className="h-9 gap-1.5 rounded-full text-sm" onClick={handleGenerate} disabled={exporting || loadingBlocks}>
-          {exporting ? <Loader2 className="size-3.5 animate-spin" /> : <Download className="size-3.5" />} Export {format}
+      <PageHeader eyebrow="Insights · Report studio" title="A useful report, ready next time." description="Save a section mix, change the period and inspect the pages at a comfortable size." actions={<Button className="h-10 gap-2 rounded-xl" onClick={handleGenerate} disabled={exporting || loadingBlocks || anyError || !sheetsFor().length}>
+          {exporting ? <Loader2 className="size-4 animate-spin" /> : <Download className="size-4" />} Export {format}
         </Button>} />
 
-      <div className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-[220px_minmax(0,1fr)_280px]">
-        {/* Palette */}
-        <aside data-tour-report-palette className="paper-card h-max min-w-0 rounded-2xl p-4 xl:sticky xl:top-20">
-          <p className="rule-label mb-3">Blocks</p>
-          <div className="flex gap-2 overflow-x-auto no-scrollbar xl:flex-col xl:overflow-visible">
-            {BLOCKS.map((block) => (
-              <button
-                key={block.id}
-                type="button"
-                onClick={() => toggleBlock(block.id)}
-                className={cn(
-                  "flex shrink-0 items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left transition-colors xl:w-full",
-                  blocks.includes(block.id) ? "border-brand/40 bg-brand-soft/30" : "border-line bg-card hover:border-brand/40",
-                )}
-              >
-                <span className="grid size-7 place-items-center rounded-lg bg-muted text-ink-soft">
-                  <block.icon className="size-3.5" />
-                </span>
-                <span className="min-w-0">
-                  <span className="block truncate text-sm font-medium">{block.title}</span>
-                  <span className="hidden truncate text-xs text-ink-faint sm:block">{block.description}</span>
-                </span>
-                <Plus className="ml-auto hidden size-3 text-ink-faint xl:block" />
-              </button>
-            ))}
+      <div className="grid min-w-0 grid-cols-1 items-start gap-6 lg:grid-cols-[280px_minmax(0,1fr)] xl:grid-cols-[300px_minmax(0,1fr)]">
+        <aside data-tour-report-palette data-tour-report-settings className="min-w-0 space-y-4 lg:sticky lg:top-20">
+          <div className="paper-card overflow-hidden rounded-2xl border border-line">
+            <header className="border-b border-line p-5"><p className="rule-label mb-2">Report presets</p><h2 className="font-display text-2xl font-semibold">Start with a familiar view.</h2></header>
+            <div className="space-y-5 p-5"><ReportPresets current={{range,branchId,blocks:activeBlocks}} onApply={preset=>{setRange(preset.range);setBranchId((branches.data?.data??[]).some(branch=>branch.branchId===preset.branchId)?preset.branchId:"");setBlocks(preset.blocks.filter(canUse));}} >
+              <label className="grid gap-2 text-sm font-medium">Reporting period<select id="report-period" value={range} onChange={e => setRange(e.target.value as (typeof RANGES)[number])} className="h-11 w-full rounded-xl border border-line bg-paper px-3 text-sm">{RANGES.map(item => <option key={item}>{item}</option>)}</select></label>
+              <label className="grid gap-2 text-sm font-medium">Branch<select id="report-branch" value={branchId} onChange={e => setBranchId(e.target.value)} className="h-11 w-full rounded-xl border border-line bg-paper px-3 text-sm"><option value="">All branches</option>{(branches.data?.data ?? []).map(branch => <option key={branch.branchId} value={branch.branchId}>{branch.name}</option>)}</select></label>
+              <fieldset><legend className="mb-3 text-sm font-medium">Include sections</legend><div className="space-y-1">{BLOCKS.map(block=><label key={block.id} className="flex min-h-11 items-center gap-3 text-sm"><input type="checkbox" className="size-4 accent-brand" checked={want(block.id)} disabled={!canUse(block.id)} onChange={()=>toggleBlock(block.id)}/>{block.title}</label>)}</div></fieldset>
+              <div aria-label="Section order" className="divide-y divide-line rounded-xl border border-line">{activeBlocks.map((id,index)=>{const block=BLOCKS.find(item=>item.id===id)!;return <div key={id} className="flex min-w-0 items-center gap-2 p-2"><GripVertical className="size-4 shrink-0 text-ink-faint"/><span className="min-w-0 flex-1 text-sm">{block.title}</span><button type="button" aria-label={`Move ${block.title} up`} disabled={index===0} onClick={()=>move(blocks.indexOf(id),-1)} className="grid size-11 shrink-0 place-items-center rounded-lg hover:bg-muted disabled:opacity-25"><ArrowUp className="size-4"/></button><button type="button" aria-label={`Move ${block.title} down`} disabled={index===activeBlocks.length-1} onClick={()=>move(blocks.indexOf(id),1)} className="grid size-11 shrink-0 place-items-center rounded-lg hover:bg-muted disabled:opacity-25"><ArrowDown className="size-4"/></button></div>})}</div>
+              </ReportPresets>
+              <fieldset><legend className="mb-2 text-sm font-medium">Download format</legend><div className="grid grid-cols-3 gap-1 rounded-xl border border-line bg-paper p-1">{(["PDF","XLSX","CSV"] as const).map(item => <button type="button" key={item} aria-pressed={format === item} onClick={() => setFormat(item)} className={cn("rounded-lg py-2 text-sm",format === item ? "bg-card font-semibold text-brand shadow-sm" : "text-ink-soft")}>{item}</button>)}</div></fieldset>
+              <div className="flex items-start gap-2 rounded-xl border border-line bg-paper p-3 text-xs leading-relaxed text-ink-soft"><FileText className="mt-0.5 size-4 shrink-0 text-brand" />The preview and downloads use the same sections, period and recorded figures.</div>
+            </div>
           </div>
-          <div className="mt-4 border-t border-line pt-3">
-            <p className="rule-label mb-2">Also worth checking</p>
-            <Link href="/insights/analytics/giving" className="block truncate rounded-lg px-2 py-1.5 text-sm text-ink-soft hover:bg-muted hover:text-ink">Giving analysis</Link>
-            <Link href="/insights/analytics/attendance" className="block truncate rounded-lg px-2 py-1.5 text-sm text-ink-soft hover:bg-muted hover:text-ink">Attendance analysis</Link>
-            <Link href="/insights/analytics/members" className="block truncate rounded-lg px-2 py-1.5 text-sm text-ink-soft hover:bg-muted hover:text-ink">Membership analysis</Link>
-          </div>
+          <p className="flex items-start gap-2 px-2 text-xs leading-relaxed text-ink-faint"><ShieldCheck className="size-4 shrink-0" />Print-friendly pages. Donor names are withheld.</p>
+          <Link href="/insights/analytics" className="block px-2 text-sm text-brand hover:underline">Explore detailed analytics →</Link>
         </aside>
 
         {/* Sheet */}
-        <main data-tour-report-preview className="min-w-0">
+        <section aria-label="Report preview" data-tour-report-preview className="min-w-0 space-y-3">
+          <div className="flex flex-wrap gap-2" aria-label="Report preview mode"><Button size="sm" variant={previewMode === "print" ? "secondary" : "outline"} aria-pressed={previewMode === "print"} onClick={() => setPreviewMode("print")}>Print preview</Button><Button size="sm" variant={previewMode === "overview" ? "secondary" : "outline"} aria-pressed={previewMode === "overview"} onClick={() => setPreviewMode("overview")}>Charts & order</Button></div>
+          {anyError && <div role="alert" className="paper-card rounded-xl border border-rose/30 p-4 text-sm">A selected report could not load. Export is paused to avoid an incomplete report.<Button variant="outline" size="sm" className="mt-2" onClick={() => { if(financial.isError) void financial.refetch(); if(attendance.isError) void attendance.refetch(); if(membersReport.isError) void membersReport.refetch(); }}>Retry reports</Button></div>}
+          {previewMode === "print" && (loadingBlocks ? <Skeleton className="h-96 rounded-2xl" /> : sheetsFor().length ? <ReportPagePreview zoom={zoom} onZoomChange={setZoom} sections={sheetsFor().flatMap(sheet => sheet.sections)} period={rangeLabel} branch={branchLabel} church={profile?.church?.name || "Your church"} blocks={overviewBlocks()} /> : <EmptyState icon={<FileText />} title="Choose your report sections" description="Add a block to preview the report for this period." />)}
+          {previewMode === "overview" && <div>
           <div className="paper-card mx-auto min-w-0 max-w-[720px] rounded-2xl p-4 sm:p-6 md:p-8">
             <header className="border-b border-line pb-5">
               <div className="flex items-center justify-between">
@@ -296,7 +291,7 @@ export default function ReportsStudioPage() {
             ) : null}
 
             <div className="mt-6 space-y-6">
-              {blocks.map((id, index) => {
+              {activeBlocks.map((id, index) => {
                 const block = BLOCKS.find((b) => b.id === id)!;
                 const data = id === "financial" ? fin : id === "attendance" ? att : mem;
                 if (!data) return null;
@@ -366,7 +361,7 @@ export default function ReportsStudioPage() {
                   </section>
                 );
               })}
-              {!blocks.length || (!fin && !att && !mem && !loadingBlocks && !anyError) ? (
+              {!activeBlocks.length || (!fin && !att && !mem && !loadingBlocks && !anyError) ? (
                 <p className="rounded-xl border border-dashed border-line py-10 text-center text-sm text-ink-faint">
                   Add blocks from the left to assemble the report.
                 </p>
@@ -377,49 +372,9 @@ export default function ReportsStudioPage() {
               Generated {formatRecordDate(new Date())} · {rangeLabel} · {branchLabel} · donor names withheld
             </footer>
           </div>
-        </main>
+          </div>}
+        </section>
 
-        {/* Settings */}
-        <aside data-tour-report-settings className="min-w-0 space-y-4 xl:sticky xl:top-20 xl:self-start">
-          <div className="paper-card rounded-2xl p-4">
-            <p className="rule-label mb-3">Report settings</p>
-            <div className="space-y-3">
-              <div className="space-y-1.5">
-                <span className="text-xs text-ink-faint">Period</span>
-                <select value={range} onChange={(e) => setRange(e.target.value as (typeof RANGES)[number])} className="h-9 w-full rounded-lg border border-line bg-card px-2 text-sm outline-none">
-                  {RANGES.map((item) => <option key={item} value={item}>{item}</option>)}
-                </select>
-              </div>
-              <div className="space-y-1.5">
-                <span className="text-xs text-ink-faint">Branch</span>
-                <select value={branchId} onChange={(e) => setBranchId(e.target.value)} className="h-9 w-full rounded-lg border border-line bg-card px-2 text-sm outline-none">
-                  <option value="">All branches</option>
-                  {(branches.data?.data ?? []).map((branch) => <option key={branch.branchId} value={branch.branchId}>{branch.name}</option>)}
-                </select>
-              </div>
-              <div className="space-y-1.5">
-                <span className="text-xs text-ink-faint">Format</span>
-                <div className="grid grid-cols-3 gap-1.5">
-                  {(["PDF", "XLSX", "CSV"] as const).map((item) => (
-                    <button key={item} type="button" onClick={() => setFormat(item)} className={cn("rounded-lg border px-2 py-1.5 text-xs transition-colors", format === item ? "border-ink/20 bg-ink text-paper" : "border-line bg-card text-ink-soft")}>
-                      {item}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <p className="text-xs leading-relaxed text-ink-faint">
-                Board packs hide names by default to protect donor privacy.
-              </p>
-            </div>
-          </div>
-          <SectionCard eyebrow="Blocks in this report" title={`${blocks.length} of ${BLOCKS.length}`}>
-            <div className="flex flex-wrap gap-1.5">
-              {BLOCKS.map((block) => (
-                <Tag key={block.id} tone={blocks.includes(block.id) ? "moss" : "neutral"} dot>{block.title}</Tag>
-              ))}
-            </div>
-          </SectionCard>
-        </aside>
       </div>
     </div>
   );

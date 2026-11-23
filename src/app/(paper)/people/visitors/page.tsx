@@ -1,4 +1,7 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
@@ -80,10 +83,10 @@ const VISITORS_TOUR_STEPS: TourStep[] = [
   { target: ".visitors-tour-search", title: "Find a guest", description: "After the tour, type a name, email address or phone number. The register updates after a short pause and returns to page one. Search combines with the status and Archived filters." },
   { target: ".visitors-tour-status", title: "Filter by follow-up stage", description: "Choose New, Contacted, Scheduled, Interested, Converted or Dropped off to narrow the register. These buttons filter the list; they do not update anyone's status. All clears only the stage filter." },
   { target: ".visitors-tour-archive", title: "Review archived guests", description: "Archived switches to archived guest records. Turn it off to return to the regular register. Archiving retains a record for restoration; deleting a guest is permanent. Available actions depend on your account." },
-  { target: ".visitors-tour-display", title: "Arrange the register", description: "Sort by First name, Last name, First visit, Status or Date added, then reverse the order with the direction button. Table and Cards show the same filtered guests. Cards are useful on small screens; tables can scroll horizontally." },
-  { target: "[data-list-table='people-visitors-1'] > [data-export-ignore]", title: "Columns and selected guests", description: "Columns chooses the fields shown in Table view. Checkboxes select guests on this page and reveal available bulk actions and exports. Selection alone changes nothing. Review the confirmation carefully before applying any action." },
+  { target: ".visitors-tour-display", title: "Arrange the register", description: "Sort by First name, Last name, First visit, Status or Date added, then reverse the order with the Sort order dropdown. List view and Card view show the same filtered guests. Cards are useful on small screens; tables can scroll horizontally." },
+  { target: "[data-list-table='people-visitors-1'] > [data-export-ignore]", title: "Columns and selected guests", description: "Columns chooses the fields shown in List view. Checkboxes select guests on this page and reveal available bulk actions and exports. Selection alone changes nothing. Review the confirmation carefully before applying any action." },
   { target: ".visitors-tour-preview", title: "Preview a guest", description: "After the tour, select a guest's name for a side preview of their first visit, contact details and assignment. Full record opens the detailed page. Mark contacted, Edit and Convert are separate actions that can change records; opening the preview does not." },
-  { target: ".visitors-tour-manage", title: "Understand the guest actions", description: "In Table view, hover a row or focus its controls to reveal actions. Manage offers Open guest record. Your account may also offer Edit, Convert to member, Archive, Restore or Delete. Conversion creates an active member and removes the visitor from this register. Archive keeps the guest for restoration; Delete permanently removes it. The tour performs none of these actions." },
+  { target: ".visitors-tour-manage", title: "Understand the guest actions", description: "In List view, hover a row or focus its controls to reveal actions. Manage offers Open guest record. Your account may also offer Edit, Convert to member, Archive, Restore or Delete. Conversion creates an active member and removes the visitor from this register. Archive keeps the guest for restoration; Delete permanently removes it. The tour performs none of these actions." },
   { target: ".visitors-tour-empty", title: "When no guests match", description: "Try a different search or loosen the filters. Clear filters resets the search, follow-up stage and Archived view and returns to page one. Your account's access restrictions still apply." },
   { target: ".visitors-tour-intake [aria-label='Pending registration summary']", title: "Read the review queue", description: "Awaiting review counts pending visitor registrations in the selected branch scope. On this page counts the responses currently displayed. A pending response is not yet a guest record; return to Records to view existing guests." },
   { target: ".visitors-tour-intake [aria-label='Pending registration filters']", title: "Find a registration to review", description: "Search submitted names, email addresses or phone numbers. Use the available branch and sorting controls to arrange the queue. These filters are separate from those on the Records tab." },
@@ -136,15 +139,15 @@ export default function VisitorsPage() {
   const canUpdate = ready && (can("visitors:list", "update") || can("visitors", "update"));
   const canDelete = ready && (can("visitors:list", "delete") || can("visitors", "delete"));
 
-  const [searchInput, setSearchInput] = React.useState("");
-  const [search, setSearch] = React.useState("");
-  const [status, setStatus] = React.useState<FollowUpStatus | "all">("all");
-  const [sortBy, setSortBy] = React.useState<NonNullable<ListVisitorsParams["sortBy"]>>("firstName");
-  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("asc");
-  const [archivedView, setArchivedView] = React.useState(false);
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
-  const [view, setView] = React.useState<"table" | "cards">("table");
+  const [searchInput, setSearchInput] = useListFilterState("searchInput", "");
+  const [search, setSearch] = useListFilterState("search", "");
+  const [status, setStatus] = useListFilterState<FollowUpStatus | "all">("status", "all");
+  const [sortBy, setSortBy] = useListFilterState<NonNullable<ListVisitorsParams["sortBy"]>>("sortBy", "firstName");
+  const [sortOrder, setSortOrder] = useListFilterState<"asc" | "desc">("sortOrder", "asc");
+  const [archivedView, setArchivedView] = useListFilterState("archivedView", false);
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
+  const [view, setView] = useListFilterState<"table" | "cards">("view", "table");
   const [formOpen, setFormOpen] = React.useState(false);
   const [editTarget, setEditTarget] = React.useState<Visitor | null>(null);
   const [convertTarget, setConvertTarget] = React.useState<Visitor | null>(null);
@@ -153,7 +156,7 @@ export default function VisitorsPage() {
   React.useEffect(() => {
     const timer = setTimeout(() => { setSearch(searchInput); setPage(1); }, 350);
     return () => clearTimeout(timer);
-  }, [searchInput]);
+  }, [searchInput, setPage, setSearch]);
 
   const params = React.useMemo<ListVisitorsParams>(
     () => ({
@@ -307,12 +310,12 @@ export default function VisitorsPage() {
 
       <div className="visitors-tour-intake">
       <IntakeRegister kind="visitors">
-      <div className="visitors-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="visitors-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Total guests" value={stats.data?.total ?? 0} tone="brand" icon={<Users className="size-4" />} />
         <StatCard label="New this month" value={stats.data?.newThisMonth ?? 0} tone="gold" icon={<CalendarDays className="size-4" />} deltaLabel="first visits" />
         <StatCard label="In follow-up" value={stats.data?.inFollowUp ?? 0} tone="sky" icon={<RefreshCw className="size-4" />} />
         <StatCard label="Converted" value={stats.data?.converted ?? 0} tone="moss" icon={<HandCoins className="size-4" />} deltaLabel="now members" />
-      </div>
+      </CompactListSummary>
 
       <ListToolbar
  search={<SearchField value={searchInput} onChange={setSearchInput} placeholder="Search guests…" className="visitors-tour-search w-full max-w-xs" />}

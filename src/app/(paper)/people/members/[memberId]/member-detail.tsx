@@ -1,4 +1,6 @@
 "use client";
+import { RecordTabsList, RecordTabsTrigger } from "@/components/shared/record-tabs";
+import { formatMoney } from "@/lib/money";
 
 import { RecordQueryError } from "@/components/shared/record-query-error";
 import { isMissingRecordError } from "@/lib/record-query-error";
@@ -38,7 +40,7 @@ import {
 import { TrendChart } from "@/components/paper/charts";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { MemberFormDialog } from "@/components/members/member-form-dialog";
 import { DeleteMemberDialog } from "@/components/members/delete-member-dialog";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -220,7 +222,7 @@ export default function MemberDetail({
             </p>
             <p className="num mt-1.5 text-sm text-ink-soft">
               {givingTotal > 0
-                ? `${new Intl.NumberFormat("en", { style: "currency", currency: givingCurrency === "NGN" ? "NGN" : "USD", maximumFractionDigits: 0 }).format(givingTotal)} total`
+                ? `${formatMoney(givingTotal, givingCurrency ?? "NGN")} total`
                 : canSeeGiving ? "No giving yet" : "Giving is hidden for your role"}
             </p>
           </div>
@@ -248,19 +250,19 @@ export default function MemberDetail({
       </div>
 
       <Tabs defaultValue="overview">
-        <TabsList className="h-9 rounded-full border border-line bg-card p-0.5">
-          <TabsTrigger value="overview" className="rounded-full px-3.5 text-sm data-[state=active]:bg-ink data-[state=active]:text-paper">
+        <RecordTabsList aria-label="Member details">
+          <RecordTabsTrigger value="overview">
             Overview & notes
-          </TabsTrigger>
+          </RecordTabsTrigger>
           {canSeeGiving ? (
-            <TabsTrigger value="giving" className="rounded-full px-3.5 text-sm data-[state=active]:bg-ink data-[state=active]:text-paper">
+            <RecordTabsTrigger value="giving">
               Giving
-            </TabsTrigger>
+            </RecordTabsTrigger>
           ) : null}
-          <TabsTrigger value="attendance" className="rounded-full px-3.5 text-sm data-[state=active]:bg-ink data-[state=active]:text-paper">
+          <RecordTabsTrigger value="attendance">
             Attendance
-          </TabsTrigger>
-        </TabsList>
+          </RecordTabsTrigger>
+        </RecordTabsList>
 
         <TabsContent value="overview" className="mt-4 grid gap-4 lg:grid-cols-2">
           <SectionCard eyebrow="Contact" title="How to reach them">
@@ -268,7 +270,7 @@ export default function MemberDetail({
               <FieldRow label="Email">{data.email ?? "Not available"}</FieldRow>
               <FieldRow label="Phone">{data.phone ?? "Not available"}</FieldRow>
               <FieldRow label="WhatsApp">{data.whatsappNumber ?? "Not available"}</FieldRow>
-              <FieldRow label="Birthday">{data.dateOfBirth ?? "Not available"}</FieldRow>
+              <FieldRow label="Birthday">{data.dateOfBirth ? formatDate(data.dateOfBirth) : "Not available"}</FieldRow>
             </DataList>
           </SectionCard>
           <SectionCard eyebrow="Where they are" title="Location & membership">
@@ -351,7 +353,7 @@ export default function MemberDetail({
                   <div key={record.id} className="flex items-center gap-3 px-5 py-3">
                     <HandCoins className="size-3.5 shrink-0 text-ink-faint" />
                     <span className="num w-24 shrink-0 text-sm font-semibold">
-                      {new Intl.NumberFormat("en", { style: "currency", currency: record.currency === "NGN" ? "NGN" : "USD", maximumFractionDigits: 0 }).format(record.amount)}
+                      {formatMoney(record.amount, record.currency)}
                     </span>
                     <span className="text-sm text-ink-soft">{formatDate(record.givingDate ?? record.createdAt)}</span>
                     <span className="ml-auto">

@@ -1,4 +1,7 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { formatStatusLabel } from "@/lib/status-label";
 
@@ -80,7 +83,7 @@ const DIRECTORY_TOUR_STEPS: TourStep[] = [
   { target: ".members-tour-search", title: "Find a person", description: "After the tour, type a name, email address or phone number. The directory updates after a short pause. Search works together with the status, branch and archive filters and returns to page one." },
   { target: ".members-tour-status", title: "Filter by member status", description: "Choose Active, Inactive, Suspended or Transferred to narrow the directory. All removes only the status filter; your search, branch and archive choices still apply." },
   { target: ".members-tour-scope", title: "Choose the register and branch", description: "Archived switches to archived member records; turn it off to return to the regular register. HQ accounts can also choose a branch. Other accounts remain within their assigned scope." },
-  { target: ".members-tour-display", title: "Arrange the directory", description: "Choose a sort field and use the direction button to reverse its order. Table and Cards show the same filtered records. Cards can be easier on small screens; tables can scroll horizontally." },
+  { target: ".members-tour-display", title: "Arrange the directory", description: "Choose a sort field and use the Sort order dropdown to reverse its order. List view and Card view show the same filtered records. Cards can be easier on small screens; tables can scroll horizontally." },
   { target: "[data-list-table='people-members-1'] > [data-export-ignore]", title: "Columns and selected records", description: "Columns lets you choose which fields to show. The checkboxes select records on this page and reveal available bulk actions. Selecting a row alone changes nothing. Review the confirmation before applying any bulk action." },
   { target: ".members-tour-preview", title: "Preview a member", description: "After the tour, select a person's name for a side preview. Full profile opens the detailed record. Depending on your permissions, Manage may also offer Edit, Archive, Restore or Deactivate. These are separate actions from viewing." },
   { target: ".members-tour-empty", title: "When nobody matches", description: "Try another search or loosen the filters. Clear filters resets the search, status, branch and archived view so you can start again. Your account's access restrictions still apply." },
@@ -150,16 +153,16 @@ export default function PeopleMembersPage() {
   const canDeactivate = ready && can("members:all", "delete");
   const isHq = !!profile?.isAdminHq;
 
-  const [searchInput, setSearchInput] = React.useState("");
-  const [search, setSearch] = React.useState("");
-  const [status, setStatus] = React.useState<"all" | MemberStatus>("all");
-  const [branchId, setBranchId] = React.useState("all");
-  const [sortBy, setSortBy] = React.useState<NonNullable<ListMembersParams["sortBy"]>>("first_name");
-  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("asc");
-  const [archivedView, setArchivedView] = React.useState(false);
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
-  const [view, setView] = React.useState<"table" | "cards">("table");
+  const [searchInput, setSearchInput] = useListFilterState("searchInput", "");
+  const [search, setSearch] = useListFilterState("search", "");
+  const [status, setStatus] = useListFilterState<"all" | MemberStatus>("status", "all");
+  const [branchId, setBranchId] = useListFilterState("branchId", "all");
+  const [sortBy, setSortBy] = useListFilterState<NonNullable<ListMembersParams["sortBy"]>>("sortBy", "first_name");
+  const [sortOrder, setSortOrder] = useListFilterState<"asc" | "desc">("sortOrder", "asc");
+  const [archivedView, setArchivedView] = useListFilterState("archivedView", false);
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
+  const [view, setView] = useListFilterState<"table" | "cards">("view", "table");
   const [editTarget, setEditTarget] = React.useState<Member | null>(null);
   const [formOpen, setFormOpen] = React.useState(false);
   const [deactivateTarget, setDeactivateTarget] = React.useState<Member[] | null>(null);
@@ -170,7 +173,7 @@ export default function PeopleMembersPage() {
       setPage(1);
     }, 350);
     return () => clearTimeout(timer);
-  }, [searchInput]);
+  }, [searchInput, setPage, setSearch]);
 
   const queryParams = React.useMemo<ListMembersParams>(
     () => ({
@@ -345,7 +348,7 @@ export default function PeopleMembersPage() {
 
       <div className="members-tour-intake">
       <IntakeRegister kind="members">
-      <StaggerGroup className="members-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-3">
+      <CompactListSummary className="members-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-3">
         <StaggerItem><StatCard label="In the register" value={total} tone="brand" icon={<Rows3 className="size-4" />} deltaLabel={archivedView ? "archived view" : "matching filters"} /></StaggerItem>
         <StaggerItem>
           <div className="paper-card flex h-full flex-col justify-between gap-4 rounded-2xl p-5">
@@ -361,7 +364,7 @@ export default function PeopleMembersPage() {
             </span>
           </div>
         </StaggerItem>
-      </StaggerGroup>
+      </CompactListSummary>
 
       <ListToolbar
  search={<SearchField value={searchInput} onChange={setSearchInput} placeholder="Search name, email or phone…" className="members-tour-search w-full max-w-xs" />}
