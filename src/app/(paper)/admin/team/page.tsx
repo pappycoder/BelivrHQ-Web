@@ -1,4 +1,7 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { PageQueryError } from "@/components/shared/page-query-error";
 
@@ -82,12 +85,12 @@ export default function AdminTeamPage() {
   const bulkDelete = useDeleteUser();
   const bulkDeactivate = useDeactivateUser();
 
-  const [query, setQuery] = React.useState("");
-  const [search, setSearch] = React.useState("");
-  const [status, setStatus] = React.useState("");
-  const [view, setView] = React.useState<"table" | "cards">("table");
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
+  const [query, setQuery] = useListFilterState("query", "");
+  const [search, setSearch] = useListFilterState("search", "");
+  const [status, setStatus] = useListFilterState("status", "");
+  const [view, setView] = useListFilterState<"table" | "cards">("view", "table");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
   const [inviteOpen, setInviteOpen] = React.useState(false);
   const [roleTarget, setRoleTarget] = React.useState<UserProfile | null>(null);
   const [deleteState, setDeleteState] = React.useState<{ users: UserProfile[]; mode: "delete" | "deactivate" } | null>(null);
@@ -95,7 +98,7 @@ export default function AdminTeamPage() {
   React.useEffect(() => {
     const t = setTimeout(() => { setSearch(query); setPage(1); }, 350);
     return () => clearTimeout(t);
-  }, [query]);
+  }, [query, setPage, setSearch]);
 
   const users = useUsers({
     page,
@@ -174,12 +177,12 @@ export default function AdminTeamPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Seats filled" value={total} tone="brand" icon={<Users className="size-4" />} />
         <StatCard label="Active this page" value={rows.filter((u) => u.status === "active").length} tone="moss" />
         <StatCard label="Two-factor on" value={rows.filter((u) => u.mfaEnabled).length} tone="gold" deltaLabel="this page" />
         <StatCard label="Admin HQ" value={rows.filter((u) => u.isAdminHq).length} tone="sky" deltaLabel="cross-branch readers" />
-      </div>
+      </CompactListSummary>
 
       <ListToolbar
  search={<SearchField value={query} onChange={setQuery} placeholder="Search name or email…" className="w-full max-w-xs" />}

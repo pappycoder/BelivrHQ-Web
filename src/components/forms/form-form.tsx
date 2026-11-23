@@ -29,7 +29,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Eye, ListChecks, Settings2, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, ArrowRight, Eye, ListChecks, Settings2, SlidersHorizontal } from "lucide-react";
 import { SectionCard } from "@/components/paper/section";
 import { getToastErrorMessage } from "@/lib/toast";
 import { cn } from "@/lib/utils";
@@ -113,6 +113,7 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
   const branchAssignment = useBranchAssignment(form);
   const { data: profile } = useCurrentProfile();
   const builderId = useId();
+  const [builderStep, setBuilderStep] = useState(0);
   const [mode, setMode] = useState<"edit" | "preview">("edit");
   const [saveError, setSaveError] = useState("");
   const [saving, setSaving] = useState(false);
@@ -170,7 +171,7 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
 
   const handleSubmit = async (values: FormValues) => {
     const branchPayload = branchAssignment.payload();
-    if (!branchPayload) return;
+    if (!branchPayload) { setBuilderStep(0); return; }
     setSaving(true);
     setSaveError("");
     try {
@@ -265,6 +266,9 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
             <Eye className="size-4" /> Preview form
           </Button>
         </div>}
+        <nav aria-label="Form builder steps" className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {["Details", "Questions", "Rules", "Preview"].map((label,index) => <Button key={label} type="button" variant={builderStep === index ? "secondary" : "outline"} aria-current={builderStep === index ? "step" : undefined} onClick={() => {setBuilderStep(index); setMode(index===3 ? "preview" : "edit");}} className="min-w-0 rounded-xl">{index+1} · {label}</Button>)}
+        </nav>
         {saveError && (
           <p
             role="alert"
@@ -275,16 +279,16 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
         )}
         <div className={withPreview ? CREATE_FORM_LAYOUT : "grid min-w-0 items-start gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]"}>
           <ValidatedForm schemaValidation
+            aria-hidden={builderStep === 3}
             id={builderId}
-            onSubmit={formControl.handleSubmit(handleSubmit, () =>
-              setMode("edit"),
-            )}
+            onSubmit={formControl.handleSubmit(handleSubmit, errors => { setMode("edit"); setBuilderStep(errors.title ? 0 : errors.fields ? 1 : 2); })}
             className={cn(
-              "min-w-0 space-y-5 xl:block",
-              !withPreview && mode === "preview" && "hidden",
+              "min-w-0 space-y-5",
+              builderStep === 3 && "hidden",
             )}
           >
-            <SectionCard
+            <div hidden={builderStep !== 0} aria-hidden={builderStep !== 0}>
+<SectionCard
               eyebrow="01 · The introduction"
               title="Form details"
               description="Let people know what this form is for."
@@ -330,7 +334,9 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
                 )}
               />
             </SectionCard>
-            <SectionCard
+</div>
+            <div hidden={builderStep !== 1} aria-hidden={builderStep !== 1}>
+<SectionCard
               eyebrow="02 · What you need to know"
               title="Questions"
               description="Choose the answer types and order that work for your form."
@@ -353,7 +359,9 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
                 )}
               />
             </SectionCard>
-            <SectionCard
+</div>
+            <div hidden={builderStep !== 2} aria-hidden={builderStep !== 2}>
+<SectionCard
               eyebrow="03 · Sharing & responses"
               title={
                 <span className="flex items-center gap-2">
@@ -375,7 +383,9 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
                 )}
               />
             </SectionCard>
+</div>
           </ValidatedForm>
+          {builderStep === 3 && <FormBuilderPreview title={formControl.watch("title")} description={formControl.watch("description")} fields={builderFields} churchName={profile?.church?.name} churchLogoUrl={profile?.church?.logoUrl} />}
           {withPreview ? <CreatePreviewSidebar>
             <CreatePreviewCard editing={!!form} eyebrow="Form preview" title={formControl.watch("title") || "Untitled form"}>
               <dl className="space-y-3 text-sm">
@@ -384,7 +394,9 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
                 <div><dt className="rule-label">Sharing</dt><dd className="mt-1">{settingsValues.isPublic ? "Public link" : "Members only"}</dd></div>
                 {formControl.watch("description") && <div><dt className="rule-label">Description</dt><dd className="mt-1 break-words">{formControl.watch("description")}</dd></div>}
               </dl>
+              {builderFields.length > 0 && <ol className="space-y-2 border-t border-line pt-4" aria-label="Question order">{builderFields.map((field,index) => <li key={field.key || index} className="flex items-start gap-2 text-sm text-ink-soft"><span className="grid size-5 shrink-0 place-items-center rounded-full bg-muted text-xs">{index+1}</span><span className="min-w-0 break-words">{field.label || "Untitled question"}</span></li>)}</ol>}
             </CreatePreviewCard>
+            <Button type="button" variant="outline" className="hidden w-full gap-2 lg:flex" onClick={() => {setBuilderStep(3);setMode("preview");}}><Eye className="size-4" />Preview form</Button>
             <FormActions>
               <Button type="submit" form={builderId} disabled={saving} loading={saving} className="w-full">{submitLabel}</Button>
               <Button asChild variant="ghost" className="w-full"><Link href={form ? `/library/forms/${form.id}` : "/library/forms"}>Cancel</Link></Button>
@@ -403,7 +415,7 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
           <aside
             className={cn(
               "min-w-0 xl:sticky xl:top-6 xl:block",
-              mode === "edit" && "hidden",
+              (mode === "edit" || builderStep === 3) && "hidden",
             )}
           >
             <FormBuilderPreview
@@ -416,6 +428,11 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
           </aside>
           )}
         </div>
+        <nav aria-label="Form builder navigation" className="flex items-center justify-between gap-3 border-t border-line pt-4">
+          <Button type="button" variant="outline" disabled={builderStep === 0 || saving} onClick={() => {const previous = builderStep-1;setBuilderStep(previous);setMode("edit");}}><ArrowLeft className="size-4" />Previous</Button>
+          <span className="text-xs text-ink-faint">Step {builderStep+1} of 4</span>
+          {builderStep < 3 ? <Button type="button" disabled={saving} onClick={() => {const next = builderStep+1;setBuilderStep(next);setMode(next === 3 ? "preview" : "edit");}}>Continue<ArrowRight className="size-4" /></Button> : <Button type="submit" form={builderId} disabled={saving} loading={saving}>{submitLabel}</Button>}
+        </nav>
       </div>
     </Form>
   );

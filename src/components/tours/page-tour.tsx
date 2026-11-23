@@ -54,6 +54,12 @@ export function PageTour({ page, account, ready, steps }: {
 
   const start = React.useCallback(() => {
     const visible = steps.filter((step) => visibleTarget(step.target));
+    const enhancements: TourStep[] = [
+      {target: ".list-filter-trigger",title: "Focus the register",description: "After the tour, open Filters & display to choose this page’s filters, scope, sorting and view. Results update as you choose. Show results returns you to the register."},
+      {target: "[data-saved-list-views]",title: "Keep a useful view",description: "Save a named combination of filters and display choices, then select it to reuse those settings. Saved views stay private to your account on this browser and never change your access."},
+      {target: "[data-mobile-preview]",title: "Review before saving",description: "On a phone, Preview opens your current draft while Save and Cancel stay above the navigation. Opening a preview does not save the record."},
+    ];
+    visible.splice(Math.min(1,visible.length),0,...enhancements.filter(step => visibleTarget(step.target) && !visible.some(existing => existing.target === step.target)));
     if (!visible.length) return;
     setAvailable(visible);
     setIndex(0);

@@ -1,5 +1,8 @@
 "use client";
 
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+
+
 import { collectionLabel } from "@/lib/collection-label";
 
 import { ListToolbar } from "@/components/shared/list-toolbar";
@@ -82,18 +85,18 @@ export function SubmissionsRegister({ form }: { form: Form }) {
   const canRead = ready && can("forms:submissions", "read");
   const canReview = canRead && can("forms:submissions", "update");
   const { confirm, dialog } = useManageConfirmation();
-  const [query, setQuery] = React.useState("");
-  const [search, setSearch] = React.useState("");
-  const [status, setStatus] = React.useState<SubmissionStatus | "all">("all");
-  const [source, setSource] = React.useState<"all" | "public" | "member">(
-    "all",
+  const [query, setQuery] = useListFilterState("submissions:query", "");
+  const [search, setSearch] = useListFilterState("submissions:search", "");
+  const [status, setStatus] = useListFilterState<SubmissionStatus | "all">("submissions:status", "all");
+  const [source, setSource] = useListFilterState<"all" | "public" | "member">(
+    "submissions:source", "all",
   );
   const [sortBy, setSortBy] =
-    React.useState<NonNullable<ListSubmissionsParams["sortBy"]>>("createdAt");
-  const [ascending, setAscending] = React.useState(false);
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(15);
-  const [view, setView] = React.useState<"table" | "cards">("table");
+    useListFilterState<NonNullable<ListSubmissionsParams["sortBy"]>>("submissions:sortBy", "createdAt");
+  const [ascending, setAscending] = useListFilterState("ascending", false);
+  const [page, setPage] = useListFilterState("submissions:page", 1);
+  const [perPage, setPerPage] = useListFilterState("submissions:perPage", 15);
+  const [view, setView] = useListFilterState<"table" | "cards">("submissions:view", "table");
   const [detail, setDetail] = React.useState<FormSubmission | null>(null);
   const [reject, setReject] = React.useState<FormSubmission | null>(null);
   React.useEffect(() => {
@@ -102,7 +105,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
       setPage(1);
     }, 300);
     return () => clearTimeout(timer);
-  }, [query]);
+  }, [query, setPage, setSearch]);
   const params: ListSubmissionsParams = {
     page,
     limit: perPage,
@@ -119,7 +122,7 @@ export function SubmissionsRegister({ form }: { form: Form }) {
   React.useEffect(() => {
     if (submissions.data && page > Math.max(1, Math.ceil(total / perPage)))
       setPage(Math.max(1, Math.ceil(total / perPage)));
-  }, [submissions.data, total, page, perPage]);
+  }, [submissions.data, total, page, perPage, setPage]);
   const clear = () => {
     setQuery("");
     setStatus("all");

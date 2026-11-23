@@ -1,5 +1,7 @@
 "use client";
 
+import { PaymentStateCard } from "@/components/billing/payment-state-card";
+
 import { collectionLabel } from "@/lib/collection-label";
 
 import { retryPage } from "@/lib/retry-page";
@@ -29,9 +31,7 @@ import {
   Building2,
   Check,
   CreditCard,
-  CheckCircle2,
   AlertCircle,
-  Clock3,
   ReceiptText,
   RefreshCcw,
   ShieldCheck,
@@ -99,6 +99,7 @@ export default function SubscriptionPage() {
   const gateway: SubscriptionGateway = "flutterwave";
   const [message, setMessage] = React.useState("");
   const [reference, setReference] = React.useState("");
+  const [missingReference, setMissingReference] = React.useState(false);
   const [manage, setManage] = React.useState(false);
   const [manageRequest, setManageRequest] = React.useState(0);
   const comparison = React.useRef<HTMLElement>(null);
@@ -148,6 +149,7 @@ export default function SubscriptionPage() {
       paymentWindow.current = params.get("payment_window") === "1";
     }
     const ref = params.get("reference") || params.get("tx_ref") || "";
+    setMissingReference(!!(params.has("status") || params.has("tx_ref") || params.has("reference")) && !/^(?:BHQSUB_|COSUB_)[a-f0-9]{32}$/.test(ref));
     if (/^(?:BHQSUB_|COSUB_)[a-f0-9]{32}$/.test(ref)) {
       setReference(ref);
       // The originating tab verifies against the server. The returning popup
@@ -248,12 +250,6 @@ export default function SubscriptionPage() {
         void refetchVerification({ cancelRefetch: false });
     });
   }, [status.canPay, status.churchId, trackedReference, refetchVerification]);
-  const waitingForPayment =
-    !!trackedReference &&
-    outcome !== "applied" &&
-    outcome !== "review" &&
-    outcome !== "closed" &&
-    outcome !== "revoked";
   React.useEffect(() => {
     if (!verification.data) return;
     client.setQueryData(status.queryKey, verification.data);
@@ -585,6 +581,7 @@ export default function SubscriptionPage() {
         quoteFetching={quote.isFetching}
         onQuoteRetry={() => void quote.refetch()}
         reference={trackedReference}
+        missingReference={missingReference}
         outcome={outcome}
         verificationError={verification.isError}
         verificationBusy={verification.isFetching}
@@ -643,52 +640,7 @@ export default function SubscriptionPage() {
           available. Contact support with the payment reference shown below.
         </div>
       )}
-      {trackedReference && (
-        <div
-          role={outcome === "review" ? "alert" : "status"}
-          className={cn(
-            "flex items-start gap-3 rounded-2xl border p-5",
-            outcome === "review"
-              ? "border-gold/30 bg-gold-soft/30"
-              : "border-brand/20 bg-brand-soft/25",
-          )}
-        >
-          <span className="mt-0.5 text-brand">
-            {outcome === "applied" ? (
-              <CheckCircle2 className="size-5" />
-            ) : (
-              <Clock3 className="size-5" />
-            )}
-          </span>
-          <div className="min-w-0 space-y-2">
-            <p className="text-sm font-semibold">
-              {outcome === "applied"
-                ? "Payment verified. Your subscription is active."
-                : outcome === "review"
-                  ? "Your payment requires a BelivrHQ review. Contact support with your payment reference."
-                  : outcome === "revoked"
-                    ? "Access funded by this payment has been removed. Other paid periods remain available. Contact support with your reference."
-                    : outcome === "closed"
-                      ? "This checkout is closed. A payment already sent will still be checked and reviewed."
-                      : "Waiting for Flutterwave to confirm your payment."}
-            </p>
-            {waitingForPayment && (
-              <p className="text-xs leading-relaxed text-ink-soft">
-                Complete payment in the separate Flutterwave window. Keep this
-                page open; we’ll update it automatically when payment is
-                verified.
-                {verification.isError &&
-                  " Connection interrupted. We’ll retry automatically when connected."}
-                {outcome === "failed" &&
-                  " The latest attempt was unsuccessful. You can retry checkout; we’ll keep checking for a later confirmation."}
-              </p>
-            )}
-            <p className="break-all font-mono text-[11px] text-ink-soft">
-              {trackedReference}
-            </p>
-          </div>
-        </div>
-      )}
+      {(trackedReference || missingReference) && <PaymentStateCard outcome={missingReference && !trackedReference ? "missing" : outcome} reference={trackedReference} amount={pending?.amount} currency={pending?.currency} plan={pending?.plan} connectionError={verification.isError} />}
       {message && (
         <p
           role="status"

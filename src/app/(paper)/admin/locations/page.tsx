@@ -1,4 +1,7 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { PageQueryError } from "@/components/shared/page-query-error";
 
@@ -52,23 +55,23 @@ export default function AdminBranchesPage() {
   const canUpdate = ready && can("branches", "update");
   const canDelete = ready && can("branches", "delete");
 
-  const [query, setQuery] = React.useState("");
-  const [search, setSearch] = React.useState("");
-  const [archivedView, setArchivedView] = React.useState(false);
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
-  const [view, setView] = React.useState<"table" | "cards">("table");
+  const [query, setQuery] = useListFilterState("query", "");
+  const [search, setSearch] = useListFilterState("search", "");
+  const [archivedView, setArchivedView] = useListFilterState("archivedView", false);
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
+  const [view, setView] = useListFilterState<"table" | "cards">("view", "table");
   const [formTarget, setFormTarget] = React.useState<{ open: boolean; branch: Branch | null }>({ open: false, branch: null });
   const [archiveState, setArchiveState] = React.useState<DialogState>(null);
 
   React.useEffect(() => {
     const t = setTimeout(() => setSearch(query), 350);
     return () => clearTimeout(t);
-  }, [query]);
+  }, [query, setSearch]);
 
   React.useEffect(() => {
     setPage(1);
-  }, [search, archivedView, perPage]);
+  }, [search, archivedView, perPage, setPage]);
 
   const branches = useBranchesList({ page, limit: perPage, search: search || undefined, archived: archivedView ? true : undefined, sortBy: "name", sortOrder: "asc" });
   const archive = useArchiveBranch();
@@ -112,12 +115,12 @@ export default function AdminBranchesPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Branches" value={total} tone="brand" icon={<Building2 className="size-4" />} deltaLabel={archivedView ? "archived" : "active"} />
         <StatCard label="Headquarters" value={rows.filter((b) => b.isHeadquarters).length} tone="gold" />
         <StatCard label="Members covered" value={membersCovered} tone="moss" icon={<Users className="size-4" />} deltaLabel="on this page" />
         <StatCard label="Locations named" value={rows.filter((b) => b.city).length} tone="sky" />
-      </div>
+      </CompactListSummary>
 
       <ListToolbar
  search={<SearchField value={query} onChange={setQuery} placeholder="Search name, city or address…" className="w-full max-w-xs" />}

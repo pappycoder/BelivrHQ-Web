@@ -1,4 +1,7 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
@@ -93,22 +96,22 @@ function SermonsInner() {
   const canCreate = ready && can("sermons:new", "create");
   const canUpdate = ready && can("sermons", "update");
 
-  const [query, setQuery] = React.useState("");
-  const [search, setSearch] = React.useState("");
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
-  const [sortBy, setSortBy] = React.useState<"sermonDate" | "title" | "createdAt">("sermonDate");
-  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
-  const [branchId, setBranchId] = React.useState("all");
-  const [archivedView, setArchivedView] = React.useState(false);
-  const [view, setView] = React.useState<"rows" | "grid">("rows");
+  const [query, setQuery] = useListFilterState("query", "");
+  const [search, setSearch] = useListFilterState("search", "");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
+  const [sortBy, setSortBy] = useListFilterState<"sermonDate" | "title" | "createdAt">("sortBy", "sermonDate");
+  const [sortOrder, setSortOrder] = useListFilterState<"asc" | "desc">("sortOrder", "desc");
+  const [branchId, setBranchId] = useListFilterState("branchId", "all");
+  const [archivedView, setArchivedView] = useListFilterState("archivedView", false);
+  const [view, setView] = useListFilterState<"rows" | "grid">("view", "rows");
   const series = searchParams.get("series") ?? undefined;
   const speaker = searchParams.get("speaker") ?? undefined;
 
   React.useEffect(() => {
     const t = setTimeout(() => { setSearch(query); setPage(1); }, 350);
     return () => clearTimeout(t);
-  }, [query]);
+  }, [query, setPage, setSearch]);
 
   const branches = useBranchesList({ limit: 100 }, { enabled: isHq });
   const params = React.useMemo(() => ({
@@ -185,12 +188,12 @@ function SermonsInner() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Sermons" value={total} tone="brand" icon={<BookOpen className="size-4" />} deltaLabel={archivedView ? "archived" : "matching"} />
         <StatCard label="Series" value={seriesAgg.data?.length ?? 0} tone="moss" />
         <StatCard label="Speakers" value={speakersAgg.data?.length ?? 0} tone="sky" />
         <StatCard label="With media" value={rows.filter((s) => s.audioUrl || s.videoUrl).length} tone="gold" deltaLabel="on this page" />
-      </div>
+      </CompactListSummary>
 
       <ListToolbar
  search={<SearchField value={query} onChange={setQuery} placeholder="Search title, speaker or scripture…" className="w-full max-w-xs" />}

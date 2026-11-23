@@ -1,4 +1,9 @@
 "use client";
+import { SearchNoResults } from "@/components/shared/search-no-results";
+import { useListSearch } from "@/hooks/use-list-search";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import * as React from "react";
 import Link from "next/link";
@@ -50,9 +55,9 @@ export default function PastoralNotesPage() {
   const canCreate = ready && can("pastoral", "create");
   const canUpdate = ready && can("pastoral", "update");
 
-  const [confidentiality, setConfidentiality] = React.useState<ConfidentialityLevel | "all">("all");
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(15);
+  const [confidentiality, setConfidentiality] = useListFilterState<ConfidentialityLevel | "all">("confidentiality", "all");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", 15);
   const [formOpen, setFormOpen] = React.useState(false);
   const [editTarget, setEditTarget] = React.useState<PastoralNote | null>(null);
 
@@ -64,12 +69,12 @@ export default function PastoralNotesPage() {
     sortOrder: "desc",
   });
 
-  const rows = notes.data?.data ?? [];
+  const { rows, query: listQuery, clearSearch, search: listSearch } = useListSearch(notes.data?.data ?? [], "query", "Search notes on this page…");
   const total = notes.data?.meta?.total ?? 0;
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div className="space-y-6">
           <PageHeader
             eyebrow="People · Pastoral care"
@@ -84,7 +89,7 @@ export default function PastoralNotesPage() {
             }
           />
 
-          <div className="flex flex-wrap items-center gap-2">
+          <ListToolbar search={listSearch}>
             {CONF_FILTERS.map((item) => (
               <FilterChip
                 key={item.value}
@@ -94,7 +99,7 @@ export default function PastoralNotesPage() {
                 {item.label}
               </FilterChip>
             ))}
-          </div>
+          </ListToolbar>
 
           {notes.isError ? (
             <EmptyState
@@ -108,11 +113,11 @@ export default function PastoralNotesPage() {
               {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-32 rounded-2xl" />)}
             </div>
           ) : rows.length === 0 ? (
-            <EmptyState
+            (listQuery.trim() ? <SearchNoResults onClear={clearSearch} /> : <EmptyState
               icon={<HeartHandshake />}
               title="No notes yet"
               description="The first one is often where care becomes deliberate."
-            />
+            />)
           ) : (
             <StaggerGroup className="space-y-3">
               {rows.map((note) => (
@@ -171,7 +176,7 @@ export default function PastoralNotesPage() {
 
           {rows.length ? (
             <div className="paper-card rounded-2xl">
-              <ListPaginationFooter
+              <ListPaginationFooter visibleMatches={listQuery.trim() ? rows.length : undefined}
                 page={page}
                 perPage={perPage}
                 total={total}

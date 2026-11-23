@@ -1,5 +1,9 @@
 "use client";
 
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
+
 import { formatStatusLabel } from "@/lib/status-label";
 
 import { EventPicker, useEventPickerEvents } from "@/components/events/event-picker";
@@ -63,10 +67,10 @@ const REGISTRATIONS_TOUR_STEPS: TourStep[] = [
   { target: ".registrations-tour-search", title: "Find an attendee or ticket", description: "Search the loaded registrations by attendee name, tier name or ticket code. Filtering is immediate and returns to page one. Clear search removes only the text filter; payment and door filters still apply." },
   { target: ".registrations-tour-payment", title: "Filter recorded payment status", description: "Any payment removes the payment filter. Paid, pending, failed and cancelled show registrations with that recorded status. These controls filter the list; they do not collect money, cancel registrations or change payments." },
   { target: ".registrations-tour-door", title: "Filter recorded check-ins", description: "Checked in shows registrations marked as checked in; Still out shows the others. Select the active chip again to remove this filter. This is the registration's recorded check-in flag, not a date-specific attendance report. Filtering changes no attendance." },
-  { target: ".registrations-tour-display", title: "Sort and choose a layout", description: "Sort by Registered date, Name, Tier or Seats and reverse the direction if needed. Table and Cards show the same matching registrations. Use horizontal scrolling for wide tables on smaller screens." },
+  { target: ".registrations-tour-display", title: "Sort and choose a layout", description: "Sort by Registered date, Name, Tier or Seats and reverse the direction if needed. List view and Card view show the same matching registrations. Use horizontal scrolling for wide tables on smaller screens." },
   { target: "[data-list-table='gatherings-events-registrations-1'] > [data-export-ignore]", title: "Columns and selected rows", description: "Columns chooses the visible table fields. Checkboxes select registrations on this page and offer exports for that selection. Selecting a row does not register a person, change payment status or check them in." },
   { target: ".registrations-tour-record", title: "Read a registration", description: "Review the attendee, tier, seat quantity, payment status, check-in flag and ticket code when supplied. A registration can reserve more than one seat. The event summary counts registrations, while Qty or the card's multiplier shows seats." },
-  { target: ".registrations-tour-manage", title: "Open the related workspace", description: "In Table view, hover a row or focus its controls to reveal actions. Open attendee appears when your account can read member profiles. Run check-in opens the attendance desk for this event; opening it alone does not check anyone in." },
+  { target: ".registrations-tour-manage", title: "Open the related workspace", description: "In List view, hover a row or focus its controls to reveal actions. Open attendee appears when your account can read member profiles. Run check-in opens the attendance desk for this event; opening it alone does not check anyone in." },
   { target: ".registrations-tour-empty", title: "When the list is empty", description: "Check the search, payment and door filters before assuming the event has no registrations. Clear search, choose Any payment and toggle the active Checked in or Still out chip off to show the full loaded list." },
   { target: ".registrations-tour-page [aria-label='Pagination']", title: "Browse matching registrations", description: "Prev and Next move through matching results. Rows per page changes the number displayed. The range and total follow search and filters. Navigation is disabled when there is nowhere else to go." },
   { target: ".registrations-tour-export button", title: "Export the matching list", description: "Export offers PDF, Excel and CSV for all loaded registrations matching your current filters, including other pages. Check the event and filters before downloading. It is hidden when no registrations match." },
@@ -125,15 +129,15 @@ function RegistrationsInner() {
   const canRegister = ready && can("events:registrations", "create");
   const canViewMembers = ready && can("members:all", "read");
 
-  const [eventId, setEventId] = React.useState(searchParams.get("event") ?? "");
-  const [query, setQuery] = React.useState("");
-  const [payment, setPayment] = React.useState<PaymentFilter>("all");
-  const [door, setDoor] = React.useState<DoorFilter>("all");
-  const [sortBy, setSortBy] = React.useState<SortValue>("createdAt");
-  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
-  const [view, setView] = React.useState<"table" | "cards">("table");
+  const [eventId, setEventId] = useListFilterState("eventId", searchParams.get("event") ?? "");
+  const [query, setQuery] = useListFilterState("query", "");
+  const [payment, setPayment] = useListFilterState<PaymentFilter>("payment", "all");
+  const [door, setDoor] = useListFilterState<DoorFilter>("door", "all");
+  const [sortBy, setSortBy] = useListFilterState<SortValue>("sortBy", "createdAt");
+  const [sortOrder, setSortOrder] = useListFilterState<"asc" | "desc">("sortOrder", "desc");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
+  const [view, setView] = useListFilterState<"table" | "cards">("view", "table");
 
   const events = useEventPickerEvents();
   const registrations = useEventRegistrations(eventId);
@@ -218,12 +222,12 @@ function RegistrationsInner() {
         }
       />
 
-      {eventId ? (<div className="registrations-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {eventId ? (<CompactListSummary className="registrations-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
             <StatCard label="Registrations" value={all.length} tone="brand" icon={<ClipboardList className="size-4" />} deltaLabel={total !== all.length ? `${number(total)} matching` : "all shown"} />
             <StatCard label="Paid" value={paid} tone="moss" />
             <StatCard label="Checked in" value={checkedIn} tone="sky" deltaLabel={all.length ? `${Math.round((checkedIn / all.length) * 100)}% of list` : "Not available"} />
             <StatCard label="Awaiting payment" value={all.filter((r) => r.paymentStatus === "pending").length} tone="gold" />
-          </div>) : null}
+          </CompactListSummary>) : null}
 
 <ListToolbar search={eventId ? (<SearchField
               value={query}

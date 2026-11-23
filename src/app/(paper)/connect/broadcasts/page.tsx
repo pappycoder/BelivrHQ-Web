@@ -1,4 +1,6 @@
 "use client";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { formatStatusLabel } from "@/lib/status-label";
 
@@ -189,12 +191,12 @@ export default function BroadcastsPage() {
         }
       />
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Broadcasts" value={broadcasts.data?.meta?.total ?? rows.length} tone="brand" icon={<Megaphone className="size-4" />} />
         <StatCard label="Recipients on page" value={reach} tone="moss" deltaLabel="from sent sends" />
         <StatCard label="Scheduled on page" value={rows.filter((b) => b.status === "scheduled").length} tone="sky" icon={<CalendarClock className="size-4" />} />
         <StatCard label="Failed on page" value={rows.filter((b) => b.status === "failed").length} tone="gold" />
-      </div>
+      </CompactListSummary>
 
       <CommunicationRegisterControls controls={controls} kind="Broadcasts"
         channels={BROADCAST_CHANNELS.map(value => ({ value, label: BROADCAST_CHANNEL_LABELS[value] }))}

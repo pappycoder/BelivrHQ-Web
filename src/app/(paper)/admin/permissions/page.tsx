@@ -1,4 +1,10 @@
 "use client";
+import { SearchNoResults } from "@/components/shared/search-no-results";
+import { useListSearch } from "@/hooks/use-list-search";
+
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { PageQueryError } from "@/components/shared/page-query-error";
 
@@ -59,26 +65,27 @@ export default function AdminRolesPage() {
     can("roles", "create") &&
     !!profile?.role?.some((r) => r === "church_admin" || r === "super_admin");
   const [createOpen, setCreateOpen] = React.useState(false);
-  const [onlyCustom, setOnlyCustom] = React.useState(false);
-  const [view, setView] = React.useState<"table" | "cards">("table");
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(10);
+  const [onlyCustom, setOnlyCustom] = useListFilterState("onlyCustom", false);
+  const [view, setView] = useListFilterState<"table" | "cards">("view", "table");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", 10);
 
   const roles = useRolesSummary();
   const permissions = useAllPermissions();
   const all = React.useMemo(() => roles.data?.roles ?? [], [roles.data]);
-  const rows = React.useMemo(() => {
+  const roleRows = React.useMemo(() => {
     const ordered = sortRolesByOrder(all);
     return onlyCustom
       ? ordered.filter((r) => r.isChurchOwned || r.isCustomized)
       : ordered;
   }, [all, onlyCustom]);
+  const { rows, query, clearSearch, search: listSearch } = useListSearch(roleRows,"query","Search roles…");
   const totalRoles = rows.length;
   const paged = rows.slice(
     (page - 1) * perPage,
     (page - 1) * perPage + perPage,
   );
-  React.useEffect(() => setPage(1), [onlyCustom, perPage]);
+  React.useEffect(() => setPage(1), [onlyCustom, perPage, query, setPage]);
   const totalPermissions = permissions.data?.length ?? 0;
 
   const statusBadge = (role: RoleWithPermissions) => {
@@ -138,7 +145,7 @@ export default function AdminRolesPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard
           label="Roles"
           value={all.length}
@@ -161,9 +168,9 @@ export default function AdminRolesPage() {
           tone="moss"
           deltaLabel="across all surfaces"
         />
-      </div>
+      </CompactListSummary>
 
-      <ListToolbar controls={<>
+      <ListToolbar filterLabel="Role scope" search={listSearch} controls={<>
 <span className="ml-auto">
           <ViewToggle
             value={view}
@@ -190,11 +197,11 @@ export default function AdminRolesPage() {
           ))}
         </div>
       ) : rows.length === 0 ? (
-        <EmptyState
+        (query.trim() ? <SearchNoResults onClear={clearSearch} /> : <EmptyState
           icon={<KeyRound />}
           title="No roles to show"
           description="Every workspace starts with the built-in set. Custom ones appear here once created."
-        />
+        />)
       ) : view === "table" ? (
         <div className="paper-card overflow-hidden rounded-2xl">
           <div className="overflow-x-auto">

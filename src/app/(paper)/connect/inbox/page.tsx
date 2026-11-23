@@ -1,4 +1,10 @@
 "use client";
+import { ConversationThread } from "@/components/email/conversation-thread";
+import { SearchNoResults } from "@/components/shared/search-no-results";
+import { useListSearch } from "@/hooks/use-list-search";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { retryPage } from "@/lib/retry-page";
 
@@ -60,8 +66,9 @@ export default function SharedInboxPage() {
   const canAnswer = ready && can("emails", "create");
   const canReadMail = ready && can("emails", "read");
 
-  const [box, setBox] = React.useState<EmailBox>("inbox");
+  const [box, setBox] = useListFilterState<EmailBox>("box", "inbox");
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
+  React.useEffect(() => { setSelectedId(null); }, [box]);
   const [composeOpen, setComposeOpen] = React.useState(false);
   const [replyCtx, setReplyCtx] = React.useState<{ id: string; subject: string; recipient: EmailContact | null } | null>(null);
 
@@ -73,7 +80,7 @@ export default function SharedInboxPage() {
   const restore = useRestoreEmail();
   const purge = useDeleteEmailForever();
 
-  const rows = emails.data?.data ?? [];
+  const { rows, query: listQuery, clearSearch, search: listSearch } = useListSearch(emails.data?.data ?? [], "query", "Search loaded messages…");
   const unread = emails.data?.unreadCount ?? 0;
 
   // Read state is a property of the CALLER'S inbox copy only — sent mail
@@ -119,10 +126,10 @@ export default function SharedInboxPage() {
   return (
     <div className="space-y-4">
       {dialog}
-      <PageHeader eyebrow="Connect · Messages" title="A place to stay connected." description="Conversations, updates and a little encouragement. Keep your church team in the loop." actions={canAnswer && <Button className="h-10 gap-2 rounded-full px-5 text-sm" onClick={compose}><PenSquare className="size-4" /> Compose message</Button>} />
+      <PageHeader eyebrow="Connect · Messages" title="A little more room for conversation." description="A clear reading pane, grouped replies and a draft that is still here when you return." actions={canAnswer && <Button className="h-10 gap-2 rounded-full px-5 text-sm" onClick={compose}><PenSquare className="size-4" /> Compose message</Button>} />
 
       <section aria-label="Mailbox" className="overflow-hidden rounded-2xl border border-line bg-card shadow-sm">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-muted/25 px-4 py-3 sm:px-6">
+        <ListToolbar inlineFilters search={listSearch}>
           <div className="flex items-center gap-2" aria-label="Mailbox folders">
             <FilterChip active={box === "inbox"} onClick={() => { setBox("inbox"); setSelectedId(null); }}>
               <InboxIcon className="mr-1.5 size-3.5" /> Inbox {unread > 0 && <span className="num ml-2 rounded-full bg-brand px-1.5 text-xs text-paper">{unread}</span>}
@@ -130,7 +137,7 @@ export default function SharedInboxPage() {
             <FilterChip active={box === "sent"} onClick={() => { setBox("sent"); setSelectedId(null); }}><Send className="mr-1.5 size-3.5" /> Sent</FilterChip>
           </div>
           <span className="flex items-center gap-1.5 text-sm text-ink-soft"><Mail className="size-3.5" />{emails.isError ? "Mailbox unavailable" : listLoading ? "Loading messages…" : `${emails.data?.total ?? 0} message${emails.data?.total === 1 ? "" : "s"}`}</span>
-        </div>
+        </ListToolbar>
         {emails.isError ? (
           <div role="alert" className="flex min-h-80 flex-col items-center justify-center px-6 py-12 text-center">
             <AlertCircle className="mb-4 size-9 text-ink-soft" />
@@ -138,7 +145,7 @@ export default function SharedInboxPage() {
             <p className="mt-2 max-w-sm text-sm text-ink-soft">Check your connection and try opening your mailbox again.</p>
             <Button variant="outline" className="mt-6 gap-2 rounded-full" onClick={() => void retryPage()}><RefreshCw className="size-4" /> Try again</Button>
           </div>
-        ) : !listLoading && rows.length === 0 ? (
+        ) : !listLoading && rows.length === 0 && listQuery.trim() ? <SearchNoResults onClear={clearSearch} /> : !listLoading && rows.length === 0 ? (
           <div className="relative isolate overflow-hidden px-5 py-12 sm:px-10 sm:py-16">
             <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-72 bg-[radial-gradient(ellipse_at_top,var(--color-brand-soft),transparent_70%)]" />
             <div className="mx-auto flex max-w-lg flex-col items-center text-center">
@@ -221,7 +228,7 @@ export default function SharedInboxPage() {
                   </p>
                 </div>
                 <div className="flex shrink-0 flex-wrap gap-1.5">
-                  {canAnswer ? (
+                  {canAnswer && box === "inbox" ? (
                     <Button size="sm" className="h-8 gap-1.5 rounded-full text-sm" onClick={startReply}>
                       <Send className="size-3.5" /> Reply
                     </Button>
@@ -248,13 +255,7 @@ export default function SharedInboxPage() {
                   ) : null}
                 </div>
               </div>
-              <div className="flex-1 overflow-y-auto px-5 py-5">
-                {detail.isError ? (
-                  <p className="text-sm text-ink-soft">This message couldn&apos;t be opened. Please try again.</p>
-                ) : (
-                  <p className="whitespace-pre-line text-sm leading-relaxed text-ink-soft">{active.body}</p>
-                )}
-              </div>
+              <div className="flex-1 overflow-y-auto"><ConversationThread message={active} onReply={startReply} canReply={canAnswer&&box==="inbox"}/></div>
               <button type="button" className="border-t border-line px-5 py-2.5 text-left text-sm text-ink-faint hover:bg-muted/40" onClick={() => { setSelectedId(null); }}>
                 ← back to the list
               </button>

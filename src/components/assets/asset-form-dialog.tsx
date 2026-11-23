@@ -9,6 +9,7 @@ import { SectionCard } from "@/components/paper/section";
 import { cn } from "@/lib/utils";
 
 import { ValidatedForm } from "@/components/ui/validated-form";
+import { GuidedRecordForm } from "@/components/shared/guided-record-form";
 
 import * as React from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -239,9 +240,10 @@ export function AssetFormDialog({
 
   const Actions = presentation === "page" ? FormActions : DialogFooter;
 
+  const RecordForm = presentation === "page" ? GuidedRecordForm : ValidatedForm;
   const editor = (
     <Form {...form}>
-      <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className={cn(presentation === "page" ? CREATE_FORM_LAYOUT : "grid gap-4")}>
+      <RecordForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className={cn(presentation === "page" ? CREATE_FORM_LAYOUT : "grid gap-4")}>
         {(categoriesQuery.error ||
           branchesQuery.error ||
           departmentsQuery.error) && (
@@ -693,7 +695,7 @@ export function AssetFormDialog({
           </Button>
         </Actions>
         </CreatePreviewSidebar>
-      </ValidatedForm>
+      </RecordForm>
     </Form>
   );
   if (presentation === "page") return editor;

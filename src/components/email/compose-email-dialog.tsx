@@ -29,6 +29,9 @@ import {
   type EmailContact,
 } from "@/hooks/use-email";
 
+import { useAccountStorage } from "@/hooks/use-account-storage";
+import { EMPTY_EMAIL_DRAFT, parseEmailDraft } from "@/lib/email-draft";
+
 const EMPTY_RECIPIENTS: EmailContact[] = [];
 
 interface ComposeEmailDialogProps {
@@ -54,25 +57,26 @@ export function ComposeEmailDialog({
   const [subject, setSubject] = React.useState("");
   const [body, setBody] = React.useState("");
 
-  const resolvedSubject = subject || (replySubject ? `Re: ${replySubject}` : "");
+  const resolvedSubject = subject || (replySubject ? (/^re:/i.test(replySubject)?replySubject:`Re: ${replySubject}`) : "");
 
   const sendEmail = useSendEmail();
 
-  // Reset draft whenever the dialog opens or the target changes.
-  React.useEffect(() => {
-    if (open) {
-      setSelected(initialRecipients);
-      setSubject("");
-      setBody(initialBody);
-    }
-  }, [open, initialBody, initialRecipients]);
+  const draft=useAccountStorage(`email-draft:${replyToId||"new"}`,EMPTY_EMAIL_DRAFT,parseEmailDraft);
+  const initial=React.useRef({initialRecipients,initialBody});initial.current={initialRecipients,initialBody};
+  React.useEffect(()=>{
+    if(!open||!draft.ready)return;
+    const saved=draft.value;
+    const hasDraft=!!(saved.subject||saved.body||saved.recipients.length);
+    setSelected(hasDraft?saved.recipients:initial.current.initialRecipients);
+    setSubject(hasDraft?saved.subject:"");setBody(hasDraft?saved.body:initial.current.initialBody);
+    // Hydrate once on open/scope changes; individual edits are saved by their handlers.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[open,draft.ready,replyToId]);
+  const persist=(patch:Partial<typeof draft.value>)=>draft.setValue({recipients:selected,subject,body,...patch});
 
   const toggleSelect = (contact: EmailContact) => {
-    setSelected((prev) =>
-      prev.some((s) => s.id === contact.id)
-        ? prev.filter((s) => s.id !== contact.id)
-        : [...prev, contact]
-    );
+    const next=selected.some(item=>item.id===contact.id)?selected.filter(item=>item.id!==contact.id):[...selected,contact];
+    setSelected(next);persist({recipients:next});
   };
 
   const handleSend = async () => {
@@ -95,6 +99,7 @@ export function ComposeEmailDialog({
         body: body.trim(),
         replyToId,
       });
+      draft.clear();
       toast.success("Email sent");
       onOpenChange(false);
     } catch (err) {
@@ -148,9 +153,9 @@ export function ComposeEmailDialog({
               <Label required htmlFor="email-subject">Subject</Label>
               <Input
                 id="email-subject"
-                placeholder={replySubject ? `Re: ${replySubject}` : "Subject"}
+                placeholder={replySubject ? (/^re:/i.test(replySubject)?replySubject:`Re: ${replySubject}`) : "Subject"}
                 value={subject}
-                onChange={(e) => setSubject(e.target.value)}
+                onChange={(e) => {setSubject(e.target.value);persist({subject:e.target.value});}}
               />
             </div>
 
@@ -159,25 +164,27 @@ export function ComposeEmailDialog({
               <Label required htmlFor="email-body">Message</Label>
               <Textarea
                 id="email-body"
-                rows={8}
+                rows={9}
                 className="resize-y"
                 style={{ minHeight: 240, fieldSizing: "fixed" }}
                 placeholder="Write your message…"
                 value={body}
-                onChange={(e) => setBody(e.target.value)}
+                onChange={(e) => {setBody(e.target.value);persist({body:e.target.value});}}
               />
             </div>
           </div>
         </FormSection>
 
+        <p role="status" className="text-xs text-ink-faint">{draft.error?"Draft is available in this tab. Browser storage is unavailable.":draft.ready?"Draft saved privately on this browser. Nothing is sent until you choose Send.":"Loading your private draft…"}</p>
         <DialogFooter>
+          <Button type="button" variant="ghost" disabled={sendEmail.isPending || !draft.ready} onClick={()=>{draft.clear();setSelected(initialRecipients);setSubject("");setBody(initialBody);}}>Discard draft</Button>
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            Keep draft
           </Button>
           <Button
             type="button"
             onClick={handleSend}
-            disabled={sendEmail.isPending}
+            disabled={sendEmail.isPending || !draft.ready}
           >
             {sendEmail.isPending ? (
               <Loader2 className="size-4 animate-spin" />

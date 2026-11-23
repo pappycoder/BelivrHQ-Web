@@ -48,6 +48,7 @@ const TableVisibility = React.createContext<{
 const CellVisibility = React.createContext<{
   hidden: boolean;
   colSpan?: number;
+  pinOffset?: number;
 } | null>(null);
 
 type HeadProps = React.ComponentProps<"th"> & {
@@ -440,6 +441,7 @@ function TableRow({
         value={{
           hidden: covered.length > 0 && visible === 0,
           colSpan: span > 1 ? Math.max(1, visible || span) : undefined,
+          pinOffset: span === 1 && start === visibility?.columns.findIndex(column => !!column.label.trim()) ? (start === 0 ? 0 : 40) : undefined,
         }}
       >
         {child}
@@ -521,6 +523,7 @@ function TableHead({ className, valueType, ...props }: HeadProps) {
   return (
     <th
       data-slot="table-head"
+      data-pinned-identity={visibility?.pinOffset !== undefined ? "true" : undefined}
       data-declared-value-type={
         valueType ??
         (/\b(amount|price|cost|balance|value|depreciation|opening|closing)\b/i.test(
@@ -534,6 +537,7 @@ function TableHead({ className, valueType, ...props }: HeadProps) {
         className,
       )}
       {...props}
+      style={{ ...props.style, ...(visibility?.pinOffset !== undefined ? { position: "sticky", left: visibility.pinOffset, zIndex: 2 } : {}) }}
       hidden={visibility?.hidden || props.hidden}
     />
   );
@@ -548,11 +552,13 @@ function TableCell({
   return (
     <td
       data-slot="table-cell"
+      data-pinned-identity={visibility?.pinOffset !== undefined ? "true" : undefined}
       className={cn(
         "px-5 py-3.5 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         className,
       )}
       {...props}
+      style={{ ...props.style, ...(visibility?.pinOffset !== undefined ? { position: "sticky", left: visibility.pinOffset, zIndex: 2 } : {}) }}
       hidden={visibility?.hidden || props.hidden}
       colSpan={visibility?.colSpan ?? props.colSpan}
     >

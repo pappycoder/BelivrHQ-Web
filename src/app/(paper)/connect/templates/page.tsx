@@ -1,4 +1,6 @@
 "use client";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { formatRecordDate } from "@/lib/record-date";
 
@@ -221,12 +223,12 @@ export default function TemplatesPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Templates" value={templates.data?.meta?.total ?? 0} tone="brand" icon={<FileText className="size-4" />} />
         <StatCard label="Published on page" value={published} tone="moss" deltaLabel="ready to send" />
         <StatCard label="WhatsApp on page" value={(templates.data?.data ?? []).filter((t) => t.channel === "whatsapp").length} tone="sky" />
         <StatCard label="Email on page" value={(templates.data?.data ?? []).filter((t) => t.channel === "email").length} tone="gold" />
-      </div>
+      </CompactListSummary>
 
       <CommunicationRegisterControls controls={controls} kind="Templates"
         channels={TEMPLATE_CHANNELS.map(value => ({ value, label: TEMPLATE_CHANNEL_LABELS[value] }))}

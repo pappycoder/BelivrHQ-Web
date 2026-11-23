@@ -6,6 +6,7 @@ import {
   ArrowDown,
   ArrowUp,
   ChevronDown,
+  GripVertical,
   ClipboardList,
   Plus,
   Trash2,
@@ -43,6 +44,7 @@ export function FormFieldsEditor({
 }: FormFieldsEditorProps) {
   const id = useId();
   const [active, setActive] = useState(0);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
   const update = (index: number, patch: Partial<FormField>) =>
     onChange(
       fields.map((field, i) => (i === index ? { ...field, ...patch } : field)),
@@ -57,7 +59,7 @@ export function FormFieldsEditor({
   return (
     <div data-tour-form-editor className="space-y-3">
       <p className="text-sm text-muted-foreground">
-        Choose a question to edit. Use Move up or Move down to change the order.
+        Choose a question to edit. Drag the handle to reorder, or use Move up and Move down.
       </p>
       {!fields.length && (
         <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-line bg-background px-4 py-8 text-center">
@@ -98,8 +100,11 @@ export function FormFieldsEditor({
                 : "border-line bg-card",
             )}
             aria-label={`Question ${index + 1}`}
+            onDragOver={event => { if (!disabled && dragIndex !== null) event.preventDefault(); }}
+            onDrop={event => { event.preventDefault(); if (disabled || dragIndex === null || dragIndex === index) return; const next = [...fields]; const [field] = next.splice(dragIndex, 1); next.splice(index, 0, field); onChange(next); setActive(index); setDragIndex(null); }}
           >
             <div className="flex flex-wrap items-center gap-2 p-3">
+              <button type="button" draggable={!disabled} disabled={disabled} aria-label={`Drag question ${index + 1}`} onDragStart={event => { event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", String(index)); setDragIndex(index); }} onDragEnd={() => setDragIndex(null)} className="cursor-grab rounded-lg p-1 text-ink-faint active:cursor-grabbing"><GripVertical className="size-4" /></button>
               <button
                 type="button"
                 className="flex min-w-0 flex-1 items-center gap-2 rounded-sm text-left text-sm focus-visible:outline-2 focus-visible:outline-ring"

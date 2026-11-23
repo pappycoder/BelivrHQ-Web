@@ -1,5 +1,9 @@
 "use client";
 
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
+
 import { LoadingState } from "@/components/shared/loading-state";
 
 import * as React from "react";
@@ -102,10 +106,10 @@ export function AssetWorklist({ kind, heading }: { kind: "loans" | "maintenance"
   const { can } = usePermissions();
   const { data: profile } = useCurrentProfile();
   const tableRoot = React.useRef<HTMLDivElement>(null);
-  const [search, setSearch] = React.useState("");
-  const [page, setPage] = React.useState(1);
-  const [limit, setLimit] = React.useState(15);
-  const [status, setStatus] = React.useState("");
+  const [search, setSearch] = useListFilterState("search", "");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [limit, setLimit] = useListFilterState("limit", 15);
+  const [status, setStatus] = useListFilterState("status", "");
   const [pickerOpen, setPickerOpen] = React.useState(false);
   const [asset, setAsset] = React.useState<Asset | null>(null);
   const [editing, setEditing] = React.useState<AssetWorklistRecord | null>(
@@ -142,11 +146,11 @@ export function AssetWorklist({ kind, heading }: { kind: "loans" | "maintenance"
           )}
         </>}
       />
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-3">
         <StatCard label={isLoan ? "Loan records" : "Maintenance jobs"} value={query.data?.meta.total ?? 0} tone="brand" deltaLabel="matching filters" />
         <StatCard label="On this page" value={query.data?.data.length ?? 0} tone="neutral" />
         <div className="paper-card flex flex-col justify-between gap-4 rounded-2xl p-5"><span className="rule-label">Scope</span><span className="font-display text-lg font-semibold leading-tight">{profile?.isAdminHq ? "All branches" : profile?.branch?.name ?? "Your permitted branches"}</span></div>
-      </div>
+      </CompactListSummary>
       <ListToolbar
         search={<SearchField className="w-full max-w-xs" aria-label="Search asset worklist" placeholder="Search asset name or tag…" value={search} onChange={(value) => { setSearch(value); setPage(1); }} />}
         controls={search || status ? <Button variant="outline" size="sm" className="h-9 rounded-full" onClick={() => { setStatus(""); setSearch(""); setPage(1); }}>Clear filters</Button> : undefined}

@@ -1,4 +1,7 @@
 "use client";
+import { useListSearch } from "@/hooks/use-list-search";
+
+import { notificationPeriod } from "@/lib/notification-period";
 
 import { PageQueryError } from "@/components/shared/page-query-error";
 
@@ -29,6 +32,7 @@ import {
   FilterChip,
   ListPaginationFooter,
   RowActions,
+  Tag,
 } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -70,7 +74,7 @@ const TYPE_TONES: Record<NotificationType, "sky" | "moss" | "brand" | "gold" | "
 };
 
 const FILTERS: { label: string; value: "all" | "unread" }[] = [
-  { label: "All", value: "all" },
+  { label: "All updates", value: "all" },
   { label: "Unread", value: "unread" },
 ];
 
@@ -85,11 +89,11 @@ const TYPES: ("all" | NotificationType)[] = [
 ];
 
 const NOTIFICATIONS_TOUR_STEPS: TourStep[] = [
-  { target: ".notifications-tour-heading", title: "Your notifications, in one place", description: "Review updates sent to your account here. The heading shows the unread count for your current filters. This tour explains the controls without opening, marking or deleting any notifications." },
+  { target: ".notifications-tour-heading", title: "Your notifications, in one place", description: "Review updates sent to your account here. The Unread filter shows the unread count for your current category. This tour explains the controls without opening, marking or deleting any notifications." },
   { target: ".notifications-tour-read-filter", title: "Focus on unread updates", description: "After the tour, choose Unread to show only notifications you have not read, or All to include read items. Changing a filter returns to the first page and clears the selection." },
   { target: ".notifications-tour-type-filter", title: "Choose a category", description: "Narrow the list to Pastoral, Giving, Event, Attendance, Broadcast or System updates. Categories combine with All or Unread. Choose All types to remove the category filter." },
   { target: ".notifications-tour-mark-all", title: "Mark everything read", description: "Mark all read applies to all your unread notifications, including other pages and categories. A confirmation appears before the update. The button is disabled when the current filters show no unread notifications." },
-  { target: ".notifications-tour-first-item", title: "Read an update and manage it", description: "After the tour, select a title or View details to open the full notification. Opening it successfully marks it read. Row action icons let you mark it read or unread, or request deletion. Deletion is permanent and requires confirmation." },
+  { target: ".notifications-tour-first-item", title: "Read an update and manage it", description: "After the tour, select an update to open the full notification. Opening it successfully marks it read. Row action icons let you mark it read or unread, or request deletion. Deletion is permanent and requires confirmation." },
   { target: ".notifications-tour-selection", title: "Work with a selection", description: "Use individual checkboxes or Select all on this page. Selecting rows reveals Mark read, Mark unread, Delete and Clear. Updates and deletion ask for confirmation; Clear only removes the selection. Switching filters or pages clears it too." },
   { target: ".notifications-tour-pagination", title: "Browse the remaining updates", description: "Use Prev and Next to move through the filtered list. Rows per page offers 10, 20 or 50 notifications and returns you to page one. The range and total show how many match your filters." },
   { target: ".notifications-tour-empty", title: "When the list is empty", description: "An empty list can mean there are no notifications, or none match your filters. Try All and All types to broaden the list. Selection and pagination return when notifications are available." },
@@ -121,7 +125,7 @@ export default function PaperNotificationsPage() {
   const bulkDelete = useBulkDeleteNotifications();
   const deleteOne = useDeleteNotification();
 
-  const items = list.data?.data ?? [];
+  const { rows: items, query, search: notificationSearch } = useListSearch(list.data?.data ?? [],"query","Search updates on this page…");
   const total = list.data?.total ?? 0;
   const selectedIds = [...selected];
 
@@ -129,7 +133,7 @@ export default function PaperNotificationsPage() {
   // rows that left the visible page.
   React.useEffect(() => {
     setSelected(new Set());
-  }, [read, type, page, perPage]);
+  }, [read, type, page, perPage, query]);
 
   const toggle = (id: string) =>
     setSelected((current) => {
@@ -187,15 +191,9 @@ export default function PaperNotificationsPage() {
       {dialog}
       <PageHeader
         className="notifications-tour-heading"
-        eyebrow="Today"
-        title="Notifications"
-        description={
-          list.isPending
-            ? "Your updates in one place."
-            : list.data?.unreadCount
-            ? `${list.data.unreadCount} ${collectionLabel(list.data.unreadCount, "things")} that happened while you were elsewhere.`
-            : "Everything is quiet."
-        }
+        eyebrow="Your workspace · Notifications"
+        title="Stay in the know, without the noise."
+        description="A clear timeline for the updates that matter."
         actions={
           <>
           <PageTour page="Notifications" account={profile ? `${profile.churchId}:${profile.profileId}` : undefined} ready={!!profile && profile.status === "active" && list.isSuccess && !activeNotification && !deleteTarget} steps={NOTIFICATIONS_TOUR_STEPS} />
@@ -217,21 +215,21 @@ export default function PaperNotificationsPage() {
         }
       />
 
-      <div className="flex flex-wrap items-center gap-2">
+      <section className="notification-shell paper-card overflow-hidden rounded-2xl border border-line">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line p-4 sm:p-5">
+        <div className="w-full min-w-0 sm:w-auto sm:flex-1">{notificationSearch}</div>
         <div className="notifications-tour-read-filter flex items-center gap-2" role="group" aria-label="Read status filters">
         {FILTERS.map((item) => (
           <FilterChip key={item.value} active={read === item.value} onClick={() => { setRead(item.value); setPage(1); }}>
-            {item.label}
+            {item.label}{item.value === "unread" && list.data?.unreadCount ? ` · ${list.data.unreadCount}` : ""}
           </FilterChip>
         ))}
         </div>
-        <span className="mx-1 hidden h-4 w-px bg-line sm:block" />
+
         <div className="notifications-tour-type-filter flex flex-wrap items-center gap-2" role="group" aria-label="Category filters">
-        {TYPES.map((item) => (
-          <FilterChip key={item} active={type === item} onClick={() => { setType(item); setPage(1); }}>
-            <span className="capitalize">{item === "all" ? "all types" : NOTIFICATION_TYPE_LABELS[item] ?? item}</span>
-          </FilterChip>
-        ))}
+        <select aria-label="Notification category" className="h-9 max-w-full rounded-full border border-line bg-card px-3 text-sm" value={type} onChange={event => { setType(event.target.value as typeof type); setPage(1); }}>
+          {TYPES.map(item => <option key={item} value={item}>{item === "all" ? "All types" : NOTIFICATION_TYPE_LABELS[item]}</option>)}
+        </select>
         </div>
       </div>
 
@@ -245,12 +243,12 @@ export default function PaperNotificationsPage() {
         <div className="notifications-tour-empty">
           <EmptyState
             icon={<BellOff />}
-            title="Nothing needs you"
-            description="The rarest, best screen. New signals land here as they happen."
+            title={query ? "No updates match your search" : read === "unread" ? "You are all caught up" : "No updates in this view"}
+            description="New updates appear here as they arrive. Try All and All types to broaden your view."
           />
         </div>
       ) : (
-        <div className="paper-card overflow-hidden rounded-2xl">
+        <div>
           <div
             className={cn(
               "notifications-tour-selection flex flex-wrap items-center gap-3 px-4 py-2.5 text-sm",
@@ -313,24 +311,26 @@ export default function PaperNotificationsPage() {
                 </div>
               </>
             ) : (
-              <span className="num">{total.toLocaleString()} total</span>
+              <span className="num">{query.trim() ? `${items.length} matching on this page · ${total.toLocaleString()} total` : `${total.toLocaleString()} total`}</span>
             )}
           </div>
 
-          <div className="divide-y divide-line/70">
+          <div className="px-3 pb-5 sm:px-6">
             {items.map((item, index) => {
               const Icon = TYPE_ICONS[item.type] ?? Settings2;
               return (
-                <div key={item.id} className={cn("group flex items-start gap-3 px-4 py-4 transition-colors hover:bg-muted/40", index === 0 && "notifications-tour-first-item")}>
+                <React.Fragment key={item.id}>
+                  {(index === 0 || notificationPeriod(items[index - 1].createdAt) !== notificationPeriod(item.createdAt)) && <div className="mb-2 mt-5 flex items-center justify-between border-b border-line pb-3 text-xs text-ink-faint"><h2 className="font-sans text-xs font-semibold uppercase tracking-wider">{notificationPeriod(item.createdAt)}</h2><span>{items.filter(notice => notificationPeriod(notice.createdAt) === notificationPeriod(item.createdAt)).length} updates</span></div>}
+                <div className={cn("notification-timeline-row group flex items-start gap-3 rounded-xl px-3 py-5 transition-colors hover:bg-muted/40 sm:gap-4 sm:px-4", !item.readAt && "bg-brand-soft/20", index === 0 && "notifications-tour-first-item")}>
                   <Checkbox
                     checked={selected.has(item.id)}
                     onCheckedChange={() => toggle(item.id)}
                     aria-label={`Select ${item.title}`}
-                    className="mt-1 size-4 shrink-0 rounded border-line"
+                    className="notification-select mt-2.5 size-4 shrink-0 rounded border-line"
                   />
                   <span
                     className={cn(
-                      "grid size-7 shrink-0 place-items-center rounded-lg",
+                      "grid size-10 shrink-0 place-items-center rounded-xl",
                       TYPE_TONES[item.type] === "brand" && "bg-brand-soft text-brand",
                       TYPE_TONES[item.type] === "moss" && "bg-moss-soft text-moss",
                       TYPE_TONES[item.type] === "gold" && "bg-gold-soft text-gold",
@@ -339,29 +339,22 @@ export default function PaperNotificationsPage() {
                       TYPE_TONES[item.type] === "neutral" && "bg-muted text-ink-soft",
                     )}
                   >
-                    <Icon className="size-3.5" />
+                    <Icon className="size-5" />
                   </span>
                   <button
                     type="button"
                     aria-label={`View notification: ${item.title}`}
                     aria-describedby={`notification-preview-${item.id}`}
                     onClick={() => setActiveNotification(item)}
-                    className="min-w-0 flex-1 space-y-1.5 text-left"
+                    className="min-w-0 flex-1 space-y-2 text-left"
                   >
+                    <span className="flex flex-wrap items-center justify-between gap-2"><Tag tone={TYPE_TONES[item.type] === "neutral" ? "neutral" : TYPE_TONES[item.type]}>{NOTIFICATION_TYPE_LABELS[item.type] ?? notificationLabel(item.type)}</Tag><time className="text-xs text-ink-faint" dateTime={item.createdAt}>{formatRelativeTime(item.createdAt)}</time></span>
                     <span className={cn("flex min-w-0 items-start gap-1.5 text-sm leading-snug", item.readAt ? "text-ink-soft" : "font-semibold text-ink")}>
                       {!item.readAt ? <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-brand" /> : null}
                       <span className="break-words">{item.title}</span>
                     </span>
                     <span id={`notification-preview-${item.id}`} className="whitespace-pre-line break-words text-sm leading-relaxed text-ink-soft line-clamp-3">{item.body}</span>
-                    <span className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-ink-faint">
-                      <span>{NOTIFICATION_TYPE_LABELS[item.type] ?? notificationLabel(item.type)}</span>
-                      <span className="sm:hidden">{formatRelativeTime(item.createdAt)}</span>
-                      <span className="text-brand">View details</span>
-                    </span>
                   </button>
-                  <span className="hidden w-24 shrink-0 text-right text-xs text-ink-faint sm:block">
-                    {formatRelativeTime(item.createdAt)}
-                  </span>
                   <RowActions
                     actions={[
                       !item.readAt && {
@@ -387,12 +380,13 @@ export default function PaperNotificationsPage() {
                     ]}
                   />
                 </div>
+                </React.Fragment>
               );
             })}
           </div>
 
           <div className="notifications-tour-pagination">
-          <ListPaginationFooter
+          <ListPaginationFooter visibleMatches={query.trim() ? items.length : undefined}
             page={page}
             perPage={perPage}
             total={total}
@@ -405,6 +399,8 @@ export default function PaperNotificationsPage() {
           </div>
         </div>
       )}
+
+      </section>
 
       <NotificationDetailDialog notification={activeNotification} open={!!activeNotification}
         onOpenChange={value => { if (!value) setActiveNotification(null); }}

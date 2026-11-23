@@ -9,6 +9,7 @@ const state = vi.hoisted(() => ({
   pending: false, empty: false, allowWrite: true,
 }));
 vi.mock("next/navigation", () => ({
+  usePathname: () => "/gatherings/events/tickets",
   useRouter: () => ({ replace: vi.fn() }),
   useSearchParams: () => new URLSearchParams("event=event-a"),
 }));

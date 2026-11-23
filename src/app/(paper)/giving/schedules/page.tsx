@@ -1,4 +1,12 @@
 "use client";
+import { SearchNoResults } from "@/components/shared/search-no-results";
+import { useListSearch } from "@/hooks/use-list-search";
+
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
+
+import { monthlyGivingEstimate } from "@/lib/recurring-giving";
 
 import { PageQueryError } from "@/components/shared/page-query-error";
 
@@ -41,9 +49,9 @@ export default function GivingSchedulesPage() {
   const canManage = ready && can("giving", "update");
   const canCreate = ready && can("giving", "create");
 
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
-  const [activeFilter, setActiveFilter] = React.useState<"" | "true" | "false">("");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
+  const [activeFilter, setActiveFilter] = useListFilterState<"" | "true" | "false">("activeFilter", "");
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [cancelTarget, setCancelTarget] = React.useState<RecurringGiving | null>(null);
 
@@ -56,11 +64,9 @@ export default function GivingSchedulesPage() {
   const resume = useResumeRecurringGiving();
   const cancel = useCancelRecurringGiving();
 
-  const rows = recurring.data?.data ?? [];
+  const { rows, query: listQuery, clearSearch, search: listSearch } = useListSearch(recurring.data?.data ?? [], "query", "Search schedules on this page…");
   const total = recurring.data?.meta?.total ?? 0;
-  const activeMonthly = rows
-    .filter((r) => r.isActive)
-    .reduce((sum, r) => sum + (r.frequency === "monthly" ? r.amount : r.frequency === "quarterly" ? Math.round(r.amount / 3) : Math.round(r.amount / 4)), 0);
+  const activeMonthly = monthlyGivingEstimate(rows);
 
   const act = (mutation: typeof pause, id: string, message: string) =>
     mutation.mutateAsync(id, {
@@ -85,16 +91,16 @@ export default function GivingSchedulesPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {recurring.isPending ? Array.from({ length: 4 }, (_, i) => <Skeleton key={i} className="h-32 rounded-2xl" />) : <>
         <StatCard label="Schedules" value={total} tone="brand" icon={<CalendarClock className="size-4" />} deltaLabel="in the book" />
-        <StatCard label="Projected / month" value={activeMonthly} prefix="₦" tone="moss" deltaLabel="this page" />
+        <StatCard label="Projected / month" value={activeMonthly} prefix="₦" tone="moss" deltaLabel="monthly average · this page" />
         <StatCard label="Paused" value={rows.filter((r) => !r.isActive).length} tone="gold" deltaLabel="this page" />
         <StatCard label="Needing attention" value={rows.filter((r) => r.failedAttemptCount > 0).length} tone="rose" icon={<ShieldOff className="size-4" />} deltaLabel="failed attempts" />
         </>}
-      </div>
+      </CompactListSummary>
 
-      <ListToolbar>
+      <ListToolbar search={listSearch}>
 <FilterChip active={activeFilter === ""} onClick={() => { setActiveFilter(""); setPage(1); }}>All</FilterChip>
 <FilterChip active={activeFilter === "true"} onClick={() => { setActiveFilter("true"); setPage(1); }}>Active</FilterChip>
 <FilterChip active={activeFilter === "false"} onClick={() => { setActiveFilter("false"); setPage(1); }}>Paused & ended</FilterChip>
@@ -104,11 +110,11 @@ export default function GivingSchedulesPage() {
       {recurring.isLoading ? (
         <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-14 rounded-xl" />)}</div>
       ) : rows.length === 0 ? (
-        <EmptyState
+        (listQuery.trim() ? <SearchNoResults onClear={clearSearch} /> : <EmptyState
           icon={<Repeat />}
           title={activeFilter ? "Nothing in this state" : "No standing gifts yet"}
           description="Recurring gifts help your church plan ahead."
-        />
+        />)
       ) : (
         <ListTable className="paper-card min-w-[1040px] divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="giving-schedules-1" records={rows ?? []} recordKey="id"><StaggerGroup className="divide-y divide-line/70">
           <div className="rule-label grid grid-cols-[minmax(0,1.6fr)_1fr_0.9fr_1fr_1fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
@@ -166,7 +172,7 @@ export default function GivingSchedulesPage() {
               </div>
             </StaggerItem>
           ))}
-          <ListPaginationFooter
+          <ListPaginationFooter visibleMatches={listQuery.trim() ? rows.length : undefined}
             page={page}
             perPage={perPage}
             total={total}

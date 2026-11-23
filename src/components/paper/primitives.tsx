@@ -11,12 +11,14 @@ import {
 import * as React from "react";
 import { isRecordOpenLabel } from "@/lib/record-row-navigation";
 import Link from "next/link";
-import { ChevronDown, Search, X } from "lucide-react";
+import { ChevronDown, MoreHorizontal, Search, X } from "lucide-react";
 import { IdentityImage } from "@/components/shared/identity-image";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ActionTooltip } from "@/components/ui/tooltip";
+
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 export { Tag } from "./stat";
 
@@ -172,6 +174,7 @@ export function IconAction({
         type="button"
         onClick={onSelect}
         disabled={disabled}
+        data-touch-action
         data-row-open={rowOpen ? "true" : undefined}
         aria-label={label}
         className={iconActionClass(tone, disabled, className)}
@@ -204,6 +207,7 @@ export function IconActionLink({
     <ActionTooltip label={label}>
       <Link
         href={href}
+        data-touch-action
         data-row-open={rowOpen ? "true" : undefined}
         aria-label={label}
         onClick={onClick}
@@ -261,7 +265,7 @@ export function RowActions({
     <>
       <div
         className={cn(
-          "row-actions flex items-center justify-end gap-1",
+          "row-actions hidden items-center justify-end gap-1 sm:flex",
           reveal && "row-actions--reveal",
           className,
         )}
@@ -301,6 +305,7 @@ export function RowActions({
           ),
         )}
       </div>
+      <div className="row-actions flex justify-end sm:hidden"><DropdownMenu><DropdownMenuTrigger asChild><button type="button" aria-label="Row actions" className="grid size-11 shrink-0 place-items-center rounded-lg border border-line bg-card"><MoreHorizontal className="size-5"/></button></DropdownMenuTrigger><DropdownMenuContent align="end" className="max-w-[calc(100vw-24px)]">{visible.map(action=>action.href?<DropdownMenuItem key={action.label} asChild><Link className="min-h-11" href={action.href}>{action.icon}{action.label}</Link></DropdownMenuItem>:<DropdownMenuItem key={action.label} disabled={action.disabled} className={cn("min-h-11",action.tone==="danger"&&"text-destructive")} onSelect={()=>{if(!action.onSelect||action.disabled)return;if(action.confirmation)confirm({...action.confirmation,title:action.confirmation.title??`${action.label}?`,destructive:action.confirmation.destructive??action.tone==="danger",onConfirm:action.onSelect});else void action.onSelect();}}>{action.icon}{action.label}</DropdownMenuItem>)}</DropdownMenuContent></DropdownMenu></div>
       {dialog}
     </>
   );
@@ -321,21 +326,13 @@ export function SortDirectionToggle({
   onToggle: () => void;
   className?: string;
 }) {
-  return (
-    <IconAction
-      label={ascending ? "Sort descending" : "Sort ascending"}
-      icon={
-        <ChevronDown
-          className={cn("transition-transform", ascending && "rotate-180")}
-        />
-      }
-      onSelect={onToggle}
-      className={cn(
-        "size-8 rounded-full border border-line bg-card",
-        className,
-      )}
-    />
-  );
+  return <label className={cn("relative inline-flex min-w-0 items-center rounded-lg border border-line bg-card",className)}>
+    <ChevronDown aria-hidden="true" className={cn("pointer-events-none absolute left-3 size-3.5 text-ink-soft",ascending && "rotate-180")} />
+    <span className="sr-only">Sort order</span>
+    <select aria-label="Sort order" value={ascending ? "asc" : "desc"} onChange={event => { if ((event.target.value === "asc") !== ascending) onToggle(); }} className="h-9 max-w-full rounded-lg bg-transparent py-1 pl-9 pr-7 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring">
+      <option value="asc">Ascending</option><option value="desc">Descending</option>
+    </select>
+  </label>;
 }
 
 export function FilterChip({
@@ -345,6 +342,7 @@ export function FilterChip({
   count,
 }: {
   active?: boolean;
+  independent?: boolean;
   children: React.ReactNode;
   onClick?: () => void;
   count?: number;
@@ -377,6 +375,10 @@ export function FilterChip({
   );
 }
 
+function viewCaption(value: string, label: string) {
+  return ["table","rows","list"].includes(value) ? "List view" : ["cards","grid"].includes(value) ? "Card view" : label;
+}
+
 export function ViewToggle<T extends string>({
   value,
   options,
@@ -389,20 +391,20 @@ export function ViewToggle<T extends string>({
   return (
     <div className="inline-flex items-center rounded-lg border border-line bg-card p-0.5">
       {options.map((option) => (
-        <ActionTooltip key={option.value} label={option.label}>
+        <ActionTooltip key={option.value} label={viewCaption(option.value,option.label)}>
           <button
             type="button"
             onClick={() => onChange(option.value)}
-            aria-label={option.label}
+            aria-label={viewCaption(option.value,option.label)}
             aria-pressed={value === option.value}
             className={cn(
-              "grid size-7 place-items-center rounded-md text-ink-faint transition-colors [&_svg]:size-3.5",
+              "inline-flex h-8 items-center justify-center gap-1.5 rounded-md px-2.5 text-sm text-ink-faint transition-colors [&_svg]:size-3.5",
               value === option.value
                 ? "bg-ink text-paper"
                 : "hover:bg-muted hover:text-ink",
             )}
           >
-            {option.icon}
+            {option.icon}<span>{viewCaption(option.value,option.label)}</span>
           </button>
         </ActionTooltip>
       ))}

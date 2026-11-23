@@ -5,7 +5,8 @@ import { isMissingRecordError } from "@/lib/record-query-error";
 
 import { collectionLabel } from "@/lib/collection-label";
 
-import { DetailNavigation, DetailHeading } from "@/components/paper/section";
+import { GatheringWorkspace } from "@/components/gatherings/gathering-workspace";
+import { DetailNavigation } from "@/components/paper/section";
 
 import * as React from "react";
 import Link from "next/link";
@@ -59,6 +60,7 @@ export default function ServiceDetailPage({
 
   const service = useService(serviceId);
   const named = useServiceAttendance(serviceId);
+  const canCheckIn = ready && can("attendance:checkin", "create");
   const canGiving = ready && can("giving:records", "read");
   const canSeeReported = useCanViewGeneralAttendance("service");
   const gifts = useGivingTransactionsAll({ serviceId });
@@ -103,51 +105,14 @@ export default function ServiceDetailPage({
         <ArrowLeft className="size-3" /> Gatherings · Attendance · Services
       </Link></DetailNavigation>
 
-      <div className="paper-card rounded-2xl p-5 md:p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="min-w-0 space-y-1.5">
-            <div className="flex flex-wrap items-center gap-2">
-              {s.category ? <Tag tone={s.category === "children" ? "gold" : "moss"}>{SERVICE_CATEGORIES.find((c) => c.value === s.category)?.label ?? s.category}</Tag> : null}
-              {s.recurrence && s.recurrence !== "weekly" ? <Tag tone="sky">{SCHEDULE_RECURRENCE_LABELS[s.recurrence]}</Tag> : null}
-              {!s.isActive ? <Tag tone="neutral">Paused</Tag> : null}
-              {s.archivedAt ? <Tag tone="rose">Archived</Tag> : null}
-            </div>
-            <DetailHeading>{s.name}</DetailHeading>
-            <p className="text-sm text-ink-soft">
-              {s.recurrence === "one_time" && s.startsOn
-                ? formatDay(s.startsOn)
-                : s.recurrence === "multi_day" && s.startsOn && s.endsOn
-                  ? `${formatDay(s.startsOn)} – ${formatDay(s.endsOn)}`
-                  : s.dayOfWeek != null ? DAY_NAMES[s.dayOfWeek] : "Any day"}
-              {s.startTime ? <span className="num"> · {timeLabel(s.startTime)}{s.endTime ? ` – ${timeLabel(s.endTime)}` : ""}</span> : null}
-            </p>
-          </div>
-          <div data-tour-service-summary className="grid grid-cols-2 gap-3 text-center sm:grid-cols-3">
-            <div className="rounded-xl bg-muted/40 px-4 py-3">
-              <p className="num font-display text-xl font-semibold">{number(s.attendanceCount ?? 0)}</p>
-              <p className="text-xs uppercase tracking-wider text-ink-faint">all-time check-ins</p>
-            </div>
-            <div className="rounded-xl bg-muted/40 px-4 py-3">
-              <p className="num font-display text-xl font-semibold">{number(namedRows.length)}</p>
-              <p className="text-xs uppercase tracking-wider text-ink-faint">recent named</p>
-            </div>
-            {canGiving ? (
-              <div className="rounded-xl bg-muted/40 px-4 py-3">
-                <p className="num font-display text-xl font-semibold">{giftRows.length ? formatNaira(giftTotal) : "Not available"}</p>
-                <p className="text-xs uppercase tracking-wider text-ink-faint">gifts tagged</p>
-              </div>
-            ) : null}
-          </div>
-        </div>
-      </div>
-
+      <GatheringWorkspace recordKey={`service:${s.serviceId}`} title={s.name} kind="Service" date={(s.recurrence === "one_time" && s.startsOn ? formatDay(s.startsOn) : s.recurrence === "multi_day" && s.startsOn && s.endsOn ? `${formatDay(s.startsOn)} – ${formatDay(s.endsOn)}` : s.dayOfWeek != null ? DAY_NAMES[s.dayOfWeek] : "Any day")+(s.startTime?` · ${timeLabel(s.startTime)}${s.endTime?` – ${timeLabel(s.endTime)}`:""}`:"")} tags={<>{!s.isActive&&<Tag tone="neutral">Paused</Tag>}{s.archivedAt&&<Tag tone="rose">Archived</Tag>}</>} actions={canCheckIn&&<Link href={`/gatherings/attendance/check-in?service=${encodeURIComponent(s.serviceId)}`} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand px-4 text-sm text-primary-foreground"><UserCheck className="size-4"/>Open the desk</Link>} overview={<SectionCard eyebrow="PEOPLE & PRESENCE" title="Every person counts."><div data-tour-service-summary className="grid grid-cols-2 gap-4"><div><p className="font-display text-3xl">{number(s.attendanceCount??0)}</p><p className="mt-2 text-xs text-ink-faint">All-time check-ins</p></div><div><p className="font-display text-3xl">{number(namedRows.length)}</p><p className="mt-2 text-xs text-ink-faint">Recent named check-ins</p></div></div></SectionCard>}>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <AttendanceWorkspace name={s.name} scope="Service" peopleValue="named" headcountValue="reported" canSeeHeadcount={canSeeReported}>
         <TabsContent value="named" className={canSeeReported ? "mt-4" : undefined}>
         <SectionCard
           eyebrow="Named check-ins"
           title="People counted by name"
-          actions={<Link href={`/gatherings/attendance/check-in?service=${encodeURIComponent(s.serviceId)}`} className="flex items-center gap-1 text-sm text-brand hover:underline"><UserCheck className="size-3" /> Open the desk</Link>}
+          actions={canCheckIn&&<Link href={`/gatherings/attendance/check-in?service=${encodeURIComponent(s.serviceId)}`} className="flex items-center gap-1 text-sm text-brand hover:underline"><UserCheck className="size-3" /> Open the desk</Link>}
           bodyClassName="p-0"
         >
           {named.isLoading ? (
@@ -233,6 +198,7 @@ export default function ServiceDetailPage({
           </div>
         </aside>
       </div>
+      </GatheringWorkspace>
     </div>
   );
 }
