@@ -1,5 +1,9 @@
 "use client";
 
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { formatRecordDateTime } from "@/lib/record-date";
@@ -68,7 +72,7 @@ const EVENTS_LIST_TOUR_STEPS: TourStep[] = [
   { target: ".events-list-tour-archive", title: "Review archived events", description: "Archived switches to archived event records. Turn it off to return to the regular register. Archiving retains registrations and attendance history; authorised users can restore the event." },
   { target: ".events-list-tour-type", title: "Narrow the event type", description: "Choose an event type or All types. This works together with the other filters and returns to the first page. The event register is separate from the active service register." },
   { target: ".events-list-tour-branch", title: "Choose a branch", description: "HQ accounts can choose a branch or All branches. Other accounts remain within their assigned access. Scope above reflects the branch choice. Changing this filter does not move an event between branches." },
-  { target: ".events-list-tour-sort", title: "Arrange the matching events", description: "Sort by Start date, Title or Date added. Use the direction button to reverse the order. Sorting returns to page one and changes only how the matching records are displayed." },
+  { target: ".events-list-tour-sort", title: "Arrange the matching events", description: "Sort by Start date, Title or Date added. Use the Sort order dropdown to reverse the order. Sorting returns to page one and changes only how the matching records are displayed." },
   { target: ".events-list-tour-dates", title: "Apply a date range", description: "Date range filters event start dates. Set From, To or both boundaries. Apply dates updates the register; Clear dates removes only the date filter. A To date before From is rejected. Closing the popover without applying discards the draft." },
   { target: "[data-list-table='events-list'] > [data-export-ignore]", title: "Columns and selected events", description: "Columns chooses the visible fields. Checkboxes select events on this page and reveal the actions available to your account, plus selected-row exports. Selection alone makes no changes. Review any bulk confirmation before proceeding." },
   { target: ".events-list-tour-record", title: "Read an event record", description: "The row shows the event title, location, type, schedule, branch and registration count. Select the title to open the full event record. Opening it does not edit the event or register anyone." },
@@ -97,31 +101,31 @@ export default function EventsListPage() {
   const canUpdate = ready && can("events", "update");
   const canDelete = ready && can("events", "delete");
   const isHq = !!profile?.isAdminHq;
-  const [searchInput, setSearchInput] = useState("");
-  const [search, setSearch] = useState("");
-  const [type, setType] = useState<EventType | "all">("all");
-  const [status, setStatus] = useState("all");
-  const [branchId, setBranchId] = useState("all");
-  const [archived, setArchived] = useState(false);
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
+  const [searchInput, setSearchInput] = useListFilterState("searchInput", "");
+  const [search, setSearch] = useListFilterState("search", "");
+  const [type, setType] = useListFilterState<EventType | "all">("type", "all");
+  const [status, setStatus] = useListFilterState("status", "all");
+  const [branchId, setBranchId] = useListFilterState("branchId", "all");
+  const [archived, setArchived] = useListFilterState("archived", false);
+  const [fromDate, setFromDate] = useListFilterState("fromDate", "");
+  const [toDate, setToDate] = useListFilterState("toDate", "");
   const [dateOpen, setDateOpen] = useState(false);
   const dateTriggerRef = useRef<HTMLButtonElement>(null);
   const restoreDateFocus = useRef(false);
   const [dateDraft, setDateDraft] = useState({ from: "", to: "" });
   const invalidRange = !!dateDraft.from && !!dateDraft.to && dateDraft.from > dateDraft.to;
   const [sortBy, setSortBy] =
-    useState<NonNullable<ListEventsParams["sortBy"]>>("startDate");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(15);
+    useListFilterState<NonNullable<ListEventsParams["sortBy"]>>("sortBy", "startDate");
+  const [sortOrder, setSortOrder] = useListFilterState<"asc" | "desc">("sortOrder", "asc");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", 15);
   useEffect(() => {
     const timer = setTimeout(() => {
       setSearch(searchInput.trim());
       setPage(1);
     }, 300);
     return () => clearTimeout(timer);
-  }, [searchInput]);
+  }, [searchInput, setPage, setSearch]);
   const list = useEventsList(
     {
       page,
@@ -150,7 +154,7 @@ export default function EventsListPage() {
     if (!list.data || list.isFetching) return;
     const lastPage = Math.max(1, Math.ceil(list.data.total / perPage));
     if (page > lastPage) setPage(lastPage);
-  }, [list.data, list.isFetching, page, perPage]);
+  }, [list.data, list.isFetching, page, perPage, setPage]);
   const scopeName = isHq
     ? branchId === "all"
       ? "All branches"
@@ -291,7 +295,7 @@ export default function EventsListPage() {
           </>
         }
       />
-      <div className="events-list-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-3">
+      <CompactListSummary className="events-list-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-3">
         {list.isLoading || !ready ? (
           <Skeleton className="h-32 rounded-2xl" />
         ) : list.isError ? (
@@ -322,7 +326,7 @@ export default function EventsListPage() {
             {scopeName}
           </span>
         </div>
-      </div>
+      </CompactListSummary>
       <div role="group" aria-label="Event list filters" className="space-y-3">
         <ListToolbar
  search={<SearchField

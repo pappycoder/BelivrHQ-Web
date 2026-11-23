@@ -1,4 +1,8 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { formatStatusLabel } from "@/lib/status-label";
 
@@ -66,8 +70,8 @@ export default function RiskRadarPage() {
   const scores = useRiskScoresAll({ sortBy: "score", sortOrder: "desc" });
   const recalculate = useRecalculateScores();
 
-  const [query, setQuery] = React.useState("");
-  const [level, setLevel] = React.useState<RiskLevel | "all">("all");
+  const [query, setQuery] = useListFilterState("query", "");
+  const [level, setLevel] = useListFilterState<RiskLevel | "all">("level", "all");
   const [scoring, setScoring] = React.useState<RiskScore | null>(null);
 
   const rows = React.useMemo(() => {
@@ -119,21 +123,21 @@ export default function RiskRadarPage() {
         }
       />
 
-      {!scores.isError && <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {!scores.isError && <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="High signal" value={counts.high} tone="rose" icon={<HeartPulse className="size-4" />} deltaLabel="worth calling" />
         <StatCard label="Watching" value={counts.medium} tone="gold" />
         <StatCard label="Steady" value={counts.improving} tone="moss" deltaLabel="recent activity" />
         <StatCard label="Scored members" value={counts.total} tone="sky" icon={<Activity className="size-4" />} />
-      </div>}
+      </CompactListSummary>}
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={query} onChange={setQuery} placeholder="Search by name…" className="w-full max-w-xs" />
+      <ListToolbar filterLabel="Risk level" search={<SearchField value={query} onChange={setQuery} placeholder="Search by name…" className="w-full max-w-xs" />}>
+
         {LEVELS.map((item) => (
           <FilterChip key={item.value} active={level === item.value} onClick={() => setLevel(item.value)}>
             {item.label}
           </FilterChip>
         ))}
-      </div>
+      </ListToolbar>
 
       {scores.isLoading ? (
         <div className="space-y-2">

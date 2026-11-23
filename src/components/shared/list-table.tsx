@@ -81,6 +81,7 @@ export function ListTable({
   recordKey,
   recordType,
   fields,
+  primaryColumn,
 }: {
   children: React.ReactNode;
   className?: string;
@@ -90,6 +91,8 @@ export function ListTable({
   recordKey?: string;
   recordType?: string;
   fields?: readonly { key: string; label: string }[];
+  /** Label of the identity column that remains visible while scrolling. */
+  primaryColumn?: string;
 }) {
   const { rows: children, pagination } = splitListPagination(content);
   const root = React.useRef<HTMLDivElement>(null);
@@ -114,8 +117,9 @@ export function ListTable({
   const baseColumns = headings.map((heading, index) => ({
     id: `column-${index}`,
     label: text(heading) || `Column ${index + 1}`,
-    hideable: index > 0 && !/^(manage|actions?|options?)$/i.test(text(heading)),
+    hideable: (primaryColumn ? text(heading) !== primaryColumn : index > 0) && !/^(manage|actions?|options?)$/i.test(text(heading)),
   }));
+  const primaryId = baseColumns.find(column => column.label === primaryColumn)?.id ?? "column-0";
   const extras = recordFieldColumns(records, {
     recordType: recordType ?? inferRecordType(tableId),
     fields,
@@ -131,6 +135,7 @@ export function ListTable({
     ...baseColumns.slice(beforeManage),
   ];
   const state = useTableColumns(tableId, declaredColumns);
+  const hiddenColumns = state.hidden.filter(id => id !== primaryId);
   const columns = [
     ...state.columns.filter(
       (column) => !/^(manage|actions?|options?)$/i.test(column.label),
@@ -177,7 +182,7 @@ export function ListTable({
   const gridTemplateColumns = [
     "40px",
     ...columns.flatMap((column) =>
-      state.hidden.includes(column.id)
+      hiddenColumns.includes(column.id)
         ? []
         : [
             widths[column.id] === "compact" || (!widths[column.id] && compactColumns)
@@ -192,7 +197,7 @@ export function ListTable({
   ].join(" ");
   const extraCount = columns.filter(
     (column) =>
-      column.id.startsWith("field:") && !state.hidden.includes(column.id),
+      column.id.startsWith("field:") && !hiddenColumns.includes(column.id),
   ).length;
   const originalWidth = Number(
     className?.match(/min-w-\[(\d+)px\]/)?.[1] ?? baseColumns.length * 120,
@@ -235,7 +240,7 @@ export function ListTable({
             <div
               key={column.id}
               role={isHeader ? "columnheader" : "cell"}
-              hidden={state.hidden.includes(column.id)}
+              hidden={hiddenColumns.includes(column.id)}
               className={cn(
                 "list-table-cell min-w-0",
                 !isHeader && (widths[column.id] === "compact" || (!widths[column.id] && compactColumns)) && "overflow-hidden text-ellipsis whitespace-nowrap",
@@ -262,6 +267,7 @@ export function ListTable({
                   : undefined
               }
               data-list-column={column.id}
+              data-list-primary={column.id === primaryId ? "true" : undefined}
             >
               {index >= 0 ? (
                 value
@@ -292,6 +298,7 @@ export function ListTable({
           children: [
             <div
               key="selection"
+              data-list-selection
               role={isHeader ? "columnheader" : "cell"}
               onClick={(event) => event.stopPropagation()}
             >

@@ -1,4 +1,10 @@
 "use client";
+import { SearchNoResults } from "@/components/shared/search-no-results";
+import { useListSearch } from "@/hooks/use-list-search";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { PageQueryError } from "@/components/shared/page-query-error";
 
@@ -59,8 +65,8 @@ export default function LifeEventsPage() {
   const canCreate = ready && can("pastoral", "create");
   const canDelete = ready && can("pastoral", "delete");
 
-  const [type, setType] = React.useState<LifeEventType | "all">("all");
-  const [upcoming, setUpcoming] = React.useState(true);
+  const [type, setType] = useListFilterState<LifeEventType | "all">("type", "all");
+  const [upcoming, setUpcoming] = useListFilterState("upcoming", true);
   const [formOpen, setFormOpen] = React.useState(false);
   const [deleteTarget, setDeleteTarget] = React.useState<LifeEvent | null>(null);
 
@@ -74,7 +80,7 @@ export default function LifeEventsPage() {
     sortOrder: "asc",
   });
 
-  const rows = React.useMemo(() => events.data?.data ?? [], [events.data]);
+  const { rows, query: listQuery, clearSearch, search: listSearch } = useListSearch(React.useMemo(() => events.data?.data ?? [], [events.data]), "query", "Search loaded life events…");
   const grouped = React.useMemo(() => {
     const map = new Map<string, LifeEvent[]>();
     for (const event of rows) {
@@ -104,7 +110,7 @@ export default function LifeEventsPage() {
           </Button>
         ) : null} />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {events.isPending ? <><Skeleton className="h-32 rounded-2xl" /><Skeleton className="h-32 rounded-2xl" /></> : <>
         <StatCard label="On the calendar" value={events.data?.meta?.total ?? rows.length} tone="brand" icon={<Gift className="size-4" />} />
         <StatCard label="Within seven days" value={upcomingSoon} tone="gold" deltaLabel="send something" />
@@ -114,31 +120,31 @@ export default function LifeEventsPage() {
           <span className="rule-label">Filter</span>
           <span className="font-display text-lg font-semibold">{upcoming ? "Upcoming only" : "All dates"}</span>
         </div>
-      </div>
+      </CompactListSummary>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <ListToolbar filterLabel="Life event type" search={listSearch}>
         <FilterChip active={type === "all"} onClick={() => setType("all")}>All types</FilterChip>
         {LIFE_EVENT_TYPES.map((item) => (
           <FilterChip key={item} active={type === item} onClick={() => setType(item)}>
             <span className="capitalize">{item}</span>
           </FilterChip>
         ))}
-        <FilterChip active={upcoming} onClick={() => setUpcoming((v) => !v)}>
+        <FilterChip independent active={upcoming} onClick={() => setUpcoming((v) => !v)}>
           {upcoming ? "Upcoming only" : "Show past too"}
         </FilterChip>
-      </div>
+      </ListToolbar>
 
       {events.isLoading ? (
         <div className="space-y-2">
           {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-16 rounded-2xl" />)}
         </div>
       ) : grouped.length === 0 ? (
-        <EmptyState
+        (listQuery.trim() ? <SearchNoResults onClear={clearSearch} /> : <EmptyState
           icon={<Cake />}
           title="No milestones recorded"
           description="Life events are how a church learns to celebrate and mourn on time."
           action={canCreate ? <Button variant="outline" size="sm" className="rounded-full border-line text-sm" onClick={() => setFormOpen(true)}>Add the first</Button> : undefined}
-        />
+        />)
       ) : (
         <div className="space-y-6">
           {grouped.map(([label, items]) => (

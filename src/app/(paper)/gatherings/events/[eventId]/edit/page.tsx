@@ -5,9 +5,9 @@ import { isMissingRecordError } from "@/lib/record-query-error";
 
 import { FormActions } from "@/components/shared/form-actions";
 
-import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
+import { CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
 import { RequiredIndicator } from "@/components/ui/required-fields";
-import { ValidatedForm } from "@/components/ui/validated-form";
+import { GuidedRecordForm } from "@/components/shared/guided-record-form";
 
 import * as React from "react";
 import Link from "next/link";
@@ -187,7 +187,7 @@ export default function EditEventPage({
         description="Change what needs changing. The calendar, the roster and the tickets all follow."
       />
 
-      <ValidatedForm onSubmit={submit} className={CREATE_FORM_LAYOUT}>
+      <GuidedRecordForm onSubmit={submit}>
         <div className="min-w-0 space-y-4">
           <SectionCard eyebrow="Details" title="What is it?">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -291,7 +291,7 @@ export default function EditEventPage({
 
           {isHq ? (
             <SectionCard eyebrow="Home" title={<span>Branch <RequiredIndicator /></span>}>
-              <select required value={form.branchId} onChange={(e) => set("branchId", e.target.value)} className="h-10 w-full rounded-lg border border-line bg-card px-2 text-sm outline-none" aria-label="Branch">
+              <select id="edit-event-branch" required value={form.branchId} onChange={(e) => set("branchId", e.target.value)} className="h-10 w-full rounded-lg border border-line bg-card px-2 text-sm outline-none" aria-label="Branch">
                 <option value="">Select a branch</option>
                 {(branches.data?.data ?? []).map((b) => <option key={b.branchId} value={b.branchId}>{b.name}</option>)}
               </select>
@@ -316,7 +316,7 @@ export default function EditEventPage({
           <Button asChild variant="ghost" className="w-full"><Link href={`/gatherings/events/${eventId}`}>Cancel</Link></Button>
           </FormActions>
         </CreatePreviewSidebar>
-      </ValidatedForm>
+      </GuidedRecordForm>
     </div>
   );
 }

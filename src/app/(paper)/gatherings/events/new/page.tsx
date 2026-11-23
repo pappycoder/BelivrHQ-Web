@@ -2,10 +2,10 @@
 
 import { FormActions } from "@/components/shared/form-actions";
 
-import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
+import { CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
 
 
-import { ValidatedForm } from "@/components/ui/validated-form";
+import { GuidedRecordForm } from "@/components/shared/guided-record-form";
 
 import * as React from "react";
 import Link from "next/link";
@@ -147,7 +147,7 @@ export default function NewEventPage() {
           Your role can view the calendar but not create events.
         </p>
       ) : (
-        <ValidatedForm onSubmit={submit} className={CREATE_FORM_LAYOUT}>
+        <GuidedRecordForm onSubmit={submit}>
           <div className="min-w-0 space-y-4">
             <SectionCard eyebrow="Details" title="What is it?">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -293,7 +293,7 @@ export default function NewEventPage() {
               </Button>
             </FormActions>
           </CreatePreviewSidebar>
-        </ValidatedForm>
+        </GuidedRecordForm>
       )}
     </div>
   );

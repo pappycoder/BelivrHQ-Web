@@ -91,12 +91,17 @@ for (const giving of [false, true]) test(`service details load with independentl
   await installReadOnlySession(context, ["attendance:services:read", ...(giving ? ["giving:records:read"] : [])]);
   await page.goto("/gatherings/attendance/services/service-a");
   await expect(page.getByRole("heading", { name: "Read-only Service", exact: true, level: 1 })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Overview", exact: true })).toHaveAttribute("aria-selected", "true");
+  await page.getByRole("tab", { name: "People", exact: true }).click();
+  await expect(page.getByRole("tab", { name: "People", exact: true })).toHaveAttribute("aria-selected", "true");
   await expect(page.getByRole("heading", { name: "People counted by name", exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "What this service raised", exact: true })).toHaveCount(giving ? 1 : 0);
   await expect(page.getByRole("button", { name: /Archive/i })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Open the desk", exact: true })).toHaveCount(0);
   const calls = await page.evaluate(() => (window as unknown as { auditCalls: string[] }).auditCalls);
   expect(calls.some((call) => call.includes("/attendance/by-service/service-a"))).toBe(true);
   expect(calls.some((call) => call.includes("/giving/transactions"))).toBe(giving);
+  expect(calls.every((call) => call.startsWith("GET "))).toBe(true);
 });
 
 

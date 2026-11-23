@@ -1,4 +1,10 @@
 "use client";
+import { SearchNoResults } from "@/components/shared/search-no-results";
+import { searchListRecords } from "@/lib/list-search";
+import { useListSearch } from "@/hooks/use-list-search";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { formatStatusLabel } from "@/lib/status-label";
 
@@ -208,13 +214,13 @@ export default function GivingDonationsPage() {
   const { can, ready } = usePermissions();
   const canRecord = ready && can("giving", "create");
 
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
-  const [status, setStatus] = React.useState("");
-  const [type, setType] = React.useState("");
-  const [categoryId, setCategoryId] = React.useState("");
-  const [startDate, setStartDate] = React.useState("");
-  const [endDate, setEndDate] = React.useState("");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
+  const [status, setStatus] = useListFilterState("status", "");
+  const [type, setType] = useListFilterState("type", "");
+  const [categoryId, setCategoryId] = useListFilterState("categoryId", "");
+  const [startDate, setStartDate] = useListFilterState("startDate", "");
+  const [endDate, setEndDate] = useListFilterState("endDate", "");
   const [dateOpen, setDateOpen] = React.useState(false);
   const [dateDraft, setDateDraft] = React.useState({ from: "", to: "" });
   const invalidRange = !!dateDraft.from && !!dateDraft.to && dateDraft.from > dateDraft.to;
@@ -237,7 +243,7 @@ export default function GivingDonationsPage() {
 
   const transactions = useGivingTransactions(params);
   const categories = useGivingCategories({ limit: 100 });
-  const rows = transactions.data?.data ?? [];
+  const { rows, query: listQuery, clearSearch, search: listSearch } = useListSearch(transactions.data?.data ?? [], "query", "Search gifts on this page…");
   const total = transactions.data?.meta?.total ?? 0;
   const pageSum = rows.reduce(
     (sum, t) => (t.status === "success" ? sum + t.amount : sum),
@@ -253,8 +259,8 @@ export default function GivingDonationsPage() {
         listUrl("/giving/transactions", { ...params, page: p, limit: 100 }),
       ),
     );
-    return exportRows(all);
-  }, [params]);
+    return exportRows(searchListRecords(all,listQuery));
+  }, [params,listQuery]);
 
   const clearFilters = () => {
     setStatus("");
@@ -295,10 +301,10 @@ export default function GivingDonationsPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard
-          label="Matching gifts"
-          value={total}
+          label={listQuery.trim() ? "Matches on this page" : "Matching gifts"}
+          value={listQuery.trim() ? rows.length : total}
           tone="brand"
           icon={<HandCoins className="size-4" />}
           deltaLabel={anyFilter ? "filtered" : "all recorded"}
@@ -321,9 +327,9 @@ export default function GivingDonationsPage() {
           value={activeCategories.length}
           tone="sky"
         />
-      </div>
+      </CompactListSummary>
 
-      <ListToolbar>
+      <ListToolbar search={listSearch}>
 <FilterChip active={!anyFilter} onClick={clearFilters}>
           All gifts
         </FilterChip>
@@ -431,7 +437,7 @@ export default function GivingDonationsPage() {
           }
         />
       ) : rows.length === 0 ? (
-        <EmptyState
+        (listQuery.trim() ? <SearchNoResults onClear={clearSearch} /> : <EmptyState
           icon={<HandCoins />}
           title={
             anyFilter
@@ -439,11 +445,12 @@ export default function GivingDonationsPage() {
               : "No gifts recorded yet"
           }
           description="Recording the Sunday plate is where the season's story starts."
-        />
+        />)
       ) : (
         <ListTable
           className="paper-card min-w-[900px] divide-y divide-line/70 rounded-2xl"
           tableId="giving-donations-1"
+          primaryColumn="Giving source"
           recordType="givingTransaction"
           records={rows ?? []}
           recordKey="transactionId"
@@ -515,7 +522,7 @@ export default function GivingDonationsPage() {
                 </div>
               </StaggerItem>
             ))}
-            <ListPaginationFooter
+            <ListPaginationFooter visibleMatches={listQuery.trim() ? rows.length : undefined}
               page={page}
               perPage={perPage}
               total={total}

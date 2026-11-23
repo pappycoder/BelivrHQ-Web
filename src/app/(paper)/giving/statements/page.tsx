@@ -1,4 +1,10 @@
 "use client";
+import { useListSearch } from "@/hooks/use-list-search";
+
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { PageQueryError } from "@/components/shared/page-query-error";
 
@@ -88,8 +94,8 @@ export default function GivingStatementsPage() {
   const { can, ready } = usePermissions();
   const canRecords = ready && can("giving:records", "read");
 
-  const [range, setRange] = React.useState<RangeKey>("year");
-  const [categoryId, setCategoryId] = React.useState("");
+  const [range, setRange] = useListFilterState<RangeKey>("range", "year");
+  const [categoryId, setCategoryId] = useListFilterState("categoryId", "");
 
   const params = React.useMemo(
     () => ({ ...rangeDates(range), categoryId: categoryId || undefined }),
@@ -98,7 +104,7 @@ export default function GivingStatementsPage() {
 
   const rowsQuery = useGivingTransactionsAll(params);
   const categories = useGivingCategories({ limit: 100 });
-  const rows = React.useMemo(() => rowsQuery.data ?? [], [rowsQuery.data]);
+  const { rows, search: listSearch } = useListSearch(React.useMemo(() => rowsQuery.data ?? [], [rowsQuery.data]), "query", "Search statements…");
 
   const totals = React.useMemo(() => {
     const total = rows.reduce((sum, t) => sum + t.amount, 0);
@@ -184,7 +190,7 @@ export default function GivingStatementsPage() {
         }
       />
 
-      <div className="flex flex-wrap items-center gap-2">
+      <ListToolbar search={listSearch}>
         {RANGES.map((item) => (
           <FilterChip
             key={item.key}
@@ -209,7 +215,7 @@ export default function GivingStatementsPage() {
               </option>
             ))}
         </select>
-      </div>
+      </ListToolbar>
 
       {!canRecords ? (
         <EmptyState
@@ -234,7 +240,7 @@ export default function GivingStatementsPage() {
         />
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <StatCard
               label={`Given · ${rangeLabel}`}
               value={totals.total}
@@ -262,7 +268,7 @@ export default function GivingStatementsPage() {
               tone="sky"
               deltaLabel="received something"
             />
-          </div>
+          </CompactListSummary>
 
           <div className="grid gap-4 lg:grid-cols-12">
             <SectionCard

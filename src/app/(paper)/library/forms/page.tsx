@@ -1,4 +1,7 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { collectionLabel } from "@/lib/collection-label";
 
@@ -97,16 +100,16 @@ export default function FormsListPage() {
   const canUpdate = ready && can("forms:list", "update");
   const canDelete = ready && can("forms:list", "delete");
 
-  const [searchInput, setSearchInput] = React.useState("");
-  const [query, setQuery] = React.useState("");
-  const [status, setStatus] = React.useState<FormStatus | "">("");
-  const [branchId, setBranchId] = React.useState("all");
-  const [sortBy, setSortBy] = React.useState<SortValue>("updatedAt");
-  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
-  const [archivedView, setArchivedView] = React.useState(false);
-  const [view, setView] = React.useState<"table" | "cards">("cards");
+  const [searchInput, setSearchInput] = useListFilterState("searchInput", "");
+  const [query, setQuery] = useListFilterState("query", "");
+  const [status, setStatus] = useListFilterState<FormStatus | "">("status", "");
+  const [branchId, setBranchId] = useListFilterState("branchId", "all");
+  const [sortBy, setSortBy] = useListFilterState<SortValue>("sortBy", "updatedAt");
+  const [sortOrder, setSortOrder] = useListFilterState<"asc" | "desc">("sortOrder", "desc");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
+  const [archivedView, setArchivedView] = useListFilterState("archivedView", false);
+  const [view, setView] = useListFilterState<"table" | "cards">("view", "table");
   const [statusTarget, setStatusTarget] = React.useState<Form | null>(null);
   const [deleteTarget, setDeleteTarget] = React.useState<Form | null>(null);
 
@@ -118,7 +121,7 @@ export default function FormsListPage() {
       setPage(1);
     }, 350);
     return () => clearTimeout(timer);
-  }, [searchInput]);
+  }, [searchInput, setPage, setQuery]);
 
   const queryParams = React.useMemo<ListFormsParams>(
     () => ({
@@ -256,14 +259,14 @@ export default function FormsListPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Forms" value={total} tone="brand" icon={<ClipboardList className="size-4" />} deltaLabel={archivedView ? "archived" : "matching"} />
         <StatCard label="Published" value={rows.filter((f) => f.status === "published" && !f.archivedAt).length} tone="moss" deltaLabel="this page" />
         <StatCard label="Public links" value={rows.filter(hasLivePublicFormLink).length} tone="sky" deltaLabel="fillable by anyone" />
         <StatCard label="Answers this page" value={rows.reduce((sum, f) => sum + (f.submissionCount ?? 0), 0)} tone="gold" />
-      </div>
+      </CompactListSummary>
 
-      <ListToolbar
+      <ListToolbar filterLabel="Form status"
  search={<SearchField value={searchInput} onChange={setSearchInput} placeholder="Search forms…" className="w-full max-w-xs" />}
  controls={<>
 <FilterChip active={archivedView} onClick={() => { setArchivedView((v) => !v); setPage(1); }}>

@@ -1,4 +1,7 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { collectionLabel } from "@/lib/collection-label";
 
@@ -79,9 +82,9 @@ const FAMILIES_TOUR_STEPS: TourStep[] = [
   { target: ".families-tour-search", title: "Find a household", description: "After the tour, type a household name. The list updates after a short pause and returns to page one. Search combines with the branch and Archived filters." },
   { target: ".families-tour-archive", title: "Include the archived register", description: "Archived switches to archived households. Turn it off to return to the regular register. Archiving keeps the household record; authorised users can restore it using the row actions." },
   { target: ".families-tour-branch", title: "Choose a branch", description: "HQ accounts can narrow the list to a branch or choose All branches. Other accounts stay within the scope assigned to them. Changing the branch returns to the first page." },
-  { target: ".families-tour-display", title: "Sort and choose a layout", description: "Sort by Household name, Date created or Members, then use the direction button to reverse the order. Cards and Table show the same filtered households. Cards are useful on smaller screens; tables can scroll horizontally." },
+  { target: ".families-tour-display", title: "Sort and choose a layout", description: "Sort by Household name, Date created or Members, then use the Sort order dropdown to reverse the order. Cards and Table show the same filtered households. Cards are useful on smaller screens; tables can scroll horizontally." },
   { target: ".families-tour-preview", title: "Preview a household", description: "After the tour, select a household's name for a side preview; the crown identifies its head. Full household opens the complete record. Available actions depend on your role: Archive keeps the household for restoration; Delete removes the group and its associations, while member records remain. Opening the preview changes nothing." },
-  { target: "[data-list-table='people-families-1'] > [data-export-ignore]", title: "Columns and selected households", description: "In Table view, Columns chooses visible fields. Checkboxes select households on this page and reveal the bulk actions available to your account. Selecting rows alone makes no changes. Review the confirmation before applying an action." },
+  { target: "[data-list-table='people-families-1'] > [data-export-ignore]", title: "Columns and selected households", description: "In List view, Columns chooses visible fields. Checkboxes select households on this page and reveal the bulk actions available to your account. Selecting rows alone makes no changes. Review the confirmation before applying an action." },
   { target: ".families-tour-empty", title: "When the list is empty", description: "An empty list may mean no households match your filters. Clear the search, turn off Archived and choose All branches if available before creating a new household. Your account's access limits still apply." },
   { target: ".families-tour-page [aria-label='Pagination']", title: "Browse more households", description: "Prev and Next move through the filtered households. Rows per page changes the page size. The range shows which households are currently displayed, and navigation is disabled when there are no more pages." },
   { target: ".families-tour-export button", title: "Export the current view", description: "Export offers PDF, Excel and CSV. Check the filters before downloading. The button is disabled when no matching households are shown." },
@@ -122,15 +125,15 @@ export default function FamiliesPage() {
   const canDelete = ready && can("families", "delete");
   const isHq = !!profile?.isAdminHq;
 
-  const [searchInput, setSearchInput] = React.useState("");
-  const [search, setSearch] = React.useState("");
-  const [branchId, setBranchId] = React.useState("all");
-  const [sortBy, setSortBy] = React.useState<NonNullable<ListFamiliesParams["sortBy"]>>("name");
-  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("asc");
-  const [archivedView, setArchivedView] = React.useState(false);
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
-  const [view, setView] = React.useState<"cards" | "table">("cards");
+  const [searchInput, setSearchInput] = useListFilterState("searchInput", "");
+  const [search, setSearch] = useListFilterState("search", "");
+  const [branchId, setBranchId] = useListFilterState("branchId", "all");
+  const [sortBy, setSortBy] = useListFilterState<NonNullable<ListFamiliesParams["sortBy"]>>("sortBy", "name");
+  const [sortOrder, setSortOrder] = useListFilterState<"asc" | "desc">("sortOrder", "asc");
+  const [archivedView, setArchivedView] = useListFilterState("archivedView", false);
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
+  const [view, setView] = useListFilterState<"cards" | "table">("view", "table");
   const [formOpen, setFormOpen] = React.useState(false);
   const [editTarget, setEditTarget] = React.useState<Family | null>(null);
   const [deleteTarget, setDeleteTarget] = React.useState<Family[] | null>(null);
@@ -142,7 +145,7 @@ export default function FamiliesPage() {
       setPage(1);
     }, 350);
     return () => clearTimeout(timer);
-  }, [searchInput]);
+  }, [searchInput, setPage, setSearch]);
 
   const params = React.useMemo<ListFamiliesParams>(
     () => ({
@@ -345,12 +348,12 @@ export default function FamiliesPage() {
         }
       />
 
-      <div className="families-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="families-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Households" value={total} tone="brand" icon={<Home className="size-4" />} deltaLabel={archivedView ? "archived" : "matching filters"} />
         <StatCard label="People on this page" value={people} tone="moss" icon={<Users className="size-4" />} />
         <StatCard label="Average size" value={families.length ? Math.round((people / families.length) * 10) / 10 : 0} decimals={1} tone="sky" />
         <StatCard label="Page" value={page} suffix={` / ${totalPages}`} tone="gold" />
-      </div>
+      </CompactListSummary>
 
       <ListToolbar
  search={<SearchField value={searchInput} onChange={setSearchInput} placeholder="Search households…" className="families-tour-search w-full max-w-xs" />}

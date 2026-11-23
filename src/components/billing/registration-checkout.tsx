@@ -1,9 +1,11 @@
 "use client";
 
+import { PaymentStateCard } from "./payment-state-card";
+
 import { collectionLabel } from "@/lib/collection-label";
 
 import Link from "next/link";
-import { Check, Clock3, ShieldCheck } from "lucide-react";
+import { Check, ShieldCheck } from "lucide-react";
 import { AuthFormWrapper } from "@/components/shared/auth-form-wrapper";
 import { LoadingState } from "@/components/shared/loading-state";
 import { Button } from "@/components/ui/button";
@@ -33,6 +35,7 @@ interface Props {
   quoteFetching: boolean;
   onQuoteRetry: () => void;
   reference: string;
+  missingReference?: boolean;
   outcome: ReturnType<typeof paymentOutcome>;
   verificationError: boolean;
   verificationBusy: boolean;
@@ -93,36 +96,7 @@ export function RegistrationCheckout(props: Props) {
           <li>Sign in</li>
         </ol>
 
-        {reference && (
-          <div
-            role={reviewing ? "alert" : "status"}
-            className="space-y-2 rounded-xl border border-primary/20 bg-primary/5 p-4 text-sm"
-          >
-            <p className="flex items-start gap-2 font-medium">
-              <Clock3 className="mt-0.5 size-4 shrink-0 text-primary" />
-              {outcome === "applied"
-                ? "Payment verified. Taking you to sign in."
-                : reviewing
-                  ? "Your payment needs a BelivrHQ review. Contact support with your reference."
-                  : outcome === "closed"
-                    ? "This checkout is closed. Any payment already sent will still be reviewed."
-                    : "Waiting for Flutterwave to confirm your payment."}
-            </p>
-            {!reviewing && outcome !== "applied" && outcome !== "closed" && (
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                Complete payment in the separate window and keep this page open.
-                Once confirmed, you’ll return here to sign in.
-                {props.verificationError &&
-                  " Connection interrupted. We’ll retry automatically when connected."}
-                {outcome === "failed" &&
-                  " The latest attempt was unsuccessful. You can retry checkout."}
-              </p>
-            )}
-            <p className="break-all font-mono text-sm text-muted-foreground">
-              {reference}
-            </p>
-          </div>
-        )}
+        {(reference || props.missingReference) && <PaymentStateCard outcome={props.missingReference && !reference ? "missing" : outcome} reference={reference} amount={pending?.amount} currency={pending?.currency} plan={pending?.plan} connectionError={props.verificationError} />}
         {reviewing && !reference && (
           <p
             role="alert"

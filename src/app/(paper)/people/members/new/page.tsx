@@ -2,10 +2,10 @@
 
 import { FormActions } from "@/components/shared/form-actions";
 
-import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
+import { CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
 
 
-import { ValidatedForm } from "@/components/ui/validated-form";
+import { GuidedRecordForm } from "@/components/shared/guided-record-form";
 
 import * as React from "react";
 import Link from "next/link";
@@ -54,18 +54,11 @@ import { confirmDiscardChanges } from "@/hooks/use-unsaved-changes";
 const MAX_PHOTO_MB = 5;
 
 const NEW_MEMBER_TOUR_STEPS: TourStep[] = [
-  { target: ".new-member-tour-heading", title: "Introduce a new member", description: "Use this form to create a member record directly. Fields marked with an asterisk are required. This guide explains the form without entering information or saving a member." },
-  { target: ".new-member-tour-name", title: "Start with their name", description: "First name and Last name are both required. Enter the person's details after the tour. The profile preview updates as you type, so you can check how the name will appear." },
-  { target: ".new-member-tour-contact", title: "Add contact details", description: "Email, Phone and WhatsApp are optional. Enter an email address in a valid format if you supply one, and include the country code when useful for phone numbers. Leave unavailable details blank." },
-  { target: ".new-member-tour-birthday", title: "Personal details are optional", description: "Choose Birthday and Gender if those details are available. You can leave them blank and continue. Check the date carefully before saving." },
-  { target: ".new-member-tour-branch", title: "Check the member's branch", description: "A branch is required. HQ accounts can select one from the available branches; branch accounts use their assigned branch and cannot change it here. Check this before creating the record." },
-  { target: ".new-member-tour-address", title: "Record their location", description: "Address, City and State are optional. Add the details you have, or leave them blank. These fields do not replace the required branch assignment." },
-  { target: ".new-member-tour-household", title: "Link an existing household", description: "Household is optional. Select an existing family to reveal Relationship and Head of household controls. Set those only if appropriate. Creating the member and linking the household are separate operations; a warning will tell you if the link needs attention." },
-  { target: ".new-member-tour-custom > div:first-child", title: "Add other useful details", description: "Add field creates a label-and-value pair for an extra detail. Supply a distinct label for each entry. Entries without a label are ignored, and a repeated label keeps the last value. You can remove a row before saving." },
-  { target: ".new-member-tour-notes", title: "Add a note if needed", description: "Use Notes for relevant context that helps your team care for this member. This is optional and is saved with the member record." },
-  { target: ".new-member-tour-preview", title: "Check the profile preview", description: "The preview reflects the name, email and selected photo from this form. It helps you review the entry; it does not mean the member has been saved." },
-  { target: ".new-member-tour-photo", title: "Choose an optional photo", description: "Add a photo accepts an image up to 5 MB. A selected photo can be replaced or removed before saving. Upload happens after the member is created; if it fails, the member is still saved and you will see a warning." },
-  { target: ".new-member-tour-save", title: "Save only when you are ready", description: "Create member validates the form and saves a new record when the required details are valid. Review any field errors and try again. Cancel returns to the directory and asks before discarding changed form fields. Finishing this tour does not submit the form." },
+ {target:".new-member-tour-heading",title:"Introduce a new member",description:"This guided form keeps your details as you move between sections. Nothing is saved until you choose Create member."},
+ {target:".guided-record-nav",title:"A little at a time",description:"Move between Personal details, Contact & address, Membership and Review & save. Previous and Continue also move between sections without saving."},
+ {target:".guided-progress",title:"See what is ready",description:"The progress indicator counts completed required fields. First name, Last name and Branch are required; optional contact details can stay blank. If validation finds a problem, choose its linked field name to return to it."},
+ {target:".new-member-tour-preview",title:"Review as you go",description:"The live profile preview reflects the name, email and photo. Add or replace the optional photo here. This preview has not been saved."},
+ {target:".guided-record-footer",title:"Review, then save",description:"Continue to Review & save to check the details, add custom fields and notes, then choose Create member. Cancel preserves the existing discard confirmation."},
 ];
 
 const RELATIONSHIP_OPTIONS = ["spouse", "child", "parent", "sibling", "ward", "other"];
@@ -200,27 +193,17 @@ export default function NewMemberPage() {
       />
 
       <Form {...form}>
-        <ValidatedForm schemaValidation onSubmit={form.handleSubmit(onSubmit)} className={CREATE_FORM_LAYOUT}>
+        <GuidedRecordForm schemaValidation onSubmit={form.handleSubmit(onSubmit)}>
           <div className="min-w-0 space-y-4">
-            <SectionCard eyebrow="Identity" title="Who are they?">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <RhfField name="firstName" label="First name" className="new-member-tour-name" required autoFocus />
-                <RhfField name="lastName" label="Last name" required />
-                <RhfField name="email" label="Email" className="new-member-tour-contact" type="email" />
-                <RhfField name="phone" label="Phone" placeholder="(415) 555-0100" />
-                <RhfField name="whatsappNumber" label="WhatsApp" placeholder="+1 415 555 0100" />
-                <RhfField name="dateOfBirth" label="Birthday" className="new-member-tour-birthday" type="date" />
-                <SelectField name="gender" label="Gender" options={["female", "male", "unspecified"]} />
-                <SelectField name="branchId" label="Branch" className="new-member-tour-branch" options={(branches.data?.data ?? []).map((b) => ({ value: b.branchId, label: b.name }))} disabled={!isHq} />
-              </div>
-            </SectionCard>
-
-            <SectionCard eyebrow="Contact & household" title="Where they are">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <RhfField name="address" label="Address" className="new-member-tour-address sm:col-span-2" />
-                <RhfField name="city" label="City" />
-                <RhfField name="state" label="State" />
-                <div className="new-member-tour-household space-y-1.5 sm:col-span-2">
+            <SectionCard title="Personal details" eyebrow="LET’S START WITH THE PERSON"><div className="grid gap-4 sm:grid-cols-2"><RhfField name="firstName" label="First name" className="new-member-tour-name" required autoFocus />
+<RhfField name="lastName" label="Last name" required />
+<RhfField name="dateOfBirth" label="Birthday" className="new-member-tour-birthday" type="date" />
+<SelectField name="gender" label="Gender" options={["female", "male", "unspecified"]} /></div></SectionCard><SectionCard title="Contact & address" eyebrow="A WAY TO STAY CONNECTED"><div className="grid gap-4 sm:grid-cols-2"><RhfField name="email" label="Email" className="new-member-tour-contact" type="email" />
+<RhfField name="phone" label="Phone" placeholder="(415) 555-0100" />
+<RhfField name="whatsappNumber" label="WhatsApp" placeholder="+1 415 555 0100" />
+<RhfField name="address" label="Address" className="new-member-tour-address sm:col-span-2" />
+<RhfField name="city" label="City" />
+<RhfField name="state" label="State" /></div></SectionCard><SectionCard title="Membership" eyebrow="A PLACE TO BELONG"><div className="grid gap-4 sm:grid-cols-2"><SelectField name="branchId" label="Branch" className="new-member-tour-branch" options={(branches.data?.data ?? []).map((b) => ({ value: b.branchId, label: b.name }))} disabled={!isHq} /><div className="new-member-tour-household space-y-1.5 sm:col-span-2">
                   <FormField
                     control={form.control}
                     name="familyId"
@@ -257,11 +240,7 @@ export default function NewMemberPage() {
                       />
                     </div>
                   ) : null}
-                </div>
-              </div>
-            </SectionCard>
-
-            <SectionCard
+                </div></div></SectionCard><div data-guided-review className="space-y-4"><SectionCard
               className="new-member-tour-custom"
               eyebrow="Their story"
               title="Custom fields"
@@ -283,9 +262,7 @@ export default function NewMemberPage() {
               ) : (
                 <p className="text-sm text-ink-faint">Nothing yet. Add one if it matters.</p>
               )}
-            </SectionCard>
-
-            <SectionCard className="new-member-tour-notes" eyebrow="Notes" title="A first word">
+            </SectionCard><SectionCard className="new-member-tour-notes" eyebrow="Notes" title="A first word">
               <FormField
                 control={form.control}
                 name="notes"
@@ -298,7 +275,7 @@ export default function NewMemberPage() {
                   </FormItem>
                 )}
               />
-            </SectionCard>
+            </SectionCard></div>
           </div>
 
           <CreatePreviewSidebar>
@@ -363,7 +340,7 @@ export default function NewMemberPage() {
               <p className="mt-3 text-center text-xs text-ink-faint">Your role can view the register but not add to it.</p>
             ) : null}
           </CreatePreviewSidebar>
-        </ValidatedForm>
+        </GuidedRecordForm>
       </Form>
     </div>
   );

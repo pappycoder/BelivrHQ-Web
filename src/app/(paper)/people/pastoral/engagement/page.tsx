@@ -1,4 +1,8 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { PageQueryError } from "@/components/shared/page-query-error";
 
@@ -41,10 +45,10 @@ export default function EngagementPage() {
   const { can, ready } = usePermissions();
   const canRecalculate = ready && can("pastoral", "update");
 
-  const [bucket, setBucket] = React.useState<EngagementBucket | "all">("all");
-  const [query, setQuery] = React.useState("");
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(15);
+  const [bucket, setBucket] = useListFilterState<EngagementBucket | "all">("bucket", "all");
+  const [query, setQuery] = useListFilterState("query", "");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", 15);
   const [scoring, setScoring] = React.useState<EngagementScore | null>(null);
 
   const distribution = useEngagementDistribution();
@@ -92,21 +96,21 @@ export default function EngagementPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="Highly engaged" value={dist?.highly_engaged ?? 0} tone="moss" icon={<TrendingUp className="size-4" />} />
         <StatCard label="Moderately" value={dist?.moderately_engaged ?? 0} tone="sky" />
         <StatCard label="Low engagement" value={dist?.low_engagement ?? 0} tone="gold" />
         <StatCard label="Disengaged" value={dist?.disengaged ?? 0} tone="rose" icon={<Gauge className="size-4" />} />
-      </div>
+      </CompactListSummary>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={query} onChange={(value) => { setQuery(value); setPage(1); }} placeholder="Search by name…" className="w-full max-w-xs" />
+      <ListToolbar filterLabel="Engagement level" search={<SearchField value={query} onChange={(value) => { setQuery(value); setPage(1); }} placeholder="Search by name…" className="w-full max-w-xs" />}>
+
         {BUCKETS.map((item) => (
           <FilterChip key={item.value} active={bucket === item.value} onClick={() => { setBucket(item.value); setPage(1); }}>
             {item.label}
           </FilterChip>
         ))}
-      </div>
+      </ListToolbar>
 
       {scores.isLoading ? (
         <div className="space-y-2">

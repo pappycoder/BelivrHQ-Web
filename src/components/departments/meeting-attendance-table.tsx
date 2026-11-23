@@ -1,5 +1,8 @@
 "use client";
 
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+
+
 import { formatRecordDate } from "@/lib/record-date";
 import { formatStatusLabel } from "@/lib/status-label";
 
@@ -13,7 +16,7 @@ import {
   meetingAttendanceRows,
   type AttendanceSort,
 } from "@/lib/meeting-attendance-register";
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -56,14 +59,14 @@ export function MeetingAttendanceTable({
   action?: ReactNode;
   onRetry?: () => void;
 }) {
-  const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("all");
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(15);
+  const [search, setSearch] = useListFilterState("meetings:search", "");
+  const [status, setStatus] = useListFilterState("meetings:status", "all");
+  const [page, setPage] = useListFilterState("meetings:page", 1);
+  const [perPage, setPerPage] = useListFilterState("meetings:perPage", 15);
   const { canAny } = usePermissions();
-  const [type, setType] = useState("all");
-  const [sort, setSort] = useState<AttendanceSort>("date");
-  const [ascending, setAscending] = useState(false);
+  const [type, setType] = useListFilterState("meetings:type", "all");
+  const [sort, setSort] = useListFilterState<AttendanceSort>("sort", "date");
+  const [ascending, setAscending] = useListFilterState("ascending", false);
   const rows = useMemo(
     () =>
       meetingAttendanceRows(records, { search, status, type, sort, ascending }),

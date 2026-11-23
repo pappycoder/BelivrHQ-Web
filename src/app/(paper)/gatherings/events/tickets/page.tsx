@@ -1,4 +1,9 @@
 "use client";
+import { SearchNoResults } from "@/components/shared/search-no-results";
+import { useListSearch } from "@/hooks/use-list-search";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { ErrorState } from "@/components/shared/error-state";
 
@@ -50,9 +55,9 @@ function TicketsInner() {
   const { can, ready } = usePermissions();
   const canAssign = ready && can("events:tickets", "create");
 
-  const [eventId, setEventId] = React.useState(searchParams.get("event") ?? "");
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
+  const [eventId, setEventId] = useListFilterState("eventId", searchParams.get("event") ?? "");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
   const [assignOpen, setAssignOpen] = React.useState(false);
   const [assignMember, setAssignMember] = React.useState<{ id: string; name: string } | null>(null);
   const [assignTier, setAssignTier] = React.useState("");
@@ -65,7 +70,7 @@ function TicketsInner() {
 
   const eventList = events.data?.data ?? [];
   const selected = eventList.find((e) => e.eventId === eventId);
-  const rows = tickets.data?.data ?? [];
+  const { rows, query: listQuery, clearSearch, search: listSearch } = useListSearch(tickets.data?.data ?? [], "query", "Search tickets on this page…");
   const total = tickets.data?.total ?? 0;
   const usedCount = rows.filter((t) => t.usedAt).length;
   const paidEvent = !!selected && !selected.isFree;
@@ -116,7 +121,7 @@ function TicketsInner() {
         }
       />
 
-      <ListToolbar>
+      <ListToolbar search={listSearch}>
 <EventPicker query={events} value={eventId}
           onValueChange={value => { setEventId(value); setPage(1); router.replace(`/gatherings/events/tickets${value ? `?event=${value}` : ""}`); }} />
 {eventReady ? (
@@ -135,26 +140,26 @@ function TicketsInner() {
       {eventId ? (
         <>
           {tiers.isError ? <ErrorState title="Unable to load ticket tiers" /> : null}
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             {tickets.isPending ? Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-32 rounded-2xl" />) : <>
             <StatCard unavailable={tickets.isError} label="Tickets issued" value={total} tone="brand" icon={<Ticket className="size-4" />} />
             <StatCard unavailable={tickets.isError} label="Used this page" value={usedCount} tone="moss" deltaLabel={tickets.isError ? "Please try again" : rows.length ? `${Math.round((usedCount / rows.length) * 100)}%` : "Not available"} />
             <StatCard unavailable={tickets.isError} label="Open this page" value={rows.length - usedCount} tone="gold" />
             </>}
             {events.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={!eventReady} label="Capacity" value={selected?.capacity ?? 0} tone="sky" deltaLabel="event seats" />}
-          </div>
+          </CompactListSummary>
 
           {tickets.isError ? (
             <ErrorState title="Unable to load issued tickets" />
           ) : tickets.isPending ? (
             <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-12 rounded-xl" />)}</div>
           ) : rows.length === 0 ? (
-            <EmptyState
+            (listQuery.trim() ? <SearchNoResults onClear={clearSearch} /> : <EmptyState
               icon={<Users />}
               title="No tickets issued yet"
               description={paidEvent ? "Sales appear here automatically; you can also seat someone by hand." : "Free events still track attendance at the desk. Claim happens member-side."}
               action={assignmentReady ? <Button size="sm" variant="outline" className="rounded-full border-line text-sm" onClick={() => setAssignOpen(true)}>Assign the first</Button> : undefined}
-            />
+            />)
           ) : (
             <ListTable className="paper-card min-w-[960px] divide-y divide-line/70 overflow-hidden rounded-2xl" tableId="gatherings-events-tickets-1" records={rows ?? []} recordKey="ticketId">
               <div className="rule-label grid grid-cols-[minmax(0,1.6fr)_1fr_0.8fr_1fr_0.8fr_auto] items-center gap-3 border-b border-line px-5 py-2.5">
@@ -194,7 +199,7 @@ function TicketsInner() {
                   </Button>
                 </div>
               ))}
-              <ListPaginationFooter
+              <ListPaginationFooter visibleMatches={listQuery.trim() ? rows.length : undefined}
                 page={page}
                 perPage={perPage}
                 total={total}

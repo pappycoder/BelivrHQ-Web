@@ -1,4 +1,10 @@
 "use client";
+import { SearchNoResults } from "@/components/shared/search-no-results";
+import { useListSearch } from "@/hooks/use-list-search";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { PageQueryError } from "@/components/shared/page-query-error";
 
@@ -72,7 +78,7 @@ export default function GivingFundsPage() {
   const canUpdate = ready && can("giving", "update");
   const canDelete = ready && can("giving", "delete");
 
-  const [archivedView, setArchivedView] = React.useState(false);
+  const [archivedView, setArchivedView] = useListFilterState("archivedView", false);
   const [formTarget, setFormTarget] = React.useState<{
     open: boolean;
     category: GivingCategory | null;
@@ -91,7 +97,7 @@ export default function GivingFundsPage() {
   const restore = useRestoreArchiveGivingCategory();
   const del = useDeleteGivingCategory();
 
-  const rows = categories.data?.data ?? [];
+  const { rows, query: listQuery, clearSearch, search: listSearch } = useListSearch(categories.data?.data ?? [], "query", "Search loaded categories…");
   const activeCount = rows.filter((c) => !c.archivedAt).length;
 
   if (categories.isError) return <PageQueryError title="Giving categories" />;
@@ -114,7 +120,7 @@ export default function GivingFundsPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard
           label="Categories"
           value={categories.data?.meta?.total ?? rows.length}
@@ -135,9 +141,9 @@ export default function GivingFundsPage() {
           tone="gold"
           deltaLabel="shared across branches"
         />
-      </div>
+      </CompactListSummary>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <ListToolbar search={listSearch}>
         <FilterChip
           active={!archivedView}
           onClick={() => setArchivedView(false)}
@@ -151,7 +157,7 @@ export default function GivingFundsPage() {
           Names stay unique per church; duplicates merge into the existing
           category.
         </span>
-      </div>
+      </ListToolbar>
 
       {categories.isLoading ? (
         <div className="space-y-2">
@@ -160,7 +166,7 @@ export default function GivingFundsPage() {
           ))}
         </div>
       ) : rows.length === 0 ? (
-        <EmptyState
+        (listQuery.trim() ? <SearchNoResults onClear={clearSearch} /> : <EmptyState
           icon={<Wallet />}
           title={archivedView ? "Nothing archived" : "No giving categories yet"}
           description="Create a category to organize the giving your church receives."
@@ -176,7 +182,7 @@ export default function GivingFundsPage() {
               </Button>
             ) : undefined
           }
-        />
+        />)
       ) : (
         <StaggerGroup className="paper-card divide-y divide-line/70 overflow-hidden rounded-2xl">
           {rows.map((category, index) => (

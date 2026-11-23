@@ -1,4 +1,5 @@
 "use client";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
 
 import { PageQueryError } from "@/components/shared/page-query-error";
 
@@ -22,7 +23,7 @@ import {
 import { PageHeader } from "@/components/paper/section";
 import { PageTour, type TourStep } from "@/components/tours/page-tour";
 import { StatCard, Tag } from "@/components/paper/stat";
-import { FilterChip, IconAction } from "@/components/paper/primitives";
+import { IconAction, ViewToggle } from "@/components/paper/primitives";
 import { StaggerGroup, StaggerItem } from "@/components/paper/motion/primitives";
 import { ServiceFormDialog } from "@/components/attendance/service-form-dialog";
 import { Button } from "@/components/ui/button";
@@ -105,6 +106,9 @@ export default function EventsCalendarPage() {
   const canRead = canReadEvents || canReadServices;
   const canCreateService = ready && (can("attendance:services", "create") || can("attendance", "create"));
   const canCreateEvent = ready && can("events", "create");
+
+  const [calendarView, setCalendarView] = React.useState<"month" | "agenda">("month");
+  React.useEffect(() => { if (window.matchMedia("(max-width: 767px)").matches) setCalendarView("agenda"); }, []);
 
   const [today, setToday] = React.useState(() => new Date());
   const [month, setMonth] = React.useState(() => new Date());
@@ -271,7 +275,7 @@ export default function EventsCalendarPage() {
         }
       />
 
-      <div className="calendar-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="calendar-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
         {canReadServices ? (
           <StatCard label="Services active" value={serviceRows.length} tone="moss" icon={<CalendarClock className="size-4" />} deltaLabel="recurring windows" />
         ) : null}
@@ -282,46 +286,13 @@ export default function EventsCalendarPage() {
             <StatCard label="Free events" value={rows.filter((e) => e.isFree).length} tone="gold" deltaLabel="no ticket required" />
           </>
         ) : null}
-        <div className="paper-card flex flex-col justify-between gap-4 rounded-2xl p-5">
-          <span className="rule-label">On the selected day</span>
-          <span className="num font-display text-sm font-semibold leading-tight">{dayEntries.length}</span>
-        </div>
-      </div>
+        <StatCard label="On the selected day" value={dayEntries.length} tone="brand" />
+      </CompactListSummary>
 
-      <div className="flex flex-wrap items-center gap-2">
-        {canReadEvents && canReadServices ? (
-          <div className="calendar-tour-kind flex flex-wrap items-center gap-2" role="group" aria-label="Gathering kind filters">
-            <FilterChip active={kind === "all"} onClick={() => setKind("all")}>All</FilterChip>
-            <FilterChip active={kind === "services"} onClick={() => setKind("services")}>Services</FilterChip>
-            <FilterChip active={kind === "events"} onClick={() => setKind("events")}>Events</FilterChip>
-            <span className="mx-1 hidden h-4 w-px bg-line sm:block" />
-          </div>
-        ) : null}
-        {canReadEvents && kind !== "services" ? (
-          <div className="calendar-tour-types flex flex-wrap gap-2" role="group" aria-label="Event type filters">
-            <FilterChip active={type === "all"} onClick={() => setType("all")}>All types</FilterChip>
-            {EVENT_TYPES.map((item) => (
-              <FilterChip key={item.value} active={type === item.value} onClick={() => setType(item.value)}>
-                {item.label}
-              </FilterChip>
-            ))}
-          </div>
-        ) : null}
-        {isHq && canRead ? (
-          <select
-            aria-label="Filter calendar by branch"
-            value={branchId}
-            onChange={(event) => setBranchId(event.target.value)}
-            className="calendar-tour-branch ml-auto h-9 rounded-full border border-line bg-card px-3 text-sm outline-none"
-          >
-            <option value="all">All branches</option>
-            {(branches.data?.data ?? []).map((b) => (
-              <option key={b.branchId} value={b.branchId}>{b.name}</option>
-            ))}
-          </select>
-        ) : (
-          <span className="ml-auto text-xs text-ink-faint">{profile?.branch?.name ?? "Your branch"} scope</span>
-        )}
+      <div className="paper-card flex min-w-0 flex-wrap items-end gap-3 rounded-2xl border border-line p-3">
+        {canReadEvents && canReadServices && <label className="calendar-tour-kind grid min-w-0 flex-1 gap-1.5 text-xs text-ink-soft">Gatherings<select className="h-9 w-full rounded-lg border border-line bg-card px-3 text-sm text-ink" aria-label="Gathering kind" value={kind} onChange={event => setKind(event.target.value as typeof kind)}><option value="all">Services & events</option><option value="services">Services</option><option value="events">Events</option></select></label>}
+        {canReadEvents && kind !== "services" && <label className="calendar-tour-types grid min-w-0 flex-1 gap-1.5 text-xs text-ink-soft">Event type<select className="h-9 w-full rounded-lg border border-line bg-card px-3 text-sm text-ink" aria-label="Event type" value={type} onChange={event => setType(event.target.value as typeof type)}><option value="all">All types</option>{EVENT_TYPES.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>}
+        {isHq && canRead ? <label className="calendar-tour-branch grid min-w-0 flex-1 gap-1.5 text-xs text-ink-soft">Branch<select aria-label="Filter calendar by branch" value={branchId} onChange={event => setBranchId(event.target.value)} className="h-9 w-full rounded-lg border border-line bg-card px-3 text-sm text-ink"><option value="all">All branches</option>{(branches.data?.data ?? []).map(branch => <option key={branch.branchId} value={branch.branchId}>{branch.name}</option>)}</select></label> : <span className="text-xs text-ink-faint">{profile?.branch?.name ?? "Your branch"} scope</span>}
       </div>
 
       {ready && !canRead ? (
@@ -331,6 +302,7 @@ export default function EventsCalendarPage() {
           <div className="paper-card overflow-hidden rounded-2xl">
             <div role="group" aria-label="Calendar navigation" className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3">
               <p className="sr-only" aria-live="polite" data-calendar-period>{monthLabel}</p>
+              <ViewToggle value={calendarView} onChange={setCalendarView} options={[{value:"agenda",label:"Agenda",icon:<CalendarClock />},{value:"month",label:"Month",icon:<CalendarDays />}]} />
               <div className="flex items-center gap-2">
                 <Select value={String(month.getMonth())} onValueChange={(value) => chooseCalendar(month.getFullYear(), Number(value))}>
                   <SelectTrigger aria-label="Calendar month" data-prefix-icon="none" className="h-9 w-40 rounded-full border-line bg-card font-display text-sm font-semibold shadow-none"><SelectValue /></SelectTrigger>
@@ -367,6 +339,18 @@ export default function EventsCalendarPage() {
                 <IconAction label="Next year" icon={<ChevronsRight className="size-4" />} onSelect={() => moveCalendar(1)} disabled={month.getFullYear() >= 9999} className="size-8" />
               </div>
             </div>
+            {calendarView === "agenda" ? <div data-calendar-agenda className="divide-y divide-line px-4 sm:px-5">
+              {showSkeleton ? <Skeleton className="my-4 h-40 rounded-xl" /> : <>
+                {grid.filter(day => day.getMonth() === month.getMonth() && (byDay.get(iso(day))?.length ?? 0) > 0).map(day => <section key={iso(day)} className="grid gap-3 py-5 sm:grid-cols-[110px_minmax(0,1fr)]">
+                  <h2 className="text-sm font-semibold text-ink-soft">{day.toLocaleDateString("en-GB",{weekday:"short", day:"numeric",month:"short"})}{sameDay(day,today) && <span className="mt-1 block text-xs text-brand">Today</span>}</h2>
+                  <div className="space-y-2">{(byDay.get(iso(day)) ?? []).map(entry => <button key={entry.id} type="button" onClick={() => router.push(entry.kind === "event" ? `/gatherings/events/${entry.event.eventId}` : `/gatherings/attendance/services/${entry.service.serviceId}`)} className="flex w-full min-w-0 items-start gap-3 rounded-xl border border-line bg-card p-4 text-left hover:border-brand/40">
+                    <span className="num shrink-0 pt-1 text-sm text-ink-soft">{entry.at.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}</span>
+                    <span className="min-w-0"><Tag tone={entry.kind === "service" ? "moss" : "sky"}>{entry.kind === "service" ? "Service" : "Event"}</Tag><span className="mt-2 block break-words text-sm font-semibold leading-relaxed">{entry.title}</span><span className="mt-1 block text-xs text-ink-faint">Open details →</span></span>
+                  </button>)}</div>
+                </section>)}
+                {!grid.some(day => day.getMonth() === month.getMonth() && (byDay.get(iso(day))?.length ?? 0) > 0) && <EmptyState icon={<CalendarDays />} title="A quieter month" description="No gatherings match this month and your current filters. Choose another month or broaden the filters." />}
+              </>}
+            </div> : <>
             <div className="rule-label grid grid-cols-7 border-b border-line px-2 py-2">
               {WEEKDAYS.map((d) => <span key={d} className="px-1 text-center">{d}</span>)}
             </div>
@@ -425,6 +409,7 @@ export default function EventsCalendarPage() {
                 })
               )}
             </div>
+            </>}
           </div>
 
           <aside className="space-y-4">

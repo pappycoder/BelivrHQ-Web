@@ -1,4 +1,7 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { ListTable } from "@/components/shared/list-table";
 import * as React from "react";
@@ -50,14 +53,14 @@ export default function DepartmentsPage() {
   const canUpdate = ready && can("departments", "update");
   const canDelete = ready && can("departments", "delete");
 
-  const [archived, setArchived] = React.useState(false);
+  const [archived, setArchived] = useListFilterState("archived", false);
   const [formOpen, setFormOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<Department | null>(null);
   const [deleteTarget, setDeleteTarget] = React.useState<Department | null>(
     null,
   );
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(12);
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", 12);
 
   const departments = useDepartmentsList({ archived });
   const archive = useArchiveDepartment();
@@ -73,7 +76,7 @@ export default function DepartmentsPage() {
     setPage((value) =>
       Math.min(value, Math.max(1, Math.ceil(rows.length / perPage))),
     );
-  }, [rows.length, perPage]);
+  }, [rows.length, perPage, setPage]);
   const paged = rows.slice(
     (page - 1) * perPage,
     (page - 1) * perPage + perPage,
@@ -225,7 +228,7 @@ export default function DepartmentsPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {departments.isLoading ? (
           Array.from({ length: 4 }, (_, i) => (
             <Skeleton key={i} className="h-28 rounded-2xl" />
@@ -256,7 +259,7 @@ export default function DepartmentsPage() {
             />
           </>
         )}
-      </div>
+      </CompactListSummary>
 
       <GroupRegisterControls
         controls={controls}

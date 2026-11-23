@@ -1,5 +1,8 @@
 "use client";
 
+import { AssetTimeline } from "./asset-timeline";
+import { RecordTabsList, RecordTabsTrigger } from "@/components/shared/record-tabs";
+import { formatStatusLabel } from "@/lib/status-label";
 import { formatRecordDate } from "@/lib/record-date";
 
 import { DetailHeading } from "@/components/paper/section";
@@ -13,6 +16,7 @@ import { UrlTabs } from "@/components/shared/url-tabs";
 import { ContentImage } from "@/components/shared/content-image";
 
 import * as React from "react";
+import Link from "next/link";
 import { getToastErrorMessage, toast } from "@/lib/toast";
 import QRCode from "qrcode";
 import { Boxes, RefreshCw } from "lucide-react";
@@ -22,7 +26,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
@@ -80,11 +84,11 @@ function AssetTabs({
   children: React.ReactNode;
 }) {
   return page ? (
-    <UrlTabs defaultValue="overview" values={values}>
+    <UrlTabs defaultValue={values.includes("timeline")?"timeline":"overview"} values={values}>
       {children}
     </UrlTabs>
   ) : (
-    <Tabs defaultValue="overview">{children}</Tabs>
+    <Tabs defaultValue={values.includes("timeline")?"timeline":"overview"}>{children}</Tabs>
   );
 }
 
@@ -131,6 +135,7 @@ export function AssetDetailDrawer({
   }, [qrQuery.data?.qrData]);
 
   const asset = assetQuery.data;
+  const nextMaintenance = canReadMaintenance && !maintenanceQuery.isError ? [...(maintenanceQuery.data??[])].filter(item=>item.status==="scheduled"||item.status==="in_progress").sort((a,b)=>a.scheduledDate.localeCompare(b.scheduledDate))[0] : undefined;
 
   const content = (
     <div className="min-w-0 [overflow-wrap:anywhere] px-6 pb-6">
@@ -147,7 +152,8 @@ export function AssetDetailDrawer({
         <p className="pt-4 text-sm text-muted-foreground">Asset not found.</p>
       ) : (
         <>
-          <div className="pt-1 space-y-1">
+          <div className="asset-summary-hero mb-5">
+            <span className="asset-summary-art" aria-hidden="true"><Boxes className="size-10"/></span><div className="min-w-0 space-y-2">
             {presentation === "page" ? <DetailHeading>{asset.name}</DetailHeading> : <p className="text-lg font-semibold">{asset.name}</p>}
             <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
               <Badge variant="outline" className="font-mono">
@@ -161,11 +167,15 @@ export function AssetDetailDrawer({
               <StatusBadge kind="status" value={asset.status} />
               <StatusBadge kind="condition" value={asset.condition} />
             </div>
+            {presentation === "drawer" && <Button asChild variant="outline" className="mt-3 min-h-11"><Link href={`/operations/assets/${asset.id}`}>Open full record →</Link></Button>}
+            </div>
+            {nextMaintenance&&<div className="asset-next-maintenance"><p className="rule-label">NEXT MAINTENANCE</p><p className="mt-2 font-display text-xl">{formatDate(nextMaintenance.scheduledDate)}</p><p className="mt-2 text-xs text-ink-faint">{formatStatusLabel(nextMaintenance.type)}</p></div>}
           </div>
 
           <AssetTabs
             page={presentation === "page"}
             values={[
+              ...((canReadLoans||canReadMaintenance)?["timeline"]:[]),
               "overview",
               "qr",
               ...(canReadMaintenance ? ["maintenance"] : []),
@@ -173,16 +183,18 @@ export function AssetDetailDrawer({
               "depreciation",
             ]}
           >
-            <TabsList className="flex w-full flex-wrap h-auto">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="qr">QR</TabsTrigger>
+            <RecordTabsList aria-label="Asset details">
+              {(canReadLoans||canReadMaintenance)&&<RecordTabsTrigger value="timeline">Timeline</RecordTabsTrigger>}
+              <RecordTabsTrigger value="overview">Overview</RecordTabsTrigger>
+              <RecordTabsTrigger value="qr">QR</RecordTabsTrigger>
               {canReadMaintenance && (
-                <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
+                <RecordTabsTrigger value="maintenance">Maintenance</RecordTabsTrigger>
               )}
-              {canReadLoans && <TabsTrigger value="loans">Loans</TabsTrigger>}
-              <TabsTrigger value="depreciation">Depreciation</TabsTrigger>
-            </TabsList>
+              {canReadLoans && <RecordTabsTrigger value="loans">Loans</RecordTabsTrigger>}
+              <RecordTabsTrigger value="depreciation">Depreciation</RecordTabsTrigger>
+            </RecordTabsList>
 
+            {(canReadLoans||canReadMaintenance)&&<TabsContent value="timeline" className="pt-5"><AssetTimeline loans={canReadLoans?loansQuery.data??[]:[]} maintenance={canReadMaintenance?maintenanceQuery.data??[]:[]} loading={(canReadLoans&&loansQuery.isLoading)||(canReadMaintenance&&maintenanceQuery.isLoading)} error={(canReadLoans&&loansQuery.isError)||(canReadMaintenance&&maintenanceQuery.isError)} onRetry={()=>{if(canReadLoans)void loansQuery.refetch();if(canReadMaintenance)void maintenanceQuery.refetch();}}/></TabsContent>}
             <TabsContent value="overview" className="space-y-4 pt-4">
               {asset.imageUrl && (
                 <ContentImage

@@ -1,4 +1,7 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import * as React from "react";
 import Link from "next/link";
@@ -52,9 +55,9 @@ export default function CellGroupsPage() {
   const canDelete = ready && can("cell_groups", "delete");
   const isCellLeader = !!profile?.role.includes("cell_leader");
 
-  const [archived, setArchived] = React.useState(false);
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(12);
+  const [archived, setArchived] = useListFilterState("archived", false);
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", 12);
   const [formOpen, setFormOpen] = React.useState(false);
   const [editing, setEditing] = React.useState<CellGroup | null>(null);
   const [deleteTarget, setDeleteTarget] = React.useState<CellGroup | null>(
@@ -73,7 +76,7 @@ export default function CellGroupsPage() {
     setPage((value) =>
       Math.min(value, Math.max(1, Math.ceil(rows.length / perPage))),
     );
-  }, [rows.length, perPage]);
+  }, [rows.length, perPage, setPage]);
   const paged = rows.slice(
     (page - 1) * perPage,
     (page - 1) * perPage + perPage,
@@ -242,7 +245,7 @@ export default function CellGroupsPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {groups.isLoading ? (
           Array.from({ length: 4 }, (_, i) => (
             <Skeleton key={i} className="h-28 rounded-2xl" />
@@ -274,7 +277,7 @@ export default function CellGroupsPage() {
             />
           </>
         )}
-      </div>
+      </CompactListSummary>
 
       <GroupRegisterControls
         controls={controls}

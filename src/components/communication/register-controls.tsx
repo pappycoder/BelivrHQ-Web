@@ -1,4 +1,5 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
 
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
@@ -10,20 +11,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 type Choice = { value: string; label: string };
 
 export function useCommunicationRegister(initialSort: string, initialAscending: boolean) {
-  const [query, setQuery] = React.useState("");
-  const [search, setSearch] = React.useState("");
-  const [channel, setChannel] = React.useState("all");
-  const [status, setStatus] = React.useState("all");
-  const [branch, setBranch] = React.useState("all");
-  const [sort, setSort] = React.useState(initialSort);
-  const [ascending, setAscending] = React.useState(initialAscending);
-  const [view, setView] = React.useState<"table" | "cards">("table");
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(24);
+  const [query, setQuery] = useListFilterState("query", "");
+  const [search, setSearch] = useListFilterState("search", "");
+  const [channel, setChannel] = useListFilterState("channel", "all");
+  const [status, setStatus] = useListFilterState("status", "all");
+  const [branch, setBranch] = useListFilterState("branch", "all");
+  const [sort, setSort] = useListFilterState("sort", initialSort);
+  const [ascending, setAscending] = useListFilterState("ascending", initialAscending);
+  const [view, setView] = useListFilterState<"table" | "cards">("view", "table");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", 24);
   React.useEffect(() => {
     const timer = setTimeout(() => setSearch(query.trim()), 250);
     return () => clearTimeout(timer);
-  }, [query]);
+  }, [query, setSearch]);
   const reset = () => { setQuery(""); setChannel("all"); setStatus("all"); setBranch("all"); setSort(initialSort); setAscending(initialAscending); setPage(1); };
   return { query, setQuery, search, channel, setChannel, status, setStatus, branch, setBranch, sort, setSort, ascending, setAscending, view, setView, page, setPage, perPage, setPerPage, reset };
 }

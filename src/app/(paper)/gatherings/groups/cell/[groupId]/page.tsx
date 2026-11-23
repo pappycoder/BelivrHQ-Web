@@ -1,5 +1,6 @@
 "use client";
 
+import { RecordTabsList, RecordTabsTrigger } from "@/components/shared/record-tabs";
 import { RecordQueryError } from "@/components/shared/record-query-error";
 import { isMissingRecordError } from "@/lib/record-query-error";
 
@@ -19,7 +20,7 @@ import { StatCard, Tag } from "@/components/paper/stat";
 import { DataList, EmptyState, FieldRow } from "@/components/paper/primitives";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TabsContent } from "@/components/ui/tabs";
 import { UrlTabs } from "@/components/shared/url-tabs";
 import { GroupMemberRoster } from "@/components/departments/group-member-roster";
 import { CellGroupFormDialog } from "@/components/departments/cell-group-form-dialog";
@@ -215,15 +216,11 @@ export default function CellGroupDetailPage({
       <UrlTabs defaultValue="overview" values={tabs} aliases={{ reported: "attendance" }}>
         {(activeTab) => (
           <>
-            <TabsList
-              aria-label="Cell group workspace"
-              className="h-auto group-data-[orientation=horizontal]/tabs:h-auto max-w-full flex-wrap overflow-visible justify-start rounded-2xl border border-line bg-card p-1"
-            >
+            <RecordTabsList aria-label="Cell group workspace">
               {tabs.map((tab) => (
-                <TabsTrigger
+                <RecordTabsTrigger
                   key={tab}
                   value={tab}
-                  className="h-9 flex-none rounded-full px-4 py-2 text-sm data-[state=active]:bg-ink data-[state=active]:text-paper"
                 >
                   {
                     {
@@ -234,9 +231,9 @@ export default function CellGroupDetailPage({
                       giving: "Meeting giving",
                     }[tab]
                   }
-                </TabsTrigger>
+                </RecordTabsTrigger>
               ))}
-            </TabsList>
+            </RecordTabsList>
             {activeTab === "overview" && (
               <TabsContent value="overview" className="mt-5">
                 {" "}

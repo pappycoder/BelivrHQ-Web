@@ -1,4 +1,9 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
+import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import { ErrorState } from "@/components/shared/error-state";
 
@@ -73,8 +78,8 @@ export default function MessagesPage() {
   // a "messages" resource was never in the permission catalog.
   const canSend = ready && can("whatsapp", "create");
 
-  const [direction, setDirection] = React.useState<MessageDirection | "all">("all");
-  const [phone, setPhone] = React.useState("");
+  const [direction, setDirection] = useListFilterState<MessageDirection | "all">("direction", "all");
+  const [phone, setPhone] = useListFilterState("phone", "");
   const [sendOpen, setSendOpen] = React.useState(false);
   const [draft, setDraft] = React.useState({ to: "", text: "" });
 
@@ -113,21 +118,21 @@ export default function MessagesPage() {
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {messages.isPending ? Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-32 rounded-2xl" />) : <>
         <StatCard unavailable={messages.isError} label="Messages this view" value={messages.data?.total ?? rows.length} tone="brand" icon={<MessageCircle className="size-4" />} />
         <StatCard unavailable={messages.isError} label="Outbound today" value={rows.filter((m) => m.direction === "outbound").length} tone="moss" deltaLabel={messages.isError ? "Please try again" : "this page"} />
         <StatCard unavailable={messages.isError} label="Inbound waiting" value={rows.filter((m) => m.direction === "inbound").length} tone="gold" deltaLabel={messages.isError ? "Please try again" : "worth a reply"} />
         </>}
         {analytics.isPending ? <Skeleton className="h-32 rounded-2xl" /> : <StatCard unavailable={analytics.isError} label="Delivery failures" value={failed} tone={failed ? "rose" : "sky"} deltaLabel={analytics.isError ? "Please try again" : "recent sends"} />}
-      </div>
+      </CompactListSummary>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <SearchField value={phone} onChange={setPhone} placeholder="Search by phone number…" className="w-full max-w-[240px]" />
+      <ListToolbar search={<SearchField value={phone} onChange={setPhone} placeholder="Search by phone number…" className="w-full max-w-[240px]" />}>
+
         <FilterChip active={direction === "all"} onClick={() => setDirection("all")}>Both ways</FilterChip>
         <FilterChip active={direction === "inbound"} onClick={() => setDirection("inbound")}>Inbound</FilterChip>
         <FilterChip active={direction === "outbound"} onClick={() => setDirection("outbound")}>Outbound</FilterChip>
-      </div>
+      </ListToolbar>
 
       {analytics.isError ? <ErrorState title="Unable to load message delivery data" /> : channels.length ? (
         <div className="paper-card flex flex-wrap items-center gap-x-8 gap-y-2 rounded-2xl px-5 py-3">

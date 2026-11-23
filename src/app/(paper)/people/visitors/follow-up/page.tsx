@@ -1,4 +1,7 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { formatStatusLabel } from "@/lib/status-label";
 
@@ -114,7 +117,7 @@ export default function VisitorFollowUpBoardPage() {
   const stats = useVisitorsStats();
   const updateVisitor = useUpdateVisitorById();
 
-  const [query, setQuery] = React.useState("");
+  const [query, setQuery] = useListFilterState("query", "");
   const [dragging, setDragging] = React.useState<Visitor | null>(null);
   const [formOpen, setFormOpen] = React.useState(false);
 
@@ -163,7 +166,7 @@ export default function VisitorFollowUpBoardPage() {
   };
 
   const unassigned = rows.filter((v) => !v.assignedToId).length;
-  const [view, setView] = React.useState<"board" | "list">("board");
+  const [view, setView] = useListFilterState<"board" | "list">("view", "list");
 
   return (
     <div className="space-y-6">
@@ -189,12 +192,12 @@ export default function VisitorFollowUpBoardPage() {
         }
       />
 
-      <div className="follow-up-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="follow-up-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard label="On the board" value={rows.length} tone="brand" />
         <StatCard label="Awaiting first hello" value={(byColumn.get("new") ?? []).length} tone="gold" deltaLabel="new status" />
         <StatCard label="In conversation" value={(byColumn.get("interested") ?? []).length + (byColumn.get("scheduled") ?? []).length} tone="sky" />
         <StatCard label="Unassigned" value={unassigned} tone={unassigned ? "rose" : "moss"} />
-      </div>
+      </CompactListSummary>
 
       <ListToolbar
  search={<SearchField value={query} onChange={setQuery} placeholder="Find a guest…" className="follow-up-tour-search w-full max-w-xs" />}

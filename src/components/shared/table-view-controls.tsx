@@ -24,7 +24,7 @@ export function TableViewControls({
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm">
           <Settings2 className="size-4" />
-          Table view
+          List view
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-80 max-w-[calc(100vw-2rem)] space-y-4">

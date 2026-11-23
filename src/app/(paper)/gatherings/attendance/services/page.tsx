@@ -1,5 +1,10 @@
 "use client";
 
+
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
+
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
 import * as React from "react";
@@ -69,7 +74,7 @@ const SERVICES_TOUR_STEPS: TourStep[] = [
   { target: ".services-tour-category", title: "Choose a service category", description: "Choose a category or All categories to narrow the register. The category describes the service; it does not represent a breakdown of attendance by age. Filtering changes no service records." },
   { target: ".services-tour-branch", title: "Choose a branch scope", description: "HQ accounts can choose a branch or All branches. Other accounts remain within their assigned access. This filter changes the displayed records and returns to the first page; it does not move services between branches." },
   { target: ".services-tour-weekday", title: "Filter a scheduled weekday", description: "Choose a weekday or All weekdays. This matches the service's configured weekday; it is not a search for every occurrence on a calendar date. Use the full service record to review its recurrence and date window." },
-  { target: ".services-tour-sort", title: "Arrange the services", description: "Sort by Day of week, Name or Date added. The direction button reverses the order. Sorting returns to page one without changing any service schedule." },
+  { target: ".services-tour-sort", title: "Arrange the services", description: "Sort by Day of week, Name or Date added. The Sort order dropdown reverses the order. Sorting returns to page one without changing any service schedule." },
   { target: "[data-list-table='services-list'] > [data-export-ignore]", title: "Columns and selected services", description: "Columns chooses the visible fields. Checkboxes select services on this page and reveal actions available to your account and selected-row exports. Selection alone makes no changes. Review the confirmation before applying a bulk action." },
   { target: ".services-tour-record", title: "Read a service record", description: "Review the name, category, schedule, branch, counting status and all-time check-ins. A schedule may be weekly, one-time or a date range. Select the service name to open its full record; viewing it records no attendance." },
   { target: ".services-tour-manage", title: "Understand the management actions", description: "Hover a row or focus its controls to reveal actions. Depending on permissions, you can Open, Edit, Pause or Resume counting, Archive, Restore or Delete. Archive retains attendance history. Delete is permanent; review its warning carefully and use Archive when keeping history matters." },
@@ -126,25 +131,25 @@ export default function AttendanceServicesPage() {
     (can("attendance:services", "delete") || can("attendance", "delete"));
   const isHq = !!profile?.isAdminHq;
 
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
-  const [searchInput, setSearchInput] = React.useState("");
-  const [search, setSearch] = React.useState("");
-  const [branchId, setBranchId] = React.useState("all");
+  const [page, setPage] = useListFilterState("page", 1);
+  const [perPage, setPerPage] = useListFilterState("perPage", PAGE_SIZE);
+  const [searchInput, setSearchInput] = useListFilterState("searchInput", "");
+  const [search, setSearch] = useListFilterState("search", "");
+  const [branchId, setBranchId] = useListFilterState("branchId", "all");
   const [sortBy, setSortBy] =
-    React.useState<NonNullable<ListServicesParams["sortBy"]>>("day_of_week");
-  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("asc");
+    useListFilterState<NonNullable<ListServicesParams["sortBy"]>>("sortBy", "day_of_week");
+  const [sortOrder, setSortOrder] = useListFilterState<"asc" | "desc">("sortOrder", "asc");
   React.useEffect(() => {
     const timeout = setTimeout(() => {
       setSearch(searchInput.trim());
       setPage(1);
     }, 300);
     return () => clearTimeout(timeout);
-  }, [searchInput]);
-  const [category, setCategory] = React.useState("all");
-  const [status, setStatus] = React.useState("all");
-  const [weekday, setWeekday] = React.useState("all");
-  const [archivedView, setArchivedView] = React.useState(false);
+  }, [searchInput, setPage, setSearch]);
+  const [category, setCategory] = useListFilterState("category", "all");
+  const [status, setStatus] = useListFilterState("status", "all");
+  const [weekday, setWeekday] = useListFilterState("weekday", "all");
+  const [archivedView, setArchivedView] = useListFilterState("archivedView", false);
   const [formOpen, setFormOpen] = React.useState(false);
   const [formService, setFormService] = React.useState<ChurchService | null>(
     null,
@@ -181,7 +186,7 @@ export default function AttendanceServicesPage() {
     if (!services.data || services.isFetching) return;
     const lastPage = Math.max(1, Math.ceil(total / perPage));
     if (page > lastPage) setPage(lastPage);
-  }, [services.data, services.isFetching, total, page, perPage]);
+  }, [services.data, services.isFetching, total, page, perPage, setPage]);
   const hasFilters =
     !!searchInput ||
     category !== "all" ||
@@ -250,7 +255,7 @@ export default function AttendanceServicesPage() {
         }
       />
 
-      <div className="services-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <CompactListSummary className="services-tour-summary grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard
           label="Services"
           value={total}
@@ -274,7 +279,7 @@ export default function AttendanceServicesPage() {
           value={new Set(rows.map((s) => s.branchId ?? "church-wide")).size}
           tone="gold"
         />
-      </div>
+      </CompactListSummary>
 
       <div role="group" aria-label="Service list filters" className="space-y-3">
         <ListToolbar

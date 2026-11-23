@@ -1,5 +1,6 @@
 "use client";
 
+import { RecordTabsList, RecordTabsTrigger } from "@/components/shared/record-tabs";
 import { formatStatusLabel } from "@/lib/status-label";
 
 
@@ -21,7 +22,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -575,20 +576,20 @@ interface UserDetailContentProps {
 export function UserDetailContent({ user }: UserDetailContentProps) {
   return (
     <UrlTabs defaultValue="account" values={["account", "role", "security"]} className="w-full">
-      <TabsList>
-        <TabsTrigger value="account">
+      <RecordTabsList aria-label="Team member details">
+        <RecordTabsTrigger value="account">
           <User className="h-4 w-4 mr-1.5" />
           Account Info
-        </TabsTrigger>
-        <TabsTrigger value="role">
+        </RecordTabsTrigger>
+        <RecordTabsTrigger value="role">
           <Shield className="h-4 w-4 mr-1.5" />
           Role &amp; Permissions
-        </TabsTrigger>
-        <TabsTrigger value="security">
+        </RecordTabsTrigger>
+        <RecordTabsTrigger value="security">
           <KeyRound className="h-4 w-4 mr-1.5" />
           Security
-        </TabsTrigger>
-      </TabsList>
+        </RecordTabsTrigger>
+      </RecordTabsList>
 
       <TabsContent value="account" forceMount className="mt-4 data-[state=inactive]:hidden">
         <AccountInfoTab user={user} />

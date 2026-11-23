@@ -1,4 +1,7 @@
 "use client";
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+import { CompactListSummary } from "@/components/shared/compact-list-summary";
+
 
 import { ListToolbar } from "@/components/shared/list-toolbar";
 
@@ -78,12 +81,12 @@ export function SermonAggregateBrowser({
   renderCard: (item: AggregatedItem, open: () => void) => React.ReactNode;
 }) {
   const router = useRouter();
-  const [query, setQuery] = React.useState("");
-  const [sortBy, setSortBy] = React.useState<SortValue>("count");
-  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
-  const [page, setPage] = React.useState(1);
-  const [perPage, setPerPage] = React.useState(PAGE_SIZE);
-  const [view, setView] = React.useState<"table" | "cards">("cards");
+  const [query, setQuery] = useListFilterState("sermons:query", "");
+  const [sortBy, setSortBy] = useListFilterState<SortValue>("sermons:sortBy", "count");
+  const [sortOrder, setSortOrder] = useListFilterState<"asc" | "desc">("sermons:sortOrder", "desc");
+  const [page, setPage] = useListFilterState("sermons:page", 1);
+  const [perPage, setPerPage] = useListFilterState("sermons:perPage", PAGE_SIZE);
+  const [view, setView] = useListFilterState<"table" | "cards">("sermons:view", "table");
 
   const open = (item: AggregatedItem) =>
     router.push(`/library/sermons?${filterParam}=${encodeURIComponent(item.name)}`);
@@ -155,11 +158,11 @@ export function SermonAggregateBrowser({
         }
       />
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+      <CompactListSummary className="grid grid-cols-2 gap-3 lg:grid-cols-3">
         <StatCard label={nounPlural} value={rows.length} tone="brand" />
         <StatCard label="Sermons counted" value={rows.reduce((sum, s) => sum + s.count, 0)} tone="moss" />
         <StatCard label="Most active" value={rows.reduce((max, s) => Math.max(max, s.count), 0)} tone="sky" deltaLabel={`${nounSingular.toLowerCase()} with the most`} />
-      </div>
+      </CompactListSummary>
 
       <ListToolbar
  search={<SearchField

@@ -1,5 +1,8 @@
 "use client";
 
+import { useListFilterState } from "@/hooks/use-list-filter-state";
+
+
 import { formatRecordDate } from "@/lib/record-date";
 
 import { FormDialogContent } from "@/components/shared/form-dialog";
@@ -246,14 +249,14 @@ export function IntakeRegister({
 }) {
   const access = useIntakeAccess(kind);
   const { data: profile } = useCurrentProfile();
-  const [tab, setTab] = useState("records");
-  const [searchInput, setSearchInput] = useState("");
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(15);
-  const [branchId, setBranchId] = useState("");
-  const [sortBy, setSortBy] = useState("createdAt");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [tab, setTab] = useListFilterState("tab", "records");
+  const [searchInput, setSearchInput] = useListFilterState("intake:searchInput", "");
+  const [search, setSearch] = useListFilterState("intake:search", "");
+  const [page, setPage] = useListFilterState("intake:page", 1);
+  const [limit, setLimit] = useListFilterState("limit", 15);
+  const [branchId, setBranchId] = useListFilterState("intake:branchId", "");
+  const [sortBy, setSortBy] = useListFilterState("intake:sortBy", "createdAt");
+  const [sortOrder, setSortOrder] = useListFilterState<"asc" | "desc">("intake:sortOrder", "desc");
   const branches = useIntakeBranches(access.review && !!profile?.isAdminHq);
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -261,7 +264,7 @@ export function IntakeRegister({
       setPage(1);
     }, 300);
     return () => clearTimeout(timer);
-  }, [searchInput]);
+  }, [searchInput, setPage, setSearch]);
   const count = useQuery({
     queryKey: ["intake-count", kind, branchId],
     enabled: access.review,
