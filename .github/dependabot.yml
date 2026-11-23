@@ -5,6 +5,20 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    groups:
+      react-runtime:
+        patterns:
+          - react
+          - react-dom
+          - "@types/react"
+          - "@types/react-dom"
+    ignore:
+      # Keep declarations aligned with the Node 22 CI/deployment runtime.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # Upgrade framework lint tooling with a coordinated Next.js migration.
+      - dependency-name: eslint-config-next
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
