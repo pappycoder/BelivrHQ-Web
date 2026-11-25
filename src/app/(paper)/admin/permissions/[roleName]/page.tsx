@@ -216,7 +216,7 @@ export default function RoleMatrixPage({
       ) : null}
 
       {isDirty && !locked ? (
-        <div className="fixed inset-x-4 bottom-4 z-50 mx-auto flex max-w-2xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-card px-5 py-3 shadow-[0_24px_64px_-24px_rgb(38_32_26_/_0.38)]">
+        <div data-workspace-bottom-actions className="fixed inset-x-4 bottom-4 z-50 mx-auto flex max-w-2xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-card px-5 py-3 shadow-[0_24px_64px_-24px_rgb(38_32_26_/_0.38)]">
           <p className="text-sm">
             <span className="num font-semibold text-moss">+{addedCount}</span>
             <span className="text-ink-faint"> · </span>

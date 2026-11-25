@@ -1,4 +1,4 @@
-import { expect, test, type BrowserContext } from "@playwright/test";
+import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 
 test.use({ serviceWorkers: "block" });
 test.beforeEach(async ({ context }) => {
@@ -60,6 +60,19 @@ async function installReadOnlySession(context: BrowserContext, grants: string[],
   }, { grants, hq });
 }
 
+async function offerInstallPrompt(page: Page, outcome: "accepted" | "dismissed" | "error") {
+  await page.evaluate(outcome => {
+    const state = window as unknown as { installCalls: number };
+    state.installCalls = 0;
+    const event = new Event("beforeinstallprompt", { cancelable: true });
+    Object.defineProperties(event, {
+      prompt: { value: async () => { state.installCalls++; if (outcome === "error") throw new Error("Fixture prompt unavailable"); } },
+      userChoice: { value: Promise.resolve({ outcome: outcome === "error" ? "dismissed" : outcome }) },
+    });
+    window.dispatchEvent(event);
+  }, outcome);
+}
+
 for (const width of [320, 390]) test(`mobile workspace logo and saved light/dark switch at ${width}px`, async ({ page, context }) => {
   await page.setViewportSize({ width, height: 844 });
   await context.addInitScript(() => {
@@ -89,6 +102,183 @@ for (const width of [320, 390]) test(`mobile workspace logo and saved light/dark
   await page.setViewportSize({ width: 1280, height: 900 });
   await expect(header.getByRole("button", { name: "Switch to dark mode", exact: true })).toBeHidden();
   await expect(page.getByRole("button", { name: "Toggle theme", exact: true })).toBeVisible();
+});
+
+for (const width of [320, 1280]) test(`floating install dock clears navigation, save bars and support at ${width}px`, async ({ page, context }) => {
+  await page.setViewportSize({ width, height: 900 });
+  await installReadOnlySession(context, ["giving:dashboard:read", "branches:read"]);
+  await page.goto("/giving/overview");
+  const banner = page.getByRole("region", { name: "Install BelivrHQ", exact: true });
+  await expect(banner).toBeVisible();
+  await page.evaluate(() => {
+    const nav = document.querySelector<HTMLElement>("[data-mobile-nav]");
+    const navHeight = nav?.getBoundingClientRect().height ?? 0;
+    const footer = document.createElement("div");
+    footer.id = "fixture-bottom-actions";
+    footer.dataset.workspaceBottomActions = "";
+    Object.assign(footer.style, { position: "fixed", bottom: (navHeight + 8) + "px", left: "16px", right: "16px", height: "64px", zIndex: "50" });
+    footer.textContent = "Fixture save actions";
+    document.querySelector("#main-content")!.append(footer);
+  });
+  const footer = page.locator("#fixture-bottom-actions");
+  await expect.poll(async () => {
+    const offer = await banner.boundingBox(); const actions = await footer.boundingBox();
+    return !!offer && !!actions && offer.y + offer.height <= actions.y - 8;
+  }).toBe(true);
+  const launcher = page.locator("[data-support-launcher]");
+  await expect(launcher).toBeVisible();
+  await expect.poll(async () => {
+    const offer = await banner.boundingBox(); const help = await launcher.boundingBox();
+    return !!offer && !!help && help.y + help.height <= offer.y - 8;
+  }).toBe(true);
+  const reserved = await page.evaluate(() => {
+    const main = document.querySelector<HTMLElement>("#main-content")!;
+    const offer = document.querySelector<HTMLElement>('[aria-label="Install BelivrHQ"]')!;
+    return parseFloat(getComputedStyle(main).paddingBottom) >= innerHeight - offer.getBoundingClientRect().top;
+  });
+  expect(reserved).toBe(true);
+  await page.evaluate(() => document.querySelector("#fixture-bottom-actions")!.remove());
+  await expect.poll(async () => {
+    const offer = await banner.boundingBox();
+    const nav = await page.locator("[data-mobile-nav]").boundingBox();
+    return !!offer && offer.y + offer.height <= (nav && nav.height > 0 ? nav.y : 900) - 8;
+  }).toBe(true);
+  await page.evaluate(() => {
+    const input = document.createElement("input"); input.id = "fixture-edit-field";
+    document.querySelector("#main-content")!.append(input);
+  });
+  await page.locator("#fixture-edit-field").focus();
+  await expect(banner).toBeHidden();
+  await expect(launcher).toBeHidden();
+  await page.evaluate(() => (document.querySelector("#fixture-edit-field") as HTMLInputElement).blur());
+  await expect(banner).toBeVisible();
+});
+
+test("short windows keep installation in the account menu without a floating offer", async ({ page, context }) => {
+  await page.setViewportSize({ width: 1280, height: 380 });
+  await installReadOnlySession(context, ["giving:dashboard:read", "branches:read"]);
+  await page.goto("/giving/overview");
+  await expect(page.getByText("₦1,234", { exact: true }).filter({ visible: true })).toBeVisible();
+  await expect(page.locator("[data-app-install-dock]")).toBeHidden();
+  await page.getByRole("button", { name: "Account menu", exact: true }).click();
+  await expect(page.getByRole("menuitem", { name: "Install BelivrHQ", exact: true })).toBeVisible();
+});
+
+test("installed app launches the workspace through the normal session gate", async ({ page }) => {
+  const response = await page.request.get("/manifest.json");
+  expect(response.ok()).toBe(true);
+  const manifest = await response.json();
+  expect(manifest.id).toBe("/");
+  expect(manifest.start_url).toBe("/home");
+  await page.goto(manifest.start_url);
+  await expect(page.getByRole("button", { name: "Sign In", exact: true })).toBeVisible();
+  expect(new URL(page.url()).pathname).toBe("/login");
+  expect(new URL(page.url()).searchParams.get("returnTo")).toBe("/home");
+});
+
+test("install offer invokes the native prompt only after a click and hides after installation", async ({ page, context }) => {
+  await installReadOnlySession(context, ["giving:dashboard:read", "branches:read"]);
+  await page.goto("/giving/overview");
+  const banner = page.getByRole("region", { name: "Install BelivrHQ", exact: true });
+  await expect(banner).toBeVisible();
+  await offerInstallPrompt(page, "accepted");
+  expect(await page.evaluate(() => (window as unknown as { installCalls: number }).installCalls)).toBe(0);
+  await banner.getByRole("button", { name: "Install App", exact: true }).click();
+  await expect(banner).toBeHidden();
+  expect(await page.evaluate(() => (window as unknown as { installCalls: number }).installCalls)).toBe(1);
+  await page.evaluate(() => window.dispatchEvent(new Event("appinstalled")));
+  await page.getByRole("button", { name: "Account menu", exact: true }).click();
+  await expect(page.getByRole("menuitem", { name: "Install BelivrHQ", exact: true })).toHaveCount(0);
+});
+
+test("dismissed install banner stays hidden after reload while account installation help remains reachable", async ({ page, context }) => {
+  await page.setViewportSize({ width: 320, height: 844 });
+  await installReadOnlySession(context, ["giving:dashboard:read", "branches:read"]);
+  await page.goto("/giving/overview");
+  const banner = page.getByRole("region", { name: "Install BelivrHQ", exact: true });
+  await expect(banner).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await banner.getByRole("button", { name: "Dismiss install banner for seven days", exact: true }).click();
+  await expect(banner).toBeHidden();
+  await page.reload();
+  await expect(page.getByText("₦1,234", { exact: true }).filter({ visible: true })).toBeVisible();
+  await expect(banner).toHaveCount(0);
+  await page.getByRole("button", { name: "Account menu", exact: true }).click();
+  await page.getByRole("menuitem", { name: "Install BelivrHQ", exact: true }).click();
+  const help = page.getByRole("dialog", { name: "Install BelivrHQ", exact: true });
+  await expect(help).toBeVisible();
+  await expect(help.getByText("Internet connection required.", { exact: false })).toBeVisible();
+  await expect(help.getByRole("heading", { name: "Desktop", exact: true })).toBeVisible();
+  await help.getByRole("tab", { name: "iPhone / iPad", exact: true }).click();
+  await expect(help.getByRole("heading", { name: "iPhone or iPad", exact: true })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await help.getByRole("button", { name: "Got it", exact: true }).click();
+  await expect(help).toBeHidden();
+  await expect(page.getByRole("button", { name: "Account menu", exact: true })).toBeFocused();
+});
+
+for (const outcome of ["dismissed", "error"] as const) test(`native install ${outcome} does not reuse a consumed browser event`, async ({ page, context }) => {
+  await installReadOnlySession(context, ["giving:dashboard:read", "branches:read"]);
+  await page.goto("/giving/overview");
+  const banner = page.getByRole("region", { name: "Install BelivrHQ", exact: true });
+  await expect(banner).toBeVisible();
+  await offerInstallPrompt(page, outcome);
+  await banner.getByRole("button", { name: "Install App", exact: true }).click();
+  if (outcome === "error") {
+    await expect(page.getByRole("dialog", { name: "Install BelivrHQ", exact: true }).getByRole("alert")).toBeVisible();
+    await page.getByRole("button", { name: "Got it", exact: true }).click();
+    await banner.getByRole("button", { name: "Install App", exact: true }).click();
+  } else {
+    await expect(banner).toBeHidden();
+    await page.getByRole("button", { name: "Account menu", exact: true }).click();
+    await page.getByRole("menuitem", { name: "Install BelivrHQ", exact: true }).click();
+  }
+  await expect(page.getByRole("dialog", { name: "Install BelivrHQ", exact: true })).toBeVisible();
+  expect(await page.evaluate(() => (window as unknown as { installCalls: number }).installCalls)).toBe(1);
+});
+
+for (const mode of ["display-mode", "ios-standalone"]) test(`installed ${mode} hides install offers`, async ({ page, context }) => {
+  await context.addInitScript(mode => {
+    if (mode === "ios-standalone") Object.defineProperty(navigator, "standalone", { value: true });
+    else {
+      const original = window.matchMedia.bind(window);
+      window.matchMedia = query => { const media = original(query); if (query === "(display-mode: standalone)") Object.defineProperty(media, "matches", { value: true }); return media; };
+    }
+  }, mode);
+  await installReadOnlySession(context, ["giving:dashboard:read", "branches:read"]);
+  await page.goto("/giving/overview");
+  await expect(page.getByText("₦1,234", { exact: true }).filter({ visible: true })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Install BelivrHQ", exact: true })).toHaveCount(0);
+  await page.getByRole("button", { name: "Account menu", exact: true }).click();
+  await expect(page.getByRole("menuitem", { name: "Install BelivrHQ", exact: true })).toHaveCount(0);
+});
+
+test("iPhone install offer opens Safari home-screen instructions", async ({ page, context }) => {
+  await context.addInitScript(() => Object.defineProperty(navigator, "userAgent", { value: "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile Safari/604.1" }));
+  await page.setViewportSize({ width: 390, height: 844 });
+  await installReadOnlySession(context, ["giving:dashboard:read", "branches:read"]);
+  await page.goto("/giving/overview");
+  await page.getByRole("region", { name: "Install BelivrHQ", exact: true }).getByRole("button", { name: "Install App", exact: true }).click();
+  const help = page.getByRole("dialog", { name: "Install BelivrHQ", exact: true });
+  await expect(help).toBeVisible();
+  await expect(help.getByText("Open BelivrHQ in Safari.", { exact: true })).toBeVisible();
+  await expect(help.getByText("Open as Web App", { exact: true })).toBeVisible();
+});
+
+test("install offer remains dismissible when preference storage is blocked", async ({ page, context }) => {
+  await context.addInitScript(() => {
+    const get = Storage.prototype.getItem;
+    const set = Storage.prototype.setItem;
+    Storage.prototype.getItem = function(key) { if (key === "belivrhq:app-install-dismissed-at") throw new DOMException("Fixture storage blocked", "SecurityError"); return get.call(this, key); };
+    Storage.prototype.setItem = function(key, value) { if (key === "belivrhq:app-install-dismissed-at") throw new DOMException("Fixture storage blocked", "SecurityError"); return set.call(this, key, value); };
+  });
+  await installReadOnlySession(context, ["giving:dashboard:read", "branches:read"]);
+  await page.goto("/giving/overview");
+  const banner = page.getByRole("region", { name: "Install BelivrHQ", exact: true });
+  await expect(banner).toBeVisible();
+  await banner.getByRole("button", { name: "Dismiss install banner for seven days", exact: true }).click();
+  await expect(banner).toBeHidden();
+  await expect(page.getByText("₦1,234", { exact: true }).filter({ visible: true })).toBeVisible();
 });
 
 for (const hq of [false, true]) test(`dashboard-only giving works without transaction or write grants (HQ=${hq})`, async ({ page, context }) => {

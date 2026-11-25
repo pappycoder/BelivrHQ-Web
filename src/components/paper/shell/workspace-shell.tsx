@@ -1,5 +1,6 @@
 "use client";
 
+import { AppInstallBanner } from "@/components/install/app-install";
 import { BillingNotice } from "@/components/billing/billing-notice";
 import * as React from "react";
 import { usePathname } from "next/navigation";
@@ -67,6 +68,7 @@ export function WorkspaceShell({ children }: { children: React.ReactNode }) {
         <Inspector />
         <SupportChatTrigger />
         <MobileNav areas={areas} />
+        <AppInstallBanner />
         <CommandPalette
           open={searchOpen}
           onOpenChange={setSearchOpen}
