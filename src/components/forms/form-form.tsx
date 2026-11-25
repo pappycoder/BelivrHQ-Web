@@ -4,8 +4,7 @@ import { collectionLabel } from "@/lib/collection-label";
 
 import { FormActions } from "@/components/shared/form-actions";
 
-import { CREATE_FORM_LAYOUT, CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
-import Link from "next/link";
+import { CreatePreviewCard, CreatePreviewSidebar } from "@/components/shared/create-preview";
 
 import { ValidatedForm } from "@/components/ui/validated-form";
 
@@ -14,7 +13,7 @@ import {
   useBranchAssignment,
 } from "@/components/shared/branch-assignment";
 
-import { useState, useEffect, useId } from "react";
+import { useState, useEffect, useId, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -29,7 +28,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Eye, ListChecks, Settings2, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Eye, ListChecks, Settings2 } from "lucide-react";
 import { SectionCard } from "@/components/paper/section";
 import { getToastErrorMessage } from "@/lib/toast";
 import { cn } from "@/lib/utils";
@@ -109,6 +108,48 @@ const EMPTY_VALUES: FormValues = {
   submissionLimit: 0,
 };
 
+const BUILDER_SECTIONS = [
+  { step: 0, label: "Form details" },
+  { step: 1, label: "Questions" },
+  { step: 2, label: "Sharing & responses" },
+  { step: 3, label: "Preview & save" },
+] as const;
+
+const BUILDER_PROGRESS_LABELS = [
+  "Start with the introduction",
+  "Add the questions people will answer",
+  "Choose who can respond",
+  "Review before saving",
+] as const;
+
+function FormBuilderProgress({
+  step,
+  variant = "rail",
+  className,
+}: {
+  step: number;
+  variant?: "rail" | "mobile";
+  className?: string;
+}) {
+  const label = BUILDER_PROGRESS_LABELS[step];
+  return (
+    <div className={cn(variant === "mobile" ? "guided-progress-mobile" : "guided-progress", className)}>
+      <span>{label}</span>
+      <progress
+        role="progressbar"
+        aria-label={variant === "mobile" ? "Mobile form setup progress" : "Form setup progress"}
+        aria-valuemin={0}
+        aria-valuemax={BUILDER_SECTIONS.length - 1}
+        aria-valuenow={step}
+        aria-valuetext={label}
+        max={BUILDER_SECTIONS.length - 1}
+        value={step}
+      />
+      {variant === "rail" && <small>Your form is saved only when you confirm.</small>}
+    </div>
+  );
+}
+
 export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: FormFormProps) {
   const branchAssignment = useBranchAssignment(form);
   const { data: profile } = useCurrentProfile();
@@ -118,6 +159,21 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
   const [saveError, setSaveError] = useState("");
   const [saving, setSaving] = useState(false);
   const [builderFields, setBuilderFields] = useState<FormFieldType[]>([]);
+  const builderBodyRef = useRef<HTMLDivElement>(null);
+
+  const goToBuilderStep = (step: number) => {
+    setBuilderStep(step);
+    setMode(step === 3 ? "preview" : "edit");
+    requestAnimationFrame(() => {
+      const target = builderBodyRef.current?.querySelector<HTMLElement>(`[data-builder-step="${step}"]`)
+        ?? builderBodyRef.current;
+      const heading = target?.querySelector<HTMLElement>("h2");
+      if (heading) {
+        heading.tabIndex = -1;
+        heading.focus();
+      }
+    });
+  };
 
   const formControl = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -171,7 +227,7 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
 
   const handleSubmit = async (values: FormValues) => {
     const branchPayload = branchAssignment.payload();
-    if (!branchPayload) { setBuilderStep(0); return; }
+    if (!branchPayload) { goToBuilderStep(0); return; }
     setSaving(true);
     setSaveError("");
     try {
@@ -243,32 +299,6 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
             {saving ? "Saving..." : submitLabel}
           </Button>}
         </div>
-        {!withPreview && <div
-          className="flex rounded-full border border-line bg-card p-1 xl:hidden"
-          aria-label="Builder view"
-        >
-          <Button
-            type="button"
-            variant={mode === "edit" ? "secondary" : "ghost"}
-            className="flex-1 rounded-full"
-            aria-pressed={mode === "edit"}
-            onClick={() => setMode("edit")}
-          >
-            <SlidersHorizontal className="size-4" /> Edit form
-          </Button>
-          <Button
-            type="button"
-            variant={mode === "preview" ? "secondary" : "ghost"}
-            className="flex-1 rounded-full"
-            aria-pressed={mode === "preview"}
-            onClick={() => setMode("preview")}
-          >
-            <Eye className="size-4" /> Preview form
-          </Button>
-        </div>}
-        <nav aria-label="Form builder steps" className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {["Details", "Questions", "Rules", "Preview"].map((label,index) => <Button key={label} type="button" variant={builderStep === index ? "secondary" : "outline"} aria-current={builderStep === index ? "step" : undefined} onClick={() => {setBuilderStep(index); setMode(index===3 ? "preview" : "edit");}} className="min-w-0 rounded-xl">{index+1} · {label}</Button>)}
-        </nav>
         {saveError && (
           <p
             role="alert"
@@ -277,162 +307,190 @@ export function FormForm({ form, onSubmit, submitLabel, withPreview = false }: F
             {saveError}
           </p>
         )}
-        <div className={withPreview ? CREATE_FORM_LAYOUT : "grid min-w-0 items-start gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]"}>
-          <ValidatedForm schemaValidation
-            aria-hidden={builderStep === 3}
-            id={builderId}
-            onSubmit={formControl.handleSubmit(handleSubmit, errors => { setMode("edit"); setBuilderStep(errors.title ? 0 : errors.fields ? 1 : 2); })}
-            className={cn(
-              "min-w-0 space-y-5",
-              builderStep === 3 && "hidden",
-            )}
-          >
-            <div hidden={builderStep !== 0} aria-hidden={builderStep !== 0}>
-<SectionCard
-              eyebrow="01 · The introduction"
-              title="Form details"
-              description="Let people know what this form is for."
-              bodyClassName="space-y-4"
+        <div className={cn(
+          "grid min-w-0 items-start gap-4",
+          withPreview
+            ? "lg:grid-cols-[180px_minmax(0,1fr)_320px]"
+            : "lg:grid-cols-[180px_minmax(0,1fr)]",
+        )}>
+          <aside aria-label="Form builder sections" className="min-w-0 lg:sticky lg:top-20 lg:self-start">
+            <FormBuilderProgress step={builderStep} variant="mobile" />
+            <nav className="guided-record-nav" aria-label="Form sections">
+              <p className="rule-label">A LITTLE AT A TIME</p>
+              {BUILDER_SECTIONS.map(section => (
+                <button
+                  key={section.step}
+                  type="button"
+                  aria-current={builderStep === section.step ? "step" : undefined}
+                  onClick={() => goToBuilderStep(section.step)}
+                  className="min-w-0"
+                >
+                  <span aria-hidden="true">
+                    {builderStep > section.step ? <Check className="size-4" /> : null}
+                  </span>
+                  <strong className="min-w-0 break-words">{section.label}</strong>
+                </button>
+              ))}
+              <FormBuilderProgress step={builderStep} />
+            </nav>
+          </aside>
+          <div ref={builderBodyRef} className="min-w-0 space-y-5">
+            <ValidatedForm schemaValidation
+              aria-hidden={builderStep === 3}
+              id={builderId}
+              onSubmit={formControl.handleSubmit(handleSubmit, errors => { goToBuilderStep(errors.title ? 0 : errors.fields ? 1 : 2); })}
+              className={cn(
+                "min-w-0 space-y-5",
+                builderStep === 3 && "hidden",
+              )}
             >
-              <BranchAssignmentField
-                assignment={branchAssignment}
-                disabled={saving}
-              />
-              <FormField required
-                control={formControl.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Membership Application"
-                        {...field}
-                        disabled={saving}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={formControl.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="What is this form for?"
-                        {...field}
-                        disabled={saving}
-                        className="min-h-24"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </SectionCard>
-</div>
-            <div hidden={builderStep !== 1} aria-hidden={builderStep !== 1}>
-<SectionCard
-              eyebrow="02 · What you need to know"
-              title="Questions"
-              description="Choose the answer types and order that work for your form."
-            >
-              <FormField required
-                control={formControl.control}
-                name="fields"
-                render={() => (
-                  <FormItem>
-                    <FormControl>
-                      <FormFieldsEditor
-                        fields={builderFields}
-                        showErrors={!!formControl.formState.errors.fields}
-                        onChange={handleFormFieldsChange}
-                        disabled={saving}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </SectionCard>
-</div>
-            <div hidden={builderStep !== 2} aria-hidden={builderStep !== 2}>
-<SectionCard
-              eyebrow="03 · Sharing & responses"
-              title={
-                <span className="flex items-center gap-2">
-                  <Settings2 className="size-4 text-brand" /> Form settings
-                </span>
-              }
-              description="Choose who can respond and when the form is open."
-            >
-              <Controller
-                control={formControl.control}
-                name="status"
-                render={() => (
-                  <FormSettingsCard
-                    values={settingsValues}
-                    onChange={handleSettingsChange}
-                    fields={builderFields}
+              <div data-builder-step={0} hidden={builderStep !== 0} aria-hidden={builderStep !== 0}>
+                <SectionCard
+                  eyebrow="The introduction"
+                  title="Form details"
+                  description="Let people know what this form is for."
+                  bodyClassName="space-y-4"
+                >
+                  <BranchAssignmentField
+                    assignment={branchAssignment}
                     disabled={saving}
                   />
-                )}
+                  <FormField required
+                    control={formControl.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Title</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Membership Application"
+                            {...field}
+                            disabled={saving}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={formControl.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="What is this form for?"
+                            {...field}
+                            disabled={saving}
+                            className="min-h-24"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </SectionCard>
+              </div>
+              <div data-builder-step={1} hidden={builderStep !== 1} aria-hidden={builderStep !== 1}>
+                <SectionCard
+                  eyebrow="What you need to know"
+                  title="Questions"
+                  description="Choose the answer types and order that work for your form."
+                >
+                  <FormField required
+                    control={formControl.control}
+                    name="fields"
+                    render={() => (
+                      <FormItem>
+                        <FormControl>
+                          <FormFieldsEditor
+                            fields={builderFields}
+                            showErrors={!!formControl.formState.errors.fields}
+                            onChange={handleFormFieldsChange}
+                            disabled={saving}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </SectionCard>
+              </div>
+              <div data-builder-step={2} hidden={builderStep !== 2} aria-hidden={builderStep !== 2}>
+                <SectionCard
+                  eyebrow="Sharing & responses"
+                  title={
+                    <span className="flex items-center gap-2">
+                      <Settings2 className="size-4 text-brand" /> Form settings
+                    </span>
+                  }
+                  description="Choose who can respond and when the form is open."
+                >
+                  <Controller
+                    control={formControl.control}
+                    name="status"
+                    render={() => (
+                      <FormSettingsCard
+                        values={settingsValues}
+                        onChange={handleSettingsChange}
+                        fields={builderFields}
+                        disabled={saving}
+                      />
+                    )}
+                  />
+                </SectionCard>
+              </div>
+            </ValidatedForm>
+            {builderStep === 3 && <div data-builder-step={3} className="min-w-0"><FormBuilderPreview title={formControl.watch("title")} description={formControl.watch("description")} fields={builderFields} churchName={profile?.church?.name} churchLogoUrl={profile?.church?.logoUrl} /></div>}
+            <nav aria-label="Form builder navigation" className="flex min-w-0 flex-wrap items-center justify-between gap-2 pt-1">
+              <Button type="button" variant="outline" className="min-w-0" disabled={builderStep === 0 || saving} onClick={() => goToBuilderStep(builderStep - 1)}><ArrowLeft className="size-4" />Previous</Button>
+              {builderStep < 3 ? <Button type="button" className="min-w-0" disabled={saving} onClick={() => goToBuilderStep(builderStep + 1)}>Continue<ArrowRight className="size-4" /></Button> : <Button type="submit" form={builderId} className="min-w-0" disabled={saving} loading={saving}>{submitLabel}</Button>}
+            </nav>
+          </div>
+          {withPreview ? (
+            <CreatePreviewSidebar>
+              <CreatePreviewCard editing={!!form} eyebrow="Form preview" title={formControl.watch("title") || "Untitled form"}>
+                <dl className="space-y-3 text-sm">
+                  <div><dt className="rule-label">Questions</dt><dd className="mt-1">{builderFields.length} {collectionLabel(builderFields.length, "questions")} · {builderFields.filter(field => field.required).length} required</dd></div>
+                  <div><dt className="rule-label">Status</dt><dd className="mt-1 capitalize">{settingsValues.status || "draft"}</dd></div>
+                  <div><dt className="rule-label">Sharing</dt><dd className="mt-1">{settingsValues.isPublic ? "Public link" : "Members only"}</dd></div>
+                  {formControl.watch("description") && <div><dt className="rule-label">Description</dt><dd className="mt-1 break-words">{formControl.watch("description")}</dd></div>}
+                </dl>
+                {builderFields.length > 0 && <ol className="space-y-2 border-t border-line pt-4" aria-label="Question order">{builderFields.map((field,index) => <li key={field.key || index} className="flex items-start gap-2 text-sm text-ink-soft"><span className="grid size-5 shrink-0 place-items-center rounded-full bg-muted text-xs">{index+1}</span><span className="min-w-0 break-words">{field.label || "Untitled question"}</span></li>)}</ol>}
+              </CreatePreviewCard>
+              <Button type="button" variant="outline" className="hidden w-full gap-2 lg:flex" onClick={() => goToBuilderStep(3)}><Eye className="size-4" />Preview form</Button>
+              <FormActions>
+                <Button type="submit" form={builderId} disabled={saving} loading={saving} className="w-full">{submitLabel}</Button>
+              </FormActions>
+              <details className="min-w-0">
+                <summary className="cursor-pointer rounded-xl border border-line bg-card p-3 text-sm font-medium">Preview as a respondent</summary>
+                <FormBuilderPreview
+                  title={formControl.watch("title")}
+                  description={formControl.watch("description")}
+                  fields={builderFields}
+                  churchName={profile?.church?.name}
+                  churchLogoUrl={profile?.church?.logoUrl}
+                />
+              </details>
+            </CreatePreviewSidebar>
+          ) : (
+            <aside
+              className={cn(
+                "min-w-0 xl:sticky xl:top-6 xl:block",
+                (mode === "edit" || builderStep === 3) && "hidden",
+              )}
+            >
+              <FormBuilderPreview
+                title={formControl.watch("title")}
+                description={formControl.watch("description")}
+                fields={builderFields}
+                churchName={profile?.church?.name}
+                churchLogoUrl={profile?.church?.logoUrl}
               />
-            </SectionCard>
-</div>
-          </ValidatedForm>
-          {builderStep === 3 && <FormBuilderPreview title={formControl.watch("title")} description={formControl.watch("description")} fields={builderFields} churchName={profile?.church?.name} churchLogoUrl={profile?.church?.logoUrl} />}
-          {withPreview ? <CreatePreviewSidebar>
-            <CreatePreviewCard editing={!!form} eyebrow="Form preview" title={formControl.watch("title") || "Untitled form"}>
-              <dl className="space-y-3 text-sm">
-                <div><dt className="rule-label">Questions</dt><dd className="mt-1">{builderFields.length} {collectionLabel(builderFields.length, "questions")} · {builderFields.filter(field => field.required).length} required</dd></div>
-                <div><dt className="rule-label">Status</dt><dd className="mt-1 capitalize">{settingsValues.status || "draft"}</dd></div>
-                <div><dt className="rule-label">Sharing</dt><dd className="mt-1">{settingsValues.isPublic ? "Public link" : "Members only"}</dd></div>
-                {formControl.watch("description") && <div><dt className="rule-label">Description</dt><dd className="mt-1 break-words">{formControl.watch("description")}</dd></div>}
-              </dl>
-              {builderFields.length > 0 && <ol className="space-y-2 border-t border-line pt-4" aria-label="Question order">{builderFields.map((field,index) => <li key={field.key || index} className="flex items-start gap-2 text-sm text-ink-soft"><span className="grid size-5 shrink-0 place-items-center rounded-full bg-muted text-xs">{index+1}</span><span className="min-w-0 break-words">{field.label || "Untitled question"}</span></li>)}</ol>}
-            </CreatePreviewCard>
-            <Button type="button" variant="outline" className="hidden w-full gap-2 lg:flex" onClick={() => {setBuilderStep(3);setMode("preview");}}><Eye className="size-4" />Preview form</Button>
-            <FormActions>
-              <Button type="submit" form={builderId} disabled={saving} loading={saving} className="w-full">{submitLabel}</Button>
-              <Button asChild variant="ghost" className="w-full"><Link href={form ? `/library/forms/${form.id}` : "/library/forms"}>Cancel</Link></Button>
-            </FormActions>
-            <details className="min-w-0">
-              <summary className="cursor-pointer rounded-xl border border-line bg-card p-3 text-sm font-medium">Preview as a respondent</summary>
-            <FormBuilderPreview
-              title={formControl.watch("title")}
-              description={formControl.watch("description")}
-              fields={builderFields}
-              churchName={profile?.church?.name}
-              churchLogoUrl={profile?.church?.logoUrl}
-            />
-            </details>
-          </CreatePreviewSidebar> : (
-          <aside
-            className={cn(
-              "min-w-0 xl:sticky xl:top-6 xl:block",
-              (mode === "edit" || builderStep === 3) && "hidden",
-            )}
-          >
-            <FormBuilderPreview
-              title={formControl.watch("title")}
-              description={formControl.watch("description")}
-              fields={builderFields}
-              churchName={profile?.church?.name}
-              churchLogoUrl={profile?.church?.logoUrl}
-            />
-          </aside>
+            </aside>
           )}
         </div>
-        <nav aria-label="Form builder navigation" className="flex items-center justify-between gap-3 border-t border-line pt-4">
-          <Button type="button" variant="outline" disabled={builderStep === 0 || saving} onClick={() => {const previous = builderStep-1;setBuilderStep(previous);setMode("edit");}}><ArrowLeft className="size-4" />Previous</Button>
-          <span className="text-xs text-ink-faint">Step {builderStep+1} of 4</span>
-          {builderStep < 3 ? <Button type="button" disabled={saving} onClick={() => {const next = builderStep+1;setBuilderStep(next);setMode(next === 3 ? "preview" : "edit");}}>Continue<ArrowRight className="size-4" /></Button> : <Button type="submit" form={builderId} disabled={saving} loading={saving}>{submitLabel}</Button>}
-        </nav>
       </div>
     </Form>
   );
