@@ -60,6 +60,37 @@ async function installReadOnlySession(context: BrowserContext, grants: string[],
   }, { grants, hq });
 }
 
+for (const width of [320, 390]) test(`mobile workspace logo and saved light/dark switch at ${width}px`, async ({ page, context }) => {
+  await page.setViewportSize({ width, height: 844 });
+  await context.addInitScript(() => {
+    if (!localStorage.getItem("theme")) localStorage.setItem("theme", "light");
+  });
+  await installReadOnlySession(context, ["giving:dashboard:read", "branches:read"]);
+  await page.goto("/giving/overview");
+  const header = page.locator("header");
+  const logo = header.getByRole("img", { name: "BelivrHQ", exact: true });
+  await expect(header.getByRole("link", { name: "BelivrHQ home", exact: true })).toBeVisible();
+  await expect(logo).toBeVisible();
+  await expect.poll(() => logo.evaluate((image: HTMLImageElement) => image.complete && image.naturalWidth > 0)).toBe(true);
+  const darkSwitch = header.getByRole("button", { name: "Switch to dark mode", exact: true });
+  await expect(darkSwitch).toBeEnabled();
+  const target = await darkSwitch.boundingBox();
+  expect(target?.width).toBeGreaterThanOrEqual(44);
+  expect(target?.height).toBeGreaterThanOrEqual(44);
+  await darkSwitch.click();
+  await expect(page.locator("html")).toHaveClass(/dark/);
+  await expect(header.getByRole("button", { name: "Switch to light mode", exact: true })).toBeVisible();
+  await expect(logo).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.reload();
+  await expect(page.locator("html")).toHaveClass(/dark/);
+  await header.getByRole("button", { name: "Switch to light mode", exact: true }).press("Enter");
+  await expect(page.locator("html")).not.toHaveClass(/dark/);
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await expect(header.getByRole("button", { name: "Switch to dark mode", exact: true })).toBeHidden();
+  await expect(page.getByRole("button", { name: "Toggle theme", exact: true })).toBeVisible();
+});
+
 for (const hq of [false, true]) test(`dashboard-only giving works without transaction or write grants (HQ=${hq})`, async ({ page, context }) => {
   await installReadOnlySession(context, ["giving:dashboard:read", "branches:read"], hq);
   await page.goto("/giving/overview");
