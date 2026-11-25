@@ -474,3 +474,34 @@
 
 /* Fidelity to the approved record preview: white hero, facts and a quiet action card. */
 .gathering-hero{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:30px;background:var(--card);padding:30px}.gathering-hero:not(:has(.gathering-capacity)){grid-template-columns:minmax(0,1fr)}.gathering-capacity{padding-left:30px;min-width:0}.guided-record-layout{grid-template-columns:190px minmax(0,1fr) 245px;gap:18px}.asset-next-maintenance{margin-left:auto;flex-shrink:0;padding-left:20px;border-left:1px solid var(--line)}@media(max-width:1199px){.guided-record-layout{grid-template-columns:165px minmax(0,1fr)}}@media(max-width:767px){.gathering-hero{grid-template-columns:minmax(0,1fr);padding:20px;gap:22px}.gathering-capacity{padding:20px 0 0;border-left:0;border-top:1px solid var(--line)}.guided-record-layout{display:block}.asset-summary-hero{flex-wrap:wrap}.asset-next-maintenance{margin-left:0;width:100%;padding:16px 0 0;border-left:0;border-top:1px solid var(--line)}}
+
+/* Floating install offer reserves its measured space and clears existing bottom UI. */
+[data-paper-root] #main-content {
+  --workspace-main-bottom: 7rem;
+  padding-bottom: calc(max(var(--workspace-main-bottom), var(--app-install-base, 0px)) + var(--app-install-space, 0px) + var(--app-install-help-space, 0px));
+}
+@media (min-width: 768px) {
+  [data-paper-root] #main-content { --workspace-main-bottom: 5rem; }
+}
+@media (max-width: 1023px) {
+  [data-paper-root]:has([data-create-sidebar] [data-form-actions]) #main-content { --workspace-main-bottom: 8rem; }
+}
+:root:has([data-paper-root] [data-app-install-dock]) [data-support-launcher] {
+  bottom: calc(var(--app-install-base, 0px) + var(--app-install-space, 0px) + .75rem);
+}
+:root:has(input:not([type=checkbox]):not([type=radio]):focus, textarea:focus, [contenteditable=true]:focus) [data-app-install-dock] {
+  visibility: hidden;
+}
+
+:root:has([data-app-install-dock]):has(input:not([type=checkbox]):not([type=radio]):focus, textarea:focus, [contenteditable=true]:focus) [data-support-launcher] {
+  visibility: hidden;
+}
+@media (max-height: 420px) {
+  [data-app-install-dock] { display: none; }
+}
+
+:root:has([data-app-install-dock]) { scroll-padding-top: 4rem; scroll-padding-bottom: var(--app-install-scroll-space, 0px); }
+:root:has(input:not([type=checkbox]):not([type=radio]):focus, textarea:focus, [contenteditable=true]:focus) [data-app-install-dock] * {
+  visibility: hidden;
+  transition: none;
+}

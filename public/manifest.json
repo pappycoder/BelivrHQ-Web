@@ -3,13 +3,16 @@
   "short_name": "BelivrHQ",
   "description": "Church management for your people, attendance, giving and branches.",
   "id": "/",
-  "start_url": "/",
+  "start_url": "/home",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#fafbf7",
   "theme_color": "#183b40",
-  "categories": ["productivity", "lifestyle"],
+  "categories": [
+    "productivity",
+    "lifestyle"
+  ],
   "icons": [
     {
       "src": "/icons/icon-192x192.png",

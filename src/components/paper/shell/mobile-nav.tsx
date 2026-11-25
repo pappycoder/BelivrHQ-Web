@@ -111,6 +111,7 @@ export function MobileNav({ areas }: { areas: PaperArea[] }) {
   return (
     <nav
       aria-label="Primary"
+      data-mobile-nav
       className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-background/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"
     >
       <div className="flex items-stretch">
