@@ -8,8 +8,12 @@ import {
   ChevronRight,
   CircleHelp,
   LogOut,
+  Moon,
   Search,
+  Sun,
 } from "lucide-react";
+import { useTheme } from "next-themes";
+import { BrandLogo } from "@/components/shared/brand-logo";
 import { toast } from "@/lib/toast";
 import { navTrail } from "@/lib/paper-nav";
 import { useAuth } from "@/hooks/use-auth";
@@ -31,12 +35,17 @@ export function ContextBar({ onOpenSearch }: { onOpenSearch: () => void }) {
   const pathname = usePathname();
   const trail = React.useMemo(() => navTrail(pathname), [pathname]);
   const { data: unread } = useNotificationsUnread();
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+  const dark = mounted && resolvedTheme === "dark";
+  const themeLabel = dark ? "Switch to light mode" : "Switch to dark mode";
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-line/70 bg-background/80 px-4 backdrop-blur-xl md:px-7">
-      <Link href="/home" className="md:hidden">
-        <span className="grid size-8 place-items-center rounded-[11px] bg-ink text-paper">
-          <span className="font-display text-sm font-semibold leading-none">a</span>
+      <Link href="/home" aria-label="BelivrHQ home" className="grid size-11 shrink-0 place-items-center md:hidden">
+        <span className="grid size-9 place-items-center rounded-[11px] bg-ink text-paper dark:bg-paper dark:ring-1 dark:ring-line">
+          <BrandLogo variant="mark" emblemClassName="size-7 brightness-0 invert" />
         </span>
       </Link>
 
@@ -63,7 +72,18 @@ export function ContextBar({ onOpenSearch }: { onOpenSearch: () => void }) {
         {trail.leaf?.title ?? "Today"}
       </span>
 
-      <div className="ml-auto flex items-center gap-1">
+      <div className="ml-auto flex shrink-0 items-center gap-1">
+        <ActionTooltip label={themeLabel}>
+          <button
+            type="button"
+            aria-label={themeLabel}
+            disabled={!mounted}
+            onClick={() => setTheme(dark ? "light" : "dark")}
+            className="grid size-11 shrink-0 place-items-center rounded-full text-ink-faint transition-colors hover:bg-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 md:hidden"
+          >
+            {dark ? <Sun className="size-4" aria-hidden="true" /> : <Moon className="size-4" aria-hidden="true" />}
+          </button>
+        </ActionTooltip>
         <button
           type="button"
           onClick={onOpenSearch}
