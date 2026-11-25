@@ -500,7 +500,7 @@
   [data-app-install-dock] { display: none; }
 }
 
-:root:has([data-app-install-dock]) { scroll-padding-bottom: var(--app-install-scroll-space, 0px); }
+:root:has([data-app-install-dock]) { scroll-padding-top: 4rem; scroll-padding-bottom: var(--app-install-scroll-space, 0px); }
 :root:has(input:not([type=checkbox]):not([type=radio]):focus, textarea:focus, [contenteditable=true]:focus) [data-app-install-dock] * {
   visibility: hidden;
   transition: none;

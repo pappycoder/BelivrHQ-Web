@@ -26,8 +26,11 @@ test("login has no seeded-account dropdown or prefilled credentials", async ({ p
 async function installReadOnlySession(context: BrowserContext, grants: string[], hq = false) {
   await context.addCookies([{ name: "belivrhq_token", value: "readonly-test", url: "http://127.0.0.1:3107" }]);
   await context.addInitScript(({ grants, hq }) => {
-    // These access/install checks model a returning test account, not onboarding.
-    localStorage.setItem("belivrhq:tour:Giving overview:v1:church-a:profile-a", "seen");
+    // Access/install checks model a returning account with completed onboarding.
+    const getStored = Storage.prototype.getItem;
+    Storage.prototype.getItem = function(key) {
+      return key.startsWith("belivrhq:tour:") ? "seen" : getStored.call(this, key);
+    };
     const original = window.fetch.bind(window);
     const calls: string[] = [];
     (window as unknown as { auditCalls: string[] }).auditCalls = calls;
