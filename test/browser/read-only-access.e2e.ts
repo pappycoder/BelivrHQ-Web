@@ -26,6 +26,8 @@ test("login has no seeded-account dropdown or prefilled credentials", async ({ p
 async function installReadOnlySession(context: BrowserContext, grants: string[], hq = false) {
   await context.addCookies([{ name: "belivrhq_token", value: "readonly-test", url: "http://127.0.0.1:3107" }]);
   await context.addInitScript(({ grants, hq }) => {
+    // These access/install checks model a returning test account, not onboarding.
+    localStorage.setItem("belivrhq:tour:Giving overview:v1:church-a:profile-a", "seen");
     const original = window.fetch.bind(window);
     const calls: string[] = [];
     (window as unknown as { auditCalls: string[] }).auditCalls = calls;
@@ -170,10 +172,14 @@ test("installed app launches the workspace through the normal session gate", asy
   const manifest = await response.json();
   expect(manifest.id).toBe("/");
   expect(manifest.start_url).toBe("/home");
-  await page.goto(manifest.start_url);
-  await expect(page.getByRole("button", { name: "Sign In", exact: true })).toBeVisible();
-  expect(new URL(page.url()).pathname).toBe("/login");
-  expect(new URL(page.url()).searchParams.get("returnTo")).toBe("/home");
+  // Inspect the gate without following Next's loopback-host normalization.
+  // The login form itself is exercised by the existing browser login regression.
+  const launch = await page.request.get(manifest.start_url, { maxRedirects: 0 });
+  expect(launch.status()).toBe(307);
+  const destination = new URL(launch.headers()["location"]);
+  expect(["http://127.0.0.1:3107", "http://localhost:3107"]).toContain(destination.origin);
+  expect(destination.pathname).toBe("/login");
+  expect(destination.searchParams.get("returnTo")).toBe("/home");
 });
 
 test("install offer invokes the native prompt only after a click and hides after installation", async ({ page, context }) => {
