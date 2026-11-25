@@ -7,11 +7,13 @@ import {
   Bell,
   ChevronRight,
   CircleHelp,
+  Download,
   LogOut,
   Moon,
   Search,
   Sun,
 } from "lucide-react";
+import { useAppInstall } from "@/components/install/app-install";
 import { useTheme } from "next-themes";
 import { BrandLogo } from "@/components/shared/brand-logo";
 import { toast } from "@/lib/toast";
@@ -138,6 +140,7 @@ export function ContextBar({ onOpenSearch }: { onOpenSearch: () => void }) {
 }
 
 function AccountMenu() {
+  const appInstall = useAppInstall();
   const { user, logout } = useAuth();
   const { data: profile } = useCurrentProfile();
   const router = useRouter();
@@ -171,6 +174,9 @@ function AccountMenu() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          {appInstall.ready && !appInstall.installed && <DropdownMenuItem disabled={appInstall.busy} onSelect={() => void appInstall.install()} className="gap-2">
+            <Download className="size-4" aria-hidden="true" />Install BelivrHQ
+          </DropdownMenuItem>}
           <DropdownMenuItem asChild>
             <Link href="/settings/profile" className="gap-2">Your profile</Link>
           </DropdownMenuItem>

@@ -3,6 +3,7 @@
 import { LEGACY_BRAND } from "@/lib/brand/identity";
 import * as React from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AppInstallProvider } from "@/components/install/app-install";
 import { AuthProvider } from "@/hooks/use-auth";
 import { SettingsProvider } from "@/contexts/settings-context";
 import { SupportChatProvider } from "@/components/support/support-chat-provider";
@@ -17,9 +18,13 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, []);
   return (
     <SettingsProvider>
+      <AppInstallProvider>
         <AuthProvider>
-          <TooltipProvider delayDuration={0}><SupportChatProvider>{children}</SupportChatProvider></TooltipProvider>
+          <TooltipProvider delayDuration={0}>
+            <SupportChatProvider>{children}</SupportChatProvider>
+          </TooltipProvider>
         </AuthProvider>
+      </AppInstallProvider>
     </SettingsProvider>
   );
 }
