@@ -34,10 +34,10 @@ it("loads a populated asset into the edit preview without creating or saving a r
   expect(html).not.toContain("Register Asset");
   expect(state.create).not.toHaveBeenCalled(); expect(state.update).not.toHaveBeenCalled();
 });
-it("keeps save and cancel disabled while an asset update is pending", () => {
+it("omits the footer cancel and keeps save disabled while an asset update is pending", () => {
   state.pending = true;
   const html = renderToStaticMarkup(createElement(AssetFormDialog, { open: true, presentation: "page", onOpenChange: vi.fn(), asset }));
-  expect(html).toMatch(/<button[^>]*disabled=""[^>]*>Cancel<\/button>/);
+  expect(html).not.toMatch(/<button[^>]*>Cancel<\/button>/);
   expect(html).toMatch(/<button[^>]*disabled=""[^>]*>Saving\.\.\.<\/button>/);
   expect(state.update).not.toHaveBeenCalled();
 });
