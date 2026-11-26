@@ -13,7 +13,7 @@ import {
   Search,
   Sun,
 } from "lucide-react";
-import { useAppInstall } from "@/components/install/app-install";
+import { AppInstallIcon, useAppInstall } from "@/components/install/app-install";
 import { useTheme } from "next-themes";
 import { BrandLogo } from "@/components/shared/brand-logo";
 import { toast } from "@/lib/toast";
@@ -118,6 +118,8 @@ export function ContextBar({ onOpenSearch }: { onOpenSearch: () => void }) {
           </Link>
         </ActionTooltip>
 
+        <AppInstallIcon />
+
         <ActionTooltip label={`Notifications${unread?.count ? ` (${unread.count} unread)` : ""}`}>
           <Link
             href="/notifications"
@@ -174,7 +176,7 @@ function AccountMenu() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          {appInstall.ready && !appInstall.installed && <DropdownMenuItem disabled={appInstall.busy} onSelect={() => void appInstall.install()} className="gap-2">
+          {appInstall.ready && !appInstall.installed && appInstall.canInstall && <DropdownMenuItem disabled={appInstall.busy} onSelect={() => void appInstall.install()} className="gap-2">
             <Download className="size-4" aria-hidden="true" />Install BelivrHQ
           </DropdownMenuItem>}
           <DropdownMenuItem asChild>
